@@ -8,20 +8,7 @@ These instructions will get a copy of the library running on your local machine 
 .NET 4.0
 
 ### Installing
-A Nuget package does not yet exist for CoordinateSharp, but will in the near future. Until then, users will need to download CoordinateSharp.cs build the library themselves.
-
-*The following example is for Visual Studio 2012, but should work for most VS verisons*
-
-  1. Create a new Class Library project called CoordinateSharp
-  2. Replace the default .cs file with the downloaded version of CoordinateSharp.cs
-  3. Goto Project->CoordinateSharp Properties
-  4. Select the build tab
-  5. Under the 'Output' section Check "XML-Documentation file:"
-  6. Open the 'Advanced' build settings
-  7. Set Debug Info to "None"
-  8. Build the project
- 
-Once the above steps have been completed you may add the CoordinateSharp reference to your required project by browsing to the CoordinateSharp projects Debug or Release folder.
+CoordinateSharp is available as a nuget packet from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
 
 # Usage Instructions
 
