@@ -80,9 +80,9 @@ Output Example:
  Input Example:
  ```XAML
  <ComboBox Name="latPosBox" VerticalAlignment="Center" SelectedItem="{Binding Path=DataContext.Latitude.Position, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"/>
-        <TextBox Text="{Binding Path=DataContext.Latitude.Degrees, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
-        <TextBox Text="{Binding Path=DataContext.Latitude.Minutes, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
-        <TextBox Text="{Binding Path=DataContext.Latitude.Seconds, StringFormat={}{0:0.####}, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+ <TextBox Text="{Binding Path=DataContext.Latitude.Degrees, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+ <TextBox Text="{Binding Path=DataContext.Latitude.Minutes, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+ <TextBox Text="{Binding Path=DataContext.Latitude.Seconds, StringFormat={}{0:0.####}, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
  ```
  
  It is important that input boxes be set with 'ValidatesOnExceptions=True'. This will ensure boxes display input erros when incorrect values are passed.
