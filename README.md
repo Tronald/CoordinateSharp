@@ -30,4 +30,13 @@ c.Longitude = new CoordinatePart(70, 45, 24.408, CoordinatePosition.W, c);
 c.Latitude.ToDouble(); // Returns 40.57682
 c.Longitude.ToDouble(); //Returns 70.75678
 ```
-//STILL WORKING
+### Formatting a Coordinate
+
+Coordinates may be formatted by passing 2 character format rules. Multiple rules may be passed by separating each variable by a semi-colon. The following example displays a Degree DecimalMinute formatted Lat/Long with leading zero rounded to the third decimal.
+```C#
+//Using Lat/Long 40.57682, -70.75678 
+string format = "FM:LT:R3";
+c.ToString(format); // N 40º 34.609' W 070º 045.407'
+c.Latitude.ToString(format);// N 40º 34.609'
+c.Longitude.ToString(format);// W 070º 45.407'
+```
