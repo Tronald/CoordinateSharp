@@ -41,7 +41,7 @@ c.Latitude.ToString(format);// N 40º 34.609'
 c.Longitude.ToString(format);// W 070º 45.407'
 ```
 
-The first character of the format is the rule with the second being the value. Each rule excepts specific value type. Reference below for formatting options. The first character in each example is the specific format rule. Everything in parentheses represents a value that may be passed with the rule.
+The first character of the format is the rule with the second being the value. Each rule expects a specific value type. Reference below for formatting options. The first character in each example is the specific format rule. Everything in parentheses represents a value that may be passed with the rule.
 
 If a format is not passed for a specific rule, the default rule will be executed during format.
 
