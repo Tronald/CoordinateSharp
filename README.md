@@ -27,6 +27,7 @@ c.ToString(); //Ouputs N 40º 34' 36.552" W 70º 45' 24.408"
 Coordinate c = new Coordinate();
 c.Latitude = new CoordinatePart(40,34, 36.552, CoordinatePosition.N, c);
 c.Longitude = new CoordinatePart(70, 45, 24.408, CoordinatePosition.W, c);
-c.ToDouble() // Returns 40.57682, -70.75678
+c.Latitude.ToDouble(); // Returns 40.57682
+c.Longitude.TouDouble(); //Returns 70.75678
 ```
 //STILL WORKING
