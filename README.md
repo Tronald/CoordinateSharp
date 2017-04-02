@@ -5,14 +5,14 @@ A simple library designed to assist with geographic coordinate format conversion
 These instructions will get a copy of the library running on your local machine for development and testing purposes.
 
 ### Prerequisites
-.NET 4.0
+.NET 4.0 or greater
 
 ### Installing
-CoordinateSharp is available as a nuget packet from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
+CoordinateSharp is now available as a nuget packet from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
 
 # Usage Instructions
 
-### Creating a Coordinate
+### Creating a Coordinate object
 
 ```C#
 //The following method creates a coordinate based on the standard and most widely used Decimal Degree format.
@@ -20,5 +20,13 @@ CoordinateSharp is available as a nuget packet from [nuget.org](https://www.nuge
 Coordinate c = new Coordinate(40.57682, -70.75678);
 c.ToString(); //Ouputs N 40º 34' 36.552" W 70º 45' 24.408"
 ```
+### Creating a Coordinate object from a non Decimal Degree formatted Lat/Long
 
-STILL WORKING CONTINUE FROM HERE...
+```C#
+//Using the known Decimal Minute Seconds formatted coordinate N 40º 34' 36.552" W 70º 45' 24.408"
+Coordinate c = new Coordinate();
+c.Latitude = new CoordinatePart(40,34, 36.552, CoordinatePosition.N, c);
+c.Longitude = new CoordinatePart(70, 45, 24.408, CoordinatePosition.W, c);
+c.ToDouble() // Returns 40.57682, -70.75678
+```
+
