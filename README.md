@@ -110,6 +110,22 @@ Output Example:
   Debug.Print(coord.CelestialInfo.SunRise.ToString() + " " + coord.CelestialInfo.SunCondition); //Outputs UpAllDay
   ```
   
+   Moon Illimination returns a value from 0.0 to 1.0. The table shown is a basic break down. You may determine Waxing and Waning types between the values shown.
+  
+|Value |Phase          |
+| ---- | ------------- |
+| 0.0  | New Moon      |
+| 0.25 | First Quarter |
+| 0.5  | Full Moon     |
+| 0.75 | Third Quarter |
+
+  You may also grab celestial data through static functions if you do not wish to create a Coordinate object.
+  
+  ```C#
+  Celestial cel = Celestial.CalculateCelestialTimes(85.57682, -70.75678, new DateTime(2017,8,21));
+  Console.WriteLine(cel.SunRise.Value.ToString());
+  ```
+   
 ### Acknowledgements
 
 SunTime calculations were adapted from NOAA and Zacky Pickholz 2008 "C# Class for Calculating Sunrise and Sunset Times" 
