@@ -1,4 +1,4 @@
-# CoordinateSharp v1.0.0.1
+# CoordinateSharp v1.0.1.1
 A simple library designed to assist with geographic coordinate format conversions in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input formats to various output formats. Most properties in the library are observable, and may be used with MVVM patterns. The ability to calculate various pieces of celestial information (sunset, moon illum..), also exist in this library as it is being used for a planning application.
 
 # Getting Started
