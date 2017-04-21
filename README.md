@@ -96,14 +96,15 @@ Output Example:
   Debug.Print(coord.CelestialInfo.SunRise.ToString()); //Outputs 3/21/2017 10:44:00 AM
   ```
   
-  The following pieces of celestial information are available
-    -Sun Set
-    -Sun Rise
-    -MoonSet
-    -Moon Rise
-    -Moon Illumination
+  The following pieces of celestial information are available:
+  
+  -Sun Set        
+  -Sun Rise         
+  -MoonSet          
+  -Moon Rise        
+  -Moon Illumination
     
-  Sun/Moon Set and Rise DateTimes are nullable. If a null value is return the Sun or Moon Condition needs to be viewed to see why. In the below example we are using a lat/long near the North Pole with a date in august. The sun does not set that far North during the specified time of year.
+  Sun/Moon Set and Rise DateTimes are nullable. If a null value is returned the Sun or Moon Condition needs to be viewed to see why. In the below example we are using a lat/long near the North Pole with a date in august. The sun does not set that far North during the specified time of year.
   
    ```C#
   Coordinate c = new Coordinate(85.57682, -70.75678, new DateTime(2017,8,21));
