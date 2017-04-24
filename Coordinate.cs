@@ -45,10 +45,32 @@ namespace CoordinateSharp
             celestialInfo = new Celestial(lat, longi, date);            
             this.geoDate = date;                        
         }
-
+        /// <summary>
+        /// Creates a populated Coordinate object.
+        /// </summary>
+        /// <param name="utm">Universal Transverse Mercator Coordinate</param>
+        public Coordinate(string utm)
+        {
+            double[] latLong = UTM2LatLon.convertUTMToLatLong(utm);
+            latitude = new CoordinatePart(latLong[0], CoordinateType.Lat, this);
+            longitude = new CoordinatePart(latLong[1], CoordinateType.Long, this);
+            celestialInfo = new Celestial(latLong[0], latLong[1], new DateTime(1900, 1, 1));
+        }
+        /// <summary>
+        /// Creates a populated Coordinate object.
+        /// </summary>
+        /// <param name="utm">Universal Transverse Mercator Coordinate</param>
+        /// <param name="date">DateTime you wish to use for celestial calculation</param>
+        public Coordinate(string utm, DateTime date)
+        {
+            double[] latLong = UTM2LatLon.convertUTMToLatLong(utm);
+            latitude = new CoordinatePart(latLong[0], CoordinateType.Lat, this);
+            longitude = new CoordinatePart(latLong[1], CoordinateType.Long, this);
+            celestialInfo = new Celestial(latLong[0], latLong[1], date);
+        }
         private CoordinatePart latitude;
         private CoordinatePart longitude;
-      
+        
         private DateTime geoDate;
         private Celestial celestialInfo;
         /// <summary>
@@ -106,7 +128,26 @@ namespace CoordinateSharp
                 }
             }
         }
-        
+        /// <summary>
+        /// Date for with to calculate celestial information. Assumes all times are in UTC.
+        /// </summary>
+        public String UTM
+        {
+            get
+            {
+                return UniversalTransverseMercator.convertLatLonToUTM(latitude.ToDouble(), longitude.ToDouble());
+            }
+            //set
+            //{
+            //    if (this.utm != value)
+            //    {
+            //        this.utm = value;
+            //        this.NotifyPropertyChanged("UTM");
+            //        celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
+            //        this.NotifyPropertyChanged("CelestialInfo");
+            //    }
+            //}
+        }
         /// <summary>
         /// Celestial information based on the objects lat/long and geo date.
         /// </summary>
