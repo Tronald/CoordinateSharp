@@ -69,6 +69,19 @@ Display Hyphens: False
 Position Display: First        
 ```
 
+### Other Coordinate Types
+
+UTM and MGRS coordinate conversions are available as read only properties. You may however, initialize a Coordinate object from a UTM/MGRS Coordinate value. It should be noted that data is stored in the double format. When conversions are made to/from UTM/MGRS, a slight flux in the value may occur. Conversions may move the the target up to a meter. 
+
+JFK AIRPORT
+
+-DMS:   N 40º 38' 39" - W 73º 46' 56"
+
+-CONVERT TO UTM:    18 T 602967.048182853 4499970.29078801
+
+-CONVERT BACK TO DD (Displaying DMS):    N 40º 38' 38.995" -  W 73º 46' 55.997"
+
+
 ### Binding and MVVM
 
 The properties in CoordinateSharp are observable and may be bound. Format strings may also be passed from the front end. Example in WPF/XAML
