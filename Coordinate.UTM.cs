@@ -2,462 +2,323 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
+using System.ComponentModel;
 
 namespace CoordinateSharp
-{  
-    internal class UniversalTransverseMercator
+{
+    public class UniversalTransverseMercator : INotifyPropertyChanged
     {
-        public static String convertLatLonToUTM(double latitude, double longitude)
-        {            //validate(latitude, longitude);
-            String UTM = "";
+        private Coordinate coordinate;
 
-            setVariables(latitude, longitude);
+        private string latZone;
+        private int longZone;
+        private double easting;
+        private double northing;
 
-            String longZone = getLongZone(longitude);
-            LatZones latZones = new LatZones();
-            String latZone = latZones.getLatZone(latitude);
-
-            double _easting = getEasting();
-            double _northing = getNorthing(latitude);
-
-            UTM = longZone + " " + latZone + " " + ((int)_easting) + " "
-                + ((int)_northing);
-            // UTM = longZone + " " + latZone + " " + decimalFormat.format(_easting) +
-            // " "+ decimalFormat.format(_northing);
-
-            return UTM;
-
-        }
-        private static double degreeToRadian(double degree)
+        public string LatZone
         {
-            return degree * Math.PI / 180;
-        }
-        private static void setVariables(double latitude, double longitude)
-        {
-            latitude = degreeToRadian(latitude);
-            rho = equatorialRadius * (1 - e * e)
-                / Math.Pow(1 - Math.Pow(e * Math.Sin(latitude), 2), 3 / 2.0);
-
-            nu = equatorialRadius / Math.Pow(1 - Math.Pow(e * Math.Sin(latitude), 2), (1 / 2.0));
-
-            double var1;
-            if (longitude < 0.0)
+            get { return this.latZone; }
+            set
             {
-                var1 = ((int)((180 + longitude) / 6.0)) + 1;
+                if (this.latZone != value)
+                {
+                    this.latZone = value;
+                    this.NotifyPropertyChanged("LatZone");
+                    //double[] d = FromUTM.convertUTMToLatLong(this);
+                    double[] d = FromUTM(longZone, latZone, easting, northing, this);
+
+                    coordinate.Latitude.DecimalDegree = d[0];                   
+                    coordinate.Longitude.DecimalDegree = d[1];
+
+                    coordinate.Latitude.NotifyPropertyChanged("DecimalDegree");
+                    coordinate.Longitude.NotifyPropertyChanged("DecimalDegree");
+                }
+            }
+        }
+        public int LongZone
+        {
+            get { return this.longZone; }
+            set
+            {
+                if (this.longZone != value)
+                {
+                    this.longZone = value;
+                    this.NotifyPropertyChanged("LongZone");
+                    double[] d = FromUTM(longZone, latZone, easting, northing, this);
+                    //double[] d = FromUTM.convertUTMToLatLong(this);
+                    coordinate.Latitude.DecimalDegree = d[0];
+                    coordinate.Longitude.DecimalDegree = d[1];
+
+                    coordinate.Latitude.NotifyPropertyChanged("DecimalDegree");
+                    coordinate.Longitude.NotifyPropertyChanged("DecimalDegree");
+                }
+            }
+        }
+        public double Easting
+        {
+            get { return this.easting; }
+            set
+            {
+                if (this.easting != value)
+                {
+                    this.easting = value;
+                    this.NotifyPropertyChanged("Easting");
+                    double[] d = FromUTM(longZone, latZone, easting, northing, this);
+                    //double[] d = FromUTM.convertUTMToLatLong(this);
+                    coordinate.Latitude.DecimalDegree = d[0];
+                    coordinate.Longitude.DecimalDegree = d[1];
+
+                    coordinate.Latitude.NotifyPropertyChanged("DecimalDegree");
+                    coordinate.Longitude.NotifyPropertyChanged("DecimalDegree");
+                }
+            }
+        }
+        public double Northing
+        {
+            get { return this.northing; }
+            set
+            {
+                if (this.northing != value)
+                {
+                    this.northing = value;
+                    this.NotifyPropertyChanged("Northing");
+                    double[] d = FromUTM(longZone, latZone, easting, northing, this);
+                    //double[] d = FromUTM.convertUTMToLatLong(this);
+                    coordinate.Latitude.DecimalDegree = d[0];
+                    coordinate.Longitude.DecimalDegree = d[1];
+
+                    coordinate.Latitude.NotifyPropertyChanged("DecimalDegree");
+                    coordinate.Longitude.NotifyPropertyChanged("DecimalDegree");
+                }
+            }
+        }
+
+        public UniversalTransverseMercator(double lat, double longi, Coordinate c)
+        {
+            //validate coords
+
+            //if (lat > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be greater than 180."); }
+            //if (lat < -180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be less than 180."); }
+
+            //if (longi > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be greater than 90."); }
+            //if (longi < -90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be less than 90."); }
+
+            ToUTM(lat,longi, this);
+            coordinate = c;
+        }
+        public UniversalTransverseMercator(string latz, int longz, double e, double n, Coordinate c)
+        {
+            //validate utm
+            if (longz < 1 || longz > 60) { throw new ArgumentOutOfRangeException("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
+            if (e < 160000 || e > 834000) { throw new WarningException("The Easting value provided is outside the max allowable range. If this is intentional, use with caution."); }
+            if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
+
+            latZone = latz;
+            longZone = longz;
+
+            easting = e;
+            northing = n;
+
+            coordinate = c;
+           // double[] d = FromUTM.convertUTMToLatLong(this);
+            double[] d = FromUTM(longZone, latZone, easting, northing, this);
+            coordinate.Latitude.DecimalDegree = d[0];
+            coordinate.Longitude.DecimalDegree = d[1];
+            coordinate.Latitude.NotifyPropertyChanged("DecimalDegree");
+            coordinate.Longitude.NotifyPropertyChanged("DecimalDegree");
+        }
+       
+        private bool Verify_Lat_Zone(string l)
+        {
+            if (LatZones.longZongLetters.Where(x => x == l.ToUpper()).Count() != 1)
+            {
+                return false;
+            }
+            return true;
+        }     
+
+        /// <summary>
+        /// Property changed event handler.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// Notifies Coordinate property of changing.
+        /// </summary>
+        /// <param name="propName"></param>
+        public void NotifyPropertyChanged(string propName)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+                if (propName != null)
+                {
+                    this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+                }
+            }
+        }
+        public void ToUTM(double lat, double longi, UniversalTransverseMercator utm)
+        {
+            string letter = "";
+            double easting = 0;
+            double northing = 0;
+            int zone = (int)Math.Floor(longi / 6 + 31);
+            if (lat < -72)
+                letter = "C";
+            else if (lat < -64)
+                letter = "D";
+            else if (lat < -56)
+                letter = "E";
+            else if (lat < -48)
+                letter = "F";
+            else if (lat < -40)
+                letter = "G";
+            else if (lat < -32)
+                letter = "H";
+            else if (lat < -24)
+                letter = "J";
+            else if (lat < -16)
+                letter = "K";
+            else if (lat < -8)
+                letter = "L";
+            else if (lat < 0)
+                letter = "M";
+            else if (lat < 8)
+                letter = "N";
+            else if (lat < 16)
+                letter = "P";
+            else if (lat < 24)
+                letter = "Q";
+            else if (lat < 32)
+                letter = "R";
+            else if (lat < 40)
+                letter = "S";
+            else if (lat < 48)
+                letter = "T";
+            else if (lat < 56)
+                letter = "U";
+            else if (lat < 64)
+                letter = "V";
+            else if (lat < 72)
+                letter = "W";
+            else
+                letter = "X";
+            easting = 0.5 * Math.Log((1 + Math.Cos(lat * Math.PI / 180) * Math.Sin(longi * Math.PI / 180 - (6 * zone - 183) * Math.PI / 180)) / (1 - Math.Cos(lat *
+                Math.PI / 180) * Math.Sin(longi * Math.PI / 180 - (6 * zone - 183) * Math.PI / 180))) * 0.9996 * 6399593.62 / Math.Pow((1 + Math.Pow(0.0820944379,
+                2) * Math.Pow(Math.Cos(lat * Math.PI / 180), 2)), 0.5) * (1 + Math.Pow(0.0820944379, 2) / 2 * Math.Pow((0.5 * Math.Log((1 + Math.Cos(lat * Math.PI /
+                180) * Math.Sin(longi * Math.PI / 180 - (6 * zone - 183) * Math.PI / 180)) / (1 - Math.Cos(lat * Math.PI / 180) * Math.Sin(longi * Math.PI / 180 -
+                (6 * zone - 183) * Math.PI / 180)))), 2) * Math.Pow(Math.Cos(lat * Math.PI / 180), 2) / 3) + 500000;
+            easting = Math.Round(easting * 100) * 0.01;
+            northing = (Math.Atan(Math.Tan(lat * Math.PI / 180) / Math.Cos((longi * Math.PI / 180 - (6 * zone - 183) * Math.PI / 180))) - lat * Math.PI / 180) *
+                0.9996 * 6399593.625 / Math.Sqrt(1 + 0.006739496742 * Math.Pow(Math.Cos(lat * Math.PI / 180), 2)) * (1 + 0.006739496742 / 2 * Math.Pow(0.5 *
+                Math.Log((1 + Math.Cos(lat * Math.PI / 180) * Math.Sin((longi * Math.PI / 180 - (6 * zone - 183) * Math.PI / 180))) / (1 - Math.Cos(lat * Math.PI /
+                180) * Math.Sin((longi * Math.PI / 180 - (6 * zone - 183) * Math.PI / 180)))), 2) * Math.Pow(Math.Cos(lat * Math.PI / 180), 2)) + 0.9996 *
+                6399593.625 * (lat * Math.PI / 180 - 0.005054622556 * (lat * Math.PI / 180 + Math.Sin(2 * lat * Math.PI / 180) / 2) + 4.258201531e-05 * (3 * (lat *
+                Math.PI / 180 + Math.Sin(2 * lat * Math.PI / 180) / 2) + Math.Sin(2 * lat * Math.PI / 180) * Math.Pow(Math.Cos(lat * Math.PI / 180), 2)) / 4 -
+                1.674057895e-07 * (5 * (3 * (lat * Math.PI / 180 + Math.Sin(2 * lat * Math.PI / 180) / 2) + Math.Sin(2 * lat * Math.PI / 180) *
+                Math.Pow(Math.Cos(lat * Math.PI / 180), 2)) / 4 + Math.Sin(2 * lat * Math.PI / 180) * Math.Pow(Math.Cos(lat * Math.PI / 180), 2) *
+                Math.Pow(Math.Cos(lat * Math.PI / 180), 2)) / 3);
+            if ((new[] { "C", "D", "E", "F", "G", "H", "J", "K", "L", "M" }).Contains(letter))
+            { northing = northing + 10000000; }
+            northing = Math.Round(northing * 100) * 0.01;
+
+            utm.latZone = letter;
+            utm.longZone = zone;
+            utm.easting = easting;
+            utm.northing = northing;
+        }
+        public static double[] FromUTM(int zone, string letter, double easting, double northing, UniversalTransverseMercator utm)
+        {
+            double[] d = { 0, 0 };
+            double north;
+            if ((new[] { "C", "D", "E", "F", "G", "H", "J", "K", "L", "M" }).Contains(letter))
+            {
+                north = northing - 10000000;
             }
             else
             {
-                var1 = ((int)(longitude / 6)) + 31;
+                north = northing;
             }
-            double var2 = (6 * var1) - 183;
-            double var3 = longitude - var2;
-            p = var3 * 3600 / 10000;
 
-            S = A0 * latitude - B0 * Math.Sin(2 * latitude) + C0 * Math.Sin(4 * latitude) - D0
-                * Math.Sin(6 * latitude) + E0 * Math.Sin(8 * latitude);
+            double latitude = (north / 6366197.724 / 0.9996 + (1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) - 0.006739496742 *
+                Math.Sin(north / 6366197.724 / 0.9996) * Math.Cos(north / 6366197.724 / 0.9996) * (Math.Atan(Math.Cos(Math.Atan((Math.Exp((easting - 500000) /
+                (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 *
+                Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) /
+                2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) / 3)) - Math.Exp(-(easting - 500000) / (0.9996 * 6399593.625 /
+                Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 * Math.Pow((easting - 500000) /
+                (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north /
+                6366197.724 / 0.9996), 2) / 3))) / 2 / Math.Cos((north - 0.9996 * 6399593.625 * (north / 6366197.724 / 0.9996 - 0.006739496742 * 3 / 4 *
+                (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Pow(0.006739496742 * 3 / 4, 2) * 5 / 3 * (3 * (north /
+                6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north /
+                6366197.724 / 0.9996), 2)) / 4 - Math.Pow(0.006739496742 * 3 / 4, 3) * 35 / 27 * (5 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north /
+                6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 + Math.Sin(2 *
+                north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 3)) /
+                (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 *
+                Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) /
+                2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) + north / 6366197.724 / 0.9996))) * Math.Tan((north - 0.9996 * 6399593.625 * (north /
+                6366197.724 / 0.9996 - 0.006739496742 * 3 / 4 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) +
+                Math.Pow(0.006739496742 * 3 / 4, 2) * 5 / 3 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) +
+                Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 - Math.Pow(0.006739496742 * 3 / 4, 3) * 35 /
+                27 * (5 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) *
+                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 /
+                0.9996), 2) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 3)) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 *
+                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 * Math.Pow((easting - 500000) / (0.9996 * 6399593.625 /
+                Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north / 6366197.724 /
+                0.9996), 2)) + north / 6366197.724 / 0.9996)) - north / 6366197.724 / 0.9996) * 3 / 2) * (Math.Atan(Math.Cos(Math.Atan((Math.Exp((easting -
+                500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) *
+                (1 - 0.006739496742 * Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north /
+                6366197.724 / 0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) / 3)) - Math.Exp(-(easting - 500000) /
+                (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 *
+                Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) /
+                2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) / 3))) / 2 / Math.Cos((north - 0.9996 * 6399593.625 * (north / 6366197.724 / 0.9996 -
+                0.006739496742 * 3 / 4 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Pow(0.006739496742 * 3 / 4, 2) *
+                5 / 3 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) *
+                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 - Math.Pow(0.006739496742 * 3 / 4, 3) * 35 / 27 * (5 * (3 * (north / 6366197.724 /
+                0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 /
+                0.9996), 2)) / 4 + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) * Math.Pow(Math.Cos(north /
+                6366197.724 / 0.9996), 2)) / 3)) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2))))
+                * (1 - 0.006739496742 * Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north /
+                6366197.724 / 0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) + north / 6366197.724 / 0.9996))) * Math.Tan((north -
+                0.9996 * 6399593.625 * (north / 6366197.724 / 0.9996 - 0.006739496742 * 3 / 4 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 /
+                0.9996) / 2) + Math.Pow(0.006739496742 * 3 / 4, 2) * 5 / 3 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) +
+                Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 - Math.Pow(0.006739496742 * 3 / 4, 3) * 35 /
+                27 * (5 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) *
+                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 /
+                0.9996), 2) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 3)) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 *
+                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 * Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 +
+                0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) + north /
+                6366197.724 / 0.9996)) - north / 6366197.724 / 0.9996)) * 180 / Math.PI;
+            latitude = Math.Round(latitude * 10000000);
+            latitude = latitude / 10000000;
 
-            K1 = S * k0;
-            K2 = nu * Math.Sin(latitude) * Math.Cos(latitude) * Math.Pow(sin1, 2) * k0 * (100000000)
-                / 2;
-            K3 = ((Math.Pow(sin1, 4) * nu * Math.Sin(latitude) * Math.Pow(Math.Cos(latitude), 3)) / 24)
-                * (5 - Math.Pow(Math.Tan(latitude), 2) + 9 * e1sq * Math.Pow(Math.Cos(latitude), 2) + 4
-                    * Math.Pow(e1sq, 2) * Math.Pow(Math.Cos(latitude), 4))
-                * k0
-                * (10000000000000000L);
+            double longitude = Math.Atan((Math.Exp((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north /
+                6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 * Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 *
+                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) / 3)) - Math.Exp(-(easting -
+                500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 *
+                Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) /
+                2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) / 3))) / 2 / Math.Cos((north - 0.9996 * 6399593.625 * (north / 6366197.724 / 0.9996 -
+                0.006739496742 * 3 / 4 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Pow(0.006739496742 * 3 / 4, 2) *
+                5 / 3 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) *
+                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 - Math.Pow(0.006739496742 * 3 / 4, 3) * 35 / 27 * (5 * (3 * (north / 6366197.724 /
+                0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 /
+                0.9996), 2)) / 4 + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) * Math.Pow(Math.Cos(north /
+                6366197.724 / 0.9996), 2)) / 3)) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) *
+                (1 - 0.006739496742 * Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 /
+                0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) + north / 6366197.724 / 0.9996)) * 180 / Math.PI + zone * 6 - 183;
+            longitude = Math.Round(longitude * 10000000);
+            longitude = longitude / 10000000;
+            d[0] = latitude;
+            d[1] = longitude;
+            return d;
 
-            K4 = nu * Math.Cos(latitude) * sin1 * k0 * 10000;
-
-            K5 = Math.Pow(sin1 * Math.Cos(latitude), 3) * (nu / 6)
-                * (1 - Math.Pow(Math.Tan(latitude), 2) + e1sq * Math.Pow(Math.Cos(latitude), 2)) * k0
-                * 1000000000000L;
-
-            A6 = (Math.Pow(p * sin1, 6) * nu * Math.Sin(latitude) * Math.Pow(Math.Cos(latitude), 5) / 720)
-                * (61 - 58 * Math.Pow(Math.Tan(latitude), 2) + Math.Pow(Math.Tan(latitude), 4) + 270
-                    * e1sq * Math.Pow(Math.Cos(latitude), 2) - 330 * e1sq
-                    * Math.Pow(Math.Sin(latitude), 2)) * k0 * (1E+24);
-
-        }
-
-        private static String getLongZone(double longitude)
+        }            
+       
+        public override string ToString()
         {
-            double longZone = 0;
-            if (longitude < 0.0)
-            {
-                longZone = ((180.0 + longitude) / 6) + 1;
-            }
-            else
-            {
-                longZone = (longitude / 6) + 31;
-            }
-            String val = Convert.ToString((int)longZone);
-            if (val.Length == 1)
-            {
-                val = "0" + val;
-            }
-            return val;
-        }
-
-        private static double getNorthing(double latitude)
-        {
-            double northing = K1 + K2 * p * p + K3 * Math.Pow(p, 4);
-            if (latitude < 0.0)
-            {
-                northing = 10000000 + northing;
-            }
-            return northing;
-        }
-
-        private static double getEasting()
-        {
-            return 500000 + (K4 * p + K5 * Math.Pow(p, 3));
-        }
-      
-        // Lat Lon to UTM variables
-
-        // equatorial radius
-        private static double equatorialRadius = 6378137;
-
-        // polar radius
-        private static double polarRadius = 6356752.314;
-
-        // flattening
-        private static double flattening = 0.00335281066474748;// (equatorialRadius-polarRadius)/equatorialRadius;
-
-        // inverse flattening 1/flattening
-        private static double inverseFlattening = 298.257223563;// 1/flattening;
-
-        // Mean radius
-        private static double rm = Math.Pow(6378137 * 6356752.314, 1 / 2.0);
-
-        // scale factor
-        private static double k0 = 0.9996;
-
-        // eccentricity
-        private static double e = Math.Sqrt(1 - Math.Pow(6356752.314 / 6378137, 2));
-
-        private static double e1sq = e * e / (1 - e * e);
-
-        private static double n = (6378137 - 6356752.314)
-            / (6378137 + 6356752.314);
-
-        // r curv 1
-        private static double rho = 6368573.744;
-
-        // r curv 2
-        private static double nu = 6389236.914;
-
-        // Calculate Meridional Arc Length
-        // Meridional Arc
-        private static double S = 5103266.421;
-
-        private static double A0 = 6367449.146;
-
-        private static double B0 = 16038.42955;
-
-        private static double C0 = 16.83261333;
-
-        private static double D0 = 0.021984404;
-
-        private static double E0 = 0.000312705;
-
-        // Calculation Constants
-        // Delta Long
-        private static double p = -0.483084;
-
-        private static double sin1 = 4.84814E-06;
-
-        // Coefficients for UTM Coordinates
-        private static double K1 = 5101225.115;
-
-        private static double K2 = 3750.291596;
-
-        private static double K3 = 1.397608151;
-
-        private static double K4 = 214839.3105;
-
-        private static double K5 = -2.995382942;
-
-        private static double A6 = -1.00541E-07;
-
+            return this.longZone.ToString() + this.LatZone + " " + (int)this.easting + "mE " + (int)this.northing + "mN";
+        }       
+       
     }
-    internal class UTM2LatLon
-    {
-        static double easting;
-
-        static double northing;
-
-        static int zone;
-
-        static String southernHemisphere = "ACDEFGHJKLM";
-
-        private static String getHemisphere(String latZone)
-        {
-            String hemisphere = "N";
-            if (southernHemisphere.IndexOf(latZone) > -1)
-            {
-                hemisphere = "S";
-            }
-            return hemisphere;
-        }
-
-        public static double[] convertUTMToLatLong(String UTM)
-        {
-            double[] latlon = { 0.0, 0.0 };
-            String[] utm = UTM.Split(' ');
-            zone = int.Parse(utm[0]);
-            String latZone = utm[1];
-            easting = Double.Parse(utm[2]);
-            northing = Double.Parse(utm[3]);
-            String hemisphere = getHemisphere(latZone);
-            double latitude = 0.0;
-            double longitude = 0.0;
-
-            if (hemisphere == "S")
-            {
-                northing = 10000000 - northing;
-            }
-            setVariables();
-            latitude = 180 * (phi1 - fact1 * (fact2 + fact3 + fact4)) / Math.PI;
-
-            if (zone > 0)
-            {
-                zoneCM = 6 * zone - 183.0;
-            }
-            else
-            {
-                zoneCM = 3.0;
-
-            }
-
-            longitude = zoneCM - _a3;
-            if (hemisphere == "S")
-            {
-                latitude = -latitude;
-            }
-
-            latlon[0] = latitude;
-            latlon[1] = longitude;
-            return latlon;
-
-        }
-
-        private static void setVariables()
-        {
-            arc = northing / k0;
-            mu = arc
-                / (a * (1 - Math.Pow(e, 2) / 4.0 - 3 * Math.Pow(e, 4) / 64.0 - 5 * Math.Pow(e, 6) / 256.0));
-
-            ei = (1 - Math.Pow((1 - e * e), (1 / 2.0)))
-                / (1 + Math.Pow((1 - e * e), (1 / 2.0)));
-
-            ca = 3 * ei / 2 - 27 * Math.Pow(ei, 3) / 32.0;
-
-            cb = 21 * Math.Pow(ei, 2) / 16 - 55 * Math.Pow(ei, 4) / 32;
-            cc = 151 * Math.Pow(ei, 3) / 96;
-            cd = 1097 * Math.Pow(ei, 4) / 512;
-            phi1 = mu + ca * Math.Sin(2 * mu) + cb * Math.Sin(4 * mu) + cc * Math.Sin(6 * mu) + cd
-                * Math.Sin(8 * mu);
-
-            n0 = a / Math.Pow((1 - Math.Pow((e * Math.Sin(phi1)), 2)), (1 / 2.0));
-
-            r0 = a * (1 - e * e) / Math.Pow((1 - Math.Pow((e * Math.Sin(phi1)), 2)), (3 / 2.0));
-            fact1 = n0 * Math.Tan(phi1) / r0;
-
-            _a1 = 500000 - easting;
-            dd0 = _a1 / (n0 * k0);
-            fact2 = dd0 * dd0 / 2;
-
-            t0 = Math.Pow(Math.Tan(phi1), 2);
-            Q0 = e1sq * Math.Pow(Math.Cos(phi1), 2);
-            fact3 = (5 + 3 * t0 + 10 * Q0 - 4 * Q0 * Q0 - 9 * e1sq) * Math.Pow(dd0, 4)
-                / 24;
-
-            fact4 = (61 + 90 * t0 + 298 * Q0 + 45 * t0 * t0 - 252 * e1sq - 3 * Q0
-                * Q0)
-                * Math.Pow(dd0, 6) / 720;
-
-            //
-            lof1 = _a1 / (n0 * k0);
-            lof2 = (1 + 2 * t0 + Q0) * Math.Pow(dd0, 3) / 6.0;
-            lof3 = (5 - 2 * Q0 + 28 * t0 - 3 * Math.Pow(Q0, 2) + 8 * e1sq + 24 * Math.Pow(t0, 2))
-                * Math.Pow(dd0, 5) / 120;
-            _a2 = (lof1 - lof2 + lof3) / Math.Cos(phi1);
-            _a3 = _a2 * 180 / Math.PI;
-
-        }
-
-
-        static double arc;
-
-        static double mu;
-
-        static double ei;
-
-        static double ca;
-
-        static double cb;
-
-        static double cc;
-
-        static double cd;
-
-        static double n0;
-
-        static double r0;
-
-        static double _a1;
-
-        static double dd0;
-
-        static double t0;
-
-        static double Q0;
-
-        static double lof1;
-
-        static double lof2;
-
-        static double lof3;
-
-        static double _a2;
-
-        static double phi1;
-
-        static double fact1;
-
-        static double fact2;
-
-        static double fact3;
-
-        static double fact4;
-
-        static double zoneCM;
-
-        static double _a3;
-
-        static double b = 6356752.314;
-
-        static double a = 6378137;
-
-        static double e = 0.081819191;
-
-        static double e1sq = 0.006739497;
-
-        static double k0 = 0.9996;
-
-    }
-
-    internal class LatZones
-    {
-        private char[] letters = { 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K',
-        'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Z' };
-
-        private int[] degrees = { -90, -84, -72, -64, -56, -48, -40, -32, -24, -16,
-        -8, 0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 84 };
-
-        private char[] negLetters = { 'A', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K',
-        'L', 'M' };
-
-        private int[] negDegrees = { -90, -84, -72, -64, -56, -48, -40, -32, -24,
-        -16, -8 };
-
-        private char[] posLetters = { 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
-        'X', 'Z' };
-
-        private int[] posDegrees = { 0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 84 };
-
-        private int arrayLength = 22;
-
-        public LatZones()
-        {
-        }
-        public int getLatZoneDegree(String letter)
-        {
-            char ltr = letter[0];
-            for (int i = 0; i < arrayLength; i++)
-            {
-                if (letters[i] == ltr)
-                {
-                    return degrees[i];
-                }
-            }
-            return -100;
-        }
-
-        public String getLatZone(double latitude)
-        {
-            int latIndex = -2;
-            int lat = (int)latitude;
-
-            if (lat >= 0)
-            {
-                int len = posLetters.Length;
-                for (int i = 0; i < len; i++)
-                {
-                    if (lat == posDegrees[i])
-                    {
-                        latIndex = i;
-                        break;
-                    }
-
-                    if (lat > posDegrees[i])
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        latIndex = i - 1;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                int len = negLetters.Length;
-                for (int i = 0; i < len; i++)
-                {
-                    if (lat == negDegrees[i])
-                    {
-                        latIndex = i;
-                        break;
-                    }
-
-                    if (lat < negDegrees[i])
-                    {
-                        latIndex = i - 1;
-                        break;
-                    }
-                    else
-                    {
-                        continue;
-                    }
-
-                }
-
-            }
-
-            if (latIndex == -1)
-            {
-                latIndex = 0;
-            }
-            if (lat >= 0)
-            {
-                if (latIndex == -2)
-                {
-                    latIndex = posLetters.Length - 1;
-                }
-                return Convert.ToString(posLetters[latIndex]);
-            }
-            else
-            {
-                if (latIndex == -2)
-                {
-                    latIndex = negLetters.Length - 1;
-                }
-                return Convert.ToString(negLetters[latIndex]);
-
-            }
-        }
-    }
-
+   
 }

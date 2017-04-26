@@ -20,6 +20,7 @@ namespace CoordinateSharp
             latitude = new CoordinatePart(CoordinateType.Lat, this);
             longitude = new CoordinatePart(CoordinateType.Long, this);
             celestialInfo = new Celestial();
+            utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this); 
         }
         /// <summary>
         /// Creates a populated Coordinate object.
@@ -31,6 +32,7 @@ namespace CoordinateSharp
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
             celestialInfo = new Celestial(lat,longi,new DateTime(1900,1,1));
+            utm = new UniversalTransverseMercator(lat, longi, this); 
         }
         /// <summary>
         /// Creates a populated Coordinate object. With an assigned GeoDate.
@@ -43,34 +45,36 @@ namespace CoordinateSharp
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
             celestialInfo = new Celestial(lat, longi, date);            
-            this.geoDate = date;                        
+            this.geoDate = date;
+            utm = new UniversalTransverseMercator(lat, longi, this);          
         }
         /// <summary>
         /// Creates a populated Coordinate object.
         /// </summary>
         /// <param name="utm">Universal Transverse Mercator Coordinate</param>
-        public Coordinate(string utm)
-        {
-            double[] latLong = UTM2LatLon.convertUTMToLatLong(utm);
-            latitude = new CoordinatePart(latLong[0], CoordinateType.Lat, this);
-            longitude = new CoordinatePart(latLong[1], CoordinateType.Long, this);
-            celestialInfo = new Celestial(latLong[0], latLong[1], new DateTime(1900, 1, 1));
+        public Coordinate(string latz, int longz, double easting, double northing)
+        {   
+            latitude = new CoordinatePart(CoordinateType.Lat, this);
+            longitude = new CoordinatePart(CoordinateType.Long, this);
+            celestialInfo = new Celestial(this.latitude.ToDouble(), this.longitude.ToDouble(), new DateTime(1900, 1, 1));
+            utm = new UniversalTransverseMercator(latz, longz, easting, northing, this);       
         }
         /// <summary>
         /// Creates a populated Coordinate object.
         /// </summary>
         /// <param name="utm">Universal Transverse Mercator Coordinate</param>
         /// <param name="date">DateTime you wish to use for celestial calculation</param>
-        public Coordinate(string utm, DateTime date)
+        public Coordinate(string latz, int longz, double easting, double northing, DateTime date)
         {
-            double[] latLong = UTM2LatLon.convertUTMToLatLong(utm);
-            latitude = new CoordinatePart(latLong[0], CoordinateType.Lat, this);
-            longitude = new CoordinatePart(latLong[1], CoordinateType.Long, this);
-            celestialInfo = new Celestial(latLong[0], latLong[1], date);
+            latitude = new CoordinatePart(CoordinateType.Lat, this);
+            longitude = new CoordinatePart(CoordinateType.Long, this);
+            celestialInfo = new Celestial(this.latitude.ToDouble(), this.longitude.ToDouble(), date);
+            utm = new UniversalTransverseMercator(latz, longz, easting, northing, this);                    
         }
         private CoordinatePart latitude;
         private CoordinatePart longitude;
-        
+        private UniversalTransverseMercator utm;
+
         private DateTime geoDate;
         private Celestial celestialInfo;
         /// <summary>
@@ -129,13 +133,13 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Date for with to calculate celestial information. Assumes all times are in UTC.
+        /// Universal Transverse Mercator Values
         /// </summary>
-        public String UTM
+        public UniversalTransverseMercator UTM
         {
             get
             {
-                return UniversalTransverseMercator.convertLatLonToUTM(latitude.ToDouble(), longitude.ToDouble());
+                return this.utm;
             }
             //set
             //{
@@ -1231,40 +1235,4 @@ namespace CoordinateSharp
         }
 
     }
-    /// <summary>
-    /// Used for setting whether a coordinate part is latitudinal or longitudinal
-    /// </summary>
-    public enum CoordinateType
-    {
-        /// <summary>
-        /// Latitude
-        /// </summary>
-        Lat,
-        /// <summary>
-        /// Longitude
-        /// </summary>
-        Long 
-    }
-    /// <summary>
-    /// Used to set a coordinate parts position
-    /// </summary>
-    public enum CoordinatesPosition
-    {
-        /// <summary>
-        /// North
-        /// </summary>
-        N, 
-        /// <summary>
-        /// East
-        /// </summary>
-        E, 
-        /// <summary>
-        /// South
-        /// </summary>
-        S, 
-        /// <summary>
-        /// West
-        /// </summary>
-        W
-    }   
 }
