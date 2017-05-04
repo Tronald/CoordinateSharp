@@ -7,6 +7,9 @@ using System.ComponentModel;
 
 namespace CoordinateSharp
 {
+    /// <summary>
+    /// Universal Transverse Mercator (UTM) coordinate system
+    /// </summary>
     public class UniversalTransverseMercator : INotifyPropertyChanged
     {
         private Coordinate coordinate;
@@ -14,7 +17,7 @@ namespace CoordinateSharp
         private string latZone;
         private int longZone;
         private double easting;
-        private double northing;
+        private double northing;   
 
         public string LatZone
         {
@@ -105,9 +108,10 @@ namespace CoordinateSharp
             //if (longi < -90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be less than 90."); }
 
             ToUTM(lat,longi, this);
+           
             coordinate = c;
         }
-        public UniversalTransverseMercator(string latz, int longz, double e, double n, Coordinate c)
+        private UniversalTransverseMercator(string latz, int longz, double e, double n, Coordinate c)
         {
             //validate utm
             if (longz < 1 || longz > 60) { throw new ArgumentOutOfRangeException("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
@@ -128,6 +132,7 @@ namespace CoordinateSharp
             coordinate.Longitude.DecimalDegree = d[1];
             coordinate.Latitude.NotifyPropertyChanged("DecimalDegree");
             coordinate.Longitude.NotifyPropertyChanged("DecimalDegree");
+           
         }
        
         private bool Verify_Lat_Zone(string l)
@@ -158,8 +163,9 @@ namespace CoordinateSharp
                 }
             }
         }
+
         public void ToUTM(double lat, double longi, UniversalTransverseMercator utm)
-        {
+        {      
             string letter = "";
             double easting = 0;
             double northing = 0;
@@ -228,7 +234,7 @@ namespace CoordinateSharp
             utm.easting = easting;
             utm.northing = northing;
         }
-        public static double[] FromUTM(int zone, string letter, double easting, double northing, UniversalTransverseMercator utm)
+        public double[] FromUTM(int zone, string letter, double easting, double northing, UniversalTransverseMercator utm)
         {
             double[] d = { 0, 0 };
             double north;
@@ -312,13 +318,12 @@ namespace CoordinateSharp
             d[1] = longitude;
             return d;
 
-        }            
-       
+        }
+      
         public override string ToString()
         {
             return this.longZone.ToString() + this.LatZone + " " + (int)this.easting + "mE " + (int)this.northing + "mN";
-        }       
-       
+        }            
     }
    
 }
