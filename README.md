@@ -5,7 +5,7 @@ A simple library designed to assist with geographic coordinate format conversion
 These instructions will get a copy of the library running on your local machine for development and testing purposes.
 
 ### Prerequisites
-.NET 4.5.1 or greater. The required framework will be lowered on the next update.
+.NET 4.0 or greater.
 
 ### Installing
 CoordinateSharp is now available as a nuget packet from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
