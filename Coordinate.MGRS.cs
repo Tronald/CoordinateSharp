@@ -9,7 +9,7 @@ namespace CoordinateSharp
 {
     /// <summary>
     /// Military Grid Reference System (MGRS)
-    /// Relies upon the UniversalTransverseMercator class
+    /// Relies upon values from the UniversalTransverseMercator class
     /// </summary>
     public class MilitaryGridReferenceSystem : INotifyPropertyChanged
     {
@@ -44,11 +44,11 @@ namespace CoordinateSharp
             get { return this.digraph; }
         }
 
-        public MilitaryGridReferenceSystem(UniversalTransverseMercator utm)
+        internal MilitaryGridReferenceSystem(UniversalTransverseMercator utm)
         {
             ToMGRS(utm);
         }
-        public void ToMGRS(UniversalTransverseMercator utm)
+        internal void ToMGRS(UniversalTransverseMercator utm)
         {
             Digraphs digraphs = new Digraphs();
 
@@ -77,6 +77,12 @@ namespace CoordinateSharp
             n = n.Substring(n.Length - 5);
             Debug.Print(n);
             this.northing = Convert.ToInt32(n);
+
+            this.NotifyPropertyChanged("Northing");
+            this.NotifyPropertyChanged("Easting");
+            this.NotifyPropertyChanged("LatZone");
+            this.NotifyPropertyChanged("LongZone");
+            this.NotifyPropertyChanged("Digraph");
         }
         /// <summary>
         /// Property changed event handler.
@@ -98,6 +104,10 @@ namespace CoordinateSharp
             }
         }
 
+        /// <summary>
+        /// MGRS Default String Format
+        /// </summary>
+        /// <returns>MGRS Formatted Coordinate String</returns>
         public override string ToString()
         {
             return this.longZone.ToString() + this.LatZone + " " + this.digraph + " " + ((int)this.easting).ToString("00000") + " " + ((int)this.northing).ToString("00000");

@@ -119,30 +119,4 @@ namespace CoordinateSharp
             return c;
         }       
     }
-    /// <summary>
-    /// Used to display a celestial condition for a set day
-    /// </summary>
-    public enum CelestialStatus
-    {
-        /// <summary>
-        /// Celestial body rises and sets on the set day.
-        /// </summary>
-        RiseAndSet,
-        /// <summary>
-        /// Celestial body is down all day
-        /// </summary>
-        DownAllDay,
-        /// <summary>
-        /// Celestial body is up all day
-        /// </summary>
-        UpAllDay,
-        /// <summary>
-        /// Celestial body rises, but does not set on the set day
-        /// </summary>
-        NoRise,
-        /// <summary>
-        /// Celestial body sets, but does not rise on the set day
-        /// </summary>
-        NoSet
-    }
 }

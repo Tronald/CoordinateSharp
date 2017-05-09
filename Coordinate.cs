@@ -53,6 +53,7 @@ namespace CoordinateSharp
         }
         /// <summary>
         /// Creates a populated Coordinate object.
+        /// Not yet implemented.
         /// </summary>
         /// <param name="utm">Universal Transverse Mercator Coordinate</param>
         private Coordinate(string latz, int longz, double easting, double northing)
@@ -65,6 +66,7 @@ namespace CoordinateSharp
         }
         /// <summary>
         /// Creates a populated Coordinate object.
+        /// Not yet implemented
         /// </summary>
         /// <param name="utm">Universal Transverse Mercator Coordinate</param>
         /// <param name="date">DateTime you wish to use for celestial calculation</param>
@@ -259,8 +261,12 @@ namespace CoordinateSharp
                 if (propName != null)
                 {
                     this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                    this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);
+                    this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);                   
                     this.NotifyPropertyChanged("CelestialInfo");
+                    this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
+                    this.mgrs.ToMGRS(this.utm);
+                    this.NotifyPropertyChanged("UTM");
+                    this.NotifyPropertyChanged("MGRS");
                 }
             }
         }
@@ -401,15 +407,7 @@ namespace CoordinateSharp
                         this.seconds = secs;
                         this.NotifyPropertyChanged("Seconds");
                     }
-                    //Notify Parent class of change
-                    if (type == CoordinateType.Lat)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Lat);
-                    }
-                    if (type == CoordinateType.Long)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Long);
-                    }
+                    NotifyParent();
                 }
             }
         }
@@ -459,14 +457,7 @@ namespace CoordinateSharp
                     this.seconds = Convert.ToDouble(secs); //Convert seconds to double for storage
                     this.NotifyPropertyChanged("Seconds");
                     //Notify parent of change
-                    if (type == CoordinateType.Lat)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Lat);
-                    }
-                    if (type == CoordinateType.Long)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Long);
-                    }
+                    NotifyParent();
                 }
             }
 
@@ -515,14 +506,7 @@ namespace CoordinateSharp
                     this.NotifyPropertyChanged("DecimalDegree");
 
                     //Notify Parent Property
-                    if (type == CoordinateType.Lat)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Lat);
-                    }
-                    if (type == CoordinateType.Long)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Long);
-                    }
+                    NotifyParent();
                 }
             }
         }
@@ -580,14 +564,7 @@ namespace CoordinateSharp
                     this.NotifyPropertyChanged("DecimalDegree");
 
                     //Notify Parent Property
-                    if (type == CoordinateType.Lat)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Lat);
-                    }
-                    if (type == CoordinateType.Long)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Long);
-                    }
+                    NotifyParent();
                 }
             }
         }
@@ -646,14 +623,7 @@ namespace CoordinateSharp
                     this.NotifyPropertyChanged("DecimalDegree");
 
                     //Notify Parent Property
-                    if (type == CoordinateType.Lat)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Lat);
-                    }
-                    if (type == CoordinateType.Long)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Long);
-                    }
+                    NotifyParent();
                 }
             }
         }
@@ -680,6 +650,8 @@ namespace CoordinateSharp
                     this.position = value;
                     this.NotifyPropertyChanged("DecimalDegree");
                     this.NotifyPropertyChanged("Position");
+                    //Notify Parent
+                    NotifyParent();
 
                 }
             }
@@ -1256,7 +1228,19 @@ namespace CoordinateSharp
                 }
             }
         }
-
+        private void NotifyParent()
+        {
+            //Notify Parent class of change
+            if (type == CoordinateType.Lat)
+            {
+                this.Parent.NotifyPropertyChanged(CoordinateType.Lat);
+            }
+            if (type == CoordinateType.Long)
+            {
+                this.Parent.NotifyPropertyChanged(CoordinateType.Long);
+            }
+            
+        }
         private enum ToStringType
         {
             Decimal_Degree, Degree_Decimal_Minute, Degree_Minute_Second, Decimal

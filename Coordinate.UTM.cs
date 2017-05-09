@@ -19,6 +19,9 @@ namespace CoordinateSharp
         private double easting;
         private double northing;   
 
+        /// <summary>
+        /// UTM Zone Letter
+        /// </summary>
         public string LatZone
         {
             get { return this.latZone; }
@@ -39,6 +42,9 @@ namespace CoordinateSharp
                 }
             }
         }
+        /// <summary>
+        /// UTM Zone Number
+        /// </summary>
         public int LongZone
         {
             get { return this.longZone; }
@@ -58,6 +64,9 @@ namespace CoordinateSharp
                 }
             }
         }
+        /// <summary>
+        /// UTM Easting
+        /// </summary>
         public double Easting
         {
             get { return this.easting; }
@@ -77,6 +86,9 @@ namespace CoordinateSharp
                 }
             }
         }
+        /// <summary>
+        /// UTM Northing
+        /// </summary>
         public double Northing
         {
             get { return this.northing; }
@@ -97,7 +109,13 @@ namespace CoordinateSharp
             }
         }
 
-        public UniversalTransverseMercator(double lat, double longi, Coordinate c)
+        /// <summary>
+        /// Constructs a UTM object based off DD Lat/Long
+        /// </summary>
+        /// <param name="lat">DD Latitude</param>
+        /// <param name="longi">DD Longitide</param>
+        /// <param name="c">Parent Coordinate Object</param>
+        internal UniversalTransverseMercator(double lat, double longi, Coordinate c)
         {
             //validate coords
 
@@ -111,7 +129,16 @@ namespace CoordinateSharp
            
             coordinate = c;
         }
-        private UniversalTransverseMercator(string latz, int longz, double e, double n, Coordinate c)
+        /// <summary>
+        /// Constructs a UTM object based off a UTM coordinate
+        /// Not yet implemented
+        /// </summary>
+        /// <param name="latz">Zone Letter</param>
+        /// <param name="longz">Zone Number</param>
+        /// <param name="e">Easting</param>
+        /// <param name="n">Northing</param>
+        /// <param name="c">Parent Coordinate Object</param>
+        internal UniversalTransverseMercator(string latz, int longz, double e, double n, Coordinate c)
         {
             //validate utm
             if (longz < 1 || longz > 60) { throw new ArgumentOutOfRangeException("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
@@ -135,6 +162,12 @@ namespace CoordinateSharp
            
         }
        
+        /// <summary>
+        /// Not yet imlemented.
+        /// Verifies Lat zone when convert from UTM to DD Lat/Long
+        /// </summary>
+        /// <param name="l">Zone Letter</param>
+        /// <returns>boolean</returns>
         private bool Verify_Lat_Zone(string l)
         {
             if (LatZones.longZongLetters.Where(x => x == l.ToUpper()).Count() != 1)
@@ -163,8 +196,13 @@ namespace CoordinateSharp
                 }
             }
         }
-
-        public void ToUTM(double lat, double longi, UniversalTransverseMercator utm)
+        /// <summary>
+        /// Assigns UTM values based of Lat/Long
+        /// </summary>
+        /// <param name="lat">DD Latitude</param>
+        /// <param name="longi">DD longitude</param>
+        /// <param name="utm">UTM Object to modify</param>
+        internal void ToUTM(double lat, double longi, UniversalTransverseMercator utm)
         {      
             string letter = "";
             double easting = 0;
@@ -227,14 +265,29 @@ namespace CoordinateSharp
                 Math.Pow(Math.Cos(lat * Math.PI / 180), 2)) / 3);
             if ((new[] { "C", "D", "E", "F", "G", "H", "J", "K", "L", "M" }).Contains(letter))
             { northing = northing + 10000000; }
+           
             northing = Math.Round(northing * 100) * 0.01;
-
             utm.latZone = letter;
             utm.longZone = zone;
             utm.easting = easting;
             utm.northing = northing;
+
+            this.NotifyPropertyChanged("Northing");
+            this.NotifyPropertyChanged("Easting");
+            this.NotifyPropertyChanged("LatZone");
+            this.NotifyPropertyChanged("LongZone");
+          
         }
-        public double[] FromUTM(int zone, string letter, double easting, double northing, UniversalTransverseMercator utm)
+        /// <summary>
+        /// Not yet implemented.
+        /// </summary>
+        /// <param name="zone">UTM Zone</param>
+        /// <param name="letter">UTM Zone Letter</param>
+        /// <param name="easting">UTM Easting</param>
+        /// <param name="northing">UTM Northing</param>
+        /// <param name="utm">UTM Object to modify</param>
+        /// <returns></returns>
+        internal double[] FromUTM(int zone, string letter, double easting, double northing, UniversalTransverseMercator utm)
         {
             double[] d = { 0, 0 };
             double north;
@@ -319,7 +372,10 @@ namespace CoordinateSharp
             return d;
 
         }
-      
+        /// <summary>
+        /// UTM Default String Format
+        /// </summary>
+        /// <returns>UTM Formatted Coordinate String</returns>
         public override string ToString()
         {
             return this.longZone.ToString() + this.LatZone + " " + (int)this.easting + "mE " + (int)this.northing + "mN";
