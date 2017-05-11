@@ -59,6 +59,19 @@ Coordinate c = new Coordinate(40.57682, -70.75678);
 c.UTM.ToString(); // Outputs 19T 351307mE 4493264mN
 ```
 
+### Other Coordinate Types
+
+UTM and MGRS coordinate conversions are available as read only properties. You may however, initialize a Coordinate object from a UTM/MGRS Coordinate value. It should be noted that data is stored in the double format. When conversions are made to/from UTM/MGRS, a slight flux in the value may occur. Conversions may move the the target up to a meter. 
+
+JFK AIRPORT
+
+-DMS:   N 40º 38' 39" - W 73º 46' 56"
+
+-CONVERT TO UTM:    18 T 602967.048182853 4499970.29078801
+
+-CONVERT BACK TO DD (Displaying DMS):    N 40º 38' 38.995" -  W 73º 46' 55.997"
+
+
 ### Binding and MVVM
 
 The properties in CoordinateSharp are observable and may be bound. If you wish to bind to the entire ```CoordinatePart``` bind to the ```Display``` property. This property can be notified of changes, unlike the overridden ```ToString()```. The ```Display``` will reflect the formats previously specified for the ```Coordinate``` object in the code-behind.

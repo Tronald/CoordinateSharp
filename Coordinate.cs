@@ -1,36 +1,4 @@
-﻿//SUMMARY
-//
-//(C) 2017, Justin Gielski
-// 
-// CoordinateSharp is a library designed to make the formatting of Latitudinal/Longitudinal geographic coordinates simple. 
-// It provides methods for easy conversion of various coordinate formats. 
-//
-// This library contains observable classes so that bindings / MVVM patterns may established.
-//
-// Refer to documentation for usage instructions
-//
-// EXTRAS:
-//
-// A feature has been added to calculate sun / moon - rise / set times & moon illumination based on coordinate position and provided geodate.
-//
-// SunTime calculations were adapted from NOAA and Zacky Pickholz 2008 "C# Class for Calculating Sunrise and Sunset Times" 
-// NOAA: https://www.esrl.noaa.gov/gmd/grad/solcalc/main.js
-// The Zacky Pickholz project can be found here https://www.codeproject.com/Articles/29306/C-Class-for-Calculating-Sunrise-and-Sunset-Times
-//
-// MoonTime calculations were adapted from the mourner / suncalc project (c) 2011-2015, Vladimir Agafonkin
-// suncalc: https://github.com/mourner/suncalc/blob/master/suncalc.js
-// suncalc's moon calculations are based on "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-//           & http://aa.quae.nl/en/reken/hemelpositie.html formulas
-
-// calculations for illumination parameters of the moon,
-// based on http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro formulas and
-// Chapter 48 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-// 
-// DO NOT USE celestial calculations contained in this library if hyper accuracy is required. Based on testing, times and illuminations are "ball park" and may be off by up to a few minutes. 
-// Times may become less accurate near the poles of the earth.
-//
-//////////////////
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,9 +17,12 @@ namespace CoordinateSharp
         /// </summary>
         public Coordinate()
         {
+            this.FormatOptions = new CoordinateFormatOptions();
             latitude = new CoordinatePart(CoordinateType.Lat, this);
             longitude = new CoordinatePart(CoordinateType.Long, this);
             celestialInfo = new Celestial();
+            utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
+            mgrs = new MilitaryGridReferenceSystem(this.utm);          
         }
         /// <summary>
         /// Creates a populated Coordinate object.
@@ -60,9 +31,12 @@ namespace CoordinateSharp
         /// <param name="longi">Decimal format longitude</param>
         public Coordinate(double lat, double longi)
         {
+            this.FormatOptions = new CoordinateFormatOptions();
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
             celestialInfo = new Celestial(lat,longi,new DateTime(1900,1,1));
+            utm = new UniversalTransverseMercator(lat, longi, this);
+            mgrs = new MilitaryGridReferenceSystem(this.utm);
         }
         /// <summary>
         /// Creates a populated Coordinate object. With an assigned GeoDate.
@@ -72,17 +46,49 @@ namespace CoordinateSharp
         /// <param name="date">DateTime you wish to use for celestial calculation</param>
         public Coordinate(double lat, double longi, DateTime date)
         {
+            this.FormatOptions = new CoordinateFormatOptions();
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
             celestialInfo = new Celestial(lat, longi, date);            
-            this.geoDate = date;                        
+            this.geoDate = date;
+            utm = new UniversalTransverseMercator(lat, longi, this);
+            mgrs = new MilitaryGridReferenceSystem(this.utm);
         }
-
+        /// <summary>
+        /// Creates a populated Coordinate object.
+        /// Not yet implemented.
+        /// </summary>
+        /// <param name="utm">Universal Transverse Mercator Coordinate</param>
+        private Coordinate(string latz, int longz, double easting, double northing)
+        {   
+            //latitude = new CoordinatePart(CoordinateType.Lat, this);
+            //longitude = new CoordinatePart(CoordinateType.Long, this);
+            //celestialInfo = new Celestial(this.latitude.ToDouble(), this.longitude.ToDouble(), new DateTime(1900, 1, 1));
+            //utm = new UniversalTransverseMercator(latz, longz, easting, northing, this);
+            //mgrs = new MilitaryGridReferenceSystem(this.utm);
+        }
+        /// <summary>
+        /// Creates a populated Coordinate object.
+        /// Not yet implemented
+        /// </summary>
+        /// <param name="utm">Universal Transverse Mercator Coordinate</param>
+        /// <param name="date">DateTime you wish to use for celestial calculation</param>
+        private Coordinate(string latz, int longz, double easting, double northing, DateTime date)
+        {
+            //latitude = new CoordinatePart(CoordinateType.Lat, this);
+            //longitude = new CoordinatePart(CoordinateType.Long, this);
+            //celestialInfo = new Celestial(this.latitude.ToDouble(), this.longitude.ToDouble(), date);
+            //utm = new UniversalTransverseMercator(latz, longz, easting, northing, this);
+            //mgrs = new MilitaryGridReferenceSystem(this.utm);    
+        }
+        
         private CoordinatePart latitude;
         private CoordinatePart longitude;
-      
+        private UniversalTransverseMercator utm;
+        private MilitaryGridReferenceSystem mgrs;        
         private DateTime geoDate;
         private Celestial celestialInfo;
+
         /// <summary>
         /// Latitudinal Coordinate Part.
         /// </summary>
@@ -96,9 +102,9 @@ namespace CoordinateSharp
                     if (value.Position == CoordinatesPosition.E || value.Position == CoordinatesPosition.W)
                     { throw new ArgumentException("Invalid Position", "Latitudinal positions cannot be set to East or West."); }
                     this.latitude = value;
-                    this.NotifyPropertyChanged("Latitude");
+                   
                     celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
-                    this.NotifyPropertyChanged("CelestialInfo");
+                 
                 }
             }
         }
@@ -114,10 +120,8 @@ namespace CoordinateSharp
                 {
                     if (value.Position == CoordinatesPosition.N || value.Position == CoordinatesPosition.S)
                     { throw new ArgumentException("Invalid Position", "Longitudinal positions cannot be set to North or South."); }
-                    this.longitude = value;
-                    this.NotifyPropertyChanged("Longitude");
-                    celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
-                    this.NotifyPropertyChanged("CelestialInfo");
+                    this.longitude = value;                   
+                    celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);                  
                 }
             }
         }     
@@ -132,13 +136,54 @@ namespace CoordinateSharp
                 if (this.geoDate != value)
                 {
                     this.geoDate = value;
-                    this.NotifyPropertyChanged("GeoDate");
+                  
                     celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
-                    this.NotifyPropertyChanged("CelestialInfo");                 
+                    this.NotifyPropertyChanged("GeoDate");
+                    this.NotifyPropertyChanged("CelestialInfo");
+                                    
                 }
             }
         }
-        
+        /// <summary>
+        /// Universal Transverse Mercator Values
+        /// </summary>
+        public UniversalTransverseMercator UTM
+        {
+            get
+            {
+                return this.utm;
+            }
+            //set
+            //{
+            //    if (this.utm != value)
+            //    {
+            //        this.utm = value;
+            //        this.NotifyPropertyChanged("UTM");
+            //        celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
+            //        this.NotifyPropertyChanged("CelestialInfo");
+            //    }
+            //}
+        }
+        /// <summary>
+        /// Military Grid Reference System Values
+        /// </summary>
+        public MilitaryGridReferenceSystem MGRS
+        {
+            get
+            {
+                return this.mgrs;
+            }
+            //set
+            //{
+            //    if (this.utm != value)
+            //    {
+            //        this.utm = value;
+            //        this.NotifyPropertyChanged("UTM");
+            //        celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
+            //        this.NotifyPropertyChanged("CelestialInfo");
+            //    }
+            //}
+        }
         /// <summary>
         /// Celestial information based on the objects lat/long and geo date.
         /// </summary>
@@ -146,7 +191,20 @@ namespace CoordinateSharp
         {
             get { return this.celestialInfo; }          
         }
-
+        /// <summary>
+        /// Formatting Options
+        /// </summary>
+        public CoordinateFormatOptions FormatOptions { get; set; }
+        /// <summary>
+        /// Formatted coordinate String
+        /// </summary>
+        public string Display
+        {
+            get
+            {
+                return this.Latitude.Display + " " + this.Longitude.Display;
+            }
+        }
         /// <summary>
         /// Overridden Coordinate ToString() method
         /// </summary>
@@ -163,6 +221,7 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="format">Format string</param>
         /// <returns>Custom formatted coordinate</returns>
+        [System.Obsolete("The 2 character format string method is deprecated. The CoordinateFormatOptions method should be used when passing formats with ToString().")]      
         public string ToString(string format)
         {
             string latString = latitude.ToString(format.ToUpper());
@@ -170,64 +229,43 @@ namespace CoordinateSharp
             return latString + " " + longSting;         
         }
         /// <summary>
-        /// Overridden Coordinate ToString() method that accepts formatting for XAML Binding. 
+        /// Overridden Coordinate ToString() method that accepts formatting. 
         /// Refer to documentation for coordinate format options
         /// </summary>
-        /// <param name="format">Format string</param>
-        /// <param name="formatProvider">Fromat Provider</param>
+        /// <param name="options">CoordinateFormatOptions</param>
         /// <returns>Custom formatted coordinate</returns>
-        public string ToString(string format, IFormatProvider formatProvider)
+        public string ToString(CoordinateFormatOptions options)
         {
-            string latString = latitude.ToString(format.ToUpper());
-            string longSting = longitude.ToString(format.ToUpper());
+            string latString = latitude.ToString(options);
+            string longSting = longitude.ToString(options);
             return latString + " " + longSting;
-        }
-              
-        /// <summary>
-        /// Property changed event handler.
-        /// </summary>
+        }     
+
         public event PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// Notifies Coordinate property of changing.
-        /// </summary>
-        /// <param name="propName"></param>
         public void NotifyPropertyChanged(string propName)
         {
             if (this.PropertyChanged != null)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                if (propName != null)
+                switch (propName)
                 {
-                    this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+                    case "CelestialInfo":
+                        this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);
+                        break;
+                    case "UTM":
+                        this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
+                        break;
+                    case "MGRS":
+                        this.MGRS.ToMGRS(this.utm);
+                        break;
                 }
-            }
-        }   
-        /// <summary>
-        /// Property changed event to be fired from the Coordinate subclass.
-        /// </summary>
-        /// <param name="type">Coordinate type</param>
-        public void NotifyPropertyChanged(CoordinateType type)
-        {
-            if (this.PropertyChanged != null)
-            {
-                string propName = string.Empty;
-                if (type == CoordinateType.Lat) { propName = "Latitude"; }
-                if (type == CoordinateType.Long) { propName = "Longitude"; }
-                if (propName == string.Empty) { return; }
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                if (propName != null)
-                {
-                    this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                    this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);
-                    this.NotifyPropertyChanged("CelestialInfo");
-                }
             }
         }
     }
     /// <summary>
     /// Observable class for handling a single coordinate (Lat or Long)
     /// </summary>
-    public class CoordinatePart : IFormattable, INotifyPropertyChanged
+    public class CoordinatePart : INotifyPropertyChanged
     {
         //Format Example String "FS:R4:LT:TT:MF:HT" = N-075º-40'-35.3645"
 
@@ -263,7 +301,7 @@ namespace CoordinateSharp
         private int minutes;
         private double seconds;
         private CoordinatesPosition position;
-        private CoordinateType type;
+        private CoordinateType type;    
 
         /// <summary>
         /// Used to determine and notify the Coordinate Parts parent.
@@ -307,19 +345,19 @@ namespace CoordinateSharp
 
                     }
                     this.decimalDegree = value;
-                    this.NotifyPropertyChanged("DecimalDegree");
+                   
                     //Update Position
                     if ((this.position == CoordinatesPosition.N || this.position == CoordinatesPosition.E) && this.decimalDegree < 0)
                     {
                         if (this.type == CoordinateType.Lat) { this.position = CoordinatesPosition.S; }
                         else { this.position = CoordinatesPosition.W; }
-                        this.NotifyPropertyChanged("Position");
+                       
                     }
                     if ((this.position == CoordinatesPosition.W || this.position == CoordinatesPosition.S) && this.decimalDegree >= 0)
                     {
                         if (this.type == CoordinateType.Lat) { this.position = CoordinatesPosition.N; }
                         else { this.position = CoordinatesPosition.E; }
-                        this.NotifyPropertyChanged("Position");
+                      
                     }
                     //Update the Degree & Decimal Minute
                     double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive for calculations
@@ -334,12 +372,12 @@ namespace CoordinateSharp
                     if (this.degrees != df)
                     {
                         this.degrees = df;
-                        this.NotifyPropertyChanged("Degrees");
+                      
                     }
                     if (this.decimalMinute != dm)
                     {
                         this.decimalMinute = dm;
-                        this.NotifyPropertyChanged("DecimalMinutes");
+                   
                     }
                     //Update Minutes Seconds              
                     double dmFloor = Math.Floor(dm); //Get number left of decimal to grab minute value
@@ -353,22 +391,13 @@ namespace CoordinateSharp
                     if (this.minutes != mF)
                     {
                         this.minutes = mF;
-                        this.NotifyPropertyChanged("Minutes");
+                      
                     }
                     if (this.seconds != secs)
                     {
-                        this.seconds = secs;
-                        this.NotifyPropertyChanged("Seconds");
+                        this.seconds = secs;                    
                     }
-                    //Notify Parent class of change
-                    if (type == CoordinateType.Lat)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Lat);
-                    }
-                    if (type == CoordinateType.Long)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Long);
-                    }
+                    NotifyProperties(PropertyTypes.DecimalDegree);
                 }
             }
         }
@@ -399,7 +428,7 @@ namespace CoordinateSharp
 
 
                     this.decimalMinute = value;
-                    this.NotifyPropertyChanged("DecimalMinute");
+                   
 
                     decimal decValue = Convert.ToDecimal(value); //Convert value to decimal for precision during calculation
                     decimal dmFloor = Math.Floor(decValue); //Extract minutes
@@ -411,21 +440,12 @@ namespace CoordinateSharp
                     if (this.decimalDegree < 0) { newDD = newDD * -1; } //Restore negative if needed
 
                     this.decimalDegree = Convert.ToDouble(newDD);  //Convert back to double for storage                      
-                    this.NotifyPropertyChanged("DecimalDegree");
+                   
 
                     this.minutes = Convert.ToInt32(dmFloor); //Convert minutes to int for storage
-                    this.NotifyPropertyChanged("Minutes");
-                    this.seconds = Convert.ToDouble(secs); //Convert seconds to double for storage
-                    this.NotifyPropertyChanged("Seconds");
-                    //Notify parent of change
-                    if (type == CoordinateType.Lat)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Lat);
-                    }
-                    if (type == CoordinateType.Long)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Long);
-                    }
+                   
+                    this.seconds = Convert.ToDouble(secs); //Convert seconds to double for storage 
+                    NotifyProperties(PropertyTypes.DecimalMinute);              
                 }
             }
 
@@ -459,7 +479,6 @@ namespace CoordinateSharp
                     decimal f = Convert.ToDecimal(this.degrees);
 
                     this.degrees = value;
-                    this.NotifyPropertyChanged("Degrees");
 
                     double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive for calculations
                     decimal dDec = Convert.ToDecimal(degABS); //Convert to Decimal for precision during calculations              
@@ -470,18 +489,7 @@ namespace CoordinateSharp
                     if (this.decimalDegree < 0) { newDD *= -1; } //Set negative as required
 
                     this.decimalDegree = Convert.ToDouble(newDD); // Convert decimalDegree to double for storage
-
-                    this.NotifyPropertyChanged("DecimalDegree");
-
-                    //Notify Parent Property
-                    if (type == CoordinateType.Lat)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Lat);
-                    }
-                    if (type == CoordinateType.Long)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Long);
-                    }
+                    NotifyProperties(PropertyTypes.Degree);
                 }
             }
         }
@@ -517,7 +525,7 @@ namespace CoordinateSharp
                     decimal f = Convert.ToDecimal(this.degrees); //Convert to degree to keep precision during calculation 
 
                     this.minutes = value;
-                    this.NotifyPropertyChanged("Minutes");
+                   
 
                     double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive
                     decimal dDec = Convert.ToDecimal(degABS); //Convert to decimalDegree for precision during calucation                        
@@ -530,23 +538,13 @@ namespace CoordinateSharp
                     decimal newDM = this.minutes + secs;//Add seconds to minutes for decimalMinute
                     double decMin = Convert.ToDouble(newDM); //Convert decimalMinute to double for storage
                     this.decimalMinute = decMin; //Round to correct precision
-                    this.NotifyPropertyChanged("DecimalMinute");
+                   
 
                     newDM /= 60; //Convert decimalMinute to storage format
                     decimal newDeg = f + newDM; //Add value to degree for decimalDegree
                     if (this.decimalDegree < 0) { newDeg *= -1; }// Set to negative as required.
                     this.decimalDegree = Convert.ToDouble(newDeg);//Convert to double and roun to correct precision for storage
-                    this.NotifyPropertyChanged("DecimalDegree");
-
-                    //Notify Parent Property
-                    if (type == CoordinateType.Lat)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Lat);
-                    }
-                    if (type == CoordinateType.Long)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Long);
-                    }
+                    NotifyProperties(PropertyTypes.Minute);
                 }
             }
         }
@@ -585,7 +583,7 @@ namespace CoordinateSharp
                         throw new ArgumentOutOfRangeException("Seconds out of range", "Seconds cannot be less than 0");
                     }
                     this.seconds = value;
-                    this.NotifyPropertyChanged("Seconds");
+                 
 
                     double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive
                     double degFloor = Math.Truncate(degABS); //Truncate the number left of the decimal
@@ -596,27 +594,32 @@ namespace CoordinateSharp
                     decimal dm = this.minutes + secs;//Add seconds to minutes for decimalMinute
                     double minFD = Convert.ToDouble(dm); //Convert decimalMinute for storage
                     this.decimalMinute = minFD;//Round to proper precision
-                    this.NotifyPropertyChanged("DecimalMinute");
-
+                  
                     decimal nm = Convert.ToDecimal(this.decimalMinute) / 60;//Convert decimalMinute to decimal and divide by 60 to get storage format decimalMinute
                     double newDeg = this.degrees + Convert.ToDouble(nm);//Convert to double and add to degree for storage decimalDegree
                     if (this.decimalDegree < 0) { newDeg *= -1; }//Make negative as needed
-                    this.decimalDegree = newDeg;//Update decimalDegree and round to proper precision
-                    this.NotifyPropertyChanged("DecimalDegree");
-
-                    //Notify Parent Property
-                    if (type == CoordinateType.Lat)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Lat);
-                    }
-                    if (type == CoordinateType.Long)
-                    {
-                        this.Parent.NotifyPropertyChanged(CoordinateType.Long);
-                    }
+                    this.decimalDegree = newDeg;//Update decimalDegree and round to proper precision    
+                    NotifyProperties(PropertyTypes.Second);
+                }
+            }
+        }       
+        /// <summary>
+        /// Formate coordinate part string
+        /// </summary>
+        public string Display
+        {
+            get 
+            {
+                if (this.Parent != null)
+                {
+                    return ToString(Parent.FormatOptions);
+                }
+                else
+                {
+                    return ToString();
                 }
             }
         }
-
         /// <summary>
         /// Observable coordinate position
         /// </summary>
@@ -637,9 +640,7 @@ namespace CoordinateSharp
                     }
                     this.decimalDegree *= -1; // Change the position
                     this.position = value;
-                    this.NotifyPropertyChanged("DecimalDegree");
-                    this.NotifyPropertyChanged("Position");
-
+                    NotifyProperties(PropertyTypes.Position);
                 }
             }
         }
@@ -650,7 +651,7 @@ namespace CoordinateSharp
         /// <param name="t">Parent Coordinates object</param>
         /// <param name="c">Parent Coordinates object</param>
         public CoordinatePart(CoordinateType t, Coordinate c)
-        {
+        {     
             this.Parent = c;
             this.type = t;
             if (this.type == CoordinateType.Lat) { this.position = CoordinatesPosition.N; }
@@ -804,34 +805,38 @@ namespace CoordinateSharp
         /// <returns>Degree Minute Seconds formated coordinate part. Seconds round to the 3rd</returns>
         public override string ToString()
         {
-            return FormatString("");
+            return FormatString(this.Parent.FormatOptions);
         }
         /// <summary>
-        /// Overridden Coordinate ToString() method that accepts formatting. 
-        /// Refer to documentation for coordinate format options
+        /// Overridden Coordinate ToString() method that accepts formatting.
+        /// Does not require the CoordinatePart format property to be set.
+        /// Refer to documentation for coordinate format options.
         /// </summary>
         /// <param name="format">Format string</param>
         /// <returns>Custom formatted coordinate part</returns>
+        [System.Obsolete("The 2 character format string method is deprecated. The CoordinateFormatOptions method should be used when passing formats with ToString().")]
         public string ToString(string format)
         {
+            if (format == null)
+            {
+                return FormatString("");
+            }
             return FormatString(format.ToUpper());
         }
         /// <summary>
-        /// Overridden Coordinate ToString() method that accepts formatting for XAML Binding. 
-        /// Refer to documentation for coordinate format options
+        /// Formatted CoordinatePart string.
         /// </summary>
-        /// <param name="format">Format string</param>
-        /// <param name="formatProvider">Fromat Provider</param>
-        /// <returns>Custom formatted coordinate part</returns>
-        public string ToString(string format, IFormatProvider formatProvider)
+        /// <param name="options">CoordinateFormatOptions</param>
+        /// <returns>string</returns>
+        public string ToString(CoordinateFormatOptions options)
         {
-            return FormatString(format.ToUpper());
+            return FormatString(options);
         }
         /// <summary>
         /// String formatting logic
         /// </summary>
         /// <param name="format">Formated Coordinate</param>
-        /// <returns></returns>
+        /// <returns>string</returns>
         private string FormatString(string format)
         {
             ToStringType type = ToStringType.Degree_Minute_Second;
@@ -1022,6 +1027,75 @@ namespace CoordinateSharp
 
             return string.Empty;
         }
+        /// <summary>
+        /// String formatting logic
+        /// </summary>
+        /// <param name="options">CoordinateFormatOptions</param>
+        /// <returns>string</returns>
+        private string FormatString(CoordinateFormatOptions options)
+        {
+            ToStringType type = ToStringType.Degree_Minute_Second;
+            int? rounding = null;
+            bool lead = false;
+            bool trail = false;
+            bool hyphen = false;
+            bool symbols = true;
+            bool degreeSymbol = true;
+            bool minuteSymbol = true;
+            bool secondsSymbol = true;
+            bool positionFirst = true;           
+
+            #region Assign Formatting Rules
+            switch (options.Format)
+            {
+                case CoordinateFormatType.Degree_Minutes_Seconds:
+                    type = ToStringType.Degree_Minute_Second;
+                    break;
+                case CoordinateFormatType.Degree_Decimal_Minutes:
+                    type = ToStringType.Degree_Decimal_Minute;
+                    break;
+                case CoordinateFormatType.Decimal_Degree:
+                    type = ToStringType.Decimal_Degree;
+                    break;
+                case CoordinateFormatType.Decimal:
+                    type = ToStringType.Decimal;
+                    break;
+                default:
+                    type = ToStringType.Degree_Minute_Second;
+                    break;
+            }
+            rounding = options.Round;
+            lead = options.Display_Leading_Zeros;
+            trail = options.Display_Trailing_Zeros;
+            symbols = options.Display_Symbols;
+            degreeSymbol = options.Display_Degree_Symbol;
+            minuteSymbol = options.Display_Minute_Symbol;
+            secondsSymbol = options.Display_Seconds_Symbol;
+            hyphen = options.Display_Hyphens;
+            positionFirst = options.Position_First;                     
+            #endregion
+
+            switch (type)
+            {
+                case ToStringType.Decimal_Degree:
+                    if (rounding == null) { rounding = 6; }
+                    return ToDecimalDegreeString(rounding.Value, lead, trail, symbols, degreeSymbol, positionFirst, hyphen);
+                case ToStringType.Degree_Decimal_Minute:
+                    if (rounding == null) { rounding = 3; }
+                    return ToDegreeDecimalMinuteString(rounding.Value, lead, trail, symbols, degreeSymbol, minuteSymbol, hyphen, positionFirst);
+                case ToStringType.Degree_Minute_Second:
+                    if (rounding == null) { rounding = 3; }
+                    return ToDegreeMinuteSecondString(rounding.Value, lead, trail, symbols, degreeSymbol, minuteSymbol, secondsSymbol, hyphen, positionFirst);
+                case ToStringType.Decimal:
+                    if (rounding == null) { rounding = 9; }
+                    double dub = this.ToDouble();
+                    dub = Math.Round(dub, rounding.Value);
+                    string lt = Leading_Trailing_Format(lead, trail, rounding.Value, Position);
+                    return string.Format(lt, dub);
+            }
+
+            return string.Empty;
+        }
         //DMS Coordinate Format
         private string ToDegreeMinuteSecondString(int rounding, bool lead, bool trail, bool symbols, bool degreeSymbol, bool minuteSymbol, bool secondSymbol, bool hyphen, bool positionFirst)
         {
@@ -1188,703 +1262,81 @@ namespace CoordinateSharp
             return "'" + argument + "' is not a valid argument for string format rule: " + rule + ".";
         }
 
+        private enum ToStringType
+        {
+            Decimal_Degree, Degree_Decimal_Minute, Degree_Minute_Second, Decimal
+        }
         /// <summary>
-        /// Property changd event handler
+        /// Notify the correct properties and parent properties
         /// </summary>
+        /// <param name="p">Property Type</param>
+        private void NotifyProperties(PropertyTypes p)
+        {
+            switch (p)
+            {
+                case PropertyTypes.DecimalDegree:
+                    this.NotifyPropertyChanged("DecimalDegree");
+                    this.NotifyPropertyChanged("DecimalMinute");
+                    this.NotifyPropertyChanged("Degrees");
+                    this.NotifyPropertyChanged("Minutes");
+                    this.NotifyPropertyChanged("Seconds");
+                    this.NotifyPropertyChanged("Position");
+                    break;
+                case PropertyTypes.DecimalMinute:
+                    this.NotifyPropertyChanged("DecimalDegree");
+                    this.NotifyPropertyChanged("DecimalMinute");
+                    this.NotifyPropertyChanged("Minutes");
+                    this.NotifyPropertyChanged("Seconds");
+                    break;
+                case PropertyTypes.Degree:
+                    this.NotifyPropertyChanged("DecimalDegree");
+                    this.NotifyPropertyChanged("Degree");                   
+                    break;
+                case PropertyTypes.Minute:
+                    this.NotifyPropertyChanged("DecimalDegree");
+                    this.NotifyPropertyChanged("DecimalMinute");
+                    this.NotifyPropertyChanged("Minutes");
+                    break;
+                case PropertyTypes.Position:
+                    this.NotifyPropertyChanged("DecimalDegree");                    
+                    this.NotifyPropertyChanged("Position");
+                    break;
+                case PropertyTypes.Second:
+                    this.NotifyPropertyChanged("DecimalDegree");
+                    this.NotifyPropertyChanged("DecimalMinute");                
+                    this.NotifyPropertyChanged("Seconds");                 
+                    break;               
+                default:
+                    this.NotifyPropertyChanged("DecimalDegree");
+                    this.NotifyPropertyChanged("DecimalMinute");
+                    this.NotifyPropertyChanged("Degrees");
+                    this.NotifyPropertyChanged("Minutes");
+                    this.NotifyPropertyChanged("Seconds");
+                    this.NotifyPropertyChanged("Position");
+                    break;
+            }
+            this.NotifyPropertyChanged("Display");
+            this.Parent.NotifyPropertyChanged("Display");
+            this.Parent.NotifyPropertyChanged("CelestialInfo");
+            this.Parent.NotifyPropertyChanged("UTM");
+            this.Parent.NotifyPropertyChanged("MGRS");
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// Notifies the Coordinate Part of a property change
-        /// </summary>
-        /// <param name="propName"></param>
         public void NotifyPropertyChanged(string propName)
         {
             if (this.PropertyChanged != null)
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                if (propName != null)
-                {
-                    this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                    if (Position == CoordinatesPosition.N || Position == CoordinatesPosition.S)
-                    {
-                        Parent.NotifyPropertyChanged(CoordinateType.Lat);
-                    }
-                    if (Position == CoordinatesPosition.E || Position == CoordinatesPosition.W)
-                    {
-                        Parent.NotifyPropertyChanged(CoordinateType.Long);
-                    }
-                }
             }
         }
 
-        private enum ToStringType
+        /// <summary>
+        /// Used for notifying the correct properties
+        /// </summary>
+        private enum PropertyTypes
         {
-            Decimal_Degree, Degree_Decimal_Minute, Degree_Minute_Second, Decimal
+            DecimalDegree, DecimalMinute, Position, Degree, Minute, Second, FormatChange
         }
-
     }
-    /// <summary>
-    /// Used for setting whether a coordinate part is latitudinal or longitudinal
-    /// </summary>
-    public enum CoordinateType
-    {
-        /// <summary>
-        /// Latitude
-        /// </summary>
-        Lat,
-        /// <summary>
-        /// Longitude
-        /// </summary>
-        Long 
-    }
-    /// <summary>
-    /// Used to set a coordinate parts position
-    /// </summary>
-    public enum CoordinatesPosition
-    {
-        /// <summary>
-        /// North
-        /// </summary>
-        N, 
-        /// <summary>
-        /// East
-        /// </summary>
-        E, 
-        /// <summary>
-        /// South
-        /// </summary>
-        S, 
-        /// <summary>
-        /// West
-        /// </summary>
-        W
-    }
-    /// <summary>
-    /// Used to display a celestial condition for a set day
-    /// </summary>
-    public enum CelestialStatus
-    {
-        /// <summary>
-        /// Celestial body rises and sets on the set day.
-        /// </summary>
-        RiseAndSet, 
-        /// <summary>
-        /// Celestial body is down all day
-        /// </summary>
-        DownAllDay, 
-        /// <summary>
-        /// Celestial body is up all day
-        /// </summary>
-        UpAllDay, 
-        /// <summary>
-        /// Celestial body rises, but does not set on the set day
-        /// </summary>
-        NoRise, 
-        /// <summary>
-        /// Celestial body sets, but does not rise on the set day
-        /// </summary>
-        NoSet
-    }
-    /// <summary>
-    /// Sun and Moon information
-    /// </summary>
-    public class Celestial
-    {
-        //When as rise or a set does not occur, the DateTime will return null
-
-        /// <summary>
-        /// Initializes an empty Celestial object
-        /// </summary>
-        public Celestial()
-        {
-            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1));
-        }
-        private Celestial(bool hasCalcs)
-        {
-            if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1)); }
-        }
-        /// <summary>
-        /// Initializes a Celestial object.
-        /// </summary>
-        /// <param name="lat">Decimal Format Latitude</param>
-        /// <param name="longi">Decimal Format Longitude</param>
-        /// <param name="geoDate">Geographic DateTime</param>
-        public Celestial(double lat, double longi, DateTime geoDate)
-        {
-            CalculateCelestialTime(lat, longi, geoDate);
-        }
-        /// <summary>
-        /// Sunset time.
-        /// </summary>
-        public DateTime? SunSet { get; set; }
-        /// <summary>
-        /// Sunrise time.
-        /// </summary>
-        public DateTime? SunRise { get; set; }
-        /// <summary>
-        /// Moonset time.
-        /// </summary>
-        public DateTime? MoonSet { get; set; }
-        /// <summary>
-        /// Moonrise time.
-        /// </summary>
-        public DateTime? MoonRise { get; set; }     
-        /// <summary>
-        /// Suns Condition for the  set geodate.
-        /// </summary>
-        public CelestialStatus SunCondition { get; set; }
-        /// <summary>
-        /// Moons condition for the set geodate.
-        /// </summary>
-        public CelestialStatus MoonCondition { get; set; }
-        /// <summary>
-        /// Moon illumination phase.
-        /// </summary>
-        public double MoonPhase { get; set; }
-        /// <summary>
-        /// Calculates all celestial data. Coordinates will notify as changes occur
-        /// </summary>
-        /// <param name="lat">Decimal format latitude</param>
-        /// <param name="longi">Decimal format longitude</param>
-        /// <param name="date">Geographic DateTime</param>
-        public void CalculateCelestialTime(double lat, double longi, DateTime date)
-        {
-            SunCalc.CalculateSunTime(lat, longi, date, this);
-            MoonCalc.GetMoonTimes(date, lat, longi, this);
-            MoonCalc.GetMoonIllumination(date, this);
-        }
-        /// <summary>
-        /// Calculate celestial data based on lat/long and date
-        /// </summary>
-        /// <param name="lat">Decimal format latitude</param>
-        /// <param name="longi">Decimal format longitude</param>
-        /// <param name="date">Geographic DateTime</param>
-        /// <returns>Fully populated Celestial object</returns>
-        public static Celestial CalculateCelestialTimes(double lat, double longi, DateTime date)
-        {
-            Celestial c = new Celestial(false);
-            SunCalc.CalculateSunTime(lat, longi, date, c);
-            MoonCalc.GetMoonTimes(date, lat, longi, c);
-            MoonCalc.GetMoonIllumination(date, c);
-            return c;
-        }
-        /// <summary>
-        /// Calculate sun data based on lat/long and date
-        /// </summary>
-        /// <param name="lat">Decimal format latitude</param>
-        /// <param name="longi">Decimal format longitude</param>
-        /// <param name="date">Geographic DateTime</param>
-        /// <returns>Partially populated Celestial Object</returns>
-        public static Celestial CalculateSunData(double lat, double longi, DateTime date)
-        {
-            Celestial c = new Celestial(false);
-            SunCalc.CalculateSunTime(lat, longi, date, c);
-            
-            return c;
-        }
-        /// <summary>
-        /// Calculate moon data based on lat/long and date
-        /// </summary>
-        /// <param name="lat">Decimal format latitude</param>
-        /// <param name="longi">Decimal format longitude</param>
-        /// <param name="date">Geographic DateTime</param>
-        /// <returns>Partially populated Celestial Object</returns>
-        public static Celestial CalculateMoonData(double lat, double longi, DateTime date)
-        {
-            Celestial c = new Celestial(false);
-           
-            MoonCalc.GetMoonTimes(date, lat, longi, c);
-            MoonCalc.GetMoonIllumination(date, c);
-            return c;
-        }
-        #region Celestial Calculations
-        private class SunCalc
-        {
-            public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c)
-            {
-                date = new DateTime(date.Year, date.Month, date.Day, 0,0,0, DateTimeKind.Utc);
-                double zone = -(int)Math.Round(TimeZone.CurrentTimeZone.GetUtcOffset(date).TotalSeconds / 3600);
-                double jd = GetJulianDay(date) - 2451545;  // Julian day relative to Jan 1.5, 2000
-
-                double lon = longi / 360;
-                double tz = zone / 24;
-                double ct = jd / 36525 + 1;                                       // centuries since 1900.0
-                double t0 = LocalSiderealTimeForTimeZone(lon, jd, tz);      // local sidereal time
-
-                // get sun position at start of day
-                jd += tz;
-                CalculateSunPosition(jd, ct);
-                double ra0 = mSunPositionInSkyArr[0];
-                double dec0 = mSunPositionInSkyArr[1];
-
-                // get sun position at end of day
-                jd += 1;
-                CalculateSunPosition(jd, ct);
-                double ra1 = mSunPositionInSkyArr[0];
-                double dec1 = mSunPositionInSkyArr[1];
-
-                // make continuous 
-                if (ra1 < ra0)
-                    ra1 += 2 * Math.PI;
-
-                mIsSunrise = false;
-                mIsSunset = false;
-
-                mRightAscentionArr[0] = ra0;
-                mDecensionArr[0] = dec0;
-
-                // check each hour of this day
-                for (int k = 0; k < 24; k++)
-                {
-                    mRightAscentionArr[2] = ra0 + (k + 1) * (ra1 - ra0) / 24;
-                    mDecensionArr[2] = dec0 + (k + 1) * (dec1 - dec0) / 24;
-                    mVHzArr[2] = TestHour(k, zone, t0, lat);
-
-                    // advance to next hour
-                    mRightAscentionArr[0] = mRightAscentionArr[2];
-                    mDecensionArr[0] = mDecensionArr[2];
-                    mVHzArr[0] = mVHzArr[2];
-                }
-
-                c.SunRise = new DateTime(date.Year, date.Month, date.Day, mRiseTimeArr[0], mRiseTimeArr[1], 0);
-                c.SunSet = new DateTime(date.Year, date.Month, date.Day, mSetTimeArr[0], mSetTimeArr[1], 0);
-                c.SunCondition = CelestialStatus.RiseAndSet;
-                // neither sunrise nor sunset
-                if ((!mIsSunrise) && (!mIsSunset))
-                {
-                    if (mVHzArr[2] < 0)
-                    {
-                        c.SunCondition = CelestialStatus.DownAllDay;
-                        c.SunRise = null;
-                        c.SunSet = null;
-                        // Sun down all day
-                    }
-                    else
-                    {
-                        c.SunCondition = CelestialStatus.UpAllDay;
-                        c.SunRise = null;
-                        c.SunSet = null;
-                        // Sun up all day
-                    }
-                }
-                // sunrise or sunset
-                else
-                {
-                    if (!mIsSunrise)
-                    {
-                        // No sunrise this date
-                        c.SunCondition = CelestialStatus.NoRise;
-                        c.SunRise = null;
-
-                    }
-                    else if (!mIsSunset)
-                    {
-                        // No sunset this date
-                        c.SunCondition = CelestialStatus.NoSet;
-                        c.SunSet = null;
-
-                    }
-                }
-            }
-            #region Private Suntime Members
-
-            private const double mDR = Math.PI / 180;
-            private const double mK1 = 15 * mDR * 1.0027379;
-
-            private static int[] mRiseTimeArr = new int[2] { 0, 0 };
-            private static int[] mSetTimeArr = new int[2] { 0, 0 };
-            private static double mRizeAzimuth = 0.0;
-            private static double mSetAzimuth = 0.0;
-
-            private static double[] mSunPositionInSkyArr = new double[2] { 0.0, 0.0 };
-            private static double[] mRightAscentionArr = new double[3] { 0.0, 0.0, 0.0 };
-            private static double[] mDecensionArr = new double[3] { 0.0, 0.0, 0.0 };
-            private static double[] mVHzArr = new double[3] { 0.0, 0.0, 0.0 };
-
-            private static bool mIsSunrise = false;
-            private static bool mIsSunset = false;
-
-            #endregion
-            #region Private Suntime Functions
-            private static double GetJulianDay(DateTime date)
-            {
-                int month = date.Month;
-                int day = date.Day;
-                int year = date.Year;
-
-                bool gregorian = (year < 1583) ? false : true;
-
-                if ((month == 1) || (month == 2))
-                {
-                    year = year - 1;
-                    month = month + 12;
-                }
-
-                double a = Math.Truncate((double)year / 100);
-                double b = 0;
-
-                if (gregorian)
-                    b = 2 - a + Math.Truncate(a / 4);
-                else
-                    b = 0.0;
-
-                double jd = Math.Truncate(365.25 * (year + 4716))
-                           + Math.Truncate(30.6001 * (month + 1))
-                           + day + b - 1524.5;
-
-                return jd;
-            }
-            private static double LocalSiderealTimeForTimeZone(double lon, double jd, double z)
-            {
-                double s = 24110.5 + 8640184.812999999 * jd / 36525 + 86636.6 * z + 86400 * lon;
-                s = s / 86400;
-                s = s - Math.Truncate(s);
-                return s * 360 * mDR;
-            }
-            private static void CalculateSunPosition(double jd, double ct)
-            {
-                double g, lo, s, u, v, w;
-
-                lo = 0.779072 + 0.00273790931 * jd;
-                lo = lo - Math.Truncate(lo);
-                lo = lo * 2 * Math.PI;
-
-                g = 0.993126 + 0.0027377785 * jd;
-                g = g - Math.Truncate(g);
-                g = g * 2 * Math.PI;
-
-                v = 0.39785 * Math.Sin(lo);
-                v = v - 0.01 * Math.Sin(lo - g);
-                v = v + 0.00333 * Math.Sin(lo + g);
-                v = v - 0.00021 * ct * Math.Sin(lo);
-
-                u = 1 - 0.03349 * Math.Cos(g);
-                u = u - 0.00014 * Math.Cos(2 * lo);
-                u = u + 0.00008 * Math.Cos(lo);
-
-                w = -0.0001 - 0.04129 * Math.Sin(2 * lo);
-                w = w + 0.03211 * Math.Sin(g);
-                w = w + 0.00104 * Math.Sin(2 * lo - g);
-                w = w - 0.00035 * Math.Sin(2 * lo + g);
-                w = w - 0.00008 * ct * Math.Sin(g);
-
-                // compute sun's right ascension
-                s = w / Math.Sqrt(u - v * v);
-                mSunPositionInSkyArr[0] = lo + Math.Atan(s / Math.Sqrt(1 - s * s));
-
-                // ...and declination 
-                s = v / Math.Sqrt(u);
-                mSunPositionInSkyArr[1] = Math.Atan(s / Math.Sqrt(1 - s * s));
-            }
-            private static double TestHour(int k, double zone, double t0, double lat)
-            {
-                double[] ha = new double[3];
-                double a, b, c, d, e, s, z;
-                double time;
-                int hr, min;
-                double az, dz, hz, nz;
-
-                ha[0] = t0 - mRightAscentionArr[0] + k * mK1;
-                ha[2] = t0 - mRightAscentionArr[2] + k * mK1 + mK1;
-
-                ha[1] = (ha[2] + ha[0]) / 2;    // hour angle at half hour
-                mDecensionArr[1] = (mDecensionArr[2] + mDecensionArr[0]) / 2;  // declination at half hour
-
-                s = Math.Sin(lat * mDR);
-                c = Math.Cos(lat * mDR);
-                z = Math.Cos(90.833 * mDR);    // refraction + sun semidiameter at horizon
-
-                if (k <= 0)
-                    mVHzArr[0] = s * Math.Sin(mDecensionArr[0]) + c * Math.Cos(mDecensionArr[0]) * Math.Cos(ha[0]) - z;
-
-                mVHzArr[2] = s * Math.Sin(mDecensionArr[2]) + c * Math.Cos(mDecensionArr[2]) * Math.Cos(ha[2]) - z;
-
-                if (Sign(mVHzArr[0]) == Sign(mVHzArr[2]))
-                    return mVHzArr[2];  // no event this hour
-
-                mVHzArr[1] = s * Math.Sin(mDecensionArr[1]) + c * Math.Cos(mDecensionArr[1]) * Math.Cos(ha[1]) - z;
-
-                a = 2 * mVHzArr[0] - 4 * mVHzArr[1] + 2 * mVHzArr[2];
-                b = -3 * mVHzArr[0] + 4 * mVHzArr[1] - mVHzArr[2];
-                d = b * b - 4 * a * mVHzArr[0];
-
-                if (d < 0)
-                    return mVHzArr[2];  // no event this hour
-
-                d = Math.Sqrt(d);
-                e = (-b + d) / (2 * a);
-
-                if ((e > 1) || (e < 0))
-                    e = (-b - d) / (2 * a);
-
-                time = (double)k + e + (double)1 / (double)120; // time of an event
-
-                hr = (int)Math.Floor(time);
-                min = (int)Math.Floor((time - hr) * 60);
-
-                hz = ha[0] + e * (ha[2] - ha[0]);                 // azimuth of the sun at the event
-                nz = -Math.Cos(mDecensionArr[1]) * Math.Sin(hz);
-                dz = c * Math.Sin(mDecensionArr[1]) - s * Math.Cos(mDecensionArr[1]) * Math.Cos(hz);
-                az = Math.Atan2(nz, dz) / mDR;
-                if (az < 0) az = az + 360;
-
-                if ((mVHzArr[0] < 0) && (mVHzArr[2] > 0))
-                {
-                    mRiseTimeArr[0] = hr;
-                    mRiseTimeArr[1] = min;
-                    mRizeAzimuth = az;
-                    mIsSunrise = true;
-                }
-
-                if ((mVHzArr[0] > 0) && (mVHzArr[2] < 0))
-                {
-                    mSetTimeArr[0] = hr;
-                    mSetTimeArr[1] = min;
-                    mSetAzimuth = az;
-                    mIsSunset = true;
-                }
-
-                return mVHzArr[2];
-            }
-            private static int Sign(double value)
-            {
-                int rv = 0;
-
-                if (value > 0.0) rv = 1;
-                else if (value < 0.0) rv = -1;
-                else rv = 0;
-
-                return rv;
-            }
-            #endregion
-        }
-        private class MoonCalc
-        {
-            static double rad = Math.PI / 180;
-            static double dayMs = 1000 * 60 * 60 * 24, J1970 = 2440588, J2000 = 2451545;
-            static double e = rad * 23.4397;
-
-            public static void GetMoonTimes(DateTime date, double lat, double lng, Celestial c)
-            {
-                c.MoonRise = null;
-                c.MoonSet = null;
-                DateTime t = new DateTime(date.Year,date.Month, date.Day,0,0,0,DateTimeKind.Utc);
-                c.MoonSet = null;
-                c.MoonSet = null;
-                double hc = 0.133 * rad,
-                h0 = GetMoonPosition(t, lat, lng).Altitude - hc,
-                h1, h2, a, b, xe, ye, d, roots, dx;
-                double? x1 = null, x2 = null, rise = null, set = null;
-                
-                bool isRise = false;
-                bool isSet = false;
-                bool isNeg;
-                if (h0 < 0)
-                {
-                    isNeg = true;
-                }
-                else
-                {
-                    isNeg = false;
-                }
-                // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
-                for (var i = 1; i <= 24; i += 2)
-                {
-                    
-                    h1 = GetMoonPosition(hoursLater(t, i), lat, lng).Altitude - hc;
-                    h2 = GetMoonPosition(hoursLater(t, i + 1), lat, lng).Altitude - hc;
-                    if (isNeg && h1 >= 0 || isNeg && h2 >= 0) { isNeg = false; isRise = true; }
-                    if (!isNeg && h1 < 0 || !isNeg && h2 < 0) { isNeg = true; isSet = true; }
-
-                    a = (h0 + h2) / 2 - h1;
-                    b = (h2 - h0) / 2;
-                    xe = -b / (2 * a);
-                    ye = (a * xe + b) * xe + h1;
-                    d = b * b - 4 * a * h1;
-                    roots = 0;
-
-                    if (d >= 0)
-                    {
-                        dx = Math.Sqrt(d) / (Math.Abs(a) * 2);
-                        x1 = xe - dx;
-                        x2 = xe + dx;
-                        if (Math.Abs(x1.Value) <= 1) roots++;
-                        if (Math.Abs(x2.Value) <= 1) roots++;
-                        if (x1 < -1) x1 = x2;
-                    }
-
-                    if (roots == 1)
-                    {
-                        if (h0 < 0) rise = i + x1;
-                        else set = i + x1;
-
-                    }
-                    else if (roots == 2)
-                    {
-                        rise = i + (ye < 0 ? x2 : x1);
-                        set = i + (ye < 0 ? x1 : x2);
-                    }
-
-                    if (rise != null && set != null) break;
-
-                    h0 = h2;
-                }
-
-                
-                if (rise != null) { c.MoonRise = hoursLater(t, rise.Value); }
-                if (set != null) { c.MoonSet = hoursLater(t, set.Value); }
-                
-                if (isRise && isSet) { c.MoonCondition = CelestialStatus.RiseAndSet; }
-                else
-                {
-                    if (!isRise && !isSet)
-                    {
-                        if (h0 >= 0) { c.MoonCondition = CelestialStatus.UpAllDay; }
-                        else { c.MoonCondition = CelestialStatus.DownAllDay; }
-                    }
-                    if (!isRise && isSet) { c.MoonCondition = CelestialStatus.NoRise; }
-                    if (isRise && !isSet) { c.MoonCondition = CelestialStatus.NoSet; }
-                }
-                
-            }
-            static MoonPosition GetMoonPosition(DateTime date, double lat, double lng)
-            {
-                double d = toDays(date);
-
-                CelCoords c = GetMoonCoords(d);
-                double lw = rad * -lng;
-                double phi = rad * lat;
-                double H = siderealTime(d, lw) - c.ra;
-                double h = altitude(H, phi, c.dec);
-
-                // formula 14.1 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-                double pa = Math.Atan2(Math.Sin(H), Math.Tan(phi) * Math.Cos(c.dec) - Math.Sin(c.dec) * Math.Cos(H));
-
-                h = h + astroRefraction(h); // altitude correction for refraction
-
-                MoonPosition mp = new MoonPosition();
-                mp.Azimuth = azimuth(H, phi, c.dec);
-                mp.Altitude = h;
-                mp.Distance = c.dist;
-                mp.ParallacticAngle = pa;
-                return mp;
-            }
-            static CelCoords GetMoonCoords(double d)
-            { // geocentric ecliptic coordinates of the moon
-
-                double L = rad * (218.316 + 13.176396 * d), // ecliptic longitude
-                    M = rad * (134.963 + 13.064993 * d), // mean anomaly
-                    F = rad * (93.272 + 13.229350 * d),  // mean distance
-
-                    l = L + rad * 6.289 * Math.Sin(M), // longitude
-                    b = rad * 5.128 * Math.Sin(F),     // latitude
-                    dt = 385001 - 20905 * Math.Cos(M);  // distance to the moon in km
-                CelCoords mc = new CelCoords();
-                mc.ra = rightAscension(l, b);
-                mc.dec = declination(l, b);
-                mc.dist = dt;
-                return mc;
-            }
-
-            public static void GetMoonIllumination(DateTime date,Celestial c)
-            {
-                date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
-                double d = toDays(date);
-                CelCoords s = GetSunCoords(d);
-                CelCoords m = GetMoonCoords(d);
-
-                double sdist = 149598000,
-                phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra)),
-                inc = Math.Atan2(sdist * Math.Sin(phi), m.dist - sdist * Math.Cos(phi)),
-                angle = Math.Atan2(Math.Cos(s.dec) * Math.Sin(s.ra - m.ra), Math.Sin(s.dec) * Math.Cos(m.dec) -
-                        Math.Cos(s.dec) * Math.Sin(m.dec) * Math.Cos(s.ra - m.ra));
-                MoonIllum mi = new MoonIllum();
-                mi.Fraction = (1 + Math.Cos(inc)) / 2;
-                mi.Phase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
-                mi.Angle = angle;
-                c.MoonPhase = mi.Phase;
-
-            }
-
-            //Moon Time Functions
-            private static CelCoords GetSunCoords(double d)
-            {
-                double M = solarMeanAnomaly(d),
-                    L = eclipticLongitude(M);
-                CelCoords c = new CelCoords();
-                c.dec = declination(L, 0);
-                c.ra = rightAscension(L, 0);
-                return c;
-            }
-            private static double solarMeanAnomaly(double d) { return rad * (357.5291 + 0.98560028 * d); }
-
-            private static double eclipticLongitude(double M)
-            {
-                double C = rad * (1.9148 * Math.Sin(M) + 0.02 * Math.Sin(2 * M) + 0.0003 * Math.Sin(3 * M)), // equation of center
-                    P = rad * 102.9372; // perihelion of the Earth
-
-                return M + C + P + Math.PI;
-            }
-            private static DateTime hoursLater(DateTime date, double h)
-            {
-                return date.AddHours(h);
-            }
-            static double toJulian(DateTime date)
-            {
-                DateTime d = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                DateTime t = date;
-                double l = (double)(t - d).TotalMilliseconds;
-             
-                return l / dayMs - 0.5 + J1970;
-            }
-            static double toDays(DateTime date)
-            {
-                return toJulian(date) - J2000;
-            }
-            static double rightAscension(double l, double b) { return Math.Atan2(Math.Sin(l) * Math.Cos(e) - Math.Tan(b) * Math.Sin(e), Math.Cos(l)); }
-            static double declination(double l, double b) { return Math.Asin(Math.Sin(b) * Math.Cos(e) + Math.Cos(b) * Math.Sin(e) * Math.Sin(l)); }
-            static double azimuth(double H, double phi, double dec) { return Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(dec) * Math.Cos(phi)); }
-            static double altitude(double H, double phi, double dec) { return Math.Asin(Math.Sin(phi) * Math.Sin(dec) + Math.Cos(phi) * Math.Cos(dec) * Math.Cos(H)); }
-            static double siderealTime(double d, double lw) { return rad * (280.16 + 360.9856235 * d) - lw; }
-            static double astroRefraction(double h)
-            {
-                // the following formula works for positive altitudes only.
-                if (h < 0)
-                {
-                    h = 0; // if h = -0.08901179 a div/0 would occur.
-                }
-
-                // formula 16.4 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-                // 1.02 / tan(h + 10.26 / (h + 5.10)) h in degrees, result in arc minutes -> converted to rad:
-                return 0.0002967 / Math.Tan(h + 0.00312536 / (h + 0.08901179));
-            }
-
-            public class MoonTimes
-            {
-                public DateTime set { get; set; }
-                public DateTime rise { get; set; }
-                public CelestialStatus status{get;set;}
-            }
-            public class MoonPosition
-            {
-                public double Azimuth { get; set; }
-                public double Altitude { get; set; }
-                public double Distance { get; set; }
-                public double ParallacticAngle { get; set; }
-            }
-            public class CelCoords
-            {
-                public double ra { get; set; }
-                public double dec { get; set; }
-                public double dist { get; set; }
-            }
-            public class MoonIllum
-            {
-                public double Fraction { get; set; }
-                public double Angle { get; set; }
-                public double Phase { get; set; }
-            }
-        }
-        #endregion
-    }
-      
 }
