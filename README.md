@@ -1,11 +1,12 @@
-# CoordinateSharp v1.0.1.1
-A simple library designed to assist with geographic coordinate format conversions in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input formats to various output formats. Most properties in the library are observable, and may be used with MVVM patterns. The ability to calculate various pieces of celestial information (sunset, moon illum..), also exist in this library as it is being used for a planning application.
+# CoordinateSharp v1.1.1.4
+A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library are observable, and may be used with MVVM patterns. This library can now convert Lat/Long to UTM/MGRS. The ability to calculate various pieces of celestial information (sunset, moon illum..), also exist in this library as it is being used for a planning application.
+
 
 # Getting Started
 These instructions will get a copy of the library running on your local machine for development and testing purposes.
 
 ### Prerequisites
-.NET 4.5.1 or greater. The required framework will be lowered on the next update.
+.NET 4.0 or greater.
 
 ### Installing
 CoordinateSharp is now available as a nuget packet from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
@@ -14,68 +15,55 @@ CoordinateSharp is now available as a nuget packet from [nuget.org](https://www.
 
 ## Creating a Coordinate object
 
+The following method creates a coordinate based on the standard Decimal Degree format.
+It will then output to the default Degree Minute Seconds format.
+
 ```C#
-//The following method creates a coordinate based on the standard and most widely used Decimal Degree format.
-//It will then output to the default Degree Minute Seconds format
 Coordinate c = new Coordinate(40.57682, -70.75678);
 c.ToString(); //Ouputs N 40º 34' 36.552" W 70º 45' 24.408"
 ```
+
 ### Creating a Coordinate object from a non Decimal Degree formatted Lat/Long
 
+Using the known Decimal Minute Seconds formatted coordinate N 40º 34' 36.552" W 70º 45' 24.408.
+
 ```C#
-//Using the known Decimal Minute Seconds formatted coordinate N 40º 34' 36.552" W 70º 45' 24.408"
 Coordinate c = new Coordinate();
 c.Latitude = new CoordinatePart(40,34, 36.552, CoordinatePosition.N, c);
 c.Longitude = new CoordinatePart(70, 45, 24.408, CoordinatePosition.W, c);
 c.Latitude.ToDouble(); // Returns 40.57682
-c.Longitude.ToDouble(); //Returns 70.75678
+c.Longitude.ToDouble(); //Returns -70.75678
 ```
 ### Formatting a Coordinate
 
-Coordinates may be formatted by passing 2 character format rules. Multiple rules may be passed by separating each variable by a semi-colon. The following example displays a Degree DecimalMinute formatted Lat/Long with leading zeros rounded to the third decimal.
+Coordinate string formats may be changed by passing or editing the ```CoordinateFormatOptions``` property contained in the ```Coordinate``` object.
+
 ```C#
-//Using Lat/Long 40.57682, -70.75678 
-string format = "FM:LT:R3";
-c.ToString(format); // N 40º 34.609' W 070º 045.407'
-c.Latitude.ToString(format);// N 40º 34.609'
-c.Longitude.ToString(format);// W 070º 45.407'
+Coordinate c = new Coordinate(40.57682, -70.75678);
+c.CoordinateFormatOptions.CoordinateFormatType = CoordinateFormatType.Degree_Decimal_Minutes;
+c.CoordinateFormatOptions.Display_Leading_Zeros = true;
+c.CoordinateFormatOptions.Round = 3;
+c.ToString(); // N 40º 34.609' W 070º 045.407'
+c.Latitude.ToString();// N 40º 34.609'
+c.Longitude.ToString();// W 070º 45.407'
 ```
 
-The first character of the format is the rule with the second being the value. Each rule expects a specific value type. Reference below for formatting options. Everything in parentheses represents a value that may be passed with the rule.
+### Universal Transverse Mercator (UTM) & Military Grid Reference System (MGRS) Formats
 
-If a format is not passed for a specific rule, the default rule will be executed during format.
+UTM and MGRS formats are available for display. They are converted from the lat/long decimal values based on the WGS 84 datum. You cannot convert these formats back to lat/long at this time. These formats are accessible from the ```Coordinate``` object.
 
-### Formatting Rules
-
-```
-F(D,M,S,C) = Format. Format values must be either 'D' (Decimal Degree) 'M' (Degree Decimal Minute) 'S' (Degree Minute Second) 'C' (Decimal): ex. 'FS' = N 70º 40' 56.678"
-R(0-9) = Rounding. Rounding values may be 0-9. Any decimals will be rounded to the declared digit. ex. 70.635473 with 'R3' = 70.635
-L(T,F) = Leading Zeros. Leading zeros may be set 'T' (true) or 'F' (false). ex. W 70.645 with 'LT' = 070.645
-T(T,F) = Trailing Zeros. Trailing zeros may be set 'T' (true) or 'F' (false). Will only trail to the specified Rounding rule. ex 70.746 with 'R5' & 'TT' = 70.74600
-B(T,F) = Display Symbols. Display symbols may be set 'T' (true) or 'F' (false). Will hide degree, minute, seconds symbols if false
-D(T,F) = Display Degree Symbol. May be set 'T' (true) or 'F' (false). May only be set when displaying symbols. Will hide degree symbol if false
-M(T,F) = Display Minute Symbol. May be set 'T' (true) or 'F' (false). May only be set when displaying symbols. Will hide minute symbol if false
-S(T,F) = Display Second Symbol. May be set 'T' (true) or 'F' (false). May only be set when displaying symbols. Will hide seconds symbol if false
-H(T,F) = Display Hyphens. May be set 'T' (true) or 'F' (false). Will display hyphens between degrees, minute, seconds if set true.
-P(F,L) = Position Display. May be set to 'F' (first) or 'L' (last). Will display postion letter where disired
-
-Defaults:
-Format: (FS) Degrees Minutes Seconds
-Rounding: Dependent upon selected format
-Leading Zeros: False
-Trailing Zeros: False
-Display Symbols: True (All Symbols display)
-Display Hyphens: False
-Position Display: First        
+```C#
+Coordinate c = new Coordinate(40.57682, -70.75678);
+c.UTM.ToString(); // Outputs 19T 351307mE 4493264mN
 ```
 
 ### Binding and MVVM
 
-The properties in CoordinateSharp are observable and may be bound. Format strings may also be passed from the front end. Example in WPF/XAML
+The properties in CoordinateSharp are observable and may be bound. If you wish to bind to the entire ```CoordinatePart``` bind to the ```Display``` property. This property can be notified of changes, unlike the overridden ```ToString()```
 
 Output Example:
 ```XAML
- <TextBlock Text="{Binding Path=DataContext.Latitude, StringFormat='FS:TT', UpdateSourceTrigger=PropertyChanged}"/>
+ <TextBlock Text="{Binding Path=DataContext.Latitude.Display, UpdateSourceTrigger=PropertyChanged}"/>
  ```
  Input Example:
  ```XAML
@@ -85,7 +73,7 @@ Output Example:
  <TextBox Text="{Binding Path=DataContext.Latitude.Seconds, StringFormat={}{0:0.####}, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
  ```
  
- It is important that input boxes be set with 'ValidatesOnExceptions=True'. This will ensure boxes display input erros when incorrect values are passed.
+ It is important that input boxes be set with 'ValidatesOnExceptions=True'. This will ensure UIElements display input erros when incorrect values are passed.
  
  ## Celestial Information
  
@@ -138,5 +126,7 @@ suncalc's moon calculations are based on "Astronomical Algorithms" 2nd edition b
  & [These Formulas](http://aa.quae.nl/en/reken/hemelpositie.html formulas)
 
 Calculations for illumination parameters of the moon based on [NASA Formulas](http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro) and Chapter 48 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
+
+UTM & MGRS Conversions were referenced from [Sami Salkosuo's j-coordconvert library](https://www.ibm.com/developerworks/library/j-coordconvert/)
   
   
