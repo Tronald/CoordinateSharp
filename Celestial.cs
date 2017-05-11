@@ -10,7 +10,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Sun and Moon information
     /// </summary>
-    public class Celestial
+    public class Celestial : INotifyPropertyChanged
     {
         //When as rise or a set does not occur, the DateTime will return null
         /// <summary>
@@ -117,6 +117,15 @@ namespace CoordinateSharp
             MoonCalc.GetMoonTimes(date, lat, longi, c);
             MoonCalc.GetMoonIllumination(date, c);
             return c;
-        }       
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string propName)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+            }
+        }
     }
 }

@@ -6,6 +6,42 @@ using System.Text;
 namespace CoordinateSharp
 {
     /// <summary>
+    /// Used to pass coordinate formatting values to the Coordinate object
+    /// </summary>
+    public class CoordinateFormatOptions
+    {
+        /// <summary>
+        /// Set default values with the constructor
+        /// </summary>
+        public CoordinateFormatOptions()
+        {
+            Format = CoordinateFormatType.Degree_Minutes_Seconds;
+            Round = 3;
+            Display_Leading_Zeros = false;
+            Display_Trailing_Zeros = false;
+            Display_Symbols = true;
+            Display_Degree_Symbol = true;
+            Display_Minute_Symbol = true;
+            Display_Seconds_Symbol = true;
+            Display_Hyphens = false;
+            Position_First = true;
+        }
+        public CoordinateFormatType Format { get; set; }
+        public int Round { get; set; }
+        public bool Display_Leading_Zeros { get; set; }
+        public bool Display_Trailing_Zeros { get; set; }
+        public bool Display_Symbols { get; set; }
+        public bool Display_Degree_Symbol { get; set; }
+        public bool Display_Minute_Symbol { get; set; }
+        public bool Display_Seconds_Symbol { get; set; }
+        public bool Display_Hyphens { get; set; }
+        public bool Position_First { get; set; }
+    }
+    /// <summary>
+    /// Coordinate Format Types
+    /// </summary>
+    public enum CoordinateFormatType { Decimal_Degree, Degree_Decimal_Minutes, Degree_Minutes_Seconds, Decimal }
+    /// <summary>
     /// Used for UTM/MGRS Conversions
     /// </summary>
     internal class LatZones

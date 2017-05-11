@@ -30,15 +30,12 @@ namespace CoordinateSharp
                 if (this.latZone != value)
                 {
                     this.latZone = value;
-                    this.NotifyPropertyChanged("LatZone");
+                   
                     //double[] d = FromUTM.convertUTMToLatLong(this);
                     double[] d = FromUTM(longZone, latZone, easting, northing, this);
 
                     coordinate.Latitude.DecimalDegree = d[0];                   
                     coordinate.Longitude.DecimalDegree = d[1];
-
-                    coordinate.Latitude.NotifyPropertyChanged("DecimalDegree");
-                    coordinate.Longitude.NotifyPropertyChanged("DecimalDegree");
                 }
             }
         }
@@ -53,14 +50,11 @@ namespace CoordinateSharp
                 if (this.longZone != value)
                 {
                     this.longZone = value;
-                    this.NotifyPropertyChanged("LongZone");
+                    
                     double[] d = FromUTM(longZone, latZone, easting, northing, this);
                     //double[] d = FromUTM.convertUTMToLatLong(this);
                     coordinate.Latitude.DecimalDegree = d[0];
                     coordinate.Longitude.DecimalDegree = d[1];
-
-                    coordinate.Latitude.NotifyPropertyChanged("DecimalDegree");
-                    coordinate.Longitude.NotifyPropertyChanged("DecimalDegree");
                 }
             }
         }
@@ -75,14 +69,11 @@ namespace CoordinateSharp
                 if (this.easting != value)
                 {
                     this.easting = value;
-                    this.NotifyPropertyChanged("Easting");
+                    
                     double[] d = FromUTM(longZone, latZone, easting, northing, this);
                     //double[] d = FromUTM.convertUTMToLatLong(this);
                     coordinate.Latitude.DecimalDegree = d[0];
                     coordinate.Longitude.DecimalDegree = d[1];
-
-                    coordinate.Latitude.NotifyPropertyChanged("DecimalDegree");
-                    coordinate.Longitude.NotifyPropertyChanged("DecimalDegree");
                 }
             }
         }
@@ -97,14 +88,11 @@ namespace CoordinateSharp
                 if (this.northing != value)
                 {
                     this.northing = value;
-                    this.NotifyPropertyChanged("Northing");
+
                     double[] d = FromUTM(longZone, latZone, easting, northing, this);
                     //double[] d = FromUTM.convertUTMToLatLong(this);
                     coordinate.Latitude.DecimalDegree = d[0];
                     coordinate.Longitude.DecimalDegree = d[1];
-
-                    coordinate.Latitude.NotifyPropertyChanged("DecimalDegree");
-                    coordinate.Longitude.NotifyPropertyChanged("DecimalDegree");
                 }
             }
         }
@@ -157,9 +145,7 @@ namespace CoordinateSharp
             double[] d = FromUTM(longZone, latZone, easting, northing, this);
             coordinate.Latitude.DecimalDegree = d[0];
             coordinate.Longitude.DecimalDegree = d[1];
-            coordinate.Latitude.NotifyPropertyChanged("DecimalDegree");
-            coordinate.Longitude.NotifyPropertyChanged("DecimalDegree");
-           
+            
         }
        
         /// <summary>
@@ -177,25 +163,6 @@ namespace CoordinateSharp
             return true;
         }     
 
-        /// <summary>
-        /// Property changed event handler.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// Notifies Coordinate property of changing.
-        /// </summary>
-        /// <param name="propName"></param>
-        public void NotifyPropertyChanged(string propName)
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                if (propName != null)
-                {
-                    this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                }
-            }
-        }
         /// <summary>
         /// Assigns UTM values based of Lat/Long
         /// </summary>
@@ -271,12 +238,6 @@ namespace CoordinateSharp
             utm.longZone = zone;
             utm.easting = easting;
             utm.northing = northing;
-
-            this.NotifyPropertyChanged("Northing");
-            this.NotifyPropertyChanged("Easting");
-            this.NotifyPropertyChanged("LatZone");
-            this.NotifyPropertyChanged("LongZone");
-          
         }
         /// <summary>
         /// Not yet implemented.
@@ -379,7 +340,15 @@ namespace CoordinateSharp
         public override string ToString()
         {
             return this.longZone.ToString() + this.LatZone + " " + (int)this.easting + "mE " + (int)this.northing + "mN";
-        }            
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string propName)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+            }
+        }
     }
    
 }

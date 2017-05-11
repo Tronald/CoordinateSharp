@@ -66,7 +66,7 @@ namespace CoordinateSharp
                 e = "00000" + ((int)utm.Easting).ToString();
             }
             e = e.Substring(e.Length - 5);
-            Debug.Print(e);
+           
             this.easting = Convert.ToInt32(e);
             
             string n =  ((int)utm.Northing).ToString();
@@ -75,35 +75,10 @@ namespace CoordinateSharp
                 n = "0000" + ((int)utm.Northing).ToString();
             }
             n = n.Substring(n.Length - 5);
-            Debug.Print(n);
+           
             this.northing = Convert.ToInt32(n);
-
-            this.NotifyPropertyChanged("Northing");
-            this.NotifyPropertyChanged("Easting");
-            this.NotifyPropertyChanged("LatZone");
-            this.NotifyPropertyChanged("LongZone");
-            this.NotifyPropertyChanged("Digraph");
         }
-        /// <summary>
-        /// Property changed event handler.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// Notifies Coordinate property of changing.
-        /// </summary>
-        /// <param name="propName"></param>
-        public void NotifyPropertyChanged(string propName)
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                if (propName != null)
-                {
-                    this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                }
-            }
-        }
-
+      
         /// <summary>
         /// MGRS Default String Format
         /// </summary>
@@ -111,7 +86,15 @@ namespace CoordinateSharp
         public override string ToString()
         {
             return this.longZone.ToString() + this.LatZone + " " + this.digraph + " " + ((int)this.easting).ToString("00000") + " " + ((int)this.northing).ToString("00000");
-        }            
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string propName)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+            }
+        }
         
     }
 }

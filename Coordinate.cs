@@ -17,11 +17,12 @@ namespace CoordinateSharp
         /// </summary>
         public Coordinate()
         {
+            this.FormatOptions = new CoordinateFormatOptions();
             latitude = new CoordinatePart(CoordinateType.Lat, this);
             longitude = new CoordinatePart(CoordinateType.Long, this);
             celestialInfo = new Celestial();
             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
-            mgrs = new MilitaryGridReferenceSystem(this.utm);
+            mgrs = new MilitaryGridReferenceSystem(this.utm);          
         }
         /// <summary>
         /// Creates a populated Coordinate object.
@@ -30,6 +31,7 @@ namespace CoordinateSharp
         /// <param name="longi">Decimal format longitude</param>
         public Coordinate(double lat, double longi)
         {
+            this.FormatOptions = new CoordinateFormatOptions();
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
             celestialInfo = new Celestial(lat,longi,new DateTime(1900,1,1));
@@ -44,6 +46,7 @@ namespace CoordinateSharp
         /// <param name="date">DateTime you wish to use for celestial calculation</param>
         public Coordinate(double lat, double longi, DateTime date)
         {
+            this.FormatOptions = new CoordinateFormatOptions();
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
             celestialInfo = new Celestial(lat, longi, date);            
@@ -78,12 +81,11 @@ namespace CoordinateSharp
             //utm = new UniversalTransverseMercator(latz, longz, easting, northing, this);
             //mgrs = new MilitaryGridReferenceSystem(this.utm);    
         }
-
+        
         private CoordinatePart latitude;
         private CoordinatePart longitude;
         private UniversalTransverseMercator utm;
-        private MilitaryGridReferenceSystem mgrs;
-
+        private MilitaryGridReferenceSystem mgrs;        
         private DateTime geoDate;
         private Celestial celestialInfo;
 
@@ -100,9 +102,9 @@ namespace CoordinateSharp
                     if (value.Position == CoordinatesPosition.E || value.Position == CoordinatesPosition.W)
                     { throw new ArgumentException("Invalid Position", "Latitudinal positions cannot be set to East or West."); }
                     this.latitude = value;
-                    this.NotifyPropertyChanged("Latitude");
+                   
                     celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
-                    this.NotifyPropertyChanged("CelestialInfo");
+                 
                 }
             }
         }
@@ -118,10 +120,8 @@ namespace CoordinateSharp
                 {
                     if (value.Position == CoordinatesPosition.N || value.Position == CoordinatesPosition.S)
                     { throw new ArgumentException("Invalid Position", "Longitudinal positions cannot be set to North or South."); }
-                    this.longitude = value;
-                    this.NotifyPropertyChanged("Longitude");
-                    celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
-                    this.NotifyPropertyChanged("CelestialInfo");
+                    this.longitude = value;                   
+                    celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);                  
                 }
             }
         }     
@@ -136,9 +136,11 @@ namespace CoordinateSharp
                 if (this.geoDate != value)
                 {
                     this.geoDate = value;
-                    this.NotifyPropertyChanged("GeoDate");
+                  
                     celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
-                    this.NotifyPropertyChanged("CelestialInfo");                 
+                    this.NotifyPropertyChanged("GeoDate");
+                    this.NotifyPropertyChanged("CelestialInfo");
+                                    
                 }
             }
         }
@@ -189,7 +191,20 @@ namespace CoordinateSharp
         {
             get { return this.celestialInfo; }          
         }
-
+        /// <summary>
+        /// Formatting Options
+        /// </summary>
+        public CoordinateFormatOptions FormatOptions { get; set; }
+        /// <summary>
+        /// Format Coordinate String
+        /// </summary>
+        public string Display
+        {
+            get
+            {
+                return this.Latitude.Display + " " + this.Longitude.Display;
+            }
+        }
         /// <summary>
         /// Overridden Coordinate ToString() method
         /// </summary>
@@ -206,6 +221,7 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="format">Format string</param>
         /// <returns>Custom formatted coordinate</returns>
+        [System.Obsolete("The 2 character format string method is deprecated. The CoordinateFormatOptions method should be used when passing formats with ToString().")]      
         public string ToString(string format)
         {
             string latString = latitude.ToString(format.ToUpper());
@@ -213,68 +229,43 @@ namespace CoordinateSharp
             return latString + " " + longSting;         
         }
         /// <summary>
-        /// Overridden Coordinate ToString() method that accepts formatting for XAML Binding. 
+        /// Overridden Coordinate ToString() method that accepts formatting. 
         /// Refer to documentation for coordinate format options
         /// </summary>
-        /// <param name="format">Format string</param>
-        /// <param name="formatProvider">Fromat Provider</param>
+        /// <param name="options">CoordinateFormatOptions</param>
         /// <returns>Custom formatted coordinate</returns>
-        public string ToString(string format, IFormatProvider formatProvider)
+        public string ToString(CoordinateFormatOptions options)
         {
-            string latString = latitude.ToString(format.ToUpper());
-            string longSting = longitude.ToString(format.ToUpper());
+            string latString = latitude.ToString(options);
+            string longSting = longitude.ToString(options);
             return latString + " " + longSting;
-        }
-              
-        /// <summary>
-        /// Property changed event handler.
-        /// </summary>
+        }     
+
         public event PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// Notifies Coordinate property of changing.
-        /// </summary>
-        /// <param name="propName"></param>
         public void NotifyPropertyChanged(string propName)
         {
             if (this.PropertyChanged != null)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                if (propName != null)
+                switch (propName)
                 {
-                    this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+                    case "CelestialInfo":
+                        this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);
+                        break;
+                    case "UTM":
+                        this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
+                        break;
+                    case "MGRS":
+                        this.MGRS.ToMGRS(this.utm);
+                        break;
                 }
-            }
-        }   
-        /// <summary>
-        /// Property changed event to be fired from the Coordinate subclass.
-        /// </summary>
-        /// <param name="type">Coordinate type</param>
-        public void NotifyPropertyChanged(CoordinateType type)
-        {
-            if (this.PropertyChanged != null)
-            {
-                string propName = string.Empty;
-                if (type == CoordinateType.Lat) { propName = "Latitude"; }
-                if (type == CoordinateType.Long) { propName = "Longitude"; }
-                if (propName == string.Empty) { return; }
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                if (propName != null)
-                {
-                    this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                    this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);                   
-                    this.NotifyPropertyChanged("CelestialInfo");
-                    this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
-                    this.mgrs.ToMGRS(this.utm);
-                    this.NotifyPropertyChanged("UTM");
-                    this.NotifyPropertyChanged("MGRS");
-                }
             }
         }
     }
     /// <summary>
     /// Observable class for handling a single coordinate (Lat or Long)
     /// </summary>
-    public class CoordinatePart : IFormattable, INotifyPropertyChanged
+    public class CoordinatePart : INotifyPropertyChanged
     {
         //Format Example String "FS:R4:LT:TT:MF:HT" = N-075º-40'-35.3645"
 
@@ -310,7 +301,7 @@ namespace CoordinateSharp
         private int minutes;
         private double seconds;
         private CoordinatesPosition position;
-        private CoordinateType type;
+        private CoordinateType type;    
 
         /// <summary>
         /// Used to determine and notify the Coordinate Parts parent.
@@ -354,19 +345,19 @@ namespace CoordinateSharp
 
                     }
                     this.decimalDegree = value;
-                    this.NotifyPropertyChanged("DecimalDegree");
+                   
                     //Update Position
                     if ((this.position == CoordinatesPosition.N || this.position == CoordinatesPosition.E) && this.decimalDegree < 0)
                     {
                         if (this.type == CoordinateType.Lat) { this.position = CoordinatesPosition.S; }
                         else { this.position = CoordinatesPosition.W; }
-                        this.NotifyPropertyChanged("Position");
+                       
                     }
                     if ((this.position == CoordinatesPosition.W || this.position == CoordinatesPosition.S) && this.decimalDegree >= 0)
                     {
                         if (this.type == CoordinateType.Lat) { this.position = CoordinatesPosition.N; }
                         else { this.position = CoordinatesPosition.E; }
-                        this.NotifyPropertyChanged("Position");
+                      
                     }
                     //Update the Degree & Decimal Minute
                     double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive for calculations
@@ -381,12 +372,12 @@ namespace CoordinateSharp
                     if (this.degrees != df)
                     {
                         this.degrees = df;
-                        this.NotifyPropertyChanged("Degrees");
+                      
                     }
                     if (this.decimalMinute != dm)
                     {
                         this.decimalMinute = dm;
-                        this.NotifyPropertyChanged("DecimalMinutes");
+                   
                     }
                     //Update Minutes Seconds              
                     double dmFloor = Math.Floor(dm); //Get number left of decimal to grab minute value
@@ -400,14 +391,13 @@ namespace CoordinateSharp
                     if (this.minutes != mF)
                     {
                         this.minutes = mF;
-                        this.NotifyPropertyChanged("Minutes");
+                      
                     }
                     if (this.seconds != secs)
                     {
-                        this.seconds = secs;
-                        this.NotifyPropertyChanged("Seconds");
+                        this.seconds = secs;                    
                     }
-                    NotifyParent();
+                    NotifyProperties(PropertyTypes.DecimalDegree);
                 }
             }
         }
@@ -438,7 +428,7 @@ namespace CoordinateSharp
 
 
                     this.decimalMinute = value;
-                    this.NotifyPropertyChanged("DecimalMinute");
+                   
 
                     decimal decValue = Convert.ToDecimal(value); //Convert value to decimal for precision during calculation
                     decimal dmFloor = Math.Floor(decValue); //Extract minutes
@@ -450,14 +440,12 @@ namespace CoordinateSharp
                     if (this.decimalDegree < 0) { newDD = newDD * -1; } //Restore negative if needed
 
                     this.decimalDegree = Convert.ToDouble(newDD);  //Convert back to double for storage                      
-                    this.NotifyPropertyChanged("DecimalDegree");
+                   
 
                     this.minutes = Convert.ToInt32(dmFloor); //Convert minutes to int for storage
-                    this.NotifyPropertyChanged("Minutes");
-                    this.seconds = Convert.ToDouble(secs); //Convert seconds to double for storage
-                    this.NotifyPropertyChanged("Seconds");
-                    //Notify parent of change
-                    NotifyParent();
+                   
+                    this.seconds = Convert.ToDouble(secs); //Convert seconds to double for storage 
+                    NotifyProperties(PropertyTypes.DecimalMinute);              
                 }
             }
 
@@ -491,7 +479,6 @@ namespace CoordinateSharp
                     decimal f = Convert.ToDecimal(this.degrees);
 
                     this.degrees = value;
-                    this.NotifyPropertyChanged("Degrees");
 
                     double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive for calculations
                     decimal dDec = Convert.ToDecimal(degABS); //Convert to Decimal for precision during calculations              
@@ -502,11 +489,7 @@ namespace CoordinateSharp
                     if (this.decimalDegree < 0) { newDD *= -1; } //Set negative as required
 
                     this.decimalDegree = Convert.ToDouble(newDD); // Convert decimalDegree to double for storage
-
-                    this.NotifyPropertyChanged("DecimalDegree");
-
-                    //Notify Parent Property
-                    NotifyParent();
+                    NotifyProperties(PropertyTypes.Degree);
                 }
             }
         }
@@ -542,7 +525,7 @@ namespace CoordinateSharp
                     decimal f = Convert.ToDecimal(this.degrees); //Convert to degree to keep precision during calculation 
 
                     this.minutes = value;
-                    this.NotifyPropertyChanged("Minutes");
+                   
 
                     double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive
                     decimal dDec = Convert.ToDecimal(degABS); //Convert to decimalDegree for precision during calucation                        
@@ -555,16 +538,13 @@ namespace CoordinateSharp
                     decimal newDM = this.minutes + secs;//Add seconds to minutes for decimalMinute
                     double decMin = Convert.ToDouble(newDM); //Convert decimalMinute to double for storage
                     this.decimalMinute = decMin; //Round to correct precision
-                    this.NotifyPropertyChanged("DecimalMinute");
+                   
 
                     newDM /= 60; //Convert decimalMinute to storage format
                     decimal newDeg = f + newDM; //Add value to degree for decimalDegree
                     if (this.decimalDegree < 0) { newDeg *= -1; }// Set to negative as required.
                     this.decimalDegree = Convert.ToDouble(newDeg);//Convert to double and roun to correct precision for storage
-                    this.NotifyPropertyChanged("DecimalDegree");
-
-                    //Notify Parent Property
-                    NotifyParent();
+                    NotifyProperties(PropertyTypes.Minute);
                 }
             }
         }
@@ -603,7 +583,7 @@ namespace CoordinateSharp
                         throw new ArgumentOutOfRangeException("Seconds out of range", "Seconds cannot be less than 0");
                     }
                     this.seconds = value;
-                    this.NotifyPropertyChanged("Seconds");
+                 
 
                     double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive
                     double degFloor = Math.Truncate(degABS); //Truncate the number left of the decimal
@@ -614,20 +594,29 @@ namespace CoordinateSharp
                     decimal dm = this.minutes + secs;//Add seconds to minutes for decimalMinute
                     double minFD = Convert.ToDouble(dm); //Convert decimalMinute for storage
                     this.decimalMinute = minFD;//Round to proper precision
-                    this.NotifyPropertyChanged("DecimalMinute");
-
+                  
                     decimal nm = Convert.ToDecimal(this.decimalMinute) / 60;//Convert decimalMinute to decimal and divide by 60 to get storage format decimalMinute
                     double newDeg = this.degrees + Convert.ToDouble(nm);//Convert to double and add to degree for storage decimalDegree
                     if (this.decimalDegree < 0) { newDeg *= -1; }//Make negative as needed
-                    this.decimalDegree = newDeg;//Update decimalDegree and round to proper precision
-                    this.NotifyPropertyChanged("DecimalDegree");
-
-                    //Notify Parent Property
-                    NotifyParent();
+                    this.decimalDegree = newDeg;//Update decimalDegree and round to proper precision    
+                    NotifyProperties(PropertyTypes.Second);
+                }
+            }
+        }       
+        public string Display
+        {
+            get 
+            {
+                if (this.Parent != null)
+                {
+                    return ToString(Parent.FormatOptions);
+                }
+                else
+                {
+                    return ToString();
                 }
             }
         }
-
         /// <summary>
         /// Observable coordinate position
         /// </summary>
@@ -648,11 +637,7 @@ namespace CoordinateSharp
                     }
                     this.decimalDegree *= -1; // Change the position
                     this.position = value;
-                    this.NotifyPropertyChanged("DecimalDegree");
-                    this.NotifyPropertyChanged("Position");
-                    //Notify Parent
-                    NotifyParent();
-
+                    NotifyProperties(PropertyTypes.Position);
                 }
             }
         }
@@ -663,7 +648,7 @@ namespace CoordinateSharp
         /// <param name="t">Parent Coordinates object</param>
         /// <param name="c">Parent Coordinates object</param>
         public CoordinatePart(CoordinateType t, Coordinate c)
-        {
+        {     
             this.Parent = c;
             this.type = t;
             if (this.type == CoordinateType.Lat) { this.position = CoordinatesPosition.N; }
@@ -820,31 +805,35 @@ namespace CoordinateSharp
             return FormatString("");
         }
         /// <summary>
-        /// Overridden Coordinate ToString() method that accepts formatting. 
-        /// Refer to documentation for coordinate format options
+        /// Overridden Coordinate ToString() method that accepts formatting.
+        /// Does not require the CoordinatePart format property to be set.
+        /// Refer to documentation for coordinate format options.
         /// </summary>
         /// <param name="format">Format string</param>
         /// <returns>Custom formatted coordinate part</returns>
+        [System.Obsolete("The 2 character format string method is deprecated. The CoordinateFormatOptions method should be used when passing formats with ToString().")]
         public string ToString(string format)
         {
+            if (format == null)
+            {
+                return FormatString("");
+            }
             return FormatString(format.ToUpper());
         }
         /// <summary>
-        /// Overridden Coordinate ToString() method that accepts formatting for XAML Binding. 
-        /// Refer to documentation for coordinate format options
+        /// Formatted CoordinatePart string.
         /// </summary>
-        /// <param name="format">Format string</param>
-        /// <param name="formatProvider">Fromat Provider</param>
-        /// <returns>Custom formatted coordinate part</returns>
-        public string ToString(string format, IFormatProvider formatProvider)
+        /// <param name="options">CoordinateFormatOptions</param>
+        /// <returns>string</returns>
+        public string ToString(CoordinateFormatOptions options)
         {
-            return FormatString(format.ToUpper());
+            return FormatString(options);
         }
         /// <summary>
         /// String formatting logic
         /// </summary>
         /// <param name="format">Formated Coordinate</param>
-        /// <returns></returns>
+        /// <returns>string</returns>
         private string FormatString(string format)
         {
             ToStringType type = ToStringType.Degree_Minute_Second;
@@ -1035,6 +1024,75 @@ namespace CoordinateSharp
 
             return string.Empty;
         }
+        /// <summary>
+        /// String formatting logic
+        /// </summary>
+        /// <param name="options">CoordinateFormatOptions</param>
+        /// <returns>string</returns>
+        private string FormatString(CoordinateFormatOptions options)
+        {
+            ToStringType type = ToStringType.Degree_Minute_Second;
+            int? rounding = null;
+            bool lead = false;
+            bool trail = false;
+            bool hyphen = false;
+            bool symbols = true;
+            bool degreeSymbol = true;
+            bool minuteSymbol = true;
+            bool secondsSymbol = true;
+            bool positionFirst = true;           
+
+            #region Assign Formatting Rules
+            switch (options.Format)
+            {
+                case CoordinateFormatType.Degree_Minutes_Seconds:
+                    type = ToStringType.Degree_Minute_Second;
+                    break;
+                case CoordinateFormatType.Degree_Decimal_Minutes:
+                    type = ToStringType.Degree_Decimal_Minute;
+                    break;
+                case CoordinateFormatType.Decimal_Degree:
+                    type = ToStringType.Decimal_Degree;
+                    break;
+                case CoordinateFormatType.Decimal:
+                    type = ToStringType.Decimal;
+                    break;
+                default:
+                    type = ToStringType.Degree_Minute_Second;
+                    break;
+            }
+            rounding = options.Round;
+            lead = options.Display_Leading_Zeros;
+            trail = options.Display_Trailing_Zeros;
+            symbols = options.Display_Symbols;
+            degreeSymbol = options.Display_Degree_Symbol;
+            minuteSymbol = options.Display_Minute_Symbol;
+            secondsSymbol = options.Display_Seconds_Symbol;
+            hyphen = options.Display_Hyphens;
+            positionFirst = options.Position_First;                     
+            #endregion
+
+            switch (type)
+            {
+                case ToStringType.Decimal_Degree:
+                    if (rounding == null) { rounding = 6; }
+                    return ToDecimalDegreeString(rounding.Value, lead, trail, symbols, degreeSymbol, positionFirst, hyphen);
+                case ToStringType.Degree_Decimal_Minute:
+                    if (rounding == null) { rounding = 3; }
+                    return ToDegreeDecimalMinuteString(rounding.Value, lead, trail, symbols, degreeSymbol, minuteSymbol, hyphen, positionFirst);
+                case ToStringType.Degree_Minute_Second:
+                    if (rounding == null) { rounding = 3; }
+                    return ToDegreeMinuteSecondString(rounding.Value, lead, trail, symbols, degreeSymbol, minuteSymbol, secondsSymbol, hyphen, positionFirst);
+                case ToStringType.Decimal:
+                    if (rounding == null) { rounding = 9; }
+                    double dub = this.ToDouble();
+                    dub = Math.Round(dub, rounding.Value);
+                    string lt = Leading_Trailing_Format(lead, trail, rounding.Value, Position);
+                    return string.Format(lt, dub);
+            }
+
+            return string.Empty;
+        }
         //DMS Coordinate Format
         private string ToDegreeMinuteSecondString(int rounding, bool lead, bool trail, bool symbols, bool degreeSymbol, bool minuteSymbol, bool secondSymbol, bool hyphen, bool positionFirst)
         {
@@ -1201,50 +1259,81 @@ namespace CoordinateSharp
             return "'" + argument + "' is not a valid argument for string format rule: " + rule + ".";
         }
 
+        private enum ToStringType
+        {
+            Decimal_Degree, Degree_Decimal_Minute, Degree_Minute_Second, Decimal
+        }
         /// <summary>
-        /// Property changd event handler
+        /// Notify the correct properties and parent properties
         /// </summary>
+        /// <param name="p">Property Type</param>
+        private void NotifyProperties(PropertyTypes p)
+        {
+            switch (p)
+            {
+                case PropertyTypes.DecimalDegree:
+                    this.NotifyPropertyChanged("DecimalDegree");
+                    this.NotifyPropertyChanged("DecimalMinute");
+                    this.NotifyPropertyChanged("Degrees");
+                    this.NotifyPropertyChanged("Minutes");
+                    this.NotifyPropertyChanged("Seconds");
+                    this.NotifyPropertyChanged("Position");
+                    break;
+                case PropertyTypes.DecimalMinute:
+                    this.NotifyPropertyChanged("DecimalDegree");
+                    this.NotifyPropertyChanged("DecimalMinute");
+                    this.NotifyPropertyChanged("Minutes");
+                    this.NotifyPropertyChanged("Seconds");
+                    break;
+                case PropertyTypes.Degree:
+                    this.NotifyPropertyChanged("DecimalDegree");
+                    this.NotifyPropertyChanged("Degree");                   
+                    break;
+                case PropertyTypes.Minute:
+                    this.NotifyPropertyChanged("DecimalDegree");
+                    this.NotifyPropertyChanged("DecimalMinute");
+                    this.NotifyPropertyChanged("Minutes");
+                    break;
+                case PropertyTypes.Position:
+                    this.NotifyPropertyChanged("DecimalDegree");                    
+                    this.NotifyPropertyChanged("Position");
+                    break;
+                case PropertyTypes.Second:
+                    this.NotifyPropertyChanged("DecimalDegree");
+                    this.NotifyPropertyChanged("DecimalMinute");                
+                    this.NotifyPropertyChanged("Seconds");                 
+                    break;               
+                default:
+                    this.NotifyPropertyChanged("DecimalDegree");
+                    this.NotifyPropertyChanged("DecimalMinute");
+                    this.NotifyPropertyChanged("Degrees");
+                    this.NotifyPropertyChanged("Minutes");
+                    this.NotifyPropertyChanged("Seconds");
+                    this.NotifyPropertyChanged("Position");
+                    break;
+            }
+            this.NotifyPropertyChanged("Display");
+            this.Parent.NotifyPropertyChanged("Display");
+            this.Parent.NotifyPropertyChanged("CelestialInfo");
+            this.Parent.NotifyPropertyChanged("UTM");
+            this.Parent.NotifyPropertyChanged("MGRS");
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// Notifies the Coordinate Part of a property change
-        /// </summary>
-        /// <param name="propName"></param>
         public void NotifyPropertyChanged(string propName)
         {
             if (this.PropertyChanged != null)
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                if (propName != null)
-                {
-                    this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-                    if (Position == CoordinatesPosition.N || Position == CoordinatesPosition.S)
-                    {
-                        Parent.NotifyPropertyChanged(CoordinateType.Lat);
-                    }
-                    if (Position == CoordinatesPosition.E || Position == CoordinatesPosition.W)
-                    {
-                        Parent.NotifyPropertyChanged(CoordinateType.Long);
-                    }
-                }
             }
-        }
-        private void NotifyParent()
-        {
-            //Notify Parent class of change
-            if (type == CoordinateType.Lat)
-            {
-                this.Parent.NotifyPropertyChanged(CoordinateType.Lat);
-            }
-            if (type == CoordinateType.Long)
-            {
-                this.Parent.NotifyPropertyChanged(CoordinateType.Long);
-            }
-            
-        }
-        private enum ToStringType
-        {
-            Decimal_Degree, Degree_Decimal_Minute, Degree_Minute_Second, Decimal
         }
 
+        /// <summary>
+        /// Used for notifying the correct properties
+        /// </summary>
+        private enum PropertyTypes
+        {
+            DecimalDegree, DecimalMinute, Position, Degree, Minute, Second, FormatChange
+        }
     }
 }
