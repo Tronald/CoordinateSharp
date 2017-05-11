@@ -8,7 +8,7 @@ using System.ComponentModel;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Military Grid Reference System (MGRS)
+    /// Military Grid Reference System (MGRS). Uses the WGS 84 Datum.
     /// Relies upon values from the UniversalTransverseMercator class
     /// </summary>
     public class MilitaryGridReferenceSystem : INotifyPropertyChanged
@@ -19,26 +19,41 @@ namespace CoordinateSharp
         private double northing;
         private string digraph;
 
+        /// <summary>
+        /// MGRS Zone Letter
+        /// </summary>
         public string LatZone
         {
             get { return this.latZone; }
             
         }
+        /// <summary>
+        /// MGRS Zone Number
+        /// </summary>
         public int LongZone
         {
             get { return this.longZone; }
            
         }
+        /// <summary>
+        /// MGRS Easting
+        /// </summary>
         public double Easting
         {
             get { return this.easting; }
           
         }
+        /// <summary>
+        /// MGRS Northing
+        /// </summary>
         public double Northing
         {
             get { return this.northing; }
            
         }
+        /// <summary>
+        /// MGRS Digraph
+        /// </summary>
         public string Digraph
         {
             get { return this.digraph; }
@@ -87,6 +102,7 @@ namespace CoordinateSharp
         {
             return this.longZone.ToString() + this.LatZone + " " + this.digraph + " " + ((int)this.easting).ToString("00000") + " " + ((int)this.northing).ToString("00000");
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged(string propName)
         {

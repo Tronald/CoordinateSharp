@@ -8,7 +8,7 @@ using System.ComponentModel;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Universal Transverse Mercator (UTM) coordinate system
+    /// Universal Transverse Mercator (UTM) coordinate system. Uses the WGS 84 Datum.
     /// </summary>
     public class UniversalTransverseMercator : INotifyPropertyChanged
     {

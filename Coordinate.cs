@@ -196,7 +196,7 @@ namespace CoordinateSharp
         /// </summary>
         public CoordinateFormatOptions FormatOptions { get; set; }
         /// <summary>
-        /// Format Coordinate String
+        /// Formatted coordinate String
         /// </summary>
         public string Display
         {
@@ -603,6 +603,9 @@ namespace CoordinateSharp
                 }
             }
         }       
+        /// <summary>
+        /// Formate coordinate part string
+        /// </summary>
         public string Display
         {
             get 
@@ -802,7 +805,7 @@ namespace CoordinateSharp
         /// <returns>Degree Minute Seconds formated coordinate part. Seconds round to the 3rd</returns>
         public override string ToString()
         {
-            return FormatString("");
+            return FormatString(this.Parent.FormatOptions);
         }
         /// <summary>
         /// Overridden Coordinate ToString() method that accepts formatting.
