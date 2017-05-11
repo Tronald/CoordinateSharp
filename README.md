@@ -15,7 +15,7 @@ CoordinateSharp is now available as a nuget packet from [nuget.org](https://www.
 
 # Usage Instructions
 
-## Creating a Coordinate object
+### Creating a Coordinate object
 
 The following method creates a coordinate based on the standard Decimal Degree format.
 It will then output to the default Degree Minute Seconds format.
@@ -77,7 +77,7 @@ Output Example:
  
  It is important that input boxes be set with 'ValidatesOnExceptions=True'. This will ensure UIElements display input erros when incorrect values are passed.
  
- ## Celestial Information
+ ### Celestial Information
  
  You may pull the following pieces of celestial information by passing a geodate to a Coordinate object. You may initialize an object with a date or pass it later. All dates are assumed to be in UTC. Only pass UTC DateTimes.
 
