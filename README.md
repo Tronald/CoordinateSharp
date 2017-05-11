@@ -1,6 +1,6 @@
 # CoordinateSharp v1.1.1.4
 
-A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library are observable, and may be used with MVVM patterns. This library can now convert Lat/Long to UTM/MGRS. The ability to calculate various pieces of celestial information (sunset, moon illum..), also exist in this library as it is being used for a planning application.
+A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can now convert Lat/Long to UTM/MGRS. The ability to calculate various pieces of celestial information (sunset, moon illum..), also exist in this library as it is being used for a planning application.
 
 NOTE: This version of CoordinateSharp may be a breaking update if previous versions were used with bound values. This update changes the way certain objects should be bound. The changes address the issues with bindings not updating for certain properties/classes bound to Label controls in WPF. 
 
