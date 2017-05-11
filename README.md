@@ -117,7 +117,7 @@ Output Example:
   Console.WriteLine(cel.SunRise.Value.ToString());
   ```
    
-### Acknowledgements
+# Acknowledgements
 
 SunTime calculations were adapted from NOAA and Zacky Pickholz 2008 "C# Class for Calculating Sunrise and Sunset Times" 
  [NOAA](https://www.esrl.noaa.gov/gmd/grad/solcalc/main.js)
