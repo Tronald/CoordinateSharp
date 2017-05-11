@@ -38,13 +38,13 @@ c.Longitude.ToDouble(); //Returns -70.75678
 ```
 ### Formatting a Coordinate
 
-Coordinate string formats may be changed by passing or editing the ```CoordinateFormatOptions``` property contained in the ```Coordinate``` object.
+Coordinate string formats may be changed by passing or editing the ```FormatOptions``` property contained in the ```Coordinate``` object. 
 
 ```C#
 Coordinate c = new Coordinate(40.57682, -70.75678);
-c.CoordinateFormatOptions.CoordinateFormatType = CoordinateFormatType.Degree_Decimal_Minutes;
-c.CoordinateFormatOptions.Display_Leading_Zeros = true;
-c.CoordinateFormatOptions.Round = 3;
+c.FormatOptions.CoordinateFormatType = CoordinateFormatType.Degree_Decimal_Minutes;
+c.FormatOptions.Display_Leading_Zeros = true;
+c.FormatOptions.Round = 3;
 c.ToString(); // N 40º 34.609' W 070º 045.407'
 c.Latitude.ToString();// N 40º 34.609'
 c.Longitude.ToString();// W 070º 45.407'
@@ -61,7 +61,7 @@ c.UTM.ToString(); // Outputs 19T 351307mE 4493264mN
 
 ### Binding and MVVM
 
-The properties in CoordinateSharp are observable and may be bound. If you wish to bind to the entire ```CoordinatePart``` bind to the ```Display``` property. This property can be notified of changes, unlike the overridden ```ToString()```
+The properties in CoordinateSharp are observable and may be bound. If you wish to bind to the entire ```CoordinatePart``` bind to the ```Display``` property. This property can be notified of changes, unlike the overridden ```ToString()```. The ```Display``` will reflect the formats previously specified for the ```Coordinate``` object in the code-behind.
 
 Output Example:
 ```XAML
