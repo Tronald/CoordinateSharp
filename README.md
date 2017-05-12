@@ -85,7 +85,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
 
   ```C#
   Coordinate c = new Coordinate(40.57682, -70.75678, new DateTime(2017,3,21));
-  Debug.Print(coord.CelestialInfo.SunRise.ToString()); //Outputs 3/21/2017 10:44:00 AM
+  c.CelestialInfo.SunRise.ToString(); //Outputs 3/21/2017 10:44:00 AM
   ```
   
   The following pieces of celestial information are available:
