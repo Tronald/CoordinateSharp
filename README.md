@@ -100,7 +100,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   
    ```C#
   Coordinate c = new Coordinate(85.57682, -70.75678, new DateTime(2017,8,21));
-  Debug.Print(coord.CelestialInfo.SunRise.ToString() + " " + coord.CelestialInfo.SunCondition); //Outputs UpAllDay
+  coord.CelestialInfo.SunCondition.ToString(); //Outputs UpAllDay
   ```
   
    Moon Illimination returns a value from 0.0 to 1.0. The table shown is a basic break down. You may determine Waxing and Waning types between the values shown.
@@ -116,7 +116,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   
   ```C#
   Celestial cel = Celestial.CalculateCelestialTimes(85.57682, -70.75678, new DateTime(2017,8,21));
-  Console.WriteLine(cel.SunRise.Value.ToString());
+  cel.SunRise.Value.ToString();
   ```
    
 # Acknowledgements
