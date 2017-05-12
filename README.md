@@ -67,14 +67,14 @@ The properties in CoordinateSharp implement INotifyPropertyChanged and may be bo
 
 Output Example:
 ```XAML
- <TextBlock Text="{Binding Path=DataContext.Latitude.Display, UpdateSourceTrigger=PropertyChanged}"/>
+ <TextBlock Text="{Binding Latitude.Display, UpdateSourceTrigger=PropertyChanged}"/>
  ```
  Input Example:
  ```XAML
  <ComboBox Name="latPosBox" VerticalAlignment="Center" SelectedItem="{Binding Path=DataContext.Latitude.Position, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"/>
- <TextBox Text="{Binding Path=DataContext.Latitude.Degrees, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
- <TextBox Text="{Binding Path=DataContext.Latitude.Minutes, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
- <TextBox Text="{Binding Path=DataContext.Latitude.Seconds, StringFormat={}{0:0.####}, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+ <TextBox Text="{Binding Latitude.Degrees, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+ <TextBox Text="{Binding Latitude.Minutes, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+ <TextBox Text="{Binding Latitude.Seconds, StringFormat={}{0:0.####}, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
  ```
  
  It is important that input boxes be set with 'ValidatesOnExceptions=True'. This will ensure UIElements display input erros when incorrect values are passed.
