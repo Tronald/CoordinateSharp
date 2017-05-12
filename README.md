@@ -63,7 +63,7 @@ c.UTM.ToString(); // Outputs 19T 351307mE 4493264mN
 
 ### Binding and MVVM
 
-The properties in CoordinateSharp are observable and may be bound. If you wish to bind to the entire ```CoordinatePart``` bind to the ```Display``` property. This property can be notified of changes, unlike the overridden ```ToString()```. The ```Display``` will reflect the formats previously specified for the ```Coordinate``` object in the code-behind.
+The properties in CoordinateSharp implement INotifyPropertyChanged and may be bound. If you wish to bind to the entire ```CoordinatePart``` bind to the ```Display``` property. This property can be notified of changes, unlike the overridden ```ToString()```. The ```Display``` will reflect the formats previously specified for the ```Coordinate``` object in the code-behind.
 
 Output Example:
 ```XAML
