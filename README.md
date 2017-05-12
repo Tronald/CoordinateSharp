@@ -42,9 +42,11 @@ Coordinate string formats may be changed by passing or editing the ```FormatOpti
 
 ```C#
 Coordinate c = new Coordinate(40.57682, -70.75678);
+
 c.FormatOptions.CoordinateFormatType = CoordinateFormatType.Degree_Decimal_Minutes;
 c.FormatOptions.Display_Leading_Zeros = true;
 c.FormatOptions.Round = 3;
+
 c.ToString(); // N 40º 34.609' W 070º 045.407'
 c.Latitude.ToString();// N 40º 34.609'
 c.Longitude.ToString();// W 070º 45.407'
