@@ -77,7 +77,7 @@ Output Example:
  <TextBox Text="{Binding Latitude.Seconds, StringFormat={}{0:0.####}, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
  ```
  
-NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'. This will ensure UIElements display input erros when incorrect values are passed.
+NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'. This will ensure UIElements display input errors when incorrect values are passed.
  
  ### Celestial Information
  
