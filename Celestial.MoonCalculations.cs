@@ -117,22 +117,21 @@ namespace CoordinateSharp
             return mp;
         }
         static CelCoords GetMoonCoords(double d)
-        { // geocentric ecliptic coordinates of the moon
-
+        {   // geocentric ecliptic coordinates of the moon
+            //Formulas used from http://aa.quae.nl/en/reken/hemelpositie.html#1_3
             double L = rad * (218.316 + 13.176396 * d), // ecliptic longitude
                 M = rad * (134.963 + 13.064993 * d), // mean anomaly
                 F = rad * (93.272 + 13.229350 * d),  // mean distance
 
                 l = L + rad * 6.289 * Math.Sin(M), // longitude
                 b = rad * 5.128 * Math.Sin(F),     // latitude
-                dt = 385001 - 20905 * Math.Cos(M);  // distance to the moon in km
+                dt = 385001 - (20905 * Math.Cos(M));  // distance to the moon in km
             CelCoords mc = new CelCoords();
             mc.ra = rightAscension(l, b);
             mc.dec = declination(l, b);
             mc.dist = dt;
             return mc;
         }
-
         public static void GetMoonIllumination(DateTime date, Celestial c)
         {
             date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
@@ -152,7 +151,14 @@ namespace CoordinateSharp
             c.MoonPhase = mi.Phase;
 
         }
-
+        public static void GetMoonDistance(DateTime date, Celestial c)
+        {
+           
+            double d = toDays(date);
+            CelCoords cel = GetMoonCoords(d);
+            c.MoonDistance = cel.dist;
+           
+        }
         //Moon Time Functions
         private static CelCoords GetSunCoords(double d)
         {
@@ -164,7 +170,7 @@ namespace CoordinateSharp
             return c;
         }
         private static double solarMeanAnomaly(double d) { return rad * (357.5291 + 0.98560028 * d); }
-
+        
         private static double eclipticLongitude(double M)
         {
             double C = rad * (1.9148 * Math.Sin(M) + 0.02 * Math.Sin(2 * M) + 0.0003 * Math.Sin(3 * M)), // equation of center
@@ -205,6 +211,7 @@ namespace CoordinateSharp
             // 1.02 / tan(h + 10.26 / (h + 5.10)) h in degrees, result in arc minutes -> converted to rad:
             return 0.0002967 / Math.Tan(h + 0.00312536 / (h + 0.08901179));
         }
+        
 
         public class MoonTimes
         {
