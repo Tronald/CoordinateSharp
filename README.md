@@ -1,4 +1,4 @@
-# CoordinateSharp v1.1.1.4
+# CoordinateSharp v1.1.1.5
 
 A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can now convert Lat/Long to UTM/MGRS. The ability to calculate various pieces of celestial information (sunset, moon illum..), also exist.
 
@@ -95,6 +95,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   -MoonSet          
   -Moon Rise        
   -Moon Illumination
+  -Moon Distance
     
   Sun/Moon Set and Rise DateTimes are nullable. If a null value is returned the Sun or Moon Condition needs to be viewed to see why. In the below example we are using a lat/long near the North Pole with a date in August. The sun does not set that far North during the specified time of year.
   
@@ -118,6 +119,8 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   Celestial cel = Celestial.CalculateCelestialTimes(85.57682, -70.75678, new DateTime(2017,8,21));
   cel.SunRise.Value.ToString();
   ```
+  
+  NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a standard distance deviation of 3,388 km. This result is considered an estimate. This estimate should suffice for general purposes, but if more precision is required a different option should be sought.
    
 # Acknowledgements
 
@@ -127,7 +130,7 @@ SunTime calculations were adapted from NOAA and Zacky Pickholz 2008 "C# Class fo
 
 MoonTime calculations were adapted from the mourner / suncalc project (c) 2011-2015, Vladimir Agafonkin [suncalc](https://github.com/mourner/suncalc/blob/master/suncalc.js)
 suncalc's moon calculations are based on "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
- & [These Formulas](http://aa.quae.nl/en/reken/hemelpositie.html formulas)
+ & [These Formulas by Dr. Louis Strous](http://aa.quae.nl/en/reken/hemelpositie.html)
 
 Calculations for illumination parameters of the moon based on [NASA Formulas](http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro) and Chapter 48 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
 
