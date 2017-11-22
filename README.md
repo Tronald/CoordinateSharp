@@ -2,7 +2,7 @@
 
 A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can now convert Lat/Long to UTM/MGRS. The ability to calculate various pieces of celestial information (sunset, moon illum..), also exist.
 
-NOTE: This version of CoordinateSharp may be a breaking update if previous versions were used with bound values. This update changes the way certain objects should be bound. The changes address the issues with bindings not updating for certain properties/classes bound to Label controls in WPF. 
+NOTE: Added MoonDistance property to the CelestialInfo property (Coordinate.CelestialInfo.MoonDistance). The property will return the approximate distance between the center of the earth and moon based on date. Can be used to determine lunar perigees and apogees.
 
 # Getting Started
 These instructions will get a copy of the library running on your local machine for development and testing purposes.
@@ -120,7 +120,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   cel.SunRise.Value.ToString();
   ```
   
-  NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a standard distance deviation of 3,388 km. This result is considered an estimate. This estimate should suffice for general purposes, but if more precision is required a different option should be sought.
+  NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a standard distance deviation of 3,388 km. The result is considered an approximation and should suffice for general purposes, but if more precision is required a different option should be sought.
    
 # Acknowledgements
 
