@@ -51,6 +51,10 @@ namespace CoordinateSharp
         /// </summary>
         public DateTime? MoonRise { get; set; }
         /// <summary>
+        /// Estimated moon distance from the earth in kilometers
+        /// </summary>
+        public double? MoonDistance { get; set; }
+        /// <summary>
         /// Suns Condition for the  set geodate.
         /// </summary>
         public CelestialStatus SunCondition { get; set; }
@@ -73,6 +77,7 @@ namespace CoordinateSharp
             SunCalc.CalculateSunTime(lat, longi, date, this);
             MoonCalc.GetMoonTimes(date, lat, longi, this);
             MoonCalc.GetMoonIllumination(date, this);
+            MoonCalc.GetMoonDistance(date, this);
         }
         /// <summary>
         /// Calculate celestial data based on lat/long and date
@@ -87,6 +92,7 @@ namespace CoordinateSharp
             SunCalc.CalculateSunTime(lat, longi, date, c);
             MoonCalc.GetMoonTimes(date, lat, longi, c);
             MoonCalc.GetMoonIllumination(date, c);
+            MoonCalc.GetMoonDistance(date, c);
             return c;
         }
         /// <summary>
