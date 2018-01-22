@@ -1,8 +1,8 @@
-# CoordinateSharp v1.1.1.5
+# CoordinateSharp v1.1.1.6
 
 A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can now convert Lat/Long to UTM/MGRS. The ability to calculate various pieces of celestial information (sunset, moon illum..), also exist.
 
-NOTE: Added MoonDistance property to the CelestialInfo property (Coordinate.CelestialInfo.MoonDistance). The property will return the approximate distance between the center of the earth and moon based on date. Can be used to determine lunar perigees and apogees.
+NOTE: (INCLUDE ADDITIONS .6 HERE PRIOR TO PULL).
 
 # Getting Started
 These instructions will get a copy of the library running on your local machine for development and testing purposes.
