@@ -50,6 +50,7 @@ namespace CoordinateSharp
         /// Moonrise time.
         /// </summary>
         public DateTime? MoonRise { get; set; }
+      
         /// <summary>
         /// Estimated moon distance from the earth in kilometers
         /// </summary>
@@ -62,10 +63,23 @@ namespace CoordinateSharp
         /// Moons condition for the set geodate.
         /// </summary>
         public CelestialStatus MoonCondition { get; set; }
+
+        /// <summary>
+        /// Moon ilumination details for the set geodate
+        /// </summary>
+        public MoonCalc.MoonIllum MoonIllum { get; set; }
+
         /// <summary>
         /// Moon illumination phase.
         /// </summary>
-        public double MoonPhase { get; set; }
+        [Obsolete("MoonPhase can be accessed through the MoonIllum property.")]
+        public double MoonPhase { get; set; }      
+       
+        /// <summary>
+        /// Returns the current zodiac moon sign 
+        /// </summary>
+        //public string MoonSign { get; set; }
+
         /// <summary>
         /// Calculates all celestial data. Coordinates will notify as changes occur
         /// </summary>
@@ -124,7 +138,7 @@ namespace CoordinateSharp
             MoonCalc.GetMoonIllumination(date, c);
             return c;
         }
-
+       
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged(string propName)
         {

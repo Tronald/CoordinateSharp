@@ -19,7 +19,7 @@ namespace CoordinateSharp
             c.MoonSet = null;
             c.MoonSet = null;
             double hc = 0.133 * rad,
-            h0 = GetMoonPosition(t, lat, lng).Altitude - hc,
+            h0 = GetMoonPosition(t, lat, lng, c).Altitude - hc,
             h1, h2, a, b, xe, ye, d, roots, dx;
             double? x1 = null, x2 = null, rise = null, set = null;
 
@@ -38,8 +38,8 @@ namespace CoordinateSharp
             for (var i = 1; i <= 24; i += 2)
             {
 
-                h1 = GetMoonPosition(hoursLater(t, i), lat, lng).Altitude - hc;
-                h2 = GetMoonPosition(hoursLater(t, i + 1), lat, lng).Altitude - hc;
+                h1 = GetMoonPosition(hoursLater(t, i), lat, lng, c).Altitude - hc;
+                h2 = GetMoonPosition(hoursLater(t, i + 1), lat, lng, c).Altitude - hc;
                 if (isNeg && h1 >= 0 || isNeg && h2 >= 0) { isNeg = false; isRise = true; }
                 if (!isNeg && h1 < 0 || !isNeg && h2 < 0) { isNeg = true; isSet = true; }
 
@@ -94,11 +94,11 @@ namespace CoordinateSharp
             }
 
         }
-        static MoonPosition GetMoonPosition(DateTime date, double lat, double lng)
+        static MoonPosition GetMoonPosition(DateTime date, double lat, double lng, Celestial cel)
         {
             double d = toDays(date);
 
-            CelCoords c = GetMoonCoords(d);
+            CelCoords c = GetMoonCoords(d, cel);
             double lw = rad * -lng;
             double phi = rad * lat;
             double H = siderealTime(d, lw) - c.ra;
@@ -116,7 +116,7 @@ namespace CoordinateSharp
             mp.ParallacticAngle = pa;
             return mp;
         }
-        static CelCoords GetMoonCoords(double d)
+        static CelCoords GetMoonCoords(double d, Celestial c)
         {   // geocentric ecliptic coordinates of the moon
             //Formulas used from http://aa.quae.nl/en/reken/hemelpositie.html#1_3
             double L = rad * (218.316 + 13.176396 * d), // ecliptic longitude
@@ -126,18 +126,51 @@ namespace CoordinateSharp
                 l = L + rad * 6.289 * Math.Sin(M), // longitude
                 b = rad * 5.128 * Math.Sin(F),     // latitude
                 dt = 385001 - (20905 * Math.Cos(M));  // distance to the moon in km
+            //c.MoonSign = MoonSign(l);
             CelCoords mc = new CelCoords();
             mc.ra = rightAscension(l, b);
             mc.dec = declination(l, b);
             mc.dist = dt;
             return mc;
         }
+        //private static string MoonSign(double l)
+        //{          
+        //    string zodiac;
+        //    if (l < 33.18)
+        //        zodiac = "Pisces";
+        //    else if (l < 51.16)
+        //        zodiac = "Aries";
+        //    else if (l < 93.44)
+        //        zodiac = "Taurus";
+        //    else if (l < 119.48)
+        //        zodiac = "Gemini";
+        //    else if (l < 135.30)
+        //        zodiac = "Cancer";
+        //    else if (l < 173.34)
+        //        zodiac = "Leo";
+        //    else if (l < 224.17)
+        //        zodiac = "Virgo";
+        //    else if (l < 242.57)
+        //        zodiac = "Libra";
+        //    else if (l < 271.26)
+        //        zodiac = "Scorpio";
+        //    else if (l < 302.49)
+        //        zodiac = "Sagittarius";
+        //    else if (l < 311.72)
+        //        zodiac = "Capricorn";
+        //    else if (l < 348.58)
+        //        zodiac = "Aquarius";
+        //    else
+        //        zodiac = "Pisces";
+
+        //    return l.ToString() + " " + zodiac;
+        //}
         public static void GetMoonIllumination(DateTime date, Celestial c)
         {
             date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
             double d = toDays(date);
             CelCoords s = GetSunCoords(d);
-            CelCoords m = GetMoonCoords(d);
+            CelCoords m = GetMoonCoords(d, c);
 
             double sdist = 149598000,
             phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra)),
@@ -145,17 +178,23 @@ namespace CoordinateSharp
             angle = Math.Atan2(Math.Cos(s.dec) * Math.Sin(s.ra - m.ra), Math.Sin(s.dec) * Math.Cos(m.dec) -
                     Math.Cos(s.dec) * Math.Sin(m.dec) * Math.Cos(s.ra - m.ra));
             MoonIllum mi = new MoonIllum();
+
             mi.Fraction = (1 + Math.Cos(inc)) / 2;
             mi.Phase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
             mi.Angle = angle;
+
             c.MoonPhase = mi.Phase;
+            c.MoonIllum = mi;
+         
+            
 
         }
+       
         public static void GetMoonDistance(DateTime date, Celestial c)
         {
            
             double d = toDays(date);
-            CelCoords cel = GetMoonCoords(d);
+            CelCoords cel = GetMoonCoords(d, c);
             c.MoonDistance = cel.dist;
            
         }
