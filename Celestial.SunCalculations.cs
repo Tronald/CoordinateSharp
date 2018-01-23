@@ -2,21 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Diagnostics;
 namespace CoordinateSharp
 {
     internal class SunCalc
     {
+        
         public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c)
         {
-            date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
-            double zone = -(int)Math.Round(TimeZone.CurrentTimeZone.GetUtcOffset(date).TotalSeconds / 3600);
-            double jd = GetJulianDay(date) - 2451545;  // Julian day relative to Jan 1.5, 2000
 
-            double lon = longi / 360;
-            double tz = zone / 24;
-            double ct = jd / 36525 + 1;                                       // centuries since 1900.0
-            double t0 = LocalSiderealTimeForTimeZone(lon, jd, tz);      // local sidereal time
+            CalculateSunAngle(date, longi, lat, c);
+            double jd2 = GetJulianDay(date) - 2451545;  // Julian day relative to Jan 1.5, 2000
+            double ct2 = jd2 / 36525 + 1; // centuries since 1900.0
+            CalculateSunPosition(jd2, ct2);
+        
+            //Sun Time Calculations
+            
+             date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
+             double zone = -(int)Math.Round(TimeZone.CurrentTimeZone.GetUtcOffset(date).TotalSeconds / 3600);
+             double jd = GetJulianDay(date) - 2451545;  // Julian day relative to Jan 1.5, 2000
+
+             double lon = longi / 360;
+             double tz = zone / 24;
+             double ct = jd / 36525 + 1; // centuries since 1900.0
+             double t0 = LocalSiderealTimeForTimeZone(lon, jd, tz);      // local sidereal time
 
             // get sun position at start of day
             jd += tz;
@@ -92,6 +101,7 @@ namespace CoordinateSharp
 
                 }
             }
+         
         }
         #region Private Suntime Members
 
@@ -146,7 +156,14 @@ namespace CoordinateSharp
             double s = 24110.5 + 8640184.812999999 * jd / 36525 + 86636.6 * z + 86400 * lon;
             s = s / 86400;
             s = s - Math.Truncate(s);
-            return s * 360 * mDR;
+            double lst = s * 360 * mDR;
+           
+            return lst;
+        }
+        private static double SideRealTime(double d, double lw)
+        {
+            double rad = Math.PI / 180;
+            return rad * (280.16 + 360.9856235 * d) - lw;
         }
         private static void CalculateSunPosition(double jd, double ct)
         {
@@ -182,6 +199,58 @@ namespace CoordinateSharp
             // ...and declination 
             s = v / Math.Sqrt(u);
             mSunPositionInSkyArr[1] = Math.Atan(s / Math.Sqrt(1 - s * s));
+           
+        }
+        private static void CalculateSunAngle(DateTime date, double longi, double lat, Celestial c)
+        {
+            double rad = Math.PI / 180;
+            double j2000 = 2451545;
+            double j1970 = 2440588;
+            double dayMS = 1000 * 60 * 60 * 24;
+            
+            
+            //C# version of JavaScript date.valueOf();
+            TimeSpan ts = date - new DateTime(1970, 1, 1);
+            double dms = (ts.TotalMilliseconds / dayMS - .5 + j1970)-j2000;
+           
+
+            double lw = rad * -longi;
+            double phi = rad * lat;
+            double e = rad * 23.4397;
+         
+            double[] sc = sunCoords(dms);
+          
+            double H = SideRealTime(dms, lw) - sc[1];
+
+            c.SunAzimuth = Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(sc[0]) * Math.Cos(phi)) * 180 / Math.PI + 180;
+            c.SunAltitude = Math.Asin(Math.Sin(phi) * Math.Sin(sc[0]) + Math.Cos(phi) * Math.Cos(sc[0]) * Math.Cos(H)) * 180 / Math.PI;
+           
+        }
+        private static double solarMeanAnomaly(double d) 
+        {
+            double rad = Math.PI/180;
+            return rad * (357.5291 + 0.98560028 * d); 
+        }
+        private static double eclipticLongitude(double m)
+        {
+            double rad = Math.PI / 180;
+            double c = rad * (1.9148 * Math.Sin(m) + 0.02 * Math.Sin(2 * m) + 0.0003 * Math.Sin(3 * m)); // equation of center
+            double p = rad * 102.9372; // perihelion of the Earth
+
+            return m + c + p + Math.PI;
+        }
+        private static double[] sunCoords(double d)
+        {
+
+            double rad = Math.PI/180;
+            double m = solarMeanAnomaly(d);
+            double l = eclipticLongitude(m);
+            double[] sc = new double[2];
+            double b = 0;
+            double e = rad * 23.4397; // obliquity of the Earth
+            sc[0] = Math.Asin(Math.Sin(b) * Math.Cos(e) + Math.Cos(b) * Math.Sin(e) * Math.Sin(l)); //declination
+            sc[1] = Math.Atan2(Math.Sin(l) * Math.Cos(e) - Math.Tan(b) * Math.Sin(e), Math.Cos(l)); //rightAscension     
+            return sc;
         }
         private static double TestHour(int k, double zone, double t0, double lat)
         {

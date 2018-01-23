@@ -50,7 +50,8 @@ namespace CoordinateSharp
         /// Moonrise time.
         /// </summary>
         public DateTime? MoonRise { get; set; }
-      
+        public double SunAzimuth { get; set; }
+        public double SunAltitude { get; set; }
         /// <summary>
         /// Estimated moon distance from the earth in kilometers
         /// </summary>
@@ -67,7 +68,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Moon ilumination details for the set geodate
         /// </summary>
-        public MoonCalc.MoonIllum MoonIllum { get; set; }
+        public MoonIllum MoonIllum { get; set; }
 
         /// <summary>
         /// Moon illumination phase.
@@ -136,6 +137,7 @@ namespace CoordinateSharp
 
             MoonCalc.GetMoonTimes(date, lat, longi, c);
             MoonCalc.GetMoonIllumination(date, c);
+            MoonCalc.GetMoonDistance(date, c);
             return c;
         }
        

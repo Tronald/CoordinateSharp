@@ -167,7 +167,7 @@ namespace CoordinateSharp
         //}
         public static void GetMoonIllumination(DateTime date, Celestial c)
         {
-            date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
             double d = toDays(date);
             CelCoords s = GetSunCoords(d);
             CelCoords m = GetMoonCoords(d, c);
@@ -271,11 +271,6 @@ namespace CoordinateSharp
             public double dec { get; set; }
             public double dist { get; set; }
         }
-        public class MoonIllum
-        {
-            public double Fraction { get; set; }
-            public double Angle { get; set; }
-            public double Phase { get; set; }
-        }
+       
     }
 }
