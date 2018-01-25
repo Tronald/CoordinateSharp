@@ -289,5 +289,35 @@ namespace CoordinateSharp
         /// </summary>
         public double Phase { get; set; }
     }
+    /// <summary>
+    /// Sun Time Information
+    /// </summary>
+    public class AdditionalSolarTimes
+    {
+        public AdditionalSolarTimes()
+        {
+            //Set dates to avoid null errors. If year return 0001 event did not occur.
+            CivilDawn = new DateTime();
+            CivilDusk = new DateTime();
+            NauticalDawn = new DateTime();
+            NauticalDusk = new DateTime();
+        }
+        /// <summary>
+        /// Returns Civil Dawn Time
+        /// </summary>
+        public DateTime CivilDawn { get; set; }
+        /// <summary>
+        /// Returns Civil Dusk Time
+        /// </summary>
+        public DateTime CivilDusk { get; set; }
+        /// <summary>
+        /// Returns Nautical Dawn Time
+        /// </summary>
+        public DateTime NauticalDawn { get; set; }
+        /// <summary>
+        /// Returns Nautical Dusk Time
+        /// </summary>
+        public DateTime NauticalDusk { get; set; }
+    }
     
 }

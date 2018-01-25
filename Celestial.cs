@@ -18,7 +18,7 @@ namespace CoordinateSharp
         /// </summary>
         public Celestial()
         {
-            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1));
+            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1));        
         }
         private Celestial(bool hasCalcs)
         {
@@ -50,7 +50,13 @@ namespace CoordinateSharp
         /// Moonrise time.
         /// </summary>
         public DateTime? MoonRise { get; set; }
+        /// <summary>
+        /// Suns azimuth in degrees
+        /// </summary>
         public double SunAzimuth { get; set; }
+        /// <summary>
+        /// Suns altitude in degrees
+        /// </summary>
         public double SunAltitude { get; set; }
         /// <summary>
         /// Estimated moon distance from the earth in kilometers
@@ -69,6 +75,10 @@ namespace CoordinateSharp
         /// Moon ilumination details for the set geodate
         /// </summary>
         public MoonIllum MoonIllum { get; set; }
+        /// <summary>
+        /// Additional solar event times
+        /// </summary>
+        public AdditionalSolarTimes AdditionalSolarTimes { get; set; }
 
         /// <summary>
         /// Moon illumination phase.

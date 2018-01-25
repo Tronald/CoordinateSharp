@@ -54,34 +54,7 @@ namespace CoordinateSharp
             utm = new UniversalTransverseMercator(lat, longi, this);
             mgrs = new MilitaryGridReferenceSystem(this.utm);
         }
-        /// <summary>
-        /// Creates a populated Coordinate object.
-        /// Not yet implemented.
-        /// </summary>
-        /// <param name="utm">Universal Transverse Mercator Coordinate</param>
-        private Coordinate(string latz, int longz, double easting, double northing)
-        {   
-            //latitude = new CoordinatePart(CoordinateType.Lat, this);
-            //longitude = new CoordinatePart(CoordinateType.Long, this);
-            //celestialInfo = new Celestial(this.latitude.ToDouble(), this.longitude.ToDouble(), new DateTime(1900, 1, 1));
-            //utm = new UniversalTransverseMercator(latz, longz, easting, northing, this);
-            //mgrs = new MilitaryGridReferenceSystem(this.utm);
-        }
-        /// <summary>
-        /// Creates a populated Coordinate object.
-        /// Not yet implemented
-        /// </summary>
-        /// <param name="utm">Universal Transverse Mercator Coordinate</param>
-        /// <param name="date">DateTime you wish to use for celestial calculation</param>
-        private Coordinate(string latz, int longz, double easting, double northing, DateTime date)
-        {
-            //latitude = new CoordinatePart(CoordinateType.Lat, this);
-            //longitude = new CoordinatePart(CoordinateType.Long, this);
-            //celestialInfo = new Celestial(this.latitude.ToDouble(), this.longitude.ToDouble(), date);
-            //utm = new UniversalTransverseMercator(latz, longz, easting, northing, this);
-            //mgrs = new MilitaryGridReferenceSystem(this.utm);    
-        }
-        
+       
         private CoordinatePart latitude;
         private CoordinatePart longitude;
         private UniversalTransverseMercator utm;
