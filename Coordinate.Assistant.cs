@@ -288,6 +288,29 @@ namespace CoordinateSharp
         /// Moon's phase
         /// </summary>
         public double Phase { get; set; }
+        /// <summary>
+        /// Moon's phase name for the specified day
+        /// </summary>
+        public string PhaseName { get; set; }
+
+    }
+    /// <summary>
+    /// Astrological Signs
+    /// </summary>
+    public class AstrologicalSigns
+    {
+        /// <summary>
+        /// Astrological Zodiac Sign
+        /// </summary>
+        public string MoonName { get; set; }
+        /// <summary>
+        /// Astrological Moon Sign
+        /// </summary>
+        public string MoonSign { get; set; }
+        /// <summary>
+        /// Astrological Zodiac Sign
+        /// </summary>
+        public string ZodiacSign { get; set; }
     }
     /// <summary>
     /// Sun Time Information

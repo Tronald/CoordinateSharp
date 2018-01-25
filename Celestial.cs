@@ -18,10 +18,13 @@ namespace CoordinateSharp
         /// </summary>
         public Celestial()
         {
-            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1));        
+            AstrolgicalSigns = new AstrologicalSigns();
+            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1));
+            
         }
         private Celestial(bool hasCalcs)
         {
+            AstrolgicalSigns = new AstrologicalSigns();
             if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1)); }
         }
         /// <summary>
@@ -32,6 +35,7 @@ namespace CoordinateSharp
         /// <param name="geoDate">Geographic DateTime</param>
         public Celestial(double lat, double longi, DateTime geoDate)
         {
+            AstrolgicalSigns = new AstrologicalSigns();
             CalculateCelestialTime(lat, longi, geoDate);
         }
         /// <summary>
@@ -79,17 +83,16 @@ namespace CoordinateSharp
         /// Additional solar event times
         /// </summary>
         public AdditionalSolarTimes AdditionalSolarTimes { get; set; }
+        /// <summary>
+        /// Astrological Signs
+        /// </summary>
+        public AstrologicalSigns AstrolgicalSigns { get; set; }
 
         /// <summary>
         /// Moon illumination phase.
         /// </summary>
         [Obsolete("MoonPhase can be accessed through the MoonIllum property.")]
-        public double MoonPhase { get; set; }      
-       
-        /// <summary>
-        /// Returns the current zodiac moon sign 
-        /// </summary>
-        //public string MoonSign { get; set; }
+        public double MoonPhase { get; set; }         
 
         /// <summary>
         /// Calculates all celestial data. Coordinates will notify as changes occur
@@ -100,9 +103,11 @@ namespace CoordinateSharp
         public void CalculateCelestialTime(double lat, double longi, DateTime date)
         {
             SunCalc.CalculateSunTime(lat, longi, date, this);
+            SunCalc.CalculateZodiacSign(date, this);
             MoonCalc.GetMoonTimes(date, lat, longi, this);
             MoonCalc.GetMoonIllumination(date, this);
             MoonCalc.GetMoonDistance(date, this);
+            MoonCalc.GetMoonSign(date, this);
         }
         /// <summary>
         /// Calculate celestial data based on lat/long and date
@@ -115,9 +120,11 @@ namespace CoordinateSharp
         {
             Celestial c = new Celestial(false);
             SunCalc.CalculateSunTime(lat, longi, date, c);
+            SunCalc.CalculateZodiacSign(date, c);
             MoonCalc.GetMoonTimes(date, lat, longi, c);
             MoonCalc.GetMoonIllumination(date, c);
             MoonCalc.GetMoonDistance(date, c);
+            MoonCalc.GetMoonSign(date, c);
             return c;
         }
         /// <summary>
@@ -131,7 +138,7 @@ namespace CoordinateSharp
         {
             Celestial c = new Celestial(false);
             SunCalc.CalculateSunTime(lat, longi, date, c);
-
+            SunCalc.CalculateZodiacSign(date, c);
             return c;
         }
         /// <summary>
@@ -148,6 +155,7 @@ namespace CoordinateSharp
             MoonCalc.GetMoonTimes(date, lat, longi, c);
             MoonCalc.GetMoonIllumination(date, c);
             MoonCalc.GetMoonDistance(date, c);
+            MoonCalc.GetMoonSign(date, c);
             return c;
         }
        
