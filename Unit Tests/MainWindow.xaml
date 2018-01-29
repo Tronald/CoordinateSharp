@@ -1,0 +1,135 @@
+﻿<Window x:Class="CoordinateShaprWPFTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Name="mw" Height="800" Width="1205" WindowState="Maximized">
+    <Window.Resources>
+        <Style TargetType="Label">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>     
+    </Window.Resources>
+    <Grid Background="WhiteSmoke">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>  
+        <Label Content="Latitude"/>
+        <Label Content="Longitude" Grid.Column="2"/>
+        <Label Content="LatLong" Grid.Column="4"/>
+        <TextBlock Grid.Row="1" Grid.Column="4" Text="{Binding Display, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+        <Label Content="Moon Phase (Obsolete)" Grid.Column="5"/>
+        <TextBlock Grid.Row="1" Grid.Column="5" Text="{Binding CelestialInfo.MoonPhase, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Text="{Binding Latitude.Display, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+        <Label Grid.Row="1" Grid.Column="1" Content="{Binding Latitude.Display, UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Longitude.Display, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+        <Label Content="Sun Rise" Grid.Row="2"/>
+        <Label Content="Sun Set" Grid.Row="2" Grid.Column="1"/>
+        <Label Content="Sun Status" Grid.Row="2" Grid.Column="2"/>
+        <Label Content="Moon Rise" Grid.Row="2" Grid.Column="3"/>
+        <Label Content="Moon Set" Grid.Row="2" Grid.Column="4"/>
+        <Label Content="Moon Status" Grid.Row="2" Grid.Column="5"/>
+        
+        <TextBlock Grid.Row="3" Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.SunRise, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.SunSet, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="3" Grid.Column="2"  Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.SunCondition, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.MoonRise, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="3" Grid.Column="4" Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.MoonSet, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="3" Grid.Column="5" Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.MoonCondition, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"/>
+        <Label Content="Latitude DecDeg" Grid.Row="4"/>
+        <Label Content="Longitude DecDeg" Grid.Row="4" Grid.Column="2"/>
+        <Label Content="GeoDate" Grid.Row="4" Grid.Column="4"/>
+        <TextBox Grid.Row="5" VerticalAlignment="Center" Text="{Binding ElementName=mw, StringFormat={}{0:0.#######}, Path=DataContext.Latitude.DecimalDegree, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+
+        <TextBox Grid.Row="5" Grid.Column="2" VerticalAlignment="Center" Text="{Binding ElementName=mw, StringFormat={}{0:0.#######}, Path=DataContext.Longitude.DecimalDegree, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+        <DatePicker SelectedDate="{Binding ElementName=mw, Path=DataContext.GeoDate, UpdateSourceTrigger=LostFocus, Mode=TwoWay}" Grid.Row="5" Grid.Column="4" VerticalAlignment="Center" SelectedDateFormat="Short"/>
+        <TextBox HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding ElementName=mw, Path=DataContext.GeoDate,StringFormat={}{0:HH:mm}, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"  Grid.Row="5" Grid.Column="5"/>
+
+
+        <Label Content="Lat Pos" Grid.Row="6"/>
+        <Label Content="Lat Deg" Grid.Row="6" Grid.Column="1"/>
+        <Label Content="Lat Min" Grid.Row="6" Grid.Column="2"/>
+        <Label Content="Lat Sec" Grid.Row="6" Grid.Column="3"/>
+        <Label Content="Lat DecMin" Grid.Row="6" Grid.Column="4"/>
+        <ComboBox Name="latPosBox" Grid.Row="7" VerticalAlignment="Center" SelectedItem="{Binding ElementName=mw, Path=DataContext.Latitude.Position, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"/>
+        <TextBox Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" Text="{Binding ElementName=mw, Path=DataContext.Latitude.Degrees, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+        <TextBox Grid.Row="7" Grid.Column="2" VerticalAlignment="Center" Text="{Binding ElementName=mw, Path=DataContext.Latitude.Minutes, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+        <TextBox Grid.Row="7" Grid.Column="3" VerticalAlignment="Center" Text="{Binding ElementName=mw, Path=DataContext.Latitude.Seconds, StringFormat={}{0:0.####}, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+        <TextBox Grid.Row="7" Grid.Column="4" VerticalAlignment="Center" Text="{Binding ElementName=mw, Path=DataContext.Latitude.DecimalMinute, StringFormat={}{0:0.######}, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+
+        <Label Content="Long Pos" Grid.Row="8"/>
+        <Label Content="Long Deg" Grid.Row="8" Grid.Column="1"/>
+        <Label Content="Long Min" Grid.Row="8" Grid.Column="2"/>
+        <Label Content="Long Sec" Grid.Row="8" Grid.Column="3"/>
+        <Label Content="Long DecMin" Grid.Row="8" Grid.Column="4"/>
+        <ComboBox Name="longPosBox" Grid.Row="9" VerticalAlignment="Center" SelectedItem="{Binding ElementName=mw, Path=DataContext.Longitude.Position, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"/>
+        <TextBox Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" Text="{Binding ElementName=mw, Path=DataContext.Longitude.Degrees, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+        <TextBox Grid.Row="9" Grid.Column="2" VerticalAlignment="Center" Text="{Binding ElementName=mw, Path=DataContext.Longitude.Minutes, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+        <TextBox Grid.Row="9" Grid.Column="3" VerticalAlignment="Center" Text="{Binding ElementName=mw, Path=DataContext.Longitude.Seconds, StringFormat={}{0:0.####}, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+        <TextBox Grid.Row="9" Grid.Column="4" VerticalAlignment="Center" Text="{Binding ElementName=mw, Path=DataContext.Longitude.DecimalMinute, StringFormat={}{0:0.######}, UpdateSourceTrigger=LostFocus, Mode=TwoWay, ValidatesOnExceptions=True}"/>
+
+        <Label Content="UTM" Grid.Row="10"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.UTM, UpdateSourceTrigger=PropertyChanged}" Grid.Row="11"/>     
+        <Label Content="MGRS" Grid.Row="10" Grid.Column="2"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.MGRS, UpdateSourceTrigger=PropertyChanged}" Grid.Row="11" Grid.Column="2"/>
+        
+        <Label Content="MOON PHASE" Grid.Row="12"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.MoonIllum.Phase, UpdateSourceTrigger=PropertyChanged}" Grid.Row="13"/>
+        <Label Content="MOON PHASE NAME" Grid.Row="12" Grid.Column="1"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.MoonIllum.PhaseName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="13"  Grid.Column="1"/>
+        <Label Content="MOON ANGLE" Grid.Row="12" Grid.Column="2"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.MoonIllum.Angle, UpdateSourceTrigger=PropertyChanged}" Grid.Row="13"  Grid.Column="2"/>
+        <Label Content="MOON FRACTION" Grid.Row="12" Grid.Column="3"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.MoonIllum.Fraction, UpdateSourceTrigger=PropertyChanged}" Grid.Row="13"  Grid.Column="3"/>
+        <Label Content="MOON DISTANCE" Grid.Row="12" Grid.Column="4"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.MoonDistance, UpdateSourceTrigger=PropertyChanged}" Grid.Row="13"  Grid.Column="4"/>
+
+        <Label Content="CIVIL DAWN" Grid.Row="14"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.AdditionalSolarTimes.CivilDawn, UpdateSourceTrigger=PropertyChanged}" Grid.Row="15"/>
+        <Label Content="CIVIL DUSK" Grid.Row="14" Grid.Column="1"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.AdditionalSolarTimes.CivilDusk, UpdateSourceTrigger=PropertyChanged}" Grid.Row="15" Grid.Column="1"/>
+        <Label Content="NAUTICAL DAWN" Grid.Row="14" Grid.Column="2"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.AdditionalSolarTimes.NauticalDawn, UpdateSourceTrigger=PropertyChanged}" Grid.Row="15" Grid.Column="2"/>
+        <Label Content="NAUTICAL DUSK" Grid.Row="14" Grid.Column="3"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.AdditionalSolarTimes.NauticalDusk, UpdateSourceTrigger=PropertyChanged}" Grid.Row="15" Grid.Column="3"/>
+
+        <Label Content="SUN AZIMUTH" Grid.Row="14" Grid.Column="4"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.SunAzimuth, UpdateSourceTrigger=PropertyChanged}" Grid.Row="15" Grid.Column="4"/>
+        <Label Content="SUN ALTITUDE" Grid.Row="14" Grid.Column="5"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.SunAltitude, UpdateSourceTrigger=PropertyChanged}" Grid.Row="15" Grid.Column="5"/>
+
+        <Label Content="MOON SIGN" Grid.Row="16" />
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.AstrologicalSigns.MoonSign, UpdateSourceTrigger=PropertyChanged}" Grid.Row="17" />
+        <Label Content="MOON NAME" Grid.Row="16" Grid.Column="1"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.AstrologicalSigns.MoonName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="17" Grid.Column="1"/>
+        <Label Content="ZODIAC SIGN" Grid.Row="16" Grid.Column="2"/>
+        <TextBlock Text="{Binding ElementName=mw, Path=DataContext.CelestialInfo.AstrologicalSigns.ZodiacSign, UpdateSourceTrigger=PropertyChanged}" Grid.Row="17" Grid.Column="2"/>
+
+    </Grid>
+</Window>
