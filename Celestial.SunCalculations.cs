@@ -7,15 +7,15 @@ namespace CoordinateSharp
 {
     internal class SunCalc
     {
-
+      
         public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c)
         {
             if (date.Year == 1900) { return; } //Return if date vaue hasn't been established.
-            DateTime actualDate = date;
+            DateTime actualDate = new DateTime(date.Year,date.Month,date.Day,date.Hour,date.Minute, date.Second, DateTimeKind.Utc);
            
             //Sun Time Calculations
-            date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
-            double zone = -(int)Math.Round(TimeZone.CurrentTimeZone.GetUtcOffset(date).TotalSeconds / 3600);
+            date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);      
+            double zone = -(int)Math.Round(TimeZone.CurrentTimeZone.GetUtcOffset(date).TotalSeconds / 3600);     
             double jd = GetJulianDay(date) - 2451545;  // Julian day relative to Jan 1.5, 2000
 
             double lon = longi / 360;
@@ -99,16 +99,21 @@ namespace CoordinateSharp
             }
             //Azimuth and Altitude
             CalculateSunAngle(actualDate, longi, lat, c);   
-            //Additional Times
+           
+           
+        }
+        public static void CalculateAdditionSolarTimes(DateTime date, double longi, double lat, Celestial c)
+        {   
             if (c.SunCondition == CelestialStatus.RiseAndSet)
             {
-                getTimes(actualDate, longi, lat, c);
+                //Sun Time Calculations
+                //date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
+                getTimes(date, longi, lat, c);
             }
             else
             {
                 c.AdditionalSolarTimes = new AdditionalSolarTimes();
             }
-           
         }
         public static void CalculateZodiacSign(DateTime date, Celestial c)
         {
@@ -127,71 +132,78 @@ namespace CoordinateSharp
            
             if (date >= new DateTime(date.Year, 1, 1) && date <= new DateTime(date.Year, 1, 19))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Capricorn";
+                c.AstrologicalSigns.ZodiacSign = "Capricorn";
                 return;
             }
             if (date >= new DateTime(date.Year, 1, 20) && date <= new DateTime(date.Year, 2, 18))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Aquarius";
+                c.AstrologicalSigns.ZodiacSign = "Aquarius";
                 return;
             }
             if (date >= new DateTime(date.Year, 2, 19) && date <= new DateTime(date.Year, 3, 20))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Pisces";
+                c.AstrologicalSigns.ZodiacSign = "Pisces";
                 return;
             }
             if (date >= new DateTime(date.Year, 3, 21) && date <= new DateTime(date.Year, 4, 19))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Aries";
+                c.AstrologicalSigns.ZodiacSign = "Aries";
                 return;
             }
             if (date >= new DateTime(date.Year, 4, 20) && date <= new DateTime(date.Year, 5, 20))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Taurus";
+                c.AstrologicalSigns.ZodiacSign = "Taurus";
                 return;
             }
             if (date >= new DateTime(date.Year, 5, 21) && date <= new DateTime(date.Year, 6, 20))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Gemini";
+                c.AstrologicalSigns.ZodiacSign = "Gemini";
                 return;
             }
             if (date >= new DateTime(date.Year, 6, 21) && date <= new DateTime(date.Year, 6, 22))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Cancer";
+                c.AstrologicalSigns.ZodiacSign = "Cancer";
                 return;
             }
             if (date >= new DateTime(date.Year, 7, 23) && date <= new DateTime(date.Year, 8, 22))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Leo";
+                c.AstrologicalSigns.ZodiacSign = "Leo";
                 return;
             }
             if (date >= new DateTime(date.Year, 8, 23) && date <= new DateTime(date.Year, 9, 22))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Virgo";
+                c.AstrologicalSigns.ZodiacSign = "Virgo";
                 return;
             }
             if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 10, 22))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Libra";
+                c.AstrologicalSigns.ZodiacSign = "Libra";
                 return;
             }
             if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 11, 21))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Scorpio";
+                c.AstrologicalSigns.ZodiacSign = "Scorpio";
                 return;
             }
             if (date >= new DateTime(date.Year, 11, 21) && date <= new DateTime(date.Year, 12, 21))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Sagittarius";
+                c.AstrologicalSigns.ZodiacSign = "Sagittarius";
                 return;
             }
             if (date >= new DateTime(date.Year, 12, 22) && date <= new DateTime(date.Year, 12, 31))
             {
-                c.AstrolgicalSigns.ZodiacSign = "Capricorn";
+                c.AstrologicalSigns.ZodiacSign = "Capricorn";
                 return;
             }
         }
+
         #region Private Suntime Members
+
+        private static double rad = Math.PI / 180;
+
+        private static double j2000 = 2451545; //Julian from year 2000
+        private static double j1970 = 2440588; //Julian from year 1970
+        private static double dayMS = 1000 * 60 * 60 * 24; //Day in milliseconds
 
         private const double mDR = Math.PI / 180;
         private const double mK1 = 15 * mDR * 1.0027379;
@@ -211,6 +223,7 @@ namespace CoordinateSharp
 
         #endregion
         #region Private Suntime Functions
+
         private static double GetJulianDay(DateTime date)
         {
             int month = date.Month;
@@ -239,6 +252,17 @@ namespace CoordinateSharp
 
             return jd;
         }
+        private static DateTime fromJulian(double j)
+        {
+
+            double unixTime = (j + 0.5 - j1970) * 86400;
+
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1);
+            dtDateTime = dtDateTime.AddSeconds(unixTime);
+
+            return dtDateTime;
+        }
+
         private static double LocalSiderealTimeForTimeZone(double lon, double jd, double z)
         {
             double s = 24110.5 + 8640184.812999999 * jd / 36525 + 86636.6 * z + 86400 * lon;
@@ -250,13 +274,11 @@ namespace CoordinateSharp
         }
         private static double SideRealTime(double d, double lw)
         {
-            double rad = Math.PI / 180;
             return rad * (280.16 + 360.9856235 * d) - lw;
         }
         private static double solarTransitJ(double ds, double M, double L)  
-        {
-            double J2000 = 2451545;
-            return J2000 + ds + 0.0053 * Math.Sin(M) - 0.0069 * Math.Sin(2 * L); 
+        {         
+            return j2000 + ds + 0.0053 * Math.Sin(M) - 0.0069 * Math.Sin(2 * L); 
         }
 
         private static double hourAngle(double h, double phi, double d) 
@@ -270,36 +292,31 @@ namespace CoordinateSharp
         }
         private static double approxTransit(double Ht, double lw, double n)
         {
-            return 0.0009 +(Ht + lw) / (2 * Math.PI) + n;
+            return 0.0009 + (Ht + lw) / (2 * Math.PI) + n;
         }
         private static double julianCycle(double d, double lw) { return Math.Round(d - 0.0009 - lw / (2 * Math.PI)); }
 
-        //Returns Time based on suns angle
+        //Returns Time of specified event based on suns angle
         private static double GetTime(double h, double lw, double phi, double dec, double n,double M, double L) 
         {
-            double w = hourAngle(h, phi, dec); //Returns NaN
-            double a = approxTransit(w, lw, n);
-            
+            double w = hourAngle(h, phi, dec);      
+            double a = approxTransit(w, lw, n);      
             return solarTransitJ(a, M, L);
         }
-        private static double  declination(double l, double b)    
+        private static double declination(double l, double b)    
         {
             double e = (Math.PI/180) * 23.4397; // obliquity of the Earth
             
             return Math.Asin(Math.Sin(b) * Math.Cos(e) + Math.Cos(b) * Math.Sin(e) * Math.Sin(l)); 
         }
+        /// <summary>
+        /// Gets times for additional solar times
+        /// </summary>
         private static void getTimes(DateTime date, double lng, double lat, Celestial c)
         {
-            double rad = Math.PI / 180;
-            double j2000 = 2451545;
-            double j1970 = 2440588;
-            double dayMS = 1000 * 60 * 60 * 24;
-
-
-            //C# version of JavaScript date.valueOf();
-            TimeSpan ts = date - new DateTime(1970, 1, 1);
-            double d = (ts.TotalMilliseconds / dayMS - .5 + j1970) - j2000;
-
+            //Get Juliam     
+            double d = GetJulianDay(date) - j2000 + .5; //LESS PRECISE JULIAN NEEDED
+          
             double lw = rad * -lng;
             double phi = rad * lat;
 
@@ -329,21 +346,13 @@ namespace CoordinateSharp
             c.AdditionalSolarTimes.CivilDawn = fromJulian(Jrise);
             c.AdditionalSolarTimes.CivilDusk = fromJulian(Jset);
 
-            Jset = GetTime(-12 * rad, lw, phi, dec, n, M, L);
+            Jset = GetTime(-12 * rad, lw, phi, dec, n, M, L);        
             Jrise = Jnoon - (Jset - Jnoon);
+        
             c.AdditionalSolarTimes.NauticalDawn = fromJulian(Jrise);
             c.AdditionalSolarTimes.NauticalDusk = fromJulian(Jset);          
         }
-        private static DateTime fromJulian(double j)
-        {          
-            double J1970 = 2440588;           
-            double unixTime = (j + 0.5 - J1970) * 86400;
-           
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTime) ;
-          
-            return dtDateTime;
-        }
+       
         private static void CalculateSunPosition(double jd, double ct)
         {
             double g, lo, s, u, v, w;
@@ -382,15 +391,10 @@ namespace CoordinateSharp
         }
         private static void CalculateSunAngle(DateTime date, double longi, double lat, Celestial c)
         {
-            double rad = Math.PI / 180;
-            double j2000 = 2451545;
-            double j1970 = 2440588;
-            double dayMS = 1000 * 60 * 60 * 24;
-            
-            
+           
             //C# version of JavaScript date.valueOf();
-            TimeSpan ts = date - new DateTime(1970, 1, 1);
-            double dms = (ts.TotalMilliseconds / dayMS - .5 + j1970)-j2000;
+            TimeSpan ts = date - new DateTime(1970, 1, 1,0,0,0, DateTimeKind.Utc);
+            double dms = (ts.TotalMilliseconds / dayMS -.5 + j1970)-j2000;
            
 
             double lw = rad * -longi;
@@ -406,13 +410,11 @@ namespace CoordinateSharp
            
         }
         private static double solarMeanAnomaly(double d) 
-        {
-            double rad = Math.PI/180;
+        {          
             return rad * (357.5291 + 0.98560028 * d); 
         }
         private static double eclipticLongitude(double m)
-        {
-            double rad = Math.PI / 180;
+        {         
             double c = rad * (1.9148 * Math.Sin(m) + 0.02 * Math.Sin(2 * m) + 0.0003 * Math.Sin(3 * m)); // equation of center
             double p = rad * 102.9372; // perihelion of the Earth
             
@@ -421,7 +423,6 @@ namespace CoordinateSharp
         private static double[] sunCoords(double d)
         {
 
-            double rad = Math.PI/180;
             double m = solarMeanAnomaly(d);
             double l = eclipticLongitude(m);
             double[] sc = new double[2];

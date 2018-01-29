@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Diagnostics;
 namespace CoordinateSharp
 {
     internal class MoonCalc
@@ -133,38 +133,7 @@ namespace CoordinateSharp
             mc.dist = dt;
             return mc;
         }
-        //private static string MoonSign(double l)
-        //{          
-        //    string zodiac;
-        //    if (l < 33.18)
-        //        zodiac = "Pisces";
-        //    else if (l < 51.16)
-        //        zodiac = "Aries";
-        //    else if (l < 93.44)
-        //        zodiac = "Taurus";
-        //    else if (l < 119.48)
-        //        zodiac = "Gemini";
-        //    else if (l < 135.30)
-        //        zodiac = "Cancer";
-        //    else if (l < 173.34)
-        //        zodiac = "Leo";
-        //    else if (l < 224.17)
-        //        zodiac = "Virgo";
-        //    else if (l < 242.57)
-        //        zodiac = "Libra";
-        //    else if (l < 271.26)
-        //        zodiac = "Scorpio";
-        //    else if (l < 302.49)
-        //        zodiac = "Sagittarius";
-        //    else if (l < 311.72)
-        //        zodiac = "Capricorn";
-        //    else if (l < 348.58)
-        //        zodiac = "Aquarius";
-        //    else
-        //        zodiac = "Pisces";
-
-        //    return l.ToString() + " " + zodiac;
-        //}
+      
         public static void GetMoonIllumination(DateTime date, Celestial c)
         {
             double d = toDays(date);
@@ -184,9 +153,11 @@ namespace CoordinateSharp
             mi.Phase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
             mi.Angle = angle;
 
-            c.MoonPhase = mi.Phase;
+           
             c.MoonIllum = mi;
+            
              string moonName = "";
+            
             //GET PHASE NAME
 
             //CHECK MOON AT BEGINNING AT END OF DAY TO GET DAY PHASE IN UTC
@@ -272,7 +243,7 @@ namespace CoordinateSharp
                 }
                
             }
-            c.AstrolgicalSigns.MoonName = moonName;
+            c.AstrologicalSigns.MoonName = moonName;
         }
 
         private static string GetMoonName(int month, string name)
@@ -344,8 +315,10 @@ namespace CoordinateSharp
             DateTime d = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             DateTime t = date;
             double l = (double)(t - d).TotalMilliseconds;
-
-            return l / dayMs - 0.5 + J1970;
+            double tj = l / dayMs - 0.5 + J1970;
+           
+            return tj;
+            
         }
         static double toDays(DateTime date)
         {
@@ -372,61 +345,61 @@ namespace CoordinateSharp
         public static void GetMoonSign(DateTime date, Celestial c)
         {
             //Formulas taken from https://www.astrocal.co.uk/moon-sign-calculator/
-            double d=date.Day; 
-            double m=date.Month;
-            double y=date.Year;
-            double hr=date.Hour;
-            double mi=date.Minute;
+            double d = date.Day;
+            double m = date.Month;
+            double y = date.Year;
+            double hr = date.Hour;
+            double mi = date.Minute;
 
-            double f=hr+(mi/60);
-			double im=12*(y+ 4800)+ m- 3;
-			double j=(2*(im- Math.Floor(im/12)*12)+ 7+ 365*im)/ 12;
-			j=Math.Floor(j)+ d+ Math.Floor(im/48)- 32083;
-				double jd=j+ Math.Floor(im/4800)- Math.Floor(im/1200)+ 38;
-				double T=((jd- 2415020)+ f/24-.5)/ 36525;
-				double ob=FNr(23.452294-.0130125*T);
-				double ll=973563+ 1732564379*T- 4*T*T;
-				double g=1012395+ 6189*T;
-				double n=933060- 6962911*T+ 7.5*T*T;
-				double g1=1203586+ 14648523*T- 37*T*T;
-				 d=1262655+ 1602961611*T- 5*T*T;
-				double M=3600;
-				double l=(ll- g1)/ M;
-				double l1=((ll- d)- g)/ M;
-			    f=(ll- n)/ M;
-				d=d/M;
-				y=2*d;
-				double ml=22639.6 * FNs(l)- 4586.4 * FNs(l- y);
-				ml=ml+ 2369.9*FNs(y)+ 769*FNs(2*l)- 669*FNs(l1);
-				ml=ml- 411.6*FNs(2*f)- 212*FNs(2*l- y);
-				ml=ml- 206*FNs(l+ l1- y)+ 192*FNs(l+ y);
-				ml=ml- 165*FNs(l1- y)+ 148*FNs(l- l1)- 125*FNs(d);
-				ml=ml- 110*FNs(l+ l1)- 55*FNs(2*f- y);
-				ml=ml- 45*FNs(l+ 2*f)+ 40*FNs(l- 2*f);
-				double tn=n+ 5392*FNs(2*f- y)- 541*FNs(l1)- 442*FNs(y);
-                tn = tn + 423 * FNs(2 * f) - 291 * FNs(2 * l - 2 * f);
-			    g=FNu(FNp(ll+ ml));
-				double sign=Math.Floor(g/30);
-				double degree=(g-(sign*30));
-				sign=sign+1;
-            
-                switch (sign.ToString())
-                {
-                    case "1": c.AstrolgicalSigns.MoonSign = "Aries"; break;
-                    case "2": c.AstrolgicalSigns.MoonSign = "Taurus"; break;
-                    case "3": c.AstrolgicalSigns.MoonSign = "Gemini"; break;
-                    case "4": c.AstrolgicalSigns.MoonSign = "Cancer"; break;
-                    case "5": c.AstrolgicalSigns.MoonSign = "Leo"; break;
-                    case "6": c.AstrolgicalSigns.MoonSign = "Virgo"; break;
-                    case "7": c.AstrolgicalSigns.MoonSign = "Libra"; break;
-                    case "8": c.AstrolgicalSigns.MoonSign = "Scorpio"; break;
-                    case "9": c.AstrolgicalSigns.MoonSign = "Sagitarius"; break;
-                    case "10": c.AstrolgicalSigns.MoonSign = "Capricorn"; break;
-                    case "11": c.AstrolgicalSigns.MoonSign = "Aquarius"; break;
-                    case "12": c.AstrolgicalSigns.MoonSign = "Pisces"; break;
-                    default: c.AstrolgicalSigns.MoonSign = "Pisces"; break;
-                }
-		
+            double f = hr + (mi / 60);
+            double im = 12 * (y + 4800) + m - 3;
+            double j = (2 * (im - Math.Floor(im / 12) * 12) + 7 + 365 * im) / 12;
+            j = Math.Floor(j) + d + Math.Floor(im / 48) - 32083;
+            double jd = j + Math.Floor(im / 4800) - Math.Floor(im / 1200) + 38;
+            double T = ((jd - 2415020) + f / 24 - .5) / 36525;
+            double ob = FNr(23.452294 - .0130125 * T);
+            double ll = 973563 + 1732564379 * T - 4 * T * T;
+            double g = 1012395 + 6189 * T;
+            double n = 933060 - 6962911 * T + 7.5 * T * T;
+            double g1 = 1203586 + 14648523 * T - 37 * T * T;
+            d = 1262655 + 1602961611 * T - 5 * T * T;
+            double M = 3600;
+            double l = (ll - g1) / M;
+            double l1 = ((ll - d) - g) / M;
+            f = (ll - n) / M;
+            d = d / M;
+            y = 2 * d;
+            double ml = 22639.6 * FNs(l) - 4586.4 * FNs(l - y);
+            ml = ml + 2369.9 * FNs(y) + 769 * FNs(2 * l) - 669 * FNs(l1);
+            ml = ml - 411.6 * FNs(2 * f) - 212 * FNs(2 * l - y);
+            ml = ml - 206 * FNs(l + l1 - y) + 192 * FNs(l + y);
+            ml = ml - 165 * FNs(l1 - y) + 148 * FNs(l - l1) - 125 * FNs(d);
+            ml = ml - 110 * FNs(l + l1) - 55 * FNs(2 * f - y);
+            ml = ml - 45 * FNs(l + 2 * f) + 40 * FNs(l - 2 * f);
+            double tn = n + 5392 * FNs(2 * f - y) - 541 * FNs(l1) - 442 * FNs(y);
+            tn = tn + 423 * FNs(2 * f) - 291 * FNs(2 * l - 2 * f);
+            g = FNu(FNp(ll + ml));
+            double sign = Math.Floor(g / 30);
+            double degree = (g - (sign * 30));
+            sign = sign + 1;
+
+            switch (sign.ToString())
+            {
+                case "1": c.AstrologicalSigns.MoonSign = "Aries"; break;
+                case "2": c.AstrologicalSigns.MoonSign = "Taurus"; break;
+                case "3": c.AstrologicalSigns.MoonSign = "Gemini"; break;
+                case "4": c.AstrologicalSigns.MoonSign = "Cancer"; break;
+                case "5": c.AstrologicalSigns.MoonSign = "Leo"; break;
+                case "6": c.AstrologicalSigns.MoonSign = "Virgo"; break;
+                case "7": c.AstrologicalSigns.MoonSign = "Libra"; break;
+                case "8": c.AstrologicalSigns.MoonSign = "Scorpio"; break;
+                case "9": c.AstrologicalSigns.MoonSign = "Sagitarius"; break;
+                case "10": c.AstrologicalSigns.MoonSign = "Capricorn"; break;
+                case "11": c.AstrologicalSigns.MoonSign = "Aquarius"; break;
+                case "12": c.AstrologicalSigns.MoonSign = "Pisces"; break;
+                default: c.AstrologicalSigns.MoonSign = "Pisces"; break;
+            }
+
         }
         private static double FNp(double x)
         {

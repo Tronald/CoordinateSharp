@@ -12,20 +12,23 @@ namespace CoordinateSharp
     /// </summary>
     public class Celestial : INotifyPropertyChanged
     {
+      
         //When as rise or a set does not occur, the DateTime will return null
         /// <summary>
         /// Initializes an empty Celestial object
         /// </summary>
         public Celestial()
         {
-            AstrolgicalSigns = new AstrologicalSigns();
+ 
+            AstrologicalSigns = new AstrologicalSigns();
             CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1));
             
         }
         private Celestial(bool hasCalcs)
         {
-            AstrolgicalSigns = new AstrologicalSigns();
-            if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1)); }
+            
+            AstrologicalSigns = new AstrologicalSigns();
+            if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1,0,0,0,DateTimeKind.Utc)); }
         }
         /// <summary>
         /// Initializes a Celestial object.
@@ -35,9 +38,23 @@ namespace CoordinateSharp
         /// <param name="geoDate">Geographic DateTime</param>
         public Celestial(double lat, double longi, DateTime geoDate)
         {
-            AstrolgicalSigns = new AstrologicalSigns();
-            CalculateCelestialTime(lat, longi, geoDate);
+            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
+            AstrologicalSigns = new AstrologicalSigns();
+            CalculateCelestialTime(lat, longi, d);
         }
+        /// <summary>
+        /// Initializes a Celestial object.
+        /// </summary>
+        /// <param name="lat">Coordinate</param>
+        public static Celestial LoadCelestial(Coordinate c)
+        {
+            DateTime geoDate = c.GeoDate;
+            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
+            Celestial cel = new Celestial(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate);
+            return cel;
+        }
+       
+       
         /// <summary>
         /// Sunset time.
         /// </summary>
@@ -86,14 +103,14 @@ namespace CoordinateSharp
         /// <summary>
         /// Astrological Signs
         /// </summary>
-        public AstrologicalSigns AstrolgicalSigns { get; set; }
+        public AstrologicalSigns AstrologicalSigns { get; set; }
 
         /// <summary>
         /// Moon illumination phase.
         /// </summary>
         [Obsolete("MoonPhase can be accessed through the MoonIllum property.")]
-        public double MoonPhase { get; set; }         
-
+        public double MoonPhase { get { return this.MoonIllum.Phase; } }
+       
         /// <summary>
         /// Calculates all celestial data. Coordinates will notify as changes occur
         /// </summary>
@@ -102,12 +119,22 @@ namespace CoordinateSharp
         /// <param name="date">Geographic DateTime</param>
         public void CalculateCelestialTime(double lat, double longi, DateTime date)
         {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+          
             SunCalc.CalculateSunTime(lat, longi, date, this);
-            SunCalc.CalculateZodiacSign(date, this);
             MoonCalc.GetMoonTimes(date, lat, longi, this);
-            MoonCalc.GetMoonIllumination(date, this);
             MoonCalc.GetMoonDistance(date, this);
+
+
+            SunCalc.CalculateZodiacSign(date, this);
             MoonCalc.GetMoonSign(date, this);
+
+            MoonCalc.GetMoonIllumination(date, this);
+
+            SunCalc.CalculateAdditionSolarTimes(date, longi, lat, this);
+
+
+
         }
         /// <summary>
         /// Calculate celestial data based on lat/long and date
@@ -118,13 +145,18 @@ namespace CoordinateSharp
         /// <returns>Fully populated Celestial object</returns>
         public static Celestial CalculateCelestialTimes(double lat, double longi, DateTime date)
         {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+          
             Celestial c = new Celestial(false);
+
             SunCalc.CalculateSunTime(lat, longi, date, c);
-            SunCalc.CalculateZodiacSign(date, c);
             MoonCalc.GetMoonTimes(date, lat, longi, c);
-            MoonCalc.GetMoonIllumination(date, c);
             MoonCalc.GetMoonDistance(date, c);
+            SunCalc.CalculateZodiacSign(date, c);
             MoonCalc.GetMoonSign(date, c);
+            MoonCalc.GetMoonIllumination(date, c);
+            SunCalc.CalculateAdditionSolarTimes(date, longi, lat, c);
+
             return c;
         }
         /// <summary>
@@ -136,9 +168,14 @@ namespace CoordinateSharp
         /// <returns>Partially populated Celestial Object</returns>
         public static Celestial CalculateSunData(double lat, double longi, DateTime date)
         {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+          
             Celestial c = new Celestial(false);
             SunCalc.CalculateSunTime(lat, longi, date, c);
             SunCalc.CalculateZodiacSign(date, c);
+
+            SunCalc.CalculateAdditionSolarTimes(date, longi, lat, c);
+
             return c;
         }
         /// <summary>
@@ -150,15 +187,18 @@ namespace CoordinateSharp
         /// <returns>Partially populated Celestial Object</returns>
         public static Celestial CalculateMoonData(double lat, double longi, DateTime date)
         {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+          
             Celestial c = new Celestial(false);
 
             MoonCalc.GetMoonTimes(date, lat, longi, c);
-            MoonCalc.GetMoonIllumination(date, c);
             MoonCalc.GetMoonDistance(date, c);
             MoonCalc.GetMoonSign(date, c);
+            MoonCalc.GetMoonIllumination(date, c);
+
             return c;
         }
-       
+      
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged(string propName)
         {

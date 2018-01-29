@@ -313,7 +313,7 @@ namespace CoordinateSharp
         public string ZodiacSign { get; set; }
     }
     /// <summary>
-    /// Sun Time Information
+    /// Additional Solar Time Information
     /// </summary>
     public class AdditionalSolarTimes
     {
@@ -341,6 +341,22 @@ namespace CoordinateSharp
         /// Returns Nautical Dusk Time
         /// </summary>
         public DateTime NauticalDusk { get; set; }
+    }
+    /// <summary>
+    /// Turn on/off eager loading of certain properties
+    /// </summary>
+    public class EagerLoad
+    {
+        
+        public EagerLoad()
+        {      
+            Celestial = true;        
+        }
+  
+        /// <summary>
+        /// Eager load celestial information
+        /// </summary>
+        public bool Celestial { get; set; }     
     }
     
 }

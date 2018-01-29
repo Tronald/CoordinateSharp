@@ -22,7 +22,8 @@ namespace CoordinateSharp
             longitude = new CoordinatePart(CoordinateType.Long, this);
             celestialInfo = new Celestial();
             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
-            mgrs = new MilitaryGridReferenceSystem(this.utm);          
+            mgrs = new MilitaryGridReferenceSystem(this.utm);
+            EagerLoadSettings = new EagerLoad();
         }
         /// <summary>
         /// Creates a populated Coordinate object.
@@ -37,6 +38,7 @@ namespace CoordinateSharp
             celestialInfo = new Celestial(lat,longi,new DateTime(1900,1,1));
             utm = new UniversalTransverseMercator(lat, longi, this);
             mgrs = new MilitaryGridReferenceSystem(this.utm);
+            EagerLoadSettings = new EagerLoad();
         }
         /// <summary>
         /// Creates a populated Coordinate object. With an assigned GeoDate.
@@ -53,6 +55,72 @@ namespace CoordinateSharp
             this.geoDate = date;
             utm = new UniversalTransverseMercator(lat, longi, this);
             mgrs = new MilitaryGridReferenceSystem(this.utm);
+            EagerLoadSettings = new EagerLoad();
+        }
+
+        /// <summary>
+        /// Creates an empty Coordinates object. Values will need to be provided to Latitude/Longitude manually.
+        /// </summary>
+        public Coordinate(EagerLoad eagerLoad)
+        {
+            this.FormatOptions = new CoordinateFormatOptions();
+            latitude = new CoordinatePart(CoordinateType.Lat, this);
+            longitude = new CoordinatePart(CoordinateType.Long, this);
+            if (eagerLoad.Celestial)
+            {
+                celestialInfo = new Celestial();
+            }           
+           
+                utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
+                mgrs = new MilitaryGridReferenceSystem(this.utm);
+            
+           
+            EagerLoadSettings = eagerLoad;
+        }
+        /// <summary>
+        /// Creates a populated Coordinate object.
+        /// </summary>
+        /// <param name="lat">Decimal format latitude</param>
+        /// <param name="longi">Decimal format longitude</param>
+        public Coordinate(double lat, double longi, EagerLoad eagerLoad)
+        {
+            this.FormatOptions = new CoordinateFormatOptions();
+            latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
+            longitude = new CoordinatePart(longi, CoordinateType.Long, this);
+            if (eagerLoad.Celestial)
+            {
+                celestialInfo = new Celestial(lat, longi, new DateTime(1900, 1, 1));
+            }
+
+            utm = new UniversalTransverseMercator(lat, longi, this);
+            mgrs = new MilitaryGridReferenceSystem(this.utm);
+
+
+            EagerLoadSettings = eagerLoad;
+        }
+        /// <summary>
+        /// Creates a populated Coordinate object. With an assigned GeoDate.
+        /// </summary>
+        /// <param name="lat">Decimal format latitude</param>
+        /// <param name="longi">Decimal format longitude</param>
+        /// <param name="date">DateTime you wish to use for celestial calculation</param>
+        public Coordinate(double lat, double longi, DateTime date, EagerLoad eagerLoad)
+        {
+            this.FormatOptions = new CoordinateFormatOptions();
+            latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
+            longitude = new CoordinatePart(longi, CoordinateType.Long, this);
+            this.geoDate = date;
+
+            if (eagerLoad.Celestial)
+            {
+                celestialInfo = new Celestial(lat, longi, date);
+            }
+
+            utm = new UniversalTransverseMercator(lat, longi, this);
+            mgrs = new MilitaryGridReferenceSystem(this.utm);
+
+
+            EagerLoadSettings = eagerLoad;
         }
        
         private CoordinatePart latitude;
@@ -61,7 +129,7 @@ namespace CoordinateSharp
         private MilitaryGridReferenceSystem mgrs;        
         private DateTime geoDate;
         private Celestial celestialInfo;
-
+       
         /// <summary>
         /// Latitudinal Coordinate Part.
         /// </summary>
@@ -75,9 +143,11 @@ namespace CoordinateSharp
                     if (value.Position == CoordinatesPosition.E || value.Position == CoordinatesPosition.W)
                     { throw new ArgumentException("Invalid Position", "Latitudinal positions cannot be set to East or West."); }
                     this.latitude = value;
+                    if (EagerLoadSettings.Celestial)
+                    {
+                        celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
+                    }
                    
-                    celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
-                 
                 }
             }
         }
@@ -93,8 +163,11 @@ namespace CoordinateSharp
                 {
                     if (value.Position == CoordinatesPosition.N || value.Position == CoordinatesPosition.S)
                     { throw new ArgumentException("Invalid Position", "Longitudinal positions cannot be set to North or South."); }
-                    this.longitude = value;                   
-                    celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);                  
+                    this.longitude = value;
+                    if (EagerLoadSettings.Celestial)
+                    {
+                        celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
+                    }
                 }
             }
         }     
@@ -109,11 +182,13 @@ namespace CoordinateSharp
                 if (this.geoDate != value)
                 {
                     this.geoDate = value;
-                  
-                    celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
-                    this.NotifyPropertyChanged("GeoDate");
-                    this.NotifyPropertyChanged("CelestialInfo");
-                                    
+                    if (EagerLoadSettings.Celestial)
+                    {
+                        celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
+                        this.NotifyPropertyChanged("CelestialInfo");
+                    }
+                   
+                    this.NotifyPropertyChanged("GeoDate");                                    
                 }
             }
         }
@@ -165,9 +240,20 @@ namespace CoordinateSharp
             get { return this.celestialInfo; }          
         }
         /// <summary>
+        /// Initialize celestial information (required if eager loading is turned off).
+        /// </summary>
+        public void LoadCelestialInfo()
+        {
+            this.celestialInfo = Celestial.LoadCelestial(this);
+        }
+        /// <summary>
         /// Formatting Options
         /// </summary>
         public CoordinateFormatOptions FormatOptions { get; set; }
+        /// <summary>
+        /// Lazy Load Settings
+        /// </summary>
+        public EagerLoad EagerLoadSettings { get; set; }
         /// <summary>
         /// Formatted coordinate String
         /// </summary>
@@ -384,7 +470,9 @@ namespace CoordinateSharp
             {
                 if (this.decimalMinute != value)
                 {
-                    //Validate values        
+                    if (value < 0) { value *= -1; }//Adjust accidental negative input
+                    //Validate values     
+                   
                     decimal dm = Math.Abs(Convert.ToDecimal(value)) / 60;
                     double decMin = Convert.ToDouble(dm);
                     if (this.type == CoordinateType.Lat)
@@ -434,6 +522,7 @@ namespace CoordinateSharp
                 //Validate Value
                 if (this.degrees != value)
                 {
+                    if (value < 0) { value *= -1; }//Adjust accidental negative input
                     if (type == CoordinateType.Lat)
                     {
                         if (value + this.decimalMinute > 90)
@@ -476,6 +565,7 @@ namespace CoordinateSharp
             {
                 if (this.minutes != value)
                 {
+                    if (value < 0) { value *= -1; }//Adjust accidental negative input
                     //Validate the minutes
                     decimal vMin = Convert.ToDecimal(value);
                     if (type == CoordinateType.Lat)
@@ -529,6 +619,7 @@ namespace CoordinateSharp
             get { return this.seconds; }
             set
             {
+                if (value < 0) { value *= -1; }//Adjust accidental negative input
                 if (this.seconds != value)
                 {
                     //Validate Seconds
@@ -1263,7 +1354,7 @@ namespace CoordinateSharp
                     break;
                 case PropertyTypes.Degree:
                     this.NotifyPropertyChanged("DecimalDegree");
-                    this.NotifyPropertyChanged("Degree");                   
+                    this.NotifyPropertyChanged("Degree");
                     break;
                 case PropertyTypes.Minute:
                     this.NotifyPropertyChanged("DecimalDegree");
@@ -1271,14 +1362,14 @@ namespace CoordinateSharp
                     this.NotifyPropertyChanged("Minutes");
                     break;
                 case PropertyTypes.Position:
-                    this.NotifyPropertyChanged("DecimalDegree");                    
+                    this.NotifyPropertyChanged("DecimalDegree");
                     this.NotifyPropertyChanged("Position");
                     break;
                 case PropertyTypes.Second:
                     this.NotifyPropertyChanged("DecimalDegree");
-                    this.NotifyPropertyChanged("DecimalMinute");                
-                    this.NotifyPropertyChanged("Seconds");                 
-                    break;               
+                    this.NotifyPropertyChanged("DecimalMinute");
+                    this.NotifyPropertyChanged("Seconds");
+                    break;
                 default:
                     this.NotifyPropertyChanged("DecimalDegree");
                     this.NotifyPropertyChanged("DecimalMinute");
@@ -1293,6 +1384,7 @@ namespace CoordinateSharp
             this.Parent.NotifyPropertyChanged("CelestialInfo");
             this.Parent.NotifyPropertyChanged("UTM");
             this.Parent.NotifyPropertyChanged("MGRS");
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
