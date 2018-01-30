@@ -93,7 +93,7 @@ Coordinate c = MilitaryGridReferenceSystem.MGRStoLatLong(mgrs);
 Coordinate nc = MilitaryGridReferenceSystem.MGRStoLatLong(c.MGRS); //c.MGRS is now 20N RF 33962 61982
 Debug.Print(c.ToString() + "  " + nc.ToString()); // N 0º 33' 35.988" W 60º 0' 0.01"   N 0º 33' 35.988" W 60º 0' 0.022"
 ```
-In the above example, the MGRS values are different once converted, but the Lat/Long is almost the same.
+In the above example, the MGRS values are different once converted, but the Lat/Long is almost the same once converted back.
 
 ### Binding and MVVM
 
