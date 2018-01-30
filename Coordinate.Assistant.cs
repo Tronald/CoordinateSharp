@@ -149,7 +149,7 @@ namespace CoordinateSharp
             digraph2.Add(new Digraph() { Zone = 20, Letter = "V" });         
         }
 
-        public int getDigraph1Index(String letter)
+        internal int getDigraph1Index(String letter)
         {
             for (int i = 0; i < digraph1Array.Length; i++)
             {
@@ -162,7 +162,7 @@ namespace CoordinateSharp
             return -1;
         }
 
-        public int getDigraph2Index(String letter)
+        internal int getDigraph2Index(String letter)
         {
             for (int i = 0; i < digraph2Array.Length; i++)
             {
@@ -174,8 +174,8 @@ namespace CoordinateSharp
 
             return -1;
         }
-
-        public String getDigraph1(int longZone, double easting)
+       
+        internal String getDigraph1(int longZone, double easting)
         {
             int a1 = longZone;
             double a2 = 8 * ((a1 - 1) % 3) + 1;
@@ -185,7 +185,7 @@ namespace CoordinateSharp
             return digraph1.Where(x=>x.Zone == Math.Floor(a4)).FirstOrDefault().Letter;
         }
 
-        public String getDigraph2(int longZone, double northing)
+        internal String getDigraph2(int longZone, double northing)
         {
             int a1 = longZone;
             double a2 = 1 + 5 * ((a1 - 1) % 2);
@@ -317,13 +317,16 @@ namespace CoordinateSharp
     /// </summary>
     public class AdditionalSolarTimes
     {
+        /// <summary>
+        /// Create an AdditionalSolarTimes object.
+        /// </summary>
         public AdditionalSolarTimes()
         {
-            //Set dates to avoid null errors. If year return 0001 event did not occur.
-            CivilDawn = new DateTime();
-            CivilDusk = new DateTime();
-            NauticalDawn = new DateTime();
-            NauticalDusk = new DateTime();
+            //Set dates to avoid null errors. If year return 1900 event did not occur.
+            CivilDawn = new DateTime(1900,1,1,0,0,0,DateTimeKind.Utc);
+            CivilDusk = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            NauticalDawn = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            NauticalDusk = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         }
         /// <summary>
         /// Returns Civil Dawn Time
@@ -347,7 +350,9 @@ namespace CoordinateSharp
     /// </summary>
     public class EagerLoad
     {
-        
+        /// <summary>
+        /// Create an EagerLoad object
+        /// </summary>
         public EagerLoad()
         {      
             Celestial = true;        

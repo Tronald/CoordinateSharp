@@ -97,6 +97,7 @@ namespace CoordinateSharp
 
                 }
             }
+            
             //Azimuth and Altitude
             CalculateSunAngle(actualDate, longi, lat, c);   
            
@@ -104,10 +105,8 @@ namespace CoordinateSharp
         }
         public static void CalculateAdditionSolarTimes(DateTime date, double longi, double lat, Celestial c)
         {   
-            if (c.SunCondition == CelestialStatus.RiseAndSet)
-            {
-                //Sun Time Calculations
-                //date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
+            if (c.SunCondition == CelestialStatus.RiseAndSet && date.Year>1900)
+            {          
                 getTimes(date, longi, lat, c);
             }
             else

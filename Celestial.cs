@@ -19,10 +19,8 @@ namespace CoordinateSharp
         /// </summary>
         public Celestial()
         {
- 
             AstrologicalSigns = new AstrologicalSigns();
-            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1));
-            
+            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1,0,0,0,DateTimeKind.Utc));   
         }
         private Celestial(bool hasCalcs)
         {
@@ -43,9 +41,9 @@ namespace CoordinateSharp
             CalculateCelestialTime(lat, longi, d);
         }
         /// <summary>
-        /// Initializes a Celestial object.
+        /// Creates a Celestial object.
         /// </summary>
-        /// <param name="lat">Coordinate</param>
+        /// <param name="c">Coordinate</param>
         public static Celestial LoadCelestial(Coordinate c)
         {
             DateTime geoDate = c.GeoDate;
@@ -119,8 +117,8 @@ namespace CoordinateSharp
         /// <param name="date">Geographic DateTime</param>
         public void CalculateCelestialTime(double lat, double longi, DateTime date)
         {
+
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-          
             SunCalc.CalculateSunTime(lat, longi, date, this);
             MoonCalc.GetMoonTimes(date, lat, longi, this);
             MoonCalc.GetMoonDistance(date, this);

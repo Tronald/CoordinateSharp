@@ -18,6 +18,7 @@ namespace CoordinateSharp
         public Coordinate()
         {
             this.FormatOptions = new CoordinateFormatOptions();
+            this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(CoordinateType.Lat, this);
             longitude = new CoordinatePart(CoordinateType.Long, this);
             celestialInfo = new Celestial();
@@ -33,9 +34,10 @@ namespace CoordinateSharp
         public Coordinate(double lat, double longi)
         {
             this.FormatOptions = new CoordinateFormatOptions();
+            this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
-            celestialInfo = new Celestial(lat,longi,new DateTime(1900,1,1));
+            celestialInfo = new Celestial(lat,longi,this.geoDate);
             utm = new UniversalTransverseMercator(lat, longi, this);
             mgrs = new MilitaryGridReferenceSystem(this.utm);
             EagerLoadSettings = new EagerLoad();
@@ -61,9 +63,11 @@ namespace CoordinateSharp
         /// <summary>
         /// Creates an empty Coordinates object. Values will need to be provided to Latitude/Longitude manually.
         /// </summary>
+        /// <param name="eagerLoad">eagerLoad options</param>
         public Coordinate(EagerLoad eagerLoad)
         {
             this.FormatOptions = new CoordinateFormatOptions();
+            this.geoDate = this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(CoordinateType.Lat, this);
             longitude = new CoordinatePart(CoordinateType.Long, this);
             if (eagerLoad.Celestial)
@@ -82,14 +86,16 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="lat">Decimal format latitude</param>
         /// <param name="longi">Decimal format longitude</param>
+        /// <param name="eagerLoad">eagerLoad options</param>
         public Coordinate(double lat, double longi, EagerLoad eagerLoad)
         {
             this.FormatOptions = new CoordinateFormatOptions();
+            this.geoDate = this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
             if (eagerLoad.Celestial)
             {
-                celestialInfo = new Celestial(lat, longi, new DateTime(1900, 1, 1));
+                celestialInfo = new Celestial(lat, longi, this.geoDate);
             }
 
             utm = new UniversalTransverseMercator(lat, longi, this);
@@ -104,6 +110,7 @@ namespace CoordinateSharp
         /// <param name="lat">Decimal format latitude</param>
         /// <param name="longi">Decimal format longitude</param>
         /// <param name="date">DateTime you wish to use for celestial calculation</param>
+        /// /// <param name="eagerLoad">eagerLoad options</param>
         public Coordinate(double lat, double longi, DateTime date, EagerLoad eagerLoad)
         {
             this.FormatOptions = new CoordinateFormatOptions();
@@ -165,7 +172,7 @@ namespace CoordinateSharp
                     { throw new ArgumentException("Invalid Position", "Longitudinal positions cannot be set to North or South."); }
                     this.longitude = value;
                     if (EagerLoadSettings.Celestial)
-                    {
+                    {                      
                         celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
                     }
                 }
@@ -361,6 +368,8 @@ namespace CoordinateSharp
         private double seconds;
         private CoordinatesPosition position;
         private CoordinateType type;    
+
+
 
         /// <summary>
         /// Used to determine and notify the Coordinate Parts parent.
@@ -718,6 +727,10 @@ namespace CoordinateSharp
         {     
             this.Parent = c;
             this.type = t;
+            this.decimalDegree = 0;
+            this.degrees = 0;
+            this.minutes = 0;
+            this.seconds = 0;
             if (this.type == CoordinateType.Lat) { this.position = CoordinatesPosition.N; }
             else { this.position = CoordinatesPosition.E; }
         }

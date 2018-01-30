@@ -13,11 +13,46 @@ namespace CoordinateSharp
     /// </summary>
     public class MilitaryGridReferenceSystem : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Create an MGRS object
+        /// </summary>
+        /// <param name="latz">Lat Zone</param>
+        /// <param name="longz">Long Zone</param>
+        /// <param name="d">Digraph</param>
+        /// <param name="e">Easting</param>
+        /// <param name="n">Northing</param>
+        public MilitaryGridReferenceSystem(string latz, int longz, string d, double e, double n)
+        {
+            string digraphLettersE = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+            string digraphLettersN = "ABCDEFGHJKLMNPQRSTUV";
+            if (longz < 1 || longz > 60) { Trace.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
+            if (e < 160000 || e > 834000) { Trace.WriteLine("The Easting value provided is outside the max allowable range. If this is intentional, use with caution."); }
+            if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
+            if (d.Count() < 2 || d.Count() > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (digraphLettersE.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (digraphLettersN.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            this.latZone = latz;
+            this.longZone = longz;
+            this.digraph = d;
+            this.easting = e;
+            this.northing = n;
+        }
         private string latZone;
         private int longZone;
         private double easting;
         private double northing;
         private string digraph;
+
+        private bool Verify_Lat_Zone(string l)
+        {
+            if (LatZones.longZongLetters.Where(x => x == l.ToUpper()).Count() != 1)
+            {
+                return false;
+            }
+            return true;
+        }
+
 
         /// <summary>
         /// MGRS Zone Letter
@@ -93,7 +128,98 @@ namespace CoordinateSharp
            
             this.northing = Convert.ToInt32(n);
         }
+        /// <summary>
+        /// Creates a Coordinate object from an MGRS/NATO UTM Coordinate
+        /// </summary>
+        /// <param name="mgrs">MilitaryGridReferenceSystem</param>
+        /// <returns></returns>
+        public static Coordinate MGRStoLatLong(MilitaryGridReferenceSystem mgrs)
+        {
+            string latz = mgrs.LatZone;
+            string digraph = mgrs.Digraph;
+
+            char eltr = digraph[0];
+            char nltr = digraph[1];
       
+            string digraphLettersE = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+            string digraphLettersN = "ABCDEFGHJKLMNPQRSTUV";
+            string digraphLettersAll="";
+            for (int lt = 1; lt < 25; lt++)
+            {
+                digraphLettersAll += "ABCDEFGHJKLMNPQRSTUV";
+            }
+           
+            var eidx = digraphLettersE.IndexOf(eltr);
+            var nidx = digraphLettersN.IndexOf(nltr);
+
+            if (mgrs.LongZone / 2.0 == Math.Floor(mgrs.LongZone / 2.0))
+            {
+                nidx -= 5;  // correction for even numbered zones
+            }
+
+            var ebase = 100000 * (1 + eidx - 8 * Math.Floor(Convert.ToDouble(eidx) / 8));
+
+            var latBand = digraphLettersE.IndexOf(latz);
+            var latBandLow = 8 * latBand - 96;
+            var latBandHigh = 8 * latBand - 88;
+
+            if (latBand < 2)
+            {
+                latBandLow = -90;
+                latBandHigh = -80;
+            }
+            else if (latBand == 21)
+            {
+                latBandLow = 72;
+                latBandHigh = 84;
+            }
+            else if (latBand > 21)
+            {
+                latBandLow = 84;
+                latBandHigh = 90;
+            }
+
+            var lowLetter = Math.Floor(100 + 1.11 * latBandLow);
+            var highLetter = Math.Round(100 + 1.11 * latBandHigh);
+            string latBandLetters = null;
+            int l = Convert.ToInt32(lowLetter);
+            int h = Convert.ToInt32(highLetter);
+            if (mgrs.LongZone / 2.0 == Math.Floor(mgrs.LongZone / 2.0))
+            {
+            
+                latBandLetters = digraphLettersAll.Substring(l + 5, h + 5).ToString();
+            }
+            else
+            {
+                latBandLetters = digraphLettersAll.Substring(l, h).ToString();
+            }
+            var nbase = 100000 * (lowLetter + latBandLetters.IndexOf(nltr));
+
+            var x = ebase + mgrs.Easting;
+            var y = nbase + mgrs.Northing;
+            if (y > 10000000)
+            {
+                y = y - 10000000;
+            }
+            if (nbase >= 10000000)
+            {
+                y = nbase + mgrs.northing - 10000000;
+            }
+
+            var southern = nbase < 10000000;
+            
+            UniversalTransverseMercator utm = new UniversalTransverseMercator(mgrs.LatZone, mgrs.LongZone, x, y, new Coordinate());
+            
+            
+            Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
+            
+            //Create second coordinate object to ensure MGRS integrity for return
+            //Investigate why this happens on future releases 
+            //Works and passes unit test
+            Coordinate nc = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble()); 
+          
+            return nc;
+        }
         /// <summary>
         /// MGRS Default String Format
         /// </summary>

@@ -12,12 +12,32 @@ namespace CoordinateSharp
     /// </summary>
     public class UniversalTransverseMercator : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Creates a UniversalTransverMercator object.
+        /// </summary>
+        /// <param name="latz">string</param>
+        /// <param name="longz">int</param>
+        /// <param name="est">double</param>
+        /// <param name="nrt">double</param>
+        public UniversalTransverseMercator(string latz, int longz, double est, double nrt)
+        {
+            if (longz < 1 || longz > 60) { Trace.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if (!Verify_Lat_Zone(latz)) { Trace.WriteLine("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
+            if (est < 160000 || est > 834000) { Trace.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
+            if (nrt < 0 || nrt > 10000000) { Trace.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
+
+            this.latZone = latz;
+            this.longZone =longz;
+            this.easting = est;
+            this.northing = nrt;
+
+        }
         private Coordinate coordinate;
 
         private string latZone;
         private int longZone;
         private double easting;
-        private double northing;   
+        private double northing;
 
         /// <summary>
         /// UTM Zone Letter
@@ -29,13 +49,7 @@ namespace CoordinateSharp
             {
                 if (this.latZone != value)
                 {
-                    this.latZone = value;
-                   
-                    //double[] d = FromUTM.convertUTMToLatLong(this);
-                    double[] d = FromUTM(longZone, latZone, easting, northing, this);
-
-                    coordinate.Latitude.DecimalDegree = d[0];                   
-                    coordinate.Longitude.DecimalDegree = d[1];
+                    this.latZone = value;                                
                 }
             }
         }
@@ -49,12 +63,7 @@ namespace CoordinateSharp
             {
                 if (this.longZone != value)
                 {
-                    this.longZone = value;
-                    
-                    double[] d = FromUTM(longZone, latZone, easting, northing, this);
-                    //double[] d = FromUTM.convertUTMToLatLong(this);
-                    coordinate.Latitude.DecimalDegree = d[0];
-                    coordinate.Longitude.DecimalDegree = d[1];
+                    this.longZone = value;                 
                 }
             }
         }
@@ -69,11 +78,6 @@ namespace CoordinateSharp
                 if (this.easting != value)
                 {
                     this.easting = value;
-                    
-                    double[] d = FromUTM(longZone, latZone, easting, northing, this);
-                    //double[] d = FromUTM.convertUTMToLatLong(this);
-                    coordinate.Latitude.DecimalDegree = d[0];
-                    coordinate.Longitude.DecimalDegree = d[1];
                 }
             }
         }
@@ -88,11 +92,6 @@ namespace CoordinateSharp
                 if (this.northing != value)
                 {
                     this.northing = value;
-
-                    double[] d = FromUTM(longZone, latZone, easting, northing, this);
-                    //double[] d = FromUTM.convertUTMToLatLong(this);
-                    coordinate.Latitude.DecimalDegree = d[0];
-                    coordinate.Longitude.DecimalDegree = d[1];
                 }
             }
         }
@@ -113,8 +112,8 @@ namespace CoordinateSharp
             //if (longi > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be greater than 90."); }
             //if (longi < -90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be less than 90."); }
 
-            ToUTM(lat,longi, this);
-           
+            ToUTM(lat, longi, this);
+
             coordinate = c;
         }
         /// <summary>
@@ -129,9 +128,9 @@ namespace CoordinateSharp
         internal UniversalTransverseMercator(string latz, int longz, double e, double n, Coordinate c)
         {
             //validate utm
-            if (longz < 1 || longz > 60) { throw new ArgumentOutOfRangeException("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if (longz < 1 || longz > 60) { Trace.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
             if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
-            if (e < 160000 || e > 834000) { throw new WarningException("The Easting value provided is outside the max allowable range. If this is intentional, use with caution."); }
+            if (e < 160000 || e > 834000) { Trace.WriteLine("The Easting value provided is outside the max allowable range. If this is intentional, use with caution."); }
             if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
 
             latZone = latz;
@@ -140,14 +139,9 @@ namespace CoordinateSharp
             easting = e;
             northing = n;
 
-            coordinate = c;
-           // double[] d = FromUTM.convertUTMToLatLong(this);
-            double[] d = FromUTM(longZone, latZone, easting, northing, this);
-            coordinate.Latitude.DecimalDegree = d[0];
-            coordinate.Longitude.DecimalDegree = d[1];
-            
+            coordinate = c;        
         }
-       
+
         /// <summary>
         /// Not yet imlemented.
         /// Verifies Lat zone when convert from UTM to DD Lat/Long
@@ -161,7 +155,7 @@ namespace CoordinateSharp
                 return false;
             }
             return true;
-        }     
+        }
 
         /// <summary>
         /// Assigns UTM values based of Lat/Long
@@ -170,7 +164,7 @@ namespace CoordinateSharp
         /// <param name="longi">DD longitude</param>
         /// <param name="utm">UTM Object to modify</param>
         internal void ToUTM(double lat, double longi, UniversalTransverseMercator utm)
-        {      
+        {
             string letter = "";
             double easting = 0;
             double northing = 0;
@@ -232,106 +226,12 @@ namespace CoordinateSharp
                 Math.Pow(Math.Cos(lat * Math.PI / 180), 2)) / 3);
             if ((new[] { "C", "D", "E", "F", "G", "H", "J", "K", "L", "M" }).Contains(letter))
             { northing = northing + 10000000; }
-           
+
             northing = Math.Round(northing * 100) * 0.01;
             utm.latZone = letter;
             utm.longZone = zone;
             utm.easting = easting;
             utm.northing = northing;
-        }
-        /// <summary>
-        /// Not yet implemented.
-        /// </summary>
-        /// <param name="zone">UTM Zone</param>
-        /// <param name="letter">UTM Zone Letter</param>
-        /// <param name="easting">UTM Easting</param>
-        /// <param name="northing">UTM Northing</param>
-        /// <param name="utm">UTM Object to modify</param>
-        /// <returns></returns>
-        internal double[] FromUTM(int zone, string letter, double easting, double northing, UniversalTransverseMercator utm)
-        {
-            double[] d = { 0, 0 };
-            double north;
-            if ((new[] { "C", "D", "E", "F", "G", "H", "J", "K", "L", "M" }).Contains(letter))
-            {
-                north = northing - 10000000;
-            }
-            else
-            {
-                north = northing;
-            }
-
-            double latitude = (north / 6366197.724 / 0.9996 + (1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) - 0.006739496742 *
-                Math.Sin(north / 6366197.724 / 0.9996) * Math.Cos(north / 6366197.724 / 0.9996) * (Math.Atan(Math.Cos(Math.Atan((Math.Exp((easting - 500000) /
-                (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 *
-                Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) /
-                2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) / 3)) - Math.Exp(-(easting - 500000) / (0.9996 * 6399593.625 /
-                Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 * Math.Pow((easting - 500000) /
-                (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north /
-                6366197.724 / 0.9996), 2) / 3))) / 2 / Math.Cos((north - 0.9996 * 6399593.625 * (north / 6366197.724 / 0.9996 - 0.006739496742 * 3 / 4 *
-                (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Pow(0.006739496742 * 3 / 4, 2) * 5 / 3 * (3 * (north /
-                6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north /
-                6366197.724 / 0.9996), 2)) / 4 - Math.Pow(0.006739496742 * 3 / 4, 3) * 35 / 27 * (5 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north /
-                6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 + Math.Sin(2 *
-                north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 3)) /
-                (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 *
-                Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) /
-                2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) + north / 6366197.724 / 0.9996))) * Math.Tan((north - 0.9996 * 6399593.625 * (north /
-                6366197.724 / 0.9996 - 0.006739496742 * 3 / 4 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) +
-                Math.Pow(0.006739496742 * 3 / 4, 2) * 5 / 3 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) +
-                Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 - Math.Pow(0.006739496742 * 3 / 4, 3) * 35 /
-                27 * (5 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) *
-                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 /
-                0.9996), 2) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 3)) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 *
-                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 * Math.Pow((easting - 500000) / (0.9996 * 6399593.625 /
-                Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north / 6366197.724 /
-                0.9996), 2)) + north / 6366197.724 / 0.9996)) - north / 6366197.724 / 0.9996) * 3 / 2) * (Math.Atan(Math.Cos(Math.Atan((Math.Exp((easting -
-                500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) *
-                (1 - 0.006739496742 * Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north /
-                6366197.724 / 0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) / 3)) - Math.Exp(-(easting - 500000) /
-                (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 *
-                Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) /
-                2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) / 3))) / 2 / Math.Cos((north - 0.9996 * 6399593.625 * (north / 6366197.724 / 0.9996 -
-                0.006739496742 * 3 / 4 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Pow(0.006739496742 * 3 / 4, 2) *
-                5 / 3 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) *
-                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 - Math.Pow(0.006739496742 * 3 / 4, 3) * 35 / 27 * (5 * (3 * (north / 6366197.724 /
-                0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 /
-                0.9996), 2)) / 4 + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) * Math.Pow(Math.Cos(north /
-                6366197.724 / 0.9996), 2)) / 3)) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2))))
-                * (1 - 0.006739496742 * Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north /
-                6366197.724 / 0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) + north / 6366197.724 / 0.9996))) * Math.Tan((north -
-                0.9996 * 6399593.625 * (north / 6366197.724 / 0.9996 - 0.006739496742 * 3 / 4 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 /
-                0.9996) / 2) + Math.Pow(0.006739496742 * 3 / 4, 2) * 5 / 3 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) +
-                Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 - Math.Pow(0.006739496742 * 3 / 4, 3) * 35 /
-                27 * (5 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) *
-                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 /
-                0.9996), 2) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 3)) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 *
-                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 * Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 +
-                0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) + north /
-                6366197.724 / 0.9996)) - north / 6366197.724 / 0.9996)) * 180 / Math.PI;
-            latitude = Math.Round(latitude * 10000000);
-            latitude = latitude / 10000000;
-
-            double longitude = Math.Atan((Math.Exp((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north /
-                6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 * Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 *
-                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) / 3)) - Math.Exp(-(easting -
-                500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) * (1 - 0.006739496742 *
-                Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))), 2) /
-                2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) / 3))) / 2 / Math.Cos((north - 0.9996 * 6399593.625 * (north / 6366197.724 / 0.9996 -
-                0.006739496742 * 3 / 4 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Pow(0.006739496742 * 3 / 4, 2) *
-                5 / 3 * (3 * (north / 6366197.724 / 0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) *
-                Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) / 4 - Math.Pow(0.006739496742 * 3 / 4, 3) * 35 / 27 * (5 * (3 * (north / 6366197.724 /
-                0.9996 + Math.Sin(2 * north / 6366197.724 / 0.9996) / 2) + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 /
-                0.9996), 2)) / 4 + Math.Sin(2 * north / 6366197.724 / 0.9996) * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2) * Math.Pow(Math.Cos(north /
-                6366197.724 / 0.9996), 2)) / 3)) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)))) *
-                (1 - 0.006739496742 * Math.Pow((easting - 500000) / (0.9996 * 6399593.625 / Math.Sqrt((1 + 0.006739496742 * Math.Pow(Math.Cos(north / 6366197.724 /
-                0.9996), 2)))), 2) / 2 * Math.Pow(Math.Cos(north / 6366197.724 / 0.9996), 2)) + north / 6366197.724 / 0.9996)) * 180 / Math.PI + zone * 6 - 183;
-            longitude = Math.Round(longitude * 10000000);
-            longitude = longitude / 10000000;
-            d[0] = latitude;
-            d[1] = longitude;
-            return d;
-
         }
         /// <summary>
         /// UTM Default String Format
@@ -342,6 +242,7 @@ namespace CoordinateSharp
             return this.longZone.ToString() + this.LatZone + " " + (int)this.easting + "mE " + (int)this.northing + "mN";
         }
         public event PropertyChangedEventHandler PropertyChanged;
+
         public void NotifyPropertyChanged(string propName)
         {
             if (this.PropertyChanged != null)
@@ -349,6 +250,219 @@ namespace CoordinateSharp
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
-    }
-   
+
+        //Convert Back to LatLong
+
+       
+
+        private static Coordinate UTMtoLatLong(double x, double y, double zone)
+        {
+            //x easting
+            //y northing
+            Coordinate c = new Coordinate();
+            //http://home.hiwaay.net/~taylorc/toolbox/geography/geoutm.html
+            double phif, Nf, Nfpow, nuf2, ep2, tf, tf2, tf4, cf;
+            double x1frac, x2frac, x3frac, x4frac, x5frac, x6frac, x7frac, x8frac;
+            double x2poly, x3poly, x4poly, x5poly, x6poly, x7poly, x8poly;
+            double sm_a = 6378137.0;
+            double sm_b = 6356752.314;
+          
+            /* Get the value of phif, the footpoint latitude. */
+            phif = FootpointLatitude(y);
+
+            /* Precalculate ep2 */
+            ep2 = (Math.Pow(sm_a, 2.0) - Math.Pow(sm_b, 2.0))
+                  / Math.Pow(sm_b, 2.0);
+
+            /* Precalculate cos (phif) */
+            cf = Math.Cos(phif);
+
+            /* Precalculate nuf2 */
+            nuf2 = ep2 * Math.Pow(cf, 2.0);
+
+            /* Precalculate Nf and initialize Nfpow */
+            Nf = Math.Pow(sm_a, 2.0) / (sm_b * Math.Sqrt(1 + nuf2));
+            Nfpow = Nf;
+
+            /* Precalculate tf */
+            tf = Math.Tan(phif);
+            tf2 = tf * tf;
+            tf4 = tf2 * tf2;
+
+            /* Precalculate fractional coefficients for x**n in the equations
+               below to simplify the expressions for latitude and longitude. */
+            x1frac = 1.0 / (Nfpow * cf);
+
+            Nfpow *= Nf;   /* now equals Nf**2) */
+            x2frac = tf / (2.0 * Nfpow);
+
+            Nfpow *= Nf;   /* now equals Nf**3) */
+            x3frac = 1.0 / (6.0 * Nfpow * cf);
+
+            Nfpow *= Nf;   /* now equals Nf**4) */
+            x4frac = tf / (24.0 * Nfpow);
+
+            Nfpow *= Nf;   /* now equals Nf**5) */
+            x5frac = 1.0 / (120.0 * Nfpow * cf);
+
+            Nfpow *= Nf;   /* now equals Nf**6) */
+            x6frac = tf / (720.0 * Nfpow);
+
+            Nfpow *= Nf;   /* now equals Nf**7) */
+            x7frac = 1.0 / (5040.0 * Nfpow * cf);
+
+            Nfpow *= Nf;   /* now equals Nf**8) */
+            x8frac = tf / (40320.0 * Nfpow);
+
+            /* Precalculate polynomial coefficients for x**n.
+               -- x**1 does not have a polynomial coefficient. */
+            x2poly = -1.0 - nuf2;
+
+            x3poly = -1.0 - 2 * tf2 - nuf2;
+
+            x4poly = 5.0 + 3.0 * tf2 + 6.0 * nuf2 - 6.0 * tf2 * nuf2
+                - 3.0 * (nuf2 * nuf2) - 9.0 * tf2 * (nuf2 * nuf2);
+
+            x5poly = 5.0 + 28.0 * tf2 + 24.0 * tf4 + 6.0 * nuf2 + 8.0 * tf2 * nuf2;
+
+            x6poly = -61.0 - 90.0 * tf2 - 45.0 * tf4 - 107.0 * nuf2
+                + 162.0 * tf2 * nuf2;
+
+            x7poly = -61.0 - 662.0 * tf2 - 1320.0 * tf4 - 720.0 * (tf4 * tf2);
+
+            x8poly = 1385.0 + 3633.0 * tf2 + 4095.0 * tf4 + 1575 * (tf4 * tf2);
+
+            /* Calculate latitude */
+            double nLat = phif + x2frac * x2poly * (x * x)
+                + x4frac * x4poly * Math.Pow(x, 4.0)
+                + x6frac * x6poly * Math.Pow(x, 6.0)
+                + x8frac * x8poly * Math.Pow(x, 8.0);
+
+            /* Calculate longitude */
+            double nLong = zone + x1frac * x
+                + x3frac * x3poly * Math.Pow(x, 3.0)
+                + x5frac * x5poly * Math.Pow(x, 5.0)
+                + x7frac * x7poly * Math.Pow(x, 7.0);
+
+            double dLat = RadToDeg(nLat);
+            double dLong = RadToDeg(nLong);
+            if (dLat > 90) { dLat = 90; }
+            if (dLat < -90) { dLat = -90; }
+            if (dLong > 180) { dLong = 180; }
+            if (dLong < -180) { dLong = -180; }
+            CoordinatePart cLat = new CoordinatePart(dLat, CoordinateType.Lat, c);
+            CoordinatePart cLng = new CoordinatePart(dLong, CoordinateType.Long, c);
+
+            c.Latitude = cLat;
+            c.Longitude = cLng;
+          
+            return c;
+        }
+        private static double RadToDeg(double rad)
+        {
+            double pi = 3.14159265358979;
+            return (rad / pi * 180.0);
+        }
+        private static double DegToRad(double deg)
+        {
+            double pi = 3.14159265358979;
+            return (deg / 180.0 * pi);
+        }
+        private static double FootpointLatitude(double y)
+        {
+            double y_, alpha_, beta_, gamma_, delta_, epsilon_, n;
+            double result;
+           
+
+            /* Ellipsoid model constants (actual values here are for WGS84) */
+            double sm_a = 6378137.0;
+            double sm_b = 6356752.314;
+           
+
+            /* Precalculate n (Eq. 10.18) */
+            n = (sm_a - sm_b) / (sm_a + sm_b);
+
+            /* Precalculate alpha_ (Eq. 10.22) */
+            /* (Same as alpha in Eq. 10.17) */
+            alpha_ = ((sm_a + sm_b) / 2.0) * (1 + (Math.Pow(n, 2.0) / 4) + (Math.Pow(n, 4.0) / 64));
+
+            /* Precalculate y_ (Eq. 10.23) */
+            y_ = y / alpha_;
+
+            /* Precalculate beta_ (Eq. 10.22) */
+            beta_ = (3.0 * n / 2.0) + (-27.0 * Math.Pow(n, 3.0) / 32.0)
+                + (269.0 * Math.Pow(n, 5.0) / 512.0);
+
+            /* Precalculate gamma_ (Eq. 10.22) */
+            gamma_ = (21.0 * Math.Pow(n, 2.0) / 16.0)
+                + (-55.0 * Math.Pow(n, 4.0) / 32.0);
+
+            /* Precalculate delta_ (Eq. 10.22) */
+            delta_ = (151.0 * Math.Pow(n, 3.0) / 96.0)
+                + (-417.0 * Math.Pow(n, 5.0) / 128.0);
+
+            /* Precalculate epsilon_ (Eq. 10.22) */
+            epsilon_ = (1097.0 * Math.Pow(n, 4.0) / 512.0);
+
+            /* Now calculate the sum of the series (Eq. 10.21) */
+            result = y_ + (beta_ * Math.Sin(2.0 * y_))
+                + (gamma_ * Math.Sin(4.0 * y_))
+                + (delta_ * Math.Sin(6.0 * y_))
+                + (epsilon_ * Math.Sin(8.0 * y_));
+
+            return result;
+        }
+        /// <summary>
+        /// Convert UTM to Lat/Long
+        /// </summary>
+        /// <param name="utm">utm</param>
+        /// <returns>Coordinate</returns>
+        public static Coordinate ConvertUTMtoLatLong(UniversalTransverseMercator utm)
+        {
+
+            bool southhemi = false;
+            if (utm.latZone == "A" || utm.latZone == "B" || utm.latZone == "C" || utm.latZone == "D" || utm.latZone == "E" || utm.latZone == "F" || utm.latZone == "G" || utm.latZone == "H" || utm.latZone == "J" ||
+                   utm.latZone == "K" || utm.latZone == "L" || utm.latZone == "M")
+            {
+                southhemi = true;
+            }
+     
+            double cmeridian;
+
+            double x = utm.Easting - 500000.0;
+            double UTMScaleFactor = 0.9996;
+            x /= UTMScaleFactor;
+
+            /* If in southern hemisphere, adjust y accordingly. */
+            double y = utm.Northing;
+            if (southhemi)
+            {
+                y -= 10000000.0;
+            }
+
+            y /= UTMScaleFactor;
+
+            cmeridian = UTMCentralMeridian(utm.LongZone);
+            Coordinate c = UTMtoLatLong(x, y, cmeridian);
+
+            if (c.Latitude.ToDouble() > 85 || c.Latitude.ToDouble() < -85)
+            {
+                Trace.WriteLine("UTM conversions greater than 85 degrees or less than -85 degree latitude contain major deviations and should be used with caution.");
+            }
+            return c;
+
+
+        }
+        private static double UTMCentralMeridian(double zone)
+        {
+            double cmeridian;
+
+            cmeridian = DegToRad(-183.0 + (zone * 6.0));
+
+            return cmeridian;
+        }
+
+      
+	}
+  
 }

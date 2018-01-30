@@ -157,7 +157,7 @@ namespace CoordinateSharp
             c.MoonIllum = mi;
             
              string moonName = "";
-            
+             int moonDate = 0;
             //GET PHASE NAME
 
             //CHECK MOON AT BEGINNING AT END OF DAY TO GET DAY PHASE IN UTC
@@ -192,11 +192,11 @@ namespace CoordinateSharp
                 //Determine Moon Name.
                 if (startPhase <= .5 && endPhase >= .5)
                 {
-                    moonName = GetMoonName(dMon.Month, moonName);         
+                    moonDate = x;
+                    moonName = GetMoonName(dMon.Month, moonName);
                 }
                 //Get Moon Name (month, string);
-                //Get Moon Phase Name
-               
+                //Get Moon Phase Name          
                 if (date.Day == x)
                 {
                     if (startPhase > endPhase)
@@ -211,7 +211,7 @@ namespace CoordinateSharp
                     }
                     if (startPhase <= .5 && endPhase >= .5)
                     {
-                        mi.PhaseName = "Full Moon";
+                        mi.PhaseName = "Full Moon";                       
                         break;
                     }
                     if (startPhase <= .75 && endPhase >= .75)
@@ -243,7 +243,11 @@ namespace CoordinateSharp
                 }
                
             }
-            c.AstrologicalSigns.MoonName = moonName;
+            if (date.Day == moonDate)
+            {
+                c.AstrologicalSigns.MoonName = moonName;
+            }
+            else { c.AstrologicalSigns.MoonName = ""; }
         }
 
         private static string GetMoonName(int month, string name)
