@@ -1,8 +1,17 @@
-# CoordinateSharp v1.1.1.6
+# CoordinateSharp v1.1.2.1
 
-A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can now convert Lat/Long to UTM/MGRS. The ability to calculate various pieces of celestial information (sunset, moon illum..), also exist.
+A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
 
-NOTE: (INCLUDE ADDITIONS .6 HERE PRIOR TO PULL).
+### 1.1.2.1 Change Note
+* -Added UTM to Lat/Long conversion.
+* -Added MGRS(NATO UTM) to Lat/Long conversion.
+* -Added sun altitude and azimuth properties.
+* -Added additional solar times.
+* -Added additional moon illumination properties.
+* -Added astrological sign properties.
+* -XML documentation added to assembly.
+* -Added UTC time integrity to calculations.
+* -Minor bug fixes.
 
 # Getting Started
 These instructions will get a copy of the library running on your local machine for development and testing purposes.
@@ -52,14 +61,31 @@ c.Latitude.ToString();// N 40º 34.609'
 c.Longitude.ToString();// W 070º 45.407'
 ```
 
-### Universal Transverse Mercator (UTM) & Military Grid Reference System (MGRS) Formats
+### Universal Transverse Mercator (UTM) & Military Grid Reference System/NATO UTM (MGRS/ NATO UTM) Formats
 
-UTM and MGRS formats are available for display. They are converted from the lat/long decimal values based on the WGS 84 datum. You cannot convert these formats back to lat/long at this time. These formats are accessible from the ```Coordinate``` object.
+UTM and MGRS formats are available for display. They are converted from the lat/long decimal values based on the WGS 84 datum. These formats are accessible from the ```Coordinate``` object.
 
 ```C#
 Coordinate c = new Coordinate(40.57682, -70.75678);
 c.UTM.ToString(); // Outputs 19T 351307mE 4493264mN
+c.MGRS.ToString(); // Outputs 19T CE 51307 93264
 ```
+
+To convert UTM or MGRS coordinates into Lat/Long
+
+```C#
+UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 233434, 234234);
+Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
+```
+NOTE: UTM conversions below and above the 85th parallels become highly inaccurate. MGRS conversion may suffer accuracy loss even sooner. Lastly, due to grid overlap the MGRS coordinates input, may not be the same ones output in the created Coordinate class. If accuracy is in question you may test the conversion by following the steps below. 
+
+```C#
+MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
+Coordinate c = MilitaryGridReferenceSystem.MGRStoLatLong(mgrs);
+Coordinate nc = MilitaryGridReferenceSystem.MGRStoLatLong(c.MGRS); //c.MGRS is now 20N RF 33962 61982
+Debug.Print(c.ToString() + "  " + nc.ToString()); // N 0º 33' 35.988" W 60º 0' 0.01"   N 0º 33' 35.988" W 60º 0' 0.022"
+```
+In the above example, the MGRS values are different once converted, but the Lat/Long is almost the same.
 
 ### Binding and MVVM
 
