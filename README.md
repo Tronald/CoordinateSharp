@@ -164,9 +164,9 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   
   NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a standard distance deviation of 3,388 km. The result is considered an approximation and should suffice for general purposes, but if more precision is required a different option should be sought.
   
-### Eagerloading
+### Eager Loading (BETA)
 
-CoordinateSharp values are all eagerloaded upon initialization of the Coordinate object. Anytime a Coordinate object property changes, everything is recalculated. The calculations are generally small, but you may wish to turn of eagerloading if you are trying to maximize performance. This will allow you to specify when certain calculations take place. At this time you may only turn eagerloading off for the celestial property. This feature will expand with future updates.
+CoordinateSharp values are all eager loaded upon initialization of the Coordinate object. Anytime a Coordinate object property changes, everything is recalculated. The calculations are generally small, but you may wish to turn off eager loading if you are trying to maximize performance. This will allow you to specify when certain calculations take place. At this time you may only turn eagerloading off for the celestial property. This feature will expand with future updates.
 
 ```C#
 EagerLoad eagerLoad = New EagerLoad();
