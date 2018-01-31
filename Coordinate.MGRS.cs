@@ -132,7 +132,7 @@ namespace CoordinateSharp
         /// Creates a Coordinate object from an MGRS/NATO UTM Coordinate
         /// </summary>
         /// <param name="mgrs">MilitaryGridReferenceSystem</param>
-        /// <returns></returns>
+        /// <returns>Coordinate object</returns>
         public static Coordinate MGRStoLatLong(MilitaryGridReferenceSystem mgrs)
         {
             string latz = mgrs.LatZone;
@@ -228,8 +228,14 @@ namespace CoordinateSharp
         {
             return this.longZone.ToString() + this.LatZone + " " + this.digraph + " " + ((int)this.easting).ToString("00000") + " " + ((int)this.northing).ToString("00000");
         }
-
+        /// <summary>
+        /// Property changed event
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// Notify property changed
+        /// </summary>
+        /// <param name="propName">Property name</param>
         public void NotifyPropertyChanged(string propName)
         {
             if (this.PropertyChanged != null)
@@ -237,6 +243,5 @@ namespace CoordinateSharp
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
-        
     }
 }

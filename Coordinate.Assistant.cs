@@ -71,7 +71,37 @@ namespace CoordinateSharp
     /// <summary>
     /// Coordinate Format Types
     /// </summary>
-    public enum CoordinateFormatType { Decimal_Degree, Degree_Decimal_Minutes, Degree_Minutes_Seconds, Decimal }
+    public enum CoordinateFormatType
+    {
+        /// <summary>
+        /// Decimal Degree Format
+        /// </summary>
+        /// <remarks>
+        /// Example: N 40.456 W 75.456
+        /// </remarks>
+        Decimal_Degree,
+        /// <summary>
+        /// Decimal Degree Minutes Format
+        /// </summary>
+        /// <remarks>
+        /// Example: N 40º 34.552' W 70º 45.408'
+        /// </remarks>
+        Degree_Decimal_Minutes,
+        /// <summary>
+        /// Decimal Degree Minutes Format
+        /// </summary>
+        /// <remarks>
+        /// Example: N 40º 34" 36.552' W 70º 45" 24.408'
+        /// </remarks>
+        Degree_Minutes_Seconds,
+        /// <summary>
+        /// Decimal Format
+        /// </summary>
+        /// <remarks>
+        /// Example: 40.57674 -70.46574
+        /// </remarks>
+        Decimal
+    }
     /// <summary>
     /// Used for UTM/MGRS Conversions
     /// </summary>

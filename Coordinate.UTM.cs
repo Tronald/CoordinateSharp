@@ -15,10 +15,10 @@ namespace CoordinateSharp
         /// <summary>
         /// Creates a UniversalTransverMercator object.
         /// </summary>
-        /// <param name="latz">string</param>
-        /// <param name="longz">int</param>
-        /// <param name="est">double</param>
-        /// <param name="nrt">double</param>
+        /// <param name="latz">Latitude zone</param>
+        /// <param name="longz">Longitude zone</param>
+        /// <param name="est">Easting</param>
+        /// <param name="nrt">Northing</param>
         public UniversalTransverseMercator(string latz, int longz, double est, double nrt)
         {
             if (longz < 1 || longz > 60) { Trace.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
@@ -240,20 +240,7 @@ namespace CoordinateSharp
         public override string ToString()
         {
             return this.longZone.ToString() + this.LatZone + " " + (int)this.easting + "mE " + (int)this.northing + "mN";
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void NotifyPropertyChanged(string propName)
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
-            }
-        }
-
-        //Convert Back to LatLong
-
-       
+        }       
 
         private static Coordinate UTMtoLatLong(double x, double y, double zone)
         {
@@ -358,6 +345,7 @@ namespace CoordinateSharp
           
             return c;
         }
+
         private static double RadToDeg(double rad)
         {
             double pi = 3.14159265358979;
@@ -413,10 +401,10 @@ namespace CoordinateSharp
             return result;
         }
         /// <summary>
-        /// Convert UTM to Lat/Long
+        /// Converts UTM coordinate to Lat/Long
         /// </summary>
         /// <param name="utm">utm</param>
-        /// <returns>Coordinate</returns>
+        /// <returns>Coordinate object</returns>
         public static Coordinate ConvertUTMtoLatLong(UniversalTransverseMercator utm)
         {
 
@@ -462,7 +450,21 @@ namespace CoordinateSharp
             return cmeridian;
         }
 
-      
+        /// <summary>
+        /// Property changed event
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// Notify property changed
+        /// </summary>
+        /// <param name="propName">Property name</param>
+        public void NotifyPropertyChanged(string propName)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+            }
+        }
 	}
   
 }
