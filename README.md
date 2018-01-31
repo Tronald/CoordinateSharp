@@ -1,8 +1,17 @@
-# CoordinateSharp v1.1.1.5
+# CoordinateSharp v1.1.2.1
 
-A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can now convert Lat/Long to UTM/MGRS. The ability to calculate various pieces of celestial information (sunset, moon illum..), also exist.
+A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
 
-NOTE: Added MoonDistance property to the CelestialInfo property (Coordinate.CelestialInfo.MoonDistance). The property will return the approximate distance between the center of the earth and moon based on date. Can be used to determine lunar perigees and apogees.
+### 1.1.2.1 Change Notes
+* -Added UTM to Lat/Long conversion.
+* -Added MGRS(NATO UTM) to Lat/Long conversion.
+* -Added sun altitude and azimuth properties.
+* -Added additional solar times.
+* -Added additional moon illumination properties.
+* -Added astrological sign properties.
+* -XML documentation added to assembly.
+* -Added UTC time integrity to calculations.
+* -Minor bug fixes.
 
 # Getting Started
 These instructions will get a copy of the library running on your local machine for development and testing purposes.
@@ -52,14 +61,39 @@ c.Latitude.ToString();// N 40º 34.609'
 c.Longitude.ToString();// W 070º 45.407'
 ```
 
-### Universal Transverse Mercator (UTM) & Military Grid Reference System (MGRS) Formats
+### Universal Transverse Mercator (UTM) & Military Grid Reference System/NATO UTM (MGRS/ NATO UTM) Formats
 
-UTM and MGRS formats are available for display. They are converted from the lat/long decimal values based on the WGS 84 datum. You cannot convert these formats back to lat/long at this time. These formats are accessible from the ```Coordinate``` object.
+UTM and MGRS formats are available for display. They are converted from the lat/long decimal values based on the WGS 84 datum. These formats are accessible from the ```Coordinate``` object.
 
 ```C#
 Coordinate c = new Coordinate(40.57682, -70.75678);
 c.UTM.ToString(); // Outputs 19T 351307mE 4493264mN
+c.MGRS.ToString(); // Outputs 19T CE 51307 93264
 ```
+
+To convert UTM or MGRS coordinates into Lat/Long
+
+```C#
+UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 233434, 234234);
+Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
+```
+Some UTM formats may contain a "Southern Hemisphere" boolean value instead of a Lat Zone character. If this is the case for a UTM you are converting use the letter "C" for southern hemisphere UTMs and "N" for norther hemisphere UTMs.
+
+```C#
+//MY UTM COORD ZONE: 32 EASTING: 233434 NORTHING: 234234 (NORTHERN HEMISPHERE)
+UniversalTransverseMercator utm = new UniversalTransverseMercator("N", 32, 233434, 234234);
+Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
+```
+
+NOTE: UTM conversions below and above the 85th parallels become highly inaccurate. MGRS conversion may suffer accuracy loss even sooner. Lastly, due to grid overlap the MGRS coordinates input, may not be the same ones output in the created Coordinate class. If accuracy is in question you may test the conversion by following the steps below. 
+
+```C#
+MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
+Coordinate c = MilitaryGridReferenceSystem.MGRStoLatLong(mgrs);
+Coordinate nc = MilitaryGridReferenceSystem.MGRStoLatLong(c.MGRS); //c.MGRS is now 20N RF 33962 61982
+Debug.Print(c.ToString() + "  " + nc.ToString()); // N 0º 33' 35.988" W 60º 0' 0.01"   N 0º 33' 35.988" W 60º 0' 0.022"
+```
+In the above example, the MGRS values are different once converted, but the Lat/Long is almost the same once converted back.
 
 ### Binding and MVVM
 
@@ -81,7 +115,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
  
  ### Celestial Information
  
- You may pull the following pieces of celestial information by passing a geodate to a Coordinate object. You may initialize an object with a date or pass it later. All dates are assumed to be in UTC. Only pass UTC DateTimes.
+ You may pull the following pieces of celestial information by passing a UTC geographic date to a Coordinate object. You may initialize an object with a date or pass it later. All dates are assumed to be in UTC. Only pass UTC DateTimes. You must convert back to local time on your own.
 
   ```C#
   Coordinate c = new Coordinate(40.57682, -70.75678, new DateTime(2017,3,21));
@@ -90,12 +124,16 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   
   The following pieces of celestial information are available:
   
-  -Sun Set        
-  -Sun Rise         
-  -MoonSet          
-  -Moon Rise        
-  -Moon Illumination
-  -Moon Distance
+  * -Sun Set        
+  * -Sun Rise    
+  * -Sun Altitude
+  * -Sun Azimuth
+  * -MoonSet          
+  * -Moon Rise        
+  * -Moon Distance
+  * -Moon Illumination (Phase, Phase Name, etc)
+  * -Additional Solar Times (Civil/Nautical Dawn/Dusk)
+  * -Astrological Information (Moon Sign, Zodiac Sign, Moon Name If Full Moon")
     
   Sun/Moon Set and Rise DateTimes are nullable. If a null value is returned the Sun or Moon Condition needs to be viewed to see why. In the below example we are using a lat/long near the North Pole with a date in August. The sun does not set that far North during the specified time of year.
   
@@ -104,7 +142,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   coord.CelestialInfo.SunCondition.ToString(); //Outputs UpAllDay
   ```
   
-   Moon Illimination returns a value from 0.0 to 1.0. The table shown is a basic break down. You may determine Waxing and Waning types between the values shown.
+   Moon Illumination returns a value from 0.0 to 1.0. The table shown is a basic break down. You may determine Waxing and Waning types between the values shown or you may get the phase name from the Celestial.MoonIllum.PhaseName property.
   
 |Value |Phase          |
 | ---- | ------------- |
@@ -112,6 +150,10 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
 | 0.25 | First Quarter |
 | 0.5  | Full Moon     |
 | 0.75 | Third Quarter |
+
+  ```C#
+  c.Celestial.MoonIllum.PhaseName
+  ```
 
   You may also grab celestial data through static functions if you do not wish to create a Coordinate object.
   
@@ -121,6 +163,23 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   ```
   
   NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a standard distance deviation of 3,388 km. The result is considered an approximation and should suffice for general purposes, but if more precision is required a different option should be sought.
+  
+### Eager Loading (BETA)
+
+CoordinateSharp values are all eager loaded upon initialization of the Coordinate object. Anytime a Coordinate object property changes, everything is recalculated. The calculations are generally small, but you may wish to turn off eager loading if you are trying to maximize performance. This will allow you to specify when certain calculations take place. At this time you may only turn eager loading off for the celestial property. This feature will expand with future updates.
+
+```C#
+EagerLoad eagerLoad = New EagerLoad();
+eagerLoad.Celestial = false;
+Coordinate c = new Coordinate(40.0352, -74.5844, DateTime.Now, eagerLoad);
+//To load Celestial data when ready
+c.LoadCelestialInfo();           
+ ```
+The above example initializes a Coordinate with eager loading in place. You may however turn it on or off after initialization.
+
+```C#
+c.EagerLoadSettings.Celestial = false;    
+ ```
    
 # Acknowledgements
 
@@ -134,6 +193,4 @@ suncalc's moon calculations are based on "Astronomical Algorithms" 2nd edition b
 
 Calculations for illumination parameters of the moon based on [NASA Formulas](http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro) and Chapter 48 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
 
-UTM & MGRS Conversions were referenced from [Sami Salkosuo's j-coordconvert library](https://www.ibm.com/developerworks/library/j-coordconvert/)
-  
-  
+UTM & MGRS Conversions were referenced from [Sami Salkosuo's j-coordconvert library](https://www.ibm.com/developerworks/library/j-coordconvert/) & [Steven Dutch, Natural and Applied Sciences,University of Wisconsin - Green Bay](https://www.uwgb.edu/dutchs/UsefulData/ConvertUTMNoOZ.HTM)

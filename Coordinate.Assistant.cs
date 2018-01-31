@@ -71,7 +71,37 @@ namespace CoordinateSharp
     /// <summary>
     /// Coordinate Format Types
     /// </summary>
-    public enum CoordinateFormatType { Decimal_Degree, Degree_Decimal_Minutes, Degree_Minutes_Seconds, Decimal }
+    public enum CoordinateFormatType
+    {
+        /// <summary>
+        /// Decimal Degree Format
+        /// </summary>
+        /// <remarks>
+        /// Example: N 40.456 W 75.456
+        /// </remarks>
+        Decimal_Degree,
+        /// <summary>
+        /// Decimal Degree Minutes Format
+        /// </summary>
+        /// <remarks>
+        /// Example: N 40º 34.552' W 70º 45.408'
+        /// </remarks>
+        Degree_Decimal_Minutes,
+        /// <summary>
+        /// Decimal Degree Minutes Format
+        /// </summary>
+        /// <remarks>
+        /// Example: N 40º 34" 36.552' W 70º 45" 24.408'
+        /// </remarks>
+        Degree_Minutes_Seconds,
+        /// <summary>
+        /// Decimal Format
+        /// </summary>
+        /// <remarks>
+        /// Example: 40.57674 -70.46574
+        /// </remarks>
+        Decimal
+    }
     /// <summary>
     /// Used for UTM/MGRS Conversions
     /// </summary>
@@ -149,7 +179,7 @@ namespace CoordinateSharp
             digraph2.Add(new Digraph() { Zone = 20, Letter = "V" });         
         }
 
-        public int getDigraph1Index(String letter)
+        internal int getDigraph1Index(String letter)
         {
             for (int i = 0; i < digraph1Array.Length; i++)
             {
@@ -162,7 +192,7 @@ namespace CoordinateSharp
             return -1;
         }
 
-        public int getDigraph2Index(String letter)
+        internal int getDigraph2Index(String letter)
         {
             for (int i = 0; i < digraph2Array.Length; i++)
             {
@@ -174,8 +204,8 @@ namespace CoordinateSharp
 
             return -1;
         }
-
-        public String getDigraph1(int longZone, double easting)
+       
+        internal String getDigraph1(int longZone, double easting)
         {
             int a1 = longZone;
             double a2 = 8 * ((a1 - 1) % 3) + 1;
@@ -185,7 +215,7 @@ namespace CoordinateSharp
             return digraph1.Where(x=>x.Zone == Math.Floor(a4)).FirstOrDefault().Letter;
         }
 
-        public String getDigraph2(int longZone, double northing)
+        internal String getDigraph2(int longZone, double northing)
         {
             int a1 = longZone;
             double a2 = 1 + 5 * ((a1 - 1) % 2);
@@ -270,6 +300,98 @@ namespace CoordinateSharp
         /// Celestial body sets, but does not rise on the set day
         /// </summary>
         NoSet
+    }
+    /// <summary>
+    /// Moon Illumination Information
+    /// </summary>
+    public class MoonIllum
+    {
+        /// <summary>
+        /// Moon's fraction
+        /// </summary>
+        public double Fraction { get; set; }
+        /// <summary>
+        /// Moon's Angle
+        /// </summary>
+        public double Angle { get; set; }
+        /// <summary>
+        /// Moon's phase
+        /// </summary>
+        public double Phase { get; set; }
+        /// <summary>
+        /// Moon's phase name for the specified day
+        /// </summary>
+        public string PhaseName { get; set; }
+
+    }
+    /// <summary>
+    /// Astrological Signs
+    /// </summary>
+    public class AstrologicalSigns
+    {
+        /// <summary>
+        /// Astrological Zodiac Sign
+        /// </summary>
+        public string MoonName { get; set; }
+        /// <summary>
+        /// Astrological Moon Sign
+        /// </summary>
+        public string MoonSign { get; set; }
+        /// <summary>
+        /// Astrological Zodiac Sign
+        /// </summary>
+        public string ZodiacSign { get; set; }
+    }
+    /// <summary>
+    /// Additional Solar Time Information
+    /// </summary>
+    public class AdditionalSolarTimes
+    {
+        /// <summary>
+        /// Create an AdditionalSolarTimes object.
+        /// </summary>
+        public AdditionalSolarTimes()
+        {
+            //Set dates to avoid null errors. If year return 1900 event did not occur.
+            CivilDawn = new DateTime(1900,1,1,0,0,0,DateTimeKind.Utc);
+            CivilDusk = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            NauticalDawn = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            NauticalDusk = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        }
+        /// <summary>
+        /// Returns Civil Dawn Time
+        /// </summary>
+        public DateTime CivilDawn { get; set; }
+        /// <summary>
+        /// Returns Civil Dusk Time
+        /// </summary>
+        public DateTime CivilDusk { get; set; }
+        /// <summary>
+        /// Returns Nautical Dawn Time
+        /// </summary>
+        public DateTime NauticalDawn { get; set; }
+        /// <summary>
+        /// Returns Nautical Dusk Time
+        /// </summary>
+        public DateTime NauticalDusk { get; set; }
+    }
+    /// <summary>
+    /// Turn on/off eager loading of certain properties
+    /// </summary>
+    public class EagerLoad
+    {
+        /// <summary>
+        /// Create an EagerLoad object
+        /// </summary>
+        public EagerLoad()
+        {      
+            Celestial = true;        
+        }
+  
+        /// <summary>
+        /// Eager load celestial information
+        /// </summary>
+        public bool Celestial { get; set; }     
     }
     
 }

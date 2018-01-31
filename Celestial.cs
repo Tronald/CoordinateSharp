@@ -8,79 +8,148 @@ using System.ComponentModel;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Sun and Moon information
+    /// The main class for Celestial information
     /// </summary>
+    /// <remarks>
+    /// This class can calculate various pieces of solar and lunar data, based on location and date
+    /// </remarks>
     public class Celestial : INotifyPropertyChanged
     {
+      
         //When as rise or a set does not occur, the DateTime will return null
         /// <summary>
-        /// Initializes an empty Celestial object
+        /// Creates an empty Celestial object
         /// </summary>
         public Celestial()
         {
-            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1));
+            AstrologicalSigns = new AstrologicalSigns();
+            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1,0,0,0,DateTimeKind.Utc));   
         }
         private Celestial(bool hasCalcs)
         {
-            if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1)); }
+            
+            AstrologicalSigns = new AstrologicalSigns();
+            if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1,0,0,0,DateTimeKind.Utc)); }
         }
         /// <summary>
-        /// Initializes a Celestial object.
+        /// Creates a Celestial object based on a geographic lat/long coordinate and specified date
         /// </summary>
         /// <param name="lat">Decimal Format Latitude</param>
         /// <param name="longi">Decimal Format Longitude</param>
-        /// <param name="geoDate">Geographic DateTime</param>
+        /// <param name="geoDate">Geographic UTC DateTime</param>
         public Celestial(double lat, double longi, DateTime geoDate)
         {
-            CalculateCelestialTime(lat, longi, geoDate);
+            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
+            AstrologicalSigns = new AstrologicalSigns();
+            CalculateCelestialTime(lat, longi, d);
         }
         /// <summary>
-        /// Sunset time.
+        /// Creates a Celestial object based on the location and date in the provided Coordinate object
+        /// </summary>
+        /// <param name="c">Coordinate</param>
+        /// <returns>A populated Celestial object</returns>
+        public static Celestial LoadCelestial(Coordinate c)
+        {
+            DateTime geoDate = c.GeoDate;
+            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
+            Celestial cel = new Celestial(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate);
+            return cel;
+        }
+       
+       
+        /// <summary>
+        /// UTC Sunset time
         /// </summary>
         public DateTime? SunSet { get; set; }
         /// <summary>
-        /// Sunrise time.
+        /// UTC Sunrise time
         /// </summary>
         public DateTime? SunRise { get; set; }
         /// <summary>
-        /// Moonset time.
+        /// UTC Moonset time
         /// </summary>
         public DateTime? MoonSet { get; set; }
         /// <summary>
-        /// Moonrise time.
+        /// UTC Moonrise time
         /// </summary>
         public DateTime? MoonRise { get; set; }
+        /// <summary>
+        /// Sun azimuth in degrees
+        /// </summary>
+        public double SunAzimuth { get; set; }
+        /// <summary>
+        /// Sun altitude in degrees
+        /// </summary>
+        public double SunAltitude { get; set; }
         /// <summary>
         /// Estimated moon distance from the earth in kilometers
         /// </summary>
         public double? MoonDistance { get; set; }
         /// <summary>
-        /// Suns Condition for the  set geodate.
+        /// Sun's Condition based on the provided UTC date
         /// </summary>
         public CelestialStatus SunCondition { get; set; }
         /// <summary>
-        /// Moons condition for the set geodate.
+        /// Moon's condition based on the provided UTC date
         /// </summary>
         public CelestialStatus MoonCondition { get; set; }
+
         /// <summary>
-        /// Moon illumination phase.
+        /// Moon ilumination details based on the provided UTC date
         /// </summary>
-        public double MoonPhase { get; set; }
+        /// <remarks>
+        /// Contains phase, phase name, fraction and angle
+        /// </remarks>
+        public MoonIllum MoonIllum { get; set; }
+        /// <summary>
+        /// Additional solar event times based on the provided UTC date and location
+        /// </summary>
+        /// <remarks>Contains civil and nautical dawn and dusk times.</remarks>
+        public AdditionalSolarTimes AdditionalSolarTimes { get; set; }
+        /// <summary>
+        /// Astrological signs based on the provided UTC date
+        /// </summary>
+        /// <remarks>
+        /// Contains zodiac, moon sign and moon name during full moon events
+        /// </remarks>
+        public AstrologicalSigns AstrologicalSigns { get; set; }
+
+        /// <summary>
+        /// Moon illumination phase
+        /// </summary>
+        /// <remarks>
+        /// This property is obsolete and has moved to the MoonIllum property
+        /// </remarks>
+        [Obsolete("MoonPhase can be accessed through the MoonIllum property.")]
+        public double MoonPhase { get { return this.MoonIllum.Phase; } }
+       
         /// <summary>
         /// Calculates all celestial data. Coordinates will notify as changes occur
         /// </summary>
         /// <param name="lat">Decimal format latitude</param>
         /// <param name="longi">Decimal format longitude</param>
         /// <param name="date">Geographic DateTime</param>
-        public void CalculateCelestialTime(double lat, double longi, DateTime date)
+        internal void CalculateCelestialTime(double lat, double longi, DateTime date)
         {
+
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
             SunCalc.CalculateSunTime(lat, longi, date, this);
             MoonCalc.GetMoonTimes(date, lat, longi, this);
-            MoonCalc.GetMoonIllumination(date, this);
             MoonCalc.GetMoonDistance(date, this);
+
+
+            SunCalc.CalculateZodiacSign(date, this);
+            MoonCalc.GetMoonSign(date, this);
+
+            MoonCalc.GetMoonIllumination(date, this);
+
+            SunCalc.CalculateAdditionSolarTimes(date, longi, lat, this);
+
+
+
         }
         /// <summary>
-        /// Calculate celestial data based on lat/long and date
+        /// Calculate celestial data based on lat/long and utc date
         /// </summary>
         /// <param name="lat">Decimal format latitude</param>
         /// <param name="longi">Decimal format longitude</param>
@@ -88,11 +157,18 @@ namespace CoordinateSharp
         /// <returns>Fully populated Celestial object</returns>
         public static Celestial CalculateCelestialTimes(double lat, double longi, DateTime date)
         {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+          
             Celestial c = new Celestial(false);
+
             SunCalc.CalculateSunTime(lat, longi, date, c);
             MoonCalc.GetMoonTimes(date, lat, longi, c);
-            MoonCalc.GetMoonIllumination(date, c);
             MoonCalc.GetMoonDistance(date, c);
+            SunCalc.CalculateZodiacSign(date, c);
+            MoonCalc.GetMoonSign(date, c);
+            MoonCalc.GetMoonIllumination(date, c);
+            SunCalc.CalculateAdditionSolarTimes(date, longi, lat, c);
+
             return c;
         }
         /// <summary>
@@ -101,11 +177,16 @@ namespace CoordinateSharp
         /// <param name="lat">Decimal format latitude</param>
         /// <param name="longi">Decimal format longitude</param>
         /// <param name="date">Geographic DateTime</param>
-        /// <returns>Partially populated Celestial Object</returns>
+        /// <returns>Partially populated Celestial object</returns>
         public static Celestial CalculateSunData(double lat, double longi, DateTime date)
         {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+          
             Celestial c = new Celestial(false);
             SunCalc.CalculateSunTime(lat, longi, date, c);
+            SunCalc.CalculateZodiacSign(date, c);
+
+            SunCalc.CalculateAdditionSolarTimes(date, longi, lat, c);
 
             return c;
         }
@@ -115,17 +196,30 @@ namespace CoordinateSharp
         /// <param name="lat">Decimal format latitude</param>
         /// <param name="longi">Decimal format longitude</param>
         /// <param name="date">Geographic DateTime</param>
-        /// <returns>Partially populated Celestial Object</returns>
+        /// <returns>Partially populated Celestial object</returns>
         public static Celestial CalculateMoonData(double lat, double longi, DateTime date)
         {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+          
             Celestial c = new Celestial(false);
 
             MoonCalc.GetMoonTimes(date, lat, longi, c);
+            MoonCalc.GetMoonDistance(date, c);
+            MoonCalc.GetMoonSign(date, c);
             MoonCalc.GetMoonIllumination(date, c);
+
             return c;
         }
-
+        
+        /// <summary>
+        /// Property changed event
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Notify property changed
+        /// </summary>
+        /// <param name="propName">Property name</param>
         public void NotifyPropertyChanged(string propName)
         {
             if (this.PropertyChanged != null)
