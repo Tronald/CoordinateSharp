@@ -115,7 +115,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
  
  ### Celestial Information
  
- You may pull the following pieces of celestial information by passing a geodate to a Coordinate object. You may initialize an object with a date or pass it later. All dates are assumed to be in UTC. Only pass UTC DateTimes. You must convert back to local time on your own.
+ You may pull the following pieces of celestial information by passing a UTC geographic date to a Coordinate object. You may initialize an object with a date or pass it later. All dates are assumed to be in UTC. Only pass UTC DateTimes. You must convert back to local time on your own.
 
   ```C#
   Coordinate c = new Coordinate(40.57682, -70.75678, new DateTime(2017,3,21));
@@ -142,7 +142,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   coord.CelestialInfo.SunCondition.ToString(); //Outputs UpAllDay
   ```
   
-   Moon Illimination returns a value from 0.0 to 1.0. The table shown is a basic break down. You may determine Waxing and Waning types between the values shown or you may get the phase name from the Celestial.MoonIllum.PhaseName property.
+   Moon Illumination returns a value from 0.0 to 1.0. The table shown is a basic break down. You may determine Waxing and Waning types between the values shown or you may get the phase name from the Celestial.MoonIllum.PhaseName property.
   
 |Value |Phase          |
 | ---- | ------------- |
@@ -166,7 +166,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   
 ### Eager Loading (BETA)
 
-CoordinateSharp values are all eager loaded upon initialization of the Coordinate object. Anytime a Coordinate object property changes, everything is recalculated. The calculations are generally small, but you may wish to turn off eager loading if you are trying to maximize performance. This will allow you to specify when certain calculations take place. At this time you may only turn eagerloading off for the celestial property. This feature will expand with future updates.
+CoordinateSharp values are all eager loaded upon initialization of the Coordinate object. Anytime a Coordinate object property changes, everything is recalculated. The calculations are generally small, but you may wish to turn off eager loading if you are trying to maximize performance. This will allow you to specify when certain calculations take place. At this time you may only turn eager loading off for the celestial property. This feature will expand with future updates.
 
 ```C#
 EagerLoad eagerLoad = New EagerLoad();
@@ -175,7 +175,7 @@ Coordinate c = new Coordinate(40.0352, -74.5844, DateTime.Now, eagerLoad);
 //To load Celestial data when ready
 c.LoadCelestialInfo();           
  ```
-The above example initializes a Coordinate with eagerloading in place. You may however turn it on or off after initialization.
+The above example initializes a Coordinate with eager loading in place. You may however turn it on or off after initialization.
 
 ```C#
 c.EagerLoadSettings.Celestial = false;    
