@@ -56,7 +56,10 @@ namespace CoordinateSharp
                 mDecensionArr[0] = mDecensionArr[2];
                 mVHzArr[0] = mVHzArr[2];
             }
-
+            //Times returned for 00:00 may create an hour value of 24 which will throw a DateTime Exception.
+            //Reset to 0 and keep same day month as this library is designed to return same day event in Z day only.
+            if (mRiseTimeArr[0] == 24) { mRiseTimeArr[0] = 0; }
+            if (mSetTimeArr[0] == 24) { mSetTimeArr[0] = 0; }
             c.SunRise = new DateTime(date.Year, date.Month, date.Day, mRiseTimeArr[0], mRiseTimeArr[1], 0);
             c.SunSet = new DateTime(date.Year, date.Month, date.Day, mSetTimeArr[0], mSetTimeArr[1], 0);          
             c.SunCondition = CelestialStatus.RiseAndSet;
