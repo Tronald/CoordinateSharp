@@ -5,3 +5,4 @@ This following items are requests that are on hold until more time & resources c
 * Planetary Calculations
 * Tidal Calculations
 * Solar/Lunar Eclipse Calculations
+* Package availability for Xamarin.iOS and MonoAndroid
