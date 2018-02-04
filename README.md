@@ -165,7 +165,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   cel.SunRise.Value.ToString();
   ```
   
-  NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a standard distance deviation of 3,388 km. The result is considered an approximation and should suffice for general purposes, but if more precision is required a different option should be sought.
+  NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a been discovered to have standard distance deviation of 3,388 km with Perigee and Apogee approximate time deviations of 36 hours. Results may be innacurate at times and should be used for estimations only. This formula will be worked for accuracy in future releases.
   
 ### Eager Loading (BETA)
 
