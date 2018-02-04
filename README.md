@@ -80,7 +80,7 @@ To convert UTM or MGRS coordinates into Lat/Long
 UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 233434, 234234);
 Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
 ```
-Some UTM formats may contain a "Southern Hemisphere" boolean value instead of a Lat Zone character. If this is the case for a UTM you are converting use the letter "C" for southern hemisphere UTMs and "N" for norther hemisphere UTMs.
+Some UTM formats may contain a "Southern Hemisphere" boolean value instead of a Lat Zone character. If this is the case for a UTM you are converting use the letter "C" for southern hemisphere UTMs and "N" for northern hemisphere UTMs.
 
 ```C#
 //MY UTM COORD ZONE: 32 EASTING: 233434 NORTHING: 234234 (NORTHERN HEMISPHERE)
