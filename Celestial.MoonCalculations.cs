@@ -37,7 +37,6 @@ namespace CoordinateSharp
             // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
             for (var i = 1; i <= 24; i += 2)
             {
-
                 h1 = GetMoonPosition(hoursLater(t, i), lat, lng, c).Altitude - hc;
                 h2 = GetMoonPosition(hoursLater(t, i + 1), lat, lng, c).Altitude - hc;
                 if (isNeg && h1 >= 0 || isNeg && h2 >= 0) { isNeg = false; isRise = true; }
@@ -64,7 +63,6 @@ namespace CoordinateSharp
                 {
                     if (h0 < 0) rise = i + x1;
                     else set = i + x1;
-
                 }
                 else if (roots == 2)
                 {
@@ -96,6 +94,7 @@ namespace CoordinateSharp
         }
         static MoonPosition GetMoonPosition(DateTime date, double lat, double lng, Celestial cel)
         {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
             double d = toDays(date);
 
             CelCoords c = GetMoonCoords(d, cel);
@@ -117,7 +116,8 @@ namespace CoordinateSharp
             return mp;
         }
         static CelCoords GetMoonCoords(double d, Celestial c)
-        {   // geocentric ecliptic coordinates of the moon
+        {   
+            // geocentric ecliptic coordinates of the moon
             //Formulas used from http://aa.quae.nl/en/reken/hemelpositie.html#1_3
             double L = rad * (218.316 + 13.176396 * d), // ecliptic longitude
                 M = rad * (134.963 + 13.064993 * d), // mean anomaly
@@ -125,7 +125,7 @@ namespace CoordinateSharp
 
                 l = L + rad * 6.289 * Math.Sin(M), // longitude
                 b = rad * 5.128 * Math.Sin(F),     // latitude
-                dt = 385001 - (20905 * Math.Cos(M));  // distance to the moon in km
+                dt = 385001 - 20905 * Math.Cos(M);  // distance to the moon in km
             //c.MoonSign = MoonSign(l);
             CelCoords mc = new CelCoords();
             mc.ra = rightAscension(l, b);
@@ -136,6 +136,8 @@ namespace CoordinateSharp
       
         public static void GetMoonIllumination(DateTime date, Celestial c)
         {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+         
             double d = toDays(date);
             CelCoords s = GetSunCoords(d);
             CelCoords m = GetMoonCoords(d, c);
@@ -163,9 +165,7 @@ namespace CoordinateSharp
             //CHECK MOON AT BEGINNING AT END OF DAY TO GET DAY PHASE IN UTC
             DateTime dMon = new DateTime(date.Year, date.Month, 1);
             for(int x = 1;x<= date.Day;x++)
-            {
-
-                
+            {               
                 DateTime nDate = new DateTime(dMon.Year, dMon.Month, x, 0, 0, 0, DateTimeKind.Utc);
                 d = toDays(nDate);
                 s = GetSunCoords(d);
@@ -285,11 +285,12 @@ namespace CoordinateSharp
         }
         public static void GetMoonDistance(DateTime date, Celestial c)
         {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
            
             double d = toDays(date);
+            
             CelCoords cel = GetMoonCoords(d, c);
-            c.MoonDistance = cel.dist;
-           
+            c.MoonDistance = cel.dist;          
         }
         //Moon Time Functions
         private static CelCoords GetSunCoords(double d)
@@ -314,6 +315,7 @@ namespace CoordinateSharp
         {
             return date.AddHours(h);
         }
+     
         static double toJulian(DateTime date)
         {
             DateTime d = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -326,8 +328,11 @@ namespace CoordinateSharp
         }
         static double toDays(DateTime date)
         {
-            return toJulian(date) - J2000;
+            double d = toJulian(date) - J2000;
+  
+            return d;
         }
+
         static double rightAscension(double l, double b) { return Math.Atan2(Math.Sin(l) * Math.Cos(e) - Math.Tan(b) * Math.Sin(e), Math.Cos(l)); }
         static double declination(double l, double b) { return Math.Asin(Math.Sin(b) * Math.Cos(e) + Math.Cos(b) * Math.Sin(e) * Math.Sin(l)); }
         static double azimuth(double H, double phi, double dec) { return Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(dec) * Math.Cos(phi)); }
@@ -412,7 +417,7 @@ namespace CoordinateSharp
             { sgn = -1; }
             else
             { sgn = 1; }
-            return sgn * ((Math.Abs(x) / 3600) / 360 - Math.Floor((Math.Abs(x) / 3600) / 360)) * 360;
+            return sgn * ((Math.Abs(x) / 3600) / 360 - Math.Floor((Math.Abs(x) / 3600.0) / 360.0)) * 360;
         }
         private static double FNu(double x)
         { return x - (Math.Floor(x / 360) * 360); }

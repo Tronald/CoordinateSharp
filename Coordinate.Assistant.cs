@@ -361,19 +361,19 @@ namespace CoordinateSharp
         /// <summary>
         /// Returns Civil Dawn Time
         /// </summary>
-        public DateTime CivilDawn { get; set; }
+        public DateTime? CivilDawn { get; set; }
         /// <summary>
         /// Returns Civil Dusk Time
         /// </summary>
-        public DateTime CivilDusk { get; set; }
+        public DateTime? CivilDusk { get; set; }
         /// <summary>
         /// Returns Nautical Dawn Time
         /// </summary>
-        public DateTime NauticalDawn { get; set; }
+        public DateTime? NauticalDawn { get; set; }
         /// <summary>
         /// Returns Nautical Dusk Time
         /// </summary>
-        public DateTime NauticalDusk { get; set; }
+        public DateTime? NauticalDusk { get; set; }
     }
     /// <summary>
     /// Turn on/off eager loading of certain properties
