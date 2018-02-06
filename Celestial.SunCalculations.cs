@@ -46,7 +46,7 @@ namespace CoordinateSharp
             mDecensionArr[0] = dec0;
 
             // check each hour of this day
-            for (int k = 0; k < 24; k++)
+            for (int k = 0; k < 25; k++)
             {
                 mRightAscentionArr[2] = ra0 + (k + 1) * (ra1 - ra0) / 24;
                 mDecensionArr[2] = dec0 + (k + 1) * (dec1 - dec0) / 24;
@@ -58,8 +58,9 @@ namespace CoordinateSharp
             }
             //Times returned for 00:00 may create an hour value of 24 which will throw a DateTime Exception.
             //Reset to 0 and keep same day month as this library is designed to return same day event in Z day only.
-            if (mRiseTimeArr[0] == 24) { mRiseTimeArr[0] = 0; }
-            if (mSetTimeArr[0] == 24) { mSetTimeArr[0] = 0; }
+            if (mRiseTimeArr[0] >= 24) { mRiseTimeArr[0] -= 24; }
+            if (mSetTimeArr[0] >= 24) { mSetTimeArr[0] -= 24; }
+
             c.SunRise = new DateTime(date.Year, date.Month, date.Day, mRiseTimeArr[0], mRiseTimeArr[1], 0);
             c.SunSet = new DateTime(date.Year, date.Month, date.Day, mSetTimeArr[0], mSetTimeArr[1], 0);          
             c.SunCondition = CelestialStatus.RiseAndSet;
@@ -251,11 +252,12 @@ namespace CoordinateSharp
             double jd = Math.Truncate(365.25 * (year + 4716))
                        + Math.Truncate(30.6001 * (month + 1))
                        + day + b - 1524.5;
-
+            
             return jd;
         }
-        private static DateTime fromJulian(double j)
+        private static DateTime? fromJulian(double j)
         {
+            if (Double.IsNaN(j)) { return null; } //No Event Occured
 
             double unixTime = (j + 0.5 - j1970) * 86400;
 
@@ -263,6 +265,7 @@ namespace CoordinateSharp
             dtDateTime = dtDateTime.AddSeconds(unixTime);
 
             return dtDateTime;
+
         }
 
         private static double LocalSiderealTimeForTimeZone(double lon, double jd, double z)
@@ -316,9 +319,9 @@ namespace CoordinateSharp
         /// </summary>
         private static void getTimes(DateTime date, double lng, double lat, Celestial c)
         {
-            //Get Juliam     
+            //Get Julian
             double d = GetJulianDay(date) - j2000 + .5; //LESS PRECISE JULIAN NEEDED
-          
+            
             double lw = rad * -lng;
             double phi = rad * lat;
 
@@ -336,8 +339,8 @@ namespace CoordinateSharp
             double Jset;
             double Jrise;
 
-            DateTime solarNoon = fromJulian(Jnoon);
-            DateTime nadir = fromJulian(Jnoon - 0.5);
+            DateTime? solarNoon = fromJulian(Jnoon);
+            DateTime? nadir = fromJulian(Jnoon - 0.5);
 
             c.AdditionalSolarTimes = new AdditionalSolarTimes();
 
