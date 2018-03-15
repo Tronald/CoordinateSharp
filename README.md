@@ -1,6 +1,9 @@
-# CoordinateSharp v1.1.2.3
+# CoordinateSharp v1.1.2.4
 
 A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
+
+### 1.1.2.4 Change Notes
+* -Added ability to pass custom datum to UTM and MRGS classes
 
 ### 1.1.2.3 Change Notes
 * -Makes AdditionalSolarTimes nullable (fixes issue #24)
@@ -69,7 +72,7 @@ c.Longitude.ToString();// W 070º 45.407'
 
 ### Universal Transverse Mercator (UTM) & Military Grid Reference System/NATO UTM (MGRS/ NATO UTM) Formats
 
-UTM and MGRS formats are available for display. They are converted from the lat/long decimal values based on the WGS 84 datum. These formats are accessible from the ```Coordinate``` object.
+UTM and MGRS formats are available for display. They are converted from the lat/long decimal values. The default datum is WGS84 but a custom datum may be passed. These formats are accessible from the ```Coordinate``` object.
 
 ```C#
 Coordinate c = new Coordinate(40.57682, -70.75678);
