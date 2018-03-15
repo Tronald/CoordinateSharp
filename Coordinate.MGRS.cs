@@ -14,7 +14,7 @@ namespace CoordinateSharp
     public class MilitaryGridReferenceSystem : INotifyPropertyChanged
     {
         /// <summary>
-        /// Create an MGRS object
+        /// Create an MGRS object with WGS84 datum
         /// </summary>
         /// <param name="latz">Lat Zone</param>
         /// <param name="longz">Long Zone</param>
@@ -37,7 +37,42 @@ namespace CoordinateSharp
             this.digraph = d;
             this.easting = e;
             this.northing = n;
+            //WGS84
+            this.radius = 6378137.0;
+            this.flattening = 298.257223563;
         }
+        /// <summary>
+        /// Create an MGRS object with custom datum
+        /// </summary>
+        /// <param name="latz">Lat Zone</param>
+        /// <param name="longz">Long Zone</param>
+        /// <param name="d">Digraph</param>
+        /// <param name="e">Easting</param>
+        /// <param name="n">Northing</param>
+        /// <param name="rad">Equatorial Radius</param>
+        /// <param name="flt">Flattening</param>
+        public MilitaryGridReferenceSystem(string latz, int longz, string d, double e, double n,double rad, double flt)
+        {
+            string digraphLettersE = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+            string digraphLettersN = "ABCDEFGHJKLMNPQRSTUV";
+            if (longz < 1 || longz > 60) { Trace.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
+            if (e < 160000 || e > 834000) { Trace.WriteLine("The Easting value provided is outside the max allowable range. If this is intentional, use with caution."); }
+            if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
+            if (d.Count() < 2 || d.Count() > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (digraphLettersE.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (digraphLettersN.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            this.latZone = latz;
+            this.longZone = longz;
+            this.digraph = d;
+            this.easting = e;
+            this.northing = n;
+          
+            this.radius = rad;
+            this.flattening = flt;
+        }
+        private double radius;
+        private double flattening;
         private string latZone;
         private int longZone;
         private double easting;
@@ -207,12 +242,13 @@ namespace CoordinateSharp
             }
 
             var southern = nbase < 10000000;
+
             
-            UniversalTransverseMercator utm = new UniversalTransverseMercator(mgrs.LatZone, mgrs.LongZone, x, y, new Coordinate());
-            
-            
+
+            UniversalTransverseMercator utm = new UniversalTransverseMercator(mgrs.LatZone, mgrs.LongZone, x, y, new Coordinate(),mgrs.radius,mgrs.flattening);
+            //utm.Set_Datum(mgrs.radius, mgrs.flattening);
             Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
-            
+            c.UTM.Set_Datum(mgrs.radius, mgrs.flattening);
             //Create second coordinate object to ensure MGRS integrity for return
             //Investigate why this happens on future releases 
             //Works and passes unit test

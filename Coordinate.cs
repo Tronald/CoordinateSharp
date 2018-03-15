@@ -170,7 +170,11 @@ namespace CoordinateSharp
                     {
                         celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
                     }
-                   
+                    if (longitude != null)
+                    {
+                        utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
+                        mgrs = new MilitaryGridReferenceSystem(this.utm);
+                    }
                 }
             }
         }
@@ -190,6 +194,11 @@ namespace CoordinateSharp
                     if (EagerLoadSettings.Celestial)
                     {                      
                         celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
+                    }
+                    if (latitude != null)
+                    {
+                        utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
+                        mgrs = new MilitaryGridReferenceSystem(this.utm);
                     }
                 }
             }
@@ -349,6 +358,11 @@ namespace CoordinateSharp
                         break;
                     case "UTM":
                         this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
+                        break;
+                    case "utm":
+                        //Adjust case and notify of change. 
+                        //Use to notify without calling ToUTM()
+                        propName = "UTM";
                         break;
                     case "MGRS":
                         this.MGRS.ToMGRS(this.utm);
