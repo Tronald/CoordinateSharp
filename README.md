@@ -1,6 +1,10 @@
-# CoordinateSharp v1.1.2.3
+# CoordinateSharp v1.1.2.4
 
 A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
+
+### 1.1.2.4 Change Notes
+* -Added ability to pass custom datum for UTM and MGRS conversions
+* -Adjusted UTM conversion formula to be more readable
 
 ### 1.1.2.3 Change Notes
 * -Makes AdditionalSolarTimes nullable (fixes issue #24)
@@ -69,7 +73,7 @@ c.Longitude.ToString();// W 070º 45.407'
 
 ### Universal Transverse Mercator (UTM) & Military Grid Reference System/NATO UTM (MGRS/ NATO UTM) Formats
 
-UTM and MGRS formats are available for display. They are converted from the lat/long decimal values based on the WGS 84 datum. These formats are accessible from the ```Coordinate``` object.
+UTM and MGRS formats are available for display. They are converted from the lat/long decimal values. The default datum is WGS84 but a custom datum may be passed. These formats are accessible from the ```Coordinate``` object.
 
 ```C#
 Coordinate c = new Coordinate(40.57682, -70.75678);
@@ -77,12 +81,28 @@ c.UTM.ToString(); // Outputs 19T 351307mE 4493264mN
 c.MGRS.ToString(); // Outputs 19T CE 51307 93264
 ```
 
-To convert UTM or MGRS coordinates into Lat/Long
+To convert UTM or MGRS coordinates into Lat/Long.
 
 ```C#
 UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 233434, 234234);
 Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
 ```
+
+You may change or pass a custom datum by using the Equatorial Radius (Semi-Major Axis) and Inverse of Flattening of the datum. This will cause UTM/MGRS conversions to be based on the new datum.
+
+To change the current datum.
+
+```C#
+c.Set_Datum(6378160.000, 298.25);
+```
+
+To create an object with the custom datum.
+
+```C#
+UniversalTransverseMercator utm = new UniversalTransverseMercator("Q", 14, 581943.5, 2111989.8, 6378160.000, 298.25);
+c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
+```
+
 Some UTM formats may contain a "Southern Hemisphere" boolean value instead of a Lat Zone character. If this is the case for a UTM you are converting use the letter "C" for southern hemisphere UTMs and "N" for northern hemisphere UTMs.
 
 ```C#

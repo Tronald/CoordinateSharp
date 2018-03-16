@@ -34,6 +34,24 @@ namespace CoordinateSharp
             EagerLoadSettings = new EagerLoad();
         }
         /// <summary>
+        /// Creates an empty Coordinates object with a custom datum
+        /// </summary>
+        /// <remarks>
+        /// Values will need to be provided to latitude/longitude CoordinateParts manually
+        /// </remarks>
+        internal Coordinate(double equatorialRadius, double inverseFlattening, bool t)
+        {
+            this.FormatOptions = new CoordinateFormatOptions();
+            this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            latitude = new CoordinatePart(CoordinateType.Lat, this);
+            longitude = new CoordinatePart(CoordinateType.Long, this);
+            celestialInfo = new Celestial();
+            utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, equatorialRadius,inverseFlattening);     
+            mgrs = new MilitaryGridReferenceSystem(this.utm);
+            //Set_Datum(equatorialRadius, inverseFlattening);
+            EagerLoadSettings = new EagerLoad();
+        }
+        /// <summary>
         /// Creates a populated Coordinate object based on decimal formated latitude and longitude
         /// </summary>
         /// <param name="lat">Decimal format latitude</param>
@@ -170,7 +188,12 @@ namespace CoordinateSharp
                     {
                         celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
                     }
-                   
+                    if (longitude != null)
+                    {
+                     
+                        utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this,utm.equatorial_radius,utm.inverse_flattening);
+                        mgrs = new MilitaryGridReferenceSystem(this.utm);
+                    }
                 }
             }
         }
@@ -190,6 +213,11 @@ namespace CoordinateSharp
                     if (EagerLoadSettings.Celestial)
                     {                      
                         celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
+                    }
+                    if (latitude != null)
+                    {
+                        utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, utm.equatorial_radius, utm.inverse_flattening);                      
+                        mgrs = new MilitaryGridReferenceSystem(this.utm);
                     }
                 }
             }
@@ -329,7 +357,23 @@ namespace CoordinateSharp
             string longSting = longitude.ToString(options);
             return latString + " " + longSting;
         }
-
+        /// <summary>
+        /// Set a custom datum for UTM and MGRS coordinates
+        /// </summary>
+        /// <param name="radius">Equatorial Radius</param>
+        /// <param name="flat">Inverse Flattening</param>
+        public void Set_Datum(double radius, double flat)
+        {
+            //WGS84
+            //RADIUS 6378137.0;
+            //FLATTENING 298.257223563;
+            this.utm.equatorial_radius = radius;
+            this.utm.inverse_flattening = flat;
+            this.utm.ToUTM(this.Latitude.ToDouble(), this.Longitude.ToDouble(), this.utm);
+            mgrs = new MilitaryGridReferenceSystem(this.utm);
+            NotifyPropertyChanged("UTM");
+            NotifyPropertyChanged("MGRS");
+        }
         /// <summary>
         /// Property changed event
         /// </summary>
@@ -349,6 +393,11 @@ namespace CoordinateSharp
                         break;
                     case "UTM":
                         this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
+                        break;
+                    case "utm":
+                        //Adjust case and notify of change. 
+                        //Use to notify without calling ToUTM()
+                        propName = "UTM";
                         break;
                     case "MGRS":
                         this.MGRS.ToMGRS(this.utm);
