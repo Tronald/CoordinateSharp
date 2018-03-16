@@ -32,7 +32,7 @@ namespace CoordinateSharp
             this.northing = nrt;
 
             this.equatorial_radius = 6378137.0;
-            this.flattening = 298.257223563;
+            this.inverse_flattening = 298.257223563;
 
         }
         /// <summary>
@@ -43,7 +43,7 @@ namespace CoordinateSharp
         /// <param name="est">Easting</param>
         /// <param name="nrt">Northing</param>
         /// <param name="radius">Equatorial Radius</param>
-        /// <param name="flaten">Flattening</param>
+        /// <param name="flaten">Inverse Flattening</param>
         public UniversalTransverseMercator(string latz, int longz, double est, double nrt, double radius, double flaten)
         {
             if (longz < 1 || longz > 60) { Trace.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
@@ -57,14 +57,14 @@ namespace CoordinateSharp
             this.northing = nrt;
 
             this.equatorial_radius = radius;
-            this.flattening = flaten;
+            this.inverse_flattening = flaten;
 
         }
 
         private Coordinate coordinate;
 
-        private double equatorial_radius;
-        private double flattening;
+        internal double equatorial_radius;
+        internal double inverse_flattening;
         private string latZone;
         private int longZone;
 
@@ -138,9 +138,9 @@ namespace CoordinateSharp
         /// <summary>
         /// Datum Flattening
         /// </summary>
-        public double Flattening
+        public double Inverse_Flattening
         {
-            get { return this.flattening; }
+            get { return this.inverse_flattening; }
         }
       
         /// <summary>
@@ -159,7 +159,23 @@ namespace CoordinateSharp
             //if (longi > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be greater than 90."); }
             //if (longi < -90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be less than 90."); }
             this.equatorial_radius = 6378137.0;
-            this.flattening = 298.257223563;
+            this.inverse_flattening = 298.257223563;
+            ToUTM(lat, longi, this);
+
+            coordinate = c;
+        }
+        /// <summary>
+        /// Constructs a UTM object based off DD Lat/Long
+        /// </summary>
+        /// <param name="lat">DD Latitude</param>
+        /// <param name="longi">DD Longitide</param>
+        /// <param name="c">Parent Coordinate Object</param>
+        /// <param name="rad">Equatorial Radius</param>
+        /// <param name="flt">Flattening</param>
+        internal UniversalTransverseMercator(double lat, double longi, Coordinate c,double rad,double flt)
+        {
+            this.equatorial_radius = rad;
+            this.inverse_flattening = flt;
             ToUTM(lat, longi, this);
 
             coordinate = c;
@@ -174,7 +190,7 @@ namespace CoordinateSharp
         /// <param name="n">Northing</param>
         /// <param name="c">Parent Coordinate Object</param>
         /// <param name="rad">Equatorial Radius</param>
-        /// <param name="flt">Flattening</param>
+        /// <param name="flt">Inverse Flattening</param>
         internal UniversalTransverseMercator(string latz, int longz, double e, double n, Coordinate c, double rad, double flt)
         {
             //validate utm
@@ -183,7 +199,7 @@ namespace CoordinateSharp
             if (e < 160000 || e > 834000) { Trace.WriteLine("The Easting value provided is outside the max allowable range. If this is intentional, use with caution."); }
             if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
             this.equatorial_radius = rad;
-            this.flattening = flt;
+            this.inverse_flattening = flt;
             latZone = latz;
             longZone = longz;
 
@@ -264,9 +280,9 @@ namespace CoordinateSharp
                 letter = "X";
 
             double a = utm.equatorial_radius;
-            double f = 1.0 / utm.flattening;
+            double f = 1.0 / utm.inverse_flattening;
             double b = a * (1 - f);   // polar radius
-            Debug.Print(b.ToString());
+           
             double e = Math.Sqrt(1 - Math.Pow(b, 2) / Math.Pow(a, 2));
             double e0 = e / Math.Sqrt(1 - Math.Pow(e, 1));
 
@@ -327,27 +343,8 @@ namespace CoordinateSharp
         public override string ToString()
         {
             return this.longZone.ToString() + this.LatZone + " " + (int)this.easting + "mE " + (int)this.northing + "mN";
-        }       
-        /// <summary>
-        /// Set a custom datum for the UTM coordinate
-        /// </summary>
-        /// <param name="radius">Equatorial Radius</param>
-        /// <param name="flat">Flattening</param>
-        public void Set_Datum(double radius, double flat)
-        {
-            //WGS84
-            //RADIUS 6378137.0;
-            //FLATTENING 298.257223563;
-            this.equatorial_radius = radius;
-            this.flattening = flat;
-          
-            ToUTM(this.coordinate.Latitude.ToDouble(), this.coordinate.Longitude.ToDouble(), this);
-            if(this.coordinate!=null)
-            {
-                this.coordinate.NotifyPropertyChanged("utm"); //Pass lower case utm to avoid double notifications
-            }
-            
         }
+       
         private static Coordinate UTMtoLatLong(double x, double y, double zone, double equatorialRadius, double flattening)
         {
             //x easting
@@ -445,7 +442,7 @@ namespace CoordinateSharp
             if (dLong > 180) { dLong = 180; }
             if (dLong < -180) { dLong = -180; }
 
-            Coordinate c = new Coordinate();
+            Coordinate c = new Coordinate(equatorialRadius,flattening, true);
             CoordinatePart cLat = new CoordinatePart(dLat, CoordinateType.Lat, c);
             CoordinatePart cLng = new CoordinatePart(dLong, CoordinateType.Long, c);
 
@@ -511,7 +508,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Converts WGS84 UTM coordinate to Lat/Long
+        /// Converts UTM coordinate to Lat/Long
         /// </summary>
         /// <param name="utm">utm</param>
         /// <returns>Coordinate object</returns>
@@ -542,7 +539,7 @@ namespace CoordinateSharp
 
             cmeridian = UTMCentralMeridian(utm.LongZone);
            
-            Coordinate c = UTMtoLatLong(x, y, cmeridian, utm.equatorial_radius, utm.flattening);
+            Coordinate c = UTMtoLatLong(x, y, cmeridian, utm.equatorial_radius, utm.inverse_flattening);
 
             if (c.Latitude.ToDouble() > 85 || c.Latitude.ToDouble() < -85)
             {
