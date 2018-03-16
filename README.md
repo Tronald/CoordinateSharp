@@ -3,7 +3,7 @@
 A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
 
 ### 1.1.2.4 Change Notes
-* -Added ability to pass custom datum to UTM and MRGS classes
+* -Added ability to pass custom datum for UTM and MRGS conversions
 
 ### 1.1.2.3 Change Notes
 * -Makes AdditionalSolarTimes nullable (fixes issue #24)
