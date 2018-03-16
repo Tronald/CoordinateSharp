@@ -4,6 +4,7 @@ A simple library designed to assist with geographic coordinate string formatting
 
 ### 1.1.2.4 Change Notes
 * -Added ability to pass custom datum for UTM and MGRS conversions
+* -Adjusted UTM conversion formula to be more readable
 
 ### 1.1.2.3 Change Notes
 * -Makes AdditionalSolarTimes nullable (fixes issue #24)
