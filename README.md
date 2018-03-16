@@ -80,7 +80,7 @@ c.UTM.ToString(); // Outputs 19T 351307mE 4493264mN
 c.MGRS.ToString(); // Outputs 19T CE 51307 93264
 ```
 
-To convert UTM or MGRS coordinates into Lat/Long
+To convert UTM or MGRS coordinates into Lat/Long.
 
 ```C#
 UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 233434, 234234);
@@ -89,7 +89,7 @@ Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
 
 You may change or pass a custom datum by using the Equatorial Radius (Semi-Major Axis) and Inverse of Flattening of the datum. This will cause UTM/MGRS conversions to be based on the new datum.
 
-To change the current datum
+To change the current datum.
 
 ```C#
 c.Set_Datum(6378160.000, 298.25);
