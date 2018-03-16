@@ -86,6 +86,22 @@ To convert UTM or MGRS coordinates into Lat/Long
 UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 233434, 234234);
 Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
 ```
+
+You may change or pass a custom datum by using the Equatorial Radius (Semi-Major Axis) and Inverse of Flattening of the datum. This will cause UTM/MGRS conversions to be based on the new datum.
+
+To change the current datum
+
+```C#
+c.Set_Datum(6378160.000, 298.25);
+```
+
+To create an object with the custom datum.
+
+```C#
+UniversalTransverseMercator utm = new UniversalTransverseMercator("Q", 14, 581943.5, 2111989.8, 6378160.000, 298.25);
+c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
+```
+
 Some UTM formats may contain a "Southern Hemisphere" boolean value instead of a Lat Zone character. If this is the case for a UTM you are converting use the letter "C" for southern hemisphere UTMs and "N" for northern hemisphere UTMs.
 
 ```C#
