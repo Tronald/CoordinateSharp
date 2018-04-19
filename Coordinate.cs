@@ -31,6 +31,7 @@ namespace CoordinateSharp
             celestialInfo = new Celestial();
             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
             mgrs = new MilitaryGridReferenceSystem(this.utm);
+            cartesian = new Cartesian(this);
             EagerLoadSettings = new EagerLoad();
         }
         /// <summary>
@@ -48,6 +49,7 @@ namespace CoordinateSharp
             celestialInfo = new Celestial();
             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, equatorialRadius,inverseFlattening);     
             mgrs = new MilitaryGridReferenceSystem(this.utm);
+            cartesian = new Cartesian(this);
             //Set_Datum(equatorialRadius, inverseFlattening);
             EagerLoadSettings = new EagerLoad();
         }
@@ -68,6 +70,7 @@ namespace CoordinateSharp
             celestialInfo = new Celestial(lat,longi,this.geoDate);
             utm = new UniversalTransverseMercator(lat, longi, this);
             mgrs = new MilitaryGridReferenceSystem(this.utm);
+            cartesian = new Cartesian(this);
             EagerLoadSettings = new EagerLoad();
         }
         /// <summary>
@@ -85,6 +88,7 @@ namespace CoordinateSharp
             this.geoDate = date;
             utm = new UniversalTransverseMercator(lat, longi, this);
             mgrs = new MilitaryGridReferenceSystem(this.utm);
+            cartesian = new Cartesian(this);
             EagerLoadSettings = new EagerLoad();
         }
 
@@ -101,6 +105,7 @@ namespace CoordinateSharp
             this.geoDate = this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(CoordinateType.Lat, this);
             longitude = new CoordinatePart(CoordinateType.Long, this);
+            cartesian = new Cartesian(this);
             if (eagerLoad.Celestial)
             {
                 celestialInfo = new Celestial();
@@ -127,6 +132,7 @@ namespace CoordinateSharp
             this.geoDate = this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
+
             if (eagerLoad.Celestial)
             {
                 celestialInfo = new Celestial(lat, longi, this.geoDate);
@@ -134,7 +140,7 @@ namespace CoordinateSharp
 
             utm = new UniversalTransverseMercator(lat, longi, this);
             mgrs = new MilitaryGridReferenceSystem(this.utm);
-
+            cartesian = new Cartesian(this);
 
             EagerLoadSettings = eagerLoad;
         }
@@ -159,7 +165,7 @@ namespace CoordinateSharp
 
             utm = new UniversalTransverseMercator(lat, longi, this);
             mgrs = new MilitaryGridReferenceSystem(this.utm);
-
+            cartesian = new Cartesian(this);
 
             EagerLoadSettings = eagerLoad;
         }
@@ -167,7 +173,8 @@ namespace CoordinateSharp
         private CoordinatePart latitude;
         private CoordinatePart longitude;
         private UniversalTransverseMercator utm;
-        private MilitaryGridReferenceSystem mgrs;        
+        private MilitaryGridReferenceSystem mgrs;
+        private Cartesian cartesian;
         private DateTime geoDate;
         private Celestial celestialInfo;
        
@@ -193,6 +200,7 @@ namespace CoordinateSharp
                      
                         utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this,utm.equatorial_radius,utm.inverse_flattening);
                         mgrs = new MilitaryGridReferenceSystem(this.utm);
+                        cartesian = new Cartesian(this);
                     }
                 }
             }
@@ -218,6 +226,7 @@ namespace CoordinateSharp
                     {
                         utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, utm.equatorial_radius, utm.inverse_flattening);                      
                         mgrs = new MilitaryGridReferenceSystem(this.utm);
+                        cartesian = new Cartesian(this);
                     }
                 }
             }
@@ -285,6 +294,16 @@ namespace CoordinateSharp
             //        this.NotifyPropertyChanged("CelestialInfo");
             //    }
             //}
+        }
+        /// <summary>
+        /// Cartesian
+        /// </summary>
+        public Cartesian Cartesian
+        {
+            get
+            {
+                return cartesian;
+            }         
         }
         /// <summary>
         /// Celestial information based on the objects lat/long and geograpic UTC date.
@@ -375,6 +394,15 @@ namespace CoordinateSharp
             NotifyPropertyChanged("MGRS");
         }
         /// <summary>
+        /// Returns a Distance object based on the current and specified coordinate
+        /// </summary>
+        /// <param name="c2">Coordinate</param>
+        /// <returns></returns>
+        public Distance Get_Distance_From_Coordinate(Coordinate c2)
+        {
+            return new Distance(this, c2);
+        }
+        /// <summary>
         /// Property changed event
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
@@ -401,6 +429,11 @@ namespace CoordinateSharp
                         break;
                     case "MGRS":
                         this.MGRS.ToMGRS(this.utm);
+                        break;
+                    case "Cartesian":
+                        Cartesian.ToCartesian(this);
+                        break;
+                    default:
                         break;
                 }
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
@@ -1479,6 +1512,7 @@ namespace CoordinateSharp
             this.Parent.NotifyPropertyChanged("CelestialInfo");
             this.Parent.NotifyPropertyChanged("UTM");
             this.Parent.NotifyPropertyChanged("MGRS");
+            this.Parent.NotifyPropertyChanged("Cartesian");
 
         }
 
@@ -1494,7 +1528,7 @@ namespace CoordinateSharp
         {
             if (this.PropertyChanged != null)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
 
@@ -1505,5 +1539,14 @@ namespace CoordinateSharp
         {
             DecimalDegree, DecimalMinute, Position, Degree, Minute, Second, FormatChange
         }
+        /// <summary>
+        /// Returns CoordinatePart in radians
+        /// </summary>
+        /// <returns></returns>
+        public double ToRadians()
+        {
+            return decimalDegree * Math.PI / 180;
+        }
+        
     }
 }
