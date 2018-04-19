@@ -126,6 +126,25 @@ Debug.Print(c.ToString() + "  " + nc.ToString()); // N 0º 33' 35.988" W 60º 0'
 ```
 In the above example, the MGRS values are different once converted, but the Lat/Long is almost the same once converted back.
 
+### Cartesian Format
+
+Cartesian (X, Y, Z) is available for display. They are converted from the lat/long radian values. These formats are accessible from the ```Coordinate``` object. You may also convert a Cartesian coordinate into a lat/long coordinate.
+
+To Cartesian:
+```C#
+Coordinate c = new Coordinate(40.7143538, -74.0059731);
+c.Cartesian.ToString(); //Outputs 0.20884915 -0.72863022 0.65228831
+```
+
+To Lat/Long:
+```C#
+Cartesian cart = new Cartesian(0.20884915, -0.72863022, 0.65228831);
+Coordinate c = Cartesian.CartesianToLatLong(cart);
+//OR
+Coordinate c = Cartesian.CartesianToLatLong(0.20884915, -0.72863022, 0.65228831);
+```
+
+
 ### Binding and MVVM
 
 The properties in CoordinateSharp implement INotifyPropertyChanged and may be bound. If you wish to bind to the entire ```CoordinatePart``` bind to the ```Display``` property. This property can be notified of changes, unlike the overridden ```ToString()```. The ```Display``` will reflect the formats previously specified for the ```Coordinate``` object in the code-behind.
