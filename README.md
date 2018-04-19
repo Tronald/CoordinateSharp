@@ -144,6 +144,20 @@ Coordinate c = Cartesian.CartesianToLatLong(cart);
 Coordinate c = Cartesian.CartesianToLatLong(0.20884915, -0.72863022, 0.65228831);
 ```
 
+### Calculating Distance
+
+Distance can be calculated between two Coordinates. Various distance values are stored in the Distance object. 
+
+```C#
+Distance d = new Distance(coord1, coord2);
+d.Kilometers;
+```
+
+You may also grab a distance by passing a second Coordinate to an existing Coordinate.
+
+```C#
+coord1.Get_Distance_From_Coordinate(coord2).Miles;
+```
 
 ### Binding and MVVM
 
