@@ -22,6 +22,19 @@ namespace CoordinateSharp
             z = Math.Sin(c.Latitude.ToRadians());
         }
         /// <summary>
+        /// Create a Cartesian Object
+        /// </summary>
+        /// <param name="xc">X</param>
+        /// <param name="yc">Y</param>
+        /// <param name="zc">Z</param>
+        public Cartesian(double xc, double yc, double zc)
+        {
+            //formulas:
+            x = xc;
+            y = yc;
+            z = zc;
+        }
+        /// <summary>
         /// Updates Cartesian Values
         /// </summary>
         /// <param name="c"></param>
@@ -96,6 +109,34 @@ namespace CoordinateSharp
             double Lat = lat * (180 / Math.PI);
             double Lon = lon * (180 / Math.PI);
             return new Coordinate(Lat, Lon);
+        }
+        /// <summary>
+        /// Returns a Lat Long Coordinate object based on the provided Cartesian Coordinate
+        /// </summary>
+        /// <param name="cart">Cartesian Coordinate</param>
+        /// <returns></returns>
+        public static Coordinate CartesianToLatLong(Cartesian cart)
+        {
+            double x = cart.X;
+            double y = cart.Y;
+            double z = cart.Z;
+
+            double lon = Math.Atan2(y, x);
+            double hyp = Math.Sqrt(x * x + y * y);
+            double lat = Math.Atan2(z, hyp);
+
+            double Lat = lat * (180 / Math.PI);
+            double Lon = lon * (180 / Math.PI);
+            return new Coordinate(Lat, Lon);
+        }
+        /// <summary>
+        /// Cartesian Default String Format
+        /// </summary>
+        /// <returns>Cartesian Formatted Coordinate String</returns>
+        /// <returns>Values rounded to the 8th place</returns>
+        public override string ToString()
+        {
+            return Math.Round(x,8).ToString() + " " + Math.Round(y, 8).ToString() + " " + Math.Round(z, 8).ToString();
         }
         /// <summary>
         /// Property changed event
