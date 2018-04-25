@@ -7,7 +7,7 @@ namespace CoordinateSharp.Eclipse
 {
     internal class SolarData
     {
-        double[] SE1901 = new double[]
+        static double[] SE1901 = new double[]
         {
           // 1901  5 18
           2415522.731807, 6.0, -4.0, 4.0, -0.9, -0.9,
@@ -2062,7 +2062,7 @@ namespace CoordinateSharp.Eclipse
              0.0268200, 0.0000511, -1.000e-05,
              0.0047553, 0.0047316
         };
-        double[] SE2001 = new double[]
+        static double[] SE2001 = new double[]
         {
           // 2001  6 21
           2452082.003314, 12.0, -4.0, 4.0, 64.2, 64.2,
