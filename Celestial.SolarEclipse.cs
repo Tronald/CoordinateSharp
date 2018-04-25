@@ -10,19 +10,20 @@ namespace CoordinateSharp
     //CONFIRM ELLIPSOID VALUES FOR WGS84 AND ALLOW ADJUSTMENT.
     internal class SolarEclipse
     {
-        private double[] obsvconst = new double[6];
-        private double[] mid = new double[40];//Check index to see if array needs to be this size
-        private string[] month = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };//Month string array
-        private double[] c1 = new double[41];
-        private double[] c2 = new double[41];
-        private double[] c3 = new double[41];
-        private double[] c4 = new double[41];
-        private List<string> values = new List<string>(); //Used to store values that would otherwise be printer. Covert to class later.
-        private List<List<string>> events = new List<List<string>>(); //List of values list;
+        private static  double[] obsvconst = new double[7];
+        private static  double[] mid = new double[41];//Check index to see if array needs to be this size
+        private static  string[] month = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };//Month string array
+        private static  double[] c1 = new double[41];
+        private static  double[] c2 = new double[41];
+        private static  double[] c3 = new double[41];
+        private static  double[] c4 = new double[41];
+        private static  List<string> values = new List<string>(); //Used to store values that would otherwise be printer. Covert to class later.
+        private static  List<List<string>> events = new List<List<string>>(); //List of values list;
 
-        public void Calculate(DateTime d, Coordinate coord)
+        public static List<List<string>> Calculate(DateTime d, Coordinate coord)
         {
             double[] el = Eclipse.SolarData.SolarDateData(d);//Get 100 year solar data;
+            events = new List<List<string>>();
             ReadData(coord);
             for (int i = 0; i < el.Length; i += 28)
             {
@@ -101,11 +102,11 @@ namespace CoordinateSharp
                         values.Add(GetAlt(c4));
                     }
                     // Eclipse magnitude
-                    GetMagnitude();
+                    values.Add(GetMagnitude());
 
 
                     // Coverage                
-                    GetCoverage();
+                    values.Add(GetCoverage());
 
                     // Central duration                   
                     if (mid[39] > 1)
@@ -119,19 +120,20 @@ namespace CoordinateSharp
                     events.Add(values);
                 }
             }
+            return events;
         }
 
         //Populates the obsvcont array
-        private void ReadData(Coordinate coord)
+        private static  void ReadData(Coordinate coord)
         {
             // Get the latitude
             obsvconst[0] = coord.Latitude.ToRadians();
 
             //// Get the longitude
-            obsvconst[1] = coord.Longitude.ToRadians();
+            obsvconst[1] = -1 * coord.Longitude.ToRadians(); //PASS REVERSE RADIAN.
 
             // Get the altitude
-            obsvconst[2] = 1000; //CHANGE TO ALLOW USER TO PASS.
+            obsvconst[2] = 100; //CHANGE TO ALLOW USER TO PASS.
 
             // Get the time zone
             obsvconst[3] = 0; //ALWAYS GMT
@@ -142,7 +144,7 @@ namespace CoordinateSharp
             obsvconst[5] = Math.Cos(tmp) + (obsvconst[2] / 6378140.0 * Math.Cos(obsvconst[0]));
         }
         // Populate the c1, c2, mid, c3 and c4 arrays
-        private void GetAll(double[] elements)
+        private static  void GetAll(double[] elements)
         {
             GetMid(elements);
             MidObservational();
@@ -291,7 +293,7 @@ namespace CoordinateSharp
             }
         }
         // Calculate mid eclipse
-        private void GetMid(double[] elements)
+        private static  void GetMid(double[] elements)
         {
             double iter, tmp;
 
@@ -309,7 +311,7 @@ namespace CoordinateSharp
             }
         }
         // Populate the circumstances array with the time and location dependent circumstances
-        private double[] TimeLocDependent(double[] elements, double[] circumstances)
+        private static  double[] TimeLocDependent(double[] elements, double[] circumstances)
         {
             double index, type;
 
@@ -353,7 +355,7 @@ namespace CoordinateSharp
             return circumstances;
         }
         // Populate the circumstances array with the time-only dependent circumstances (x, y, d, m, ...)
-        private double[] TimeDependent(double[] elements, double[] circumstances)
+        private static  double[] TimeDependent(double[] elements, double[] circumstances)
         {
             double type, t, ans;
 
@@ -422,7 +424,7 @@ namespace CoordinateSharp
             return circumstances;
         }
         // Get the observational circumstances for mid eclipse
-        private void MidObservational()
+        private static  void MidObservational()
         {
             Observational(mid);
             // Calculate m, magnitude and moon/sun
@@ -431,7 +433,7 @@ namespace CoordinateSharp
             mid[38] = (mid[28] - mid[29]) / (mid[28] + mid[29]);
         }
         // Get the observational circumstances
-        private void Observational(double[] circumstances)
+        private static  void Observational(double[] circumstances)
         {
             double contacttype, coslat, sinlat;
 
@@ -483,7 +485,7 @@ namespace CoordinateSharp
         //   Entry conditions -
         //   1. The mid array must be populated
         //   2. The magnitude at mid eclipse must be > 0.0
-        private void Getc1c4(double[] elements)
+        private static  void Getc1c4(double[] elements)
         {
             double tmp, n;
 
@@ -499,7 +501,7 @@ namespace CoordinateSharp
             c1c4iterate(elements, c4);
         }
         // Iterate on C1 or C4
-        private double[] c1c4iterate(double[] elements, double[] circumstances)
+        private static  double[] c1c4iterate(double[] elements, double[] circumstances)
         {
             double sign, iter, tmp, n;
 
@@ -531,7 +533,7 @@ namespace CoordinateSharp
         //   Entry conditions -
         //   1. The mid array must be populated
         //   2. There must be either a total or annular eclipse at the location!
-        private void Getc2c3(double[] elements)
+        private static  void Getc2c3(double[] elements)
         {
             double tmp, n;
 
@@ -555,7 +557,7 @@ namespace CoordinateSharp
             c2c3iterate(elements, c3);
         }
         // Iterate on C2 or C3
-        private double[] c2c3iterate(double[] elements, double[] circumstances)
+        private static  double[] c2c3iterate(double[] elements, double[] circumstances)
         {
             double sign, iter, tmp, n;
 
@@ -588,7 +590,7 @@ namespace CoordinateSharp
             return circumstances;
         }
         // Get the date of an event
-        private string GetDate(double[] elements, double[] circumstances)
+        private static  string GetDate(double[] elements, double[] circumstances)
         {
             double t, jd, a, b, c, d, e, index;
             string ans = "";
@@ -644,17 +646,17 @@ namespace CoordinateSharp
             return ans;
         }
         // Calculate the time of sunset
-        private void GetSunset(double[] elements, double[] circumstances)
+        private static  void GetSunset(double[] elements, double[] circumstances)
         {
             GetSunriset(elements, circumstances, 1.0);
         }
         // Calculate the time of sunrise
-        private void GetSunrise(double[] elements, double[] circumstances)
+        private static  void GetSunrise(double[] elements, double[] circumstances)
         {
             GetSunriset(elements, circumstances, -1.0);
         }
         // Calculate the time of sunrise or sunset
-        private void GetSunriset(double[] elements, double[] circumstances, double riset)
+        private static  void GetSunriset(double[] elements, double[] circumstances, double riset)
         {
             double h0, diff, iter;
 
@@ -673,7 +675,7 @@ namespace CoordinateSharp
             }
         }
         // Copy a set of circumstances
-        private void CopyCircumstances(double[] circumstancesfrom, double[] circumstancesto)
+        private static  void CopyCircumstances(double[] circumstancesfrom, double[] circumstancesto)
         {
             for (int i = 1; i < 41; i++)
             {
@@ -681,7 +683,7 @@ namespace CoordinateSharp
             }
         }
         // Get the local time of an event
-        private string GetTime(double[] elements, double[] circumstances)
+        private static  string GetTime(double[] elements, double[] circumstances)
         {
             string ans = "";
             int index = (int)obsvconst[6];
@@ -734,7 +736,7 @@ namespace CoordinateSharp
             }
         }
         // Get the altitude
-        private string GetAlt(double[] circumstances)
+        private static  string GetAlt(double[] circumstances)
         {
             double t;
             string ans = "";
@@ -782,7 +784,7 @@ namespace CoordinateSharp
             }
         }
         // Get the azimuth
-        private string GetAzi(double[] circumstances)
+        private static  string GetAzi(double[] circumstances)
         {
             string ans = "";
             double t = circumstances[35] * 180.0 / Math.PI;
@@ -815,7 +817,7 @@ namespace CoordinateSharp
             }
         }
         // Get the magnitude
-        private string GetMagnitude()
+        private static  string GetMagnitude()
         {
             double a = Math.Floor(1000.0 * mid[37] + 0.5) / 1000.0;
             string ans = a.ToString();
@@ -834,7 +836,7 @@ namespace CoordinateSharp
             return ans;
         }
         // Get the coverage
-        private string GetCoverage()
+        private static  string GetCoverage()
         {
             double a=0, b, c;
             string ans = "";
@@ -879,7 +881,7 @@ namespace CoordinateSharp
         }
         // Get the duration in mm:ss.s format
         // Adapted from code written by Stephen McCann - 27/04/2001
-        private string GetDuration()
+        private static  string GetDuration()
         {
             double tmp;
             string ans;
