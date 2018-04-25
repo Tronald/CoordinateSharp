@@ -393,5 +393,74 @@ namespace CoordinateSharp
         /// </summary>
         public bool Celestial { get; set; }     
     }
-    
+    /// <summary>
+    /// Contains distance values between two coordinates.
+    /// </summary>
+    public class Distance
+    {     
+        private double kilometers;        
+        private double miles;
+        private double feet;
+        private double meters;
+
+        /// <summary>
+        /// Initializes a distance object
+        /// </summary>
+        /// <param name="c1">Coordinate 1</param>
+        /// <param name="c2">Coordinate 2</param>
+        public Distance(Coordinate c1, Coordinate c2)
+        {
+
+            ////RADIANS
+            double nLat = c1.Latitude.ToDouble() * Math.PI / 180;
+            double nLong = c1.Longitude.ToDouble() * Math.PI / 180;
+            double cLat = c2.Latitude.ToDouble() * Math.PI / 180;
+            double cLong = c2.Longitude.ToDouble() * Math.PI / 180;
+
+            //Calcs
+            double R = 6371e3; //meters
+            double v1 = nLat;
+            double v2 = cLat;
+            double latRad = (c2.Latitude.ToDouble() - c1.Latitude.ToDouble()) * Math.PI / 180;
+            double longRad = (c2.Longitude.ToDouble() - c1.Longitude.ToDouble()) * Math.PI / 180;
+
+            double a = Math.Sin(latRad / 2.0) * Math.Sin(latRad / 2.0) +
+                Math.Cos(nLat) * Math.Cos(cLat) * Math.Sin(longRad / 2.0) * Math.Sin(longRad / 2.0);
+            double cl = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            double dist = R * cl;
+
+            kilometers = dist / 1000;
+            meters = dist;
+            feet = dist * 3.28084;
+            miles = meters * 0.000621371;
+        }
+        /// <summary>
+        /// Distance in Kilometers
+        /// </summary>
+        public double Kilometers
+        {
+            get { return kilometers; }
+        }
+        /// <summary>
+        /// Distance in Miles
+        /// </summary>
+        public double Miles
+        {
+            get { return miles; }
+        }
+        /// <summary>
+        /// Distance in Meters
+        /// </summary>
+        public double Meters
+        {
+            get { return meters; }
+        }
+        /// <summary>
+        /// Distance in Feet
+        /// </summary>
+        public double Feet
+        {
+            get { return feet; }
+        }
+    }
 }

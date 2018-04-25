@@ -1,6 +1,11 @@
-# CoordinateSharp v1.1.2.4
+# CoordinateSharp v1.1.2.5
 
-A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
+A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM) and Cartesian (X, Y, Z). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
+
+### 1.1.2.5 Change Notes
+* -Added ability to convert to/from cartesian
+* -Added ability to calculate distance between to points (Haversine Formula)
+* -Added ability to get radians from CoordinatePart
 
 ### 1.1.2.4 Change Notes
 * -Added ability to pass custom datum for UTM and MGRS conversions
@@ -120,6 +125,39 @@ Coordinate nc = MilitaryGridReferenceSystem.MGRStoLatLong(c.MGRS); //c.MGRS is n
 Debug.Print(c.ToString() + "  " + nc.ToString()); // N 0º 33' 35.988" W 60º 0' 0.01"   N 0º 33' 35.988" W 60º 0' 0.022"
 ```
 In the above example, the MGRS values are different once converted, but the Lat/Long is almost the same once converted back.
+
+### Cartesian Format
+
+Cartesian (X, Y, Z) is available for display. They are converted from the lat/long radian values. These formats are accessible from the ```Coordinate``` object. You may also convert a Cartesian coordinate into a lat/long coordinate.
+
+To Cartesian:
+```C#
+Coordinate c = new Coordinate(40.7143538, -74.0059731);
+c.Cartesian.ToString(); //Outputs 0.20884915 -0.72863022 0.65228831
+```
+
+To Lat/Long:
+```C#
+Cartesian cart = new Cartesian(0.20884915, -0.72863022, 0.65228831);
+Coordinate c = Cartesian.CartesianToLatLong(cart);
+//OR
+Coordinate c = Cartesian.CartesianToLatLong(0.20884915, -0.72863022, 0.65228831);
+```
+
+### Calculating Distance
+
+Distance can be calculated between two Coordinates. Various distance values are stored in the Distance object. 
+
+```C#
+Distance d = new Distance(coord1, coord2);
+d.Kilometers;
+```
+
+You may also grab a distance by passing a second Coordinate to an existing Coordinate.
+
+```C#
+coord1.Get_Distance_From_Coordinate(coord2).Miles;
+```
 
 ### Binding and MVVM
 
