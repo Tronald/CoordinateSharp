@@ -5,152 +5,25 @@ using System.Text;
 
 namespace CoordinateSharp
 {
+    //CURRENT ALTITUDE IS SET CONSTANT AT 1000M. NEED TO ADJUST TO ALLOW USER PASS.
+    //SOME TIMES AND ALTS WERE RETURN WITH COLOR AND STYLING. DETERMINE WHY AND ADJUST VALUE AS REQUIRED. SEARCH "WAS ITALIC".
+    //CONFIRM ELLIPSOID VALUES FOR WGS84 AND ALLOW ADJUSTMENT.
     internal class SolarEclipse
     {
         private double[] obsvconst = new double[6];
         private double[] mid = new double[40];//Check index to see if array needs to be this size
         private string[] month = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };//Month string array
+        private double[] c1 = new double[41];
+        private double[] c2 = new double[41];
+        private double[] c3 = new double[41];
+        private double[] c4 = new double[41];
         private List<string> values = new List<string>(); //Used to store values that would otherwise be printer. Covert to class later.
         private List<List<string>> events = new List<List<string>>(); //List of values list;
 
         public void Calculate(DateTime d, Coordinate coord)
         {
-            //CONFIRM ELLIPSOID VALUES?
             double[] el = Eclipse.SolarData.SolarDateData(d);//Get 100 year solar data;
             ReadData(coord);
-            #region
-            //results = document.getElementById("el_results");
-            //p = document.createElement("p");
-            //p.setAttribute("id", "el_locationtable");
-            //b = document.createElement("h2");
-            //b.appendChild(document.createTextNode("Solar Eclipses visible from  " + document.eclipseform.loc_name.value));
-            //p.appendChild(b);
-            //resultsTable = document.createElement("table");
-            //resultsTable.setAttribute("border", "0");
-            //tbody = document.createElement("tbody");
-            //row = document.createElement("tr");
-            //td = document.createElement("td");
-            //td.setAttribute("align", "right");
-            //td.setAttribute("nowrap", "");
-            //td.appendChild(document.createTextNode("Latitude: "));
-            //row.appendChild(td);
-            //td = document.createElement("td");
-            //td.setAttribute("nowrap", "");
-            //text = document.eclipseform.latd.value;
-            //text += "\u00b0 ";
-            //if (document.eclipseform.latm.value < 10) text += "0";
-            //text += document.eclipseform.latm.value;
-            //text += "' ";
-            //if (document.eclipseform.lats.value < 10) text += "0";
-            //text += document.eclipseform.lats.value;
-            //text += '" ';
-            //text += (document.eclipseform.latx.options[document.eclipseform.latx.selectedIndex]).text;
-            //td.appendChild(document.createTextNode(text));
-            //row.appendChild(td);
-            //tbody.appendChild(row);
-            //row = document.createElement("tr");
-            //td = document.createElement("td");
-            //td.setAttribute("align", "right");
-            //td.setAttribute("nowrap", "");
-            //td.appendChild(document.createTextNode("Longitude: "));
-            //row.appendChild(td);
-            //td = document.createElement("td");
-            //td.setAttribute("nowrap", "");
-            //text = document.eclipseform.lond.value;
-            //text += "\u00b0 ";
-            //if (document.eclipseform.lonm.value < 10) text += "0";
-            //text += document.eclipseform.lonm.value;
-            //text += "' ";
-            //if (document.eclipseform.lons.value < 10) text += "0";
-            //text += document.eclipseform.lons.value;
-            //text += '" ';
-            //text += (document.eclipseform.lonx.options[document.eclipseform.lonx.selectedIndex]).text;
-            //td.appendChild(document.createTextNode(text));
-            //row.appendChild(td);
-            //tbody.appendChild(row);
-            //row = document.createElement("tr");
-            //td = document.createElement("td");
-            //td.setAttribute("align", "right");
-            //td.setAttribute("nowrap", "");
-            //td.appendChild(document.createTextNode("Altitude: "));
-            //row.appendChild(td);
-            //td = document.createElement("td");
-            //td.setAttribute("nowrap", "");
-            //text = document.eclipseform.alt.value;
-            //text += "m";
-            //td.appendChild(document.createTextNode(text));
-            //row.appendChild(td);
-            //tbody.appendChild(row);
-            //row = document.createElement("tr");
-            //td = document.createElement("td");
-            //td.setAttribute("align", "right");
-            //td.setAttribute("nowrap", "");
-            //td.appendChild(document.createTextNode("Time Zone: "));
-            //row.appendChild(td);
-            //td = document.createElement("td");
-            //td.setAttribute("nowrap", "");
-            //text = (document.eclipseform.tzh.options[document.eclipseform.tzh.selectedIndex]).text;
-            //text += ":";
-            //text += (document.eclipseform.tzm.options[document.eclipseform.tzm.selectedIndex]).text;
-            //text += " ";
-            //text += (document.eclipseform.tzx.options[document.eclipseform.tzx.selectedIndex]).text;
-            //td.appendChild(document.createTextNode(text));
-            //row.appendChild(td);
-            //tbody.appendChild(row);
-            //resultsTable.appendChild(tbody);
-            //p.appendChild(resultsTable);
-            //results.appendChild(p);
-
-            //resultsTable = document.createElement("table");
-            //resultsTable.setAttribute("id", "el_resultstable");
-            //resultsTable.setAttribute("width", "150");
-            //resultsTable.setAttribute("border", "2");
-            //tbody = document.createElement("tbody");
-            //row = document.createElement("tr");
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("Calendar Date"));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("Eclipse Type"));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("Partial Eclipse Begins"));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("Sun Alt"));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("A or T Eclipse Begins"));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("Maximum Eclipse"));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("Sun Alt"));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("Sun Azi"));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("A or T Eclipse Ends"));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("Partial Eclipse Ends"));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("Sun Alt"));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("Eclipse Mag."));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("Eclipse Obs."));
-            //row.appendChild(td);
-            //td = document.createElement("th");
-            //td.appendChild(document.createTextNode("A or T Eclipse Duration"));
-            //row.appendChild(td);
-            //tbody.appendChild(row);
-            #endregion
             for (int i = 0; i < el.Length; i += 28)
             {
                 obsvconst[6] = i;
@@ -228,21 +101,24 @@ namespace CoordinateSharp
                         values.Add(GetAlt(c4));
                     }
                     // Eclipse magnitude
-                    GetMagnitude());
+                    GetMagnitude();
 
-            // Coverage                
-            GetCoverage();
 
-            // Central duration                   
-            if (mid[39] > 1)
-            {
-                values.Add(GetDuration());
+                    // Coverage                
+                    GetCoverage();
+
+                    // Central duration                   
+                    if (mid[39] > 1)
+                    {
+                        values.Add(GetDuration());
+                    }
+                    else
+                    {
+                        values.Add("-");
+                    }
+                    events.Add(values);
+                }
             }
-            else
-            {
-                values.Add("-");
-            }
-            events.Add(values);
         }
 
         //Populates the obsvcont array
@@ -272,10 +148,10 @@ namespace CoordinateSharp
             MidObservational();
             if (mid[37] > 0.0)
             {
-                getc1c4(elements);
+                Getc1c4(elements);
                 if ((mid[36] < mid[29]) || (mid[36] < -mid[29]))
                 {
-                    getc2c3(elements);
+                    Getc2c3(elements);
                     if (mid[29] < 0.0)
                     {
                         mid[39] = 3; // Total eclipse
@@ -338,7 +214,7 @@ namespace CoordinateSharp
                         GetSunrise(elements, c2);
                         Observational(c2);
                         c2[40] = 2;
-                        copycircumstances(c2, c1);
+                        CopyCircumstances(c2, c1);
                     }
                     else if (pattern == 11)
                     {
@@ -346,7 +222,7 @@ namespace CoordinateSharp
                         GetSunrise(elements, mid);
                         MidObservational();
                         mid[40] = 2;
-                        copycircumstances(mid, c1);
+                        CopyCircumstances(mid, c1);
                     }
                     else if (pattern == 1)
                     {
@@ -545,7 +421,172 @@ namespace CoordinateSharp
             }
             return circumstances;
         }
+        // Get the observational circumstances for mid eclipse
+        private void MidObservational()
+        {
+            Observational(mid);
+            // Calculate m, magnitude and moon/sun
+            mid[36] = Math.Sqrt(mid[24] * mid[24] + mid[25] * mid[25]);
+            mid[37] = (mid[28] - mid[36]) / (mid[28] + mid[29]);
+            mid[38] = (mid[28] - mid[29]) / (mid[28] + mid[29]);
+        }
+        // Get the observational circumstances
+        private void Observational(double[] circumstances)
+        {
+            double contacttype, coslat, sinlat;
 
+            // We are looking at an "external" contact UNLESS this is a total eclipse AND we are looking at
+            // c2 or c3, in which case it is an INTERNAL contact! Note that if we are looking at mid eclipse,
+            // then we may not have determined the type of eclipse (mid[39]) just yet!
+            if (circumstances[0] == 0)
+            {
+                contacttype = 1.0;
+            }
+            else
+            {
+                if ((mid[39] == 3) && ((circumstances[0] == -1) || (circumstances[0] == 1)))
+                {
+                    contacttype = -1.0;
+                }
+                else
+                {
+                    contacttype = 1.0;
+                }
+            }
+            // Calculate p
+            circumstances[31] = Math.Atan2(contacttype * circumstances[24], contacttype * circumstances[25]);
+            // Calculate alt
+            sinlat = Math.Sin(obsvconst[0]);
+            coslat = Math.Cos(obsvconst[0]);
+            circumstances[32] = Math.Asin(circumstances[5] * sinlat + circumstances[6] * coslat * circumstances[18]);
+            // Calculate q
+            circumstances[33] = Math.Asin(coslat * circumstances[17] / Math.Cos(circumstances[32]));
+            if (circumstances[20] < 0.0)
+            {
+                circumstances[33] = Math.PI - circumstances[33];
+            }
+            // Calculate v
+            circumstances[34] = circumstances[31] - circumstances[33];
+            // Calculate azi
+            circumstances[35] = Math.Atan2(-1.0 * circumstances[17] * circumstances[6], circumstances[5] * coslat - circumstances[18] * sinlat * circumstances[6]);
+            // Calculate visibility
+            if (circumstances[32] > -0.00524)
+            {
+                circumstances[40] = 0;
+            }
+            else
+            {
+                circumstances[40] = 1;
+            }
+        }
+        // Get C1 and C4 data
+        //   Entry conditions -
+        //   1. The mid array must be populated
+        //   2. The magnitude at mid eclipse must be > 0.0
+        private void Getc1c4(double[] elements)
+        {
+            double tmp, n;
+
+            n = Math.Sqrt(mid[30]);
+            tmp = mid[26] * mid[25] - mid[24] * mid[27];
+            tmp = tmp / n / mid[28];
+            tmp = Math.Sqrt(1.0 - tmp * tmp) * mid[28] / n;
+            c1[0] = -2;
+            c4[0] = 2;
+            c1[1] = mid[1] - tmp;
+            c4[1] = mid[1] + tmp;
+            c1c4iterate(elements, c1);
+            c1c4iterate(elements, c4);
+        }
+        // Iterate on C1 or C4
+        private double[] c1c4iterate(double[] elements, double[] circumstances)
+        {
+            double sign, iter, tmp, n;
+
+            TimeLocDependent(elements, circumstances);
+            if (circumstances[0] < 0)
+            {
+                sign = -1.0;
+            }
+            else
+            {
+                sign = 1.0;
+            }
+            tmp = 1.0;
+            iter = 0;
+            while (((tmp > 0.000001) || (tmp < -0.000001)) && (iter < 50))
+            {
+                n = Math.Sqrt(circumstances[30]);
+                tmp = circumstances[26] * circumstances[25] - circumstances[24] * circumstances[27];
+                tmp = tmp / n / circumstances[28];
+                tmp = sign * Math.Sqrt(1.0 - tmp * tmp) * circumstances[28] / n;
+                tmp = (circumstances[24] * circumstances[26] + circumstances[25] * circumstances[27]) / circumstances[30] - tmp;
+                circumstances[1] = circumstances[1] - tmp;
+                TimeLocDependent(elements, circumstances);
+                iter++;
+            }
+            return circumstances;
+        }
+        // Get C2 and C3 data
+        //   Entry conditions -
+        //   1. The mid array must be populated
+        //   2. There must be either a total or annular eclipse at the location!
+        private void Getc2c3(double[] elements)
+        {
+            double tmp, n;
+
+            n = Math.Sqrt(mid[30]);
+            tmp = mid[26] * mid[25] - mid[24] * mid[27];
+            tmp = tmp / n / mid[29];
+            tmp = Math.Sqrt(1.0 - tmp * tmp) * mid[29] / n;
+            c2[0] = -1;
+            c3[0] = 1;
+            if (mid[29] < 0.0)
+            {
+                c2[1] = mid[1] + tmp;
+                c3[1] = mid[1] - tmp;
+            }
+            else
+            {
+                c2[1] = mid[1] - tmp;
+                c3[1] = mid[1] + tmp;
+            }
+            c2c3iterate(elements, c2);
+            c2c3iterate(elements, c3);
+        }
+        // Iterate on C2 or C3
+        private double[] c2c3iterate(double[] elements, double[] circumstances)
+        {
+            double sign, iter, tmp, n;
+
+            TimeLocDependent(elements, circumstances);
+            if (circumstances[0] < 0)
+            {
+                sign = -1.0;
+            }
+            else
+            {
+                sign = 1.0;
+            }
+            if (mid[29] < 0.0)
+            {
+                sign = -sign;
+            }
+            tmp = 1.0;
+            iter = 0;
+            while (((tmp > 0.000001) || (tmp < -0.000001)) && (iter < 50))
+            {
+                n = Math.Sqrt(circumstances[30]);
+                tmp = circumstances[26] * circumstances[25] - circumstances[24] * circumstances[27];
+                tmp = tmp / n / circumstances[29];
+                tmp = sign * Math.Sqrt(1.0 - tmp * tmp) * circumstances[29] / n;
+                tmp = (circumstances[24] * circumstances[26] + circumstances[25] * circumstances[27]) / circumstances[30] - tmp;
+                circumstances[1] = circumstances[1] - tmp;
+                TimeLocDependent(elements, circumstances);
+                iter++;
+            }
+            return circumstances;
+        }
         // Get the date of an event
         private string GetDate(double[] elements, double[] circumstances)
         {
@@ -600,6 +641,277 @@ namespace CoordinateSharp
                 ans = ans + "0";
             }
             ans = ans + d;
+            return ans;
+        }
+        // Calculate the time of sunset
+        private void GetSunset(double[] elements, double[] circumstances)
+        {
+            GetSunriset(elements, circumstances, 1.0);
+        }
+        // Calculate the time of sunrise
+        private void GetSunrise(double[] elements, double[] circumstances)
+        {
+            GetSunriset(elements, circumstances, -1.0);
+        }
+        // Calculate the time of sunrise or sunset
+        private void GetSunriset(double[] elements, double[] circumstances, double riset)
+        {
+            double h0, diff, iter;
+
+            diff = 1.0;
+            iter = 0;
+            while ((diff > 0.00001) || (diff < -0.00001))
+            {
+                iter++;
+                if (iter == 4) { return; }
+                h0 = Math.Acos((Math.Sin(-0.00524) - Math.Sin(obsvconst[0]) * circumstances[5]) / Math.Cos(obsvconst[0]) / circumstances[6]);
+                diff = (riset * h0 - circumstances[16]) / circumstances[13];
+                while (diff >= 12.0) { diff -= 24.0; }
+                while (diff <= -12.0) { diff += 24.0; }
+                circumstances[1] += diff;
+                TimeLocDependent(elements, circumstances);
+            }
+        }
+        // Copy a set of circumstances
+        private void CopyCircumstances(double[] circumstancesfrom, double[] circumstancesto)
+        {
+            for (int i = 1; i < 41; i++)
+            {
+                circumstancesto[i] = circumstancesfrom[i];
+            }
+        }
+        // Get the local time of an event
+        private string GetTime(double[] elements, double[] circumstances)
+        {
+            string ans = "";
+            int index = (int)obsvconst[6];
+            double t = circumstances[1] + elements[1 + index] - obsvconst[3] - (elements[4 + index] - 0.5) / 3600.0;
+            if (t < 0.0)
+            {
+                t = t + 24.0;
+            }
+            if (t >= 24.0)
+            {
+                t = t - 24.0;
+            }
+            if (t < 10.0)
+            {
+                ans = ans + "0";
+            }
+            ans = ans + Math.Floor(t) + ":";
+            t = (t * 60.0) - 60.0 * Math.Floor(t);
+            if (t < 10.0)
+            {
+                ans = ans + "0";
+            }
+            ans = ans + Math.Floor(t);
+            if (circumstances[40] <= 1)
+            { // not sunrise or sunset
+                ans = ans + ":";
+                t = (t * 60.0) - 60.0 * Math.Floor(t);
+                if (t < 10.0)
+                {
+                    ans = ans + "0";
+                }
+                ans = ans + Math.Floor(t);
+            }
+            if (circumstances[40] == 1)
+            {
+                //WAS ITALIC
+                return ans;
+            }
+            else if (circumstances[40] == 2)
+            {
+                return ans + "(r)";
+            }
+            else if (circumstances[40] == 3)
+            {
+                return ans + "(s)";
+            }
+            else
+            {
+                return ans;
+            }
+        }
+        // Get the altitude
+        private string GetAlt(double[] circumstances)
+        {
+            double t;
+            string ans = "";
+
+            if (circumstances[40] == 2)
+            {
+                return "0(r)";
+            }
+            if (circumstances[40] == 3)
+            {
+                return "0(s)";
+            }
+            if ((circumstances[32] < 0.0) && (circumstances[32] >= -0.00524))
+            {
+                // Crude correction for refraction (and for consistency's sake)
+                t = 0.0;
+            }
+            else
+            {
+                t = circumstances[32] * 180.0 / Math.PI;
+            }
+            if (t < 0.0)
+            {
+                ans = "-";
+                t = -t;
+            }
+            else
+            {
+                ans = "";
+            }
+            t = Math.Floor(t + 0.5);
+            if (t < 10.0)
+            {
+                ans = ans + "0";
+            }
+            ans = ans + t;
+            if (circumstances[40] == 1)
+            {
+                //WAS ITALIC
+                return ans;
+            }
+            else
+            {
+                return ans;
+            }
+        }
+        // Get the azimuth
+        private string GetAzi(double[] circumstances)
+        {
+            string ans = "";
+            double t = circumstances[35] * 180.0 / Math.PI;
+            if (t < 0.0)
+            {
+                t = t + 360.0;
+            }
+            if (t >= 360.0)
+            {
+                t = t - 360.0;
+            }
+            t = Math.Floor(t + 0.5);
+            if (t < 100.0)
+            {
+                ans = ans + "0";
+            }
+            if (t < 10.0)
+            {
+                ans = ans + "0";
+            }
+            ans = ans + t;
+            if (circumstances[40] == 1)
+            {
+                //WAS ITALIC
+                return ans;
+            }
+            else
+            {
+                return ans;
+            }
+        }
+        // Get the magnitude
+        private string GetMagnitude()
+        {
+            double a = Math.Floor(1000.0 * mid[37] + 0.5) / 1000.0;
+            string ans = a.ToString();
+            if (mid[40] == 1)
+            {
+                return ans;
+            }
+            if (mid[40] == 2)
+            {
+                ans = a.ToString() + "(r)";
+            }
+            if (mid[40] == 3)
+            {
+                ans = a.ToString() + "(s)";
+            }
+            return ans;
+        }
+        // Get the coverage
+        private string GetCoverage()
+        {
+            double a=0, b, c;
+            string ans = "";
+            if (mid[37] <= 0.0)
+            {
+                ans = "0.0";
+            }
+            else if (mid[37] >= 1.0)
+            {
+                ans = "1.000";
+            }
+            else
+            {
+                if (mid[39] == 2)
+                {
+                    c = mid[38] * mid[38];
+                }
+                else
+                {
+                    c = Math.Acos((mid[28] * mid[28] + mid[29] * mid[29] - 2.0 * mid[36] * mid[36]) / (mid[28] * mid[28] - mid[29] * mid[29]));
+                    b = Math.Acos((mid[28] * mid[29] + mid[36] * mid[36]) / mid[36] / (mid[28] + mid[29]));
+                    a = Math.PI - b - c;
+                    c = ((mid[38] * mid[38] * a + b) - mid[38] * Math.Sin(c)) / Math.PI;
+                }
+                a = Math.Floor(1000.0 * c + 0.5) / 1000.0;
+                ans = a.ToString();
+            }
+            if (mid[40] == 1)
+            {
+                //WAS ITALIC
+                return ans;
+            }
+            if (mid[40] == 2)
+            {
+                ans = a.ToString() + "(r)";
+            }
+            if (mid[40] == 3)
+            {
+                ans = a + "(s)";
+            }
+            return ans;
+        }
+        // Get the duration in mm:ss.s format
+        // Adapted from code written by Stephen McCann - 27/04/2001
+        private string GetDuration()
+        {
+            double tmp;
+            string ans;
+
+            if (c3[40] == 4)
+            {
+                tmp = mid[1] - c2[1];
+            }
+            else if (c2[40] == 4)
+            {
+                tmp = c3[1] - mid[1];
+            }
+            else
+            {
+                tmp = c3[1] - c2[1];
+            }
+            if (tmp < 0.0)
+            {
+                tmp = tmp + 24.0;
+            }
+            else if (tmp >= 24.0)
+            {
+                tmp = tmp - 24.0;
+            }
+            tmp = (tmp * 60.0) - 60.0 * Math.Floor(tmp) + 0.05 / 60.0;
+            ans = Math.Floor(tmp) + "m";
+            tmp = (tmp * 60.0) - 60.0 * Math.Floor(tmp);
+            if (tmp < 10.0)
+            {
+                ans = ans + "0";
+            }
+            ans += Math.Floor(tmp) + "s";
             return ans;
         }
     }
