@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
 namespace CoordinateSharp
 {
     internal class SunCalc
-    {
-      
+    {     
         public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c)
         {
             if (date.Year == 1900) { return; } //Return if date vaue hasn't been established.
@@ -117,6 +113,7 @@ namespace CoordinateSharp
             {
                 c.AdditionalSolarTimes = new AdditionalSolarTimes();
             }
+            CalculateSolarEclipse(date, lat, longi, c);
         }
         public static void CalculateZodiacSign(DateTime date, Celestial c)
         {
@@ -197,6 +194,38 @@ namespace CoordinateSharp
             {
                 c.AstrologicalSigns.ZodiacSign = "Capricorn";
                 return;
+            }
+        }
+        public static void CalculateSolarEclipse(DateTime date, double lat, double longi, Celestial c)
+        {
+            //Convert to Radian
+            double latR = lat * Math.PI / 180;
+            double longR = longi * Math.PI / 180;
+            List<List<string>> se = SolarEclipseCalc.CalculateSolarEclipse(date, latR, longR);
+            //RETURN FIRST AND LAST
+            if (se.Count == 0) { return; }
+            //FIND LAST AND NEXT ECLIPSE
+            int lastE = -1;
+            int nextE = -1;
+            int currentE = 0;
+            DateTime lastDate = new DateTime();
+            DateTime nextDate = new DateTime(3300, 1, 1);
+            //Iterate to get last and next eclipse
+            foreach(List<string> values in se)
+            {
+                DateTime ld = Convert.ToDateTime(values[0]);
+                if (ld < date && ld>lastDate) { lastDate = ld;lastE = currentE; }
+                if(ld>= date && ld < nextDate) { nextDate = ld;nextE = currentE; }
+                currentE++;
+            }
+            //SET ECLIPSE DATA
+            if (lastE >= 0)
+            {
+                c.AdditionalSolarTimes.SolarEclipse.LastEclipse = new SolarEclipseDetails(se[lastE]);
+            }
+            if (nextE >= 0)
+            {
+                c.AdditionalSolarTimes.SolarEclipse.NextEclipse = new SolarEclipseDetails(se[nextE]);
             }
         }
 

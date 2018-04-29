@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CoordinateSharp
 {
@@ -307,6 +306,13 @@ namespace CoordinateSharp
     public class MoonIllum
     {
         /// <summary>
+        /// Create a new MoonIllum object
+        /// </summary>
+        public MoonIllum()
+        {
+            LunarEclipse = new LunarEclipse();
+        }
+        /// <summary>
         /// Moon's fraction
         /// </summary>
         public double Fraction { get; set; }
@@ -322,6 +328,10 @@ namespace CoordinateSharp
         /// Moon's phase name for the specified day
         /// </summary>
         public string PhaseName { get; set; }
+        /// <summary>
+        /// Returns a LunarEclipse object
+        /// </summary>
+        public LunarEclipse LunarEclipse {get;set;}
 
     }
     /// <summary>
@@ -353,10 +363,11 @@ namespace CoordinateSharp
         public AdditionalSolarTimes()
         {
             //Set dates to avoid null errors. If year return 1900 event did not occur.
-            CivilDawn = new DateTime(1900,1,1,0,0,0,DateTimeKind.Utc);
+            CivilDawn = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             CivilDusk = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             NauticalDawn = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             NauticalDusk = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            SolarEclipse = new SolarEclipse();
         }
         /// <summary>
         /// Returns Civil Dawn Time
@@ -374,6 +385,10 @@ namespace CoordinateSharp
         /// Returns Nautical Dusk Time
         /// </summary>
         public DateTime? NauticalDusk { get; set; }
+        /// <summary>
+        /// Returns a SolarEclipse object
+        /// </summary>
+        public SolarEclipse SolarEclipse { get; set; }
     }
     /// <summary>
     /// Turn on/off eager loading of certain properties
@@ -462,5 +477,330 @@ namespace CoordinateSharp
         {
             get { return feet; }
         }
+    }
+    /// <summary>
+    /// Class containing solar eclipse information
+    /// </summary>
+    public class SolarEclipse
+    {
+        /// <summary>
+        /// Initialize a SolarEclipse object
+        /// </summary>
+        public SolarEclipse()
+        { 
+            LastEclipse = new SolarEclipseDetails();
+            NextEclipse = new SolarEclipseDetails();
+        }
+        /// <summary>
+        /// Details about the previous solar eclipse
+        /// </summary>
+        public SolarEclipseDetails LastEclipse { get; set;  }
+        /// <summary>
+        /// Details about the next solar eclipse
+        /// </summary>
+        public SolarEclipseDetails NextEclipse { get; set; }
+    }
+    /// <summary>
+    /// Class containing lunar eclipse information
+    /// </summary>
+    public class LunarEclipse
+    {
+        /// <summary>
+        /// Initialize a LunarEclipse object
+        /// </summary>
+        public LunarEclipse()
+        {
+            LastEclipse = new LunarEclipseDetails();
+            NextEclipse = new LunarEclipseDetails();
+        }
+        /// <summary>
+        /// Details about the previous lunar eclipse
+        /// </summary>
+        public LunarEclipseDetails LastEclipse { get; set; }
+        /// <summary>
+        /// Details about the next lunar eclipse
+        /// </summary>
+        public LunarEclipseDetails NextEclipse { get; set; }
+    }
+    /// <summary>
+    /// Class containing specific solar eclipse information
+    /// </summary>
+    public class SolarEclipseDetails
+    {
+        private DateTime date;
+        private SolarEclipseType type;
+        private DateTime partialEclispeBegin;      
+        private DateTime aorTEclipseBegin;
+        private DateTime maximumEclipse;
+        private DateTime partialEclispeEnd;
+        private DateTime aorTEclipseEnd;
+        private TimeSpan aorTDuration;
+        private bool hasEclipseData;
+
+        /// <summary>
+        /// Initialize a SolarEclipseDetails object
+        /// </summary>
+        /// <param name="values">Solar Eclipse String Values</param>
+        public SolarEclipseDetails(List<string> values)
+        {
+            //Eclipse has value
+            hasEclipseData = true;
+            //Set Eclipse Date
+            date = Convert.ToDateTime(values[0]);
+            switch(values[1])
+            {
+                case "P":
+                    type = SolarEclipseType.Partial;
+                    break;
+                case "A":
+                    type = SolarEclipseType.Annular;
+                    break;
+                case "T":
+                    type = SolarEclipseType.Total;
+                    break;
+                default:
+                    break;
+            }
+            TimeSpan ts;
+            //Eclipse start
+            if (TimeSpan.TryParse(values[2], out ts))
+            {
+                partialEclispeBegin = date.Add(ts);
+            }
+            //A or T start
+            if (TimeSpan.TryParse(values[4], out ts))
+            {
+                aorTEclipseBegin = date.Add(ts);
+            }
+            //Maximum Eclipse
+            if (TimeSpan.TryParse(values[5], out ts))
+            {
+                maximumEclipse = date.Add(ts);
+            }
+            //A or T ends
+            if (TimeSpan.TryParse(values[8], out ts))
+            {
+                aorTEclipseEnd = date.Add(ts);
+            }
+            //Eclipse end
+            if (TimeSpan.TryParse(values[9], out ts))
+            {
+                partialEclispeEnd = date.Add(ts);
+            }
+            //A or T Duration
+            if (TimeSpan.TryParse(values[13], out ts))
+            {
+                aorTDuration = ts;
+            }
+            else
+            {
+                aorTDuration = new TimeSpan();
+            }
+        }
+        /// <summary>
+        /// Initialize an empty SolarEclipseDetails object
+        /// </summary>
+        public SolarEclipseDetails()
+        {
+            hasEclipseData = false;
+        }
+        /// <summary>
+        /// Determine if the SolarEclipseDetails object has been populated
+        /// </summary>
+        public bool HasEclipseData { get { return hasEclipseData; } }
+        /// <summary>
+        /// Date of solar eclipse
+        /// </summary>
+        public DateTime Date{ get { return date; } }
+        /// <summary>
+        /// Solar eclipse type
+        /// </summary>
+        public SolarEclipseType Type{ get { return type; } }
+        /// <summary>
+        /// DateTime when the partial eclipse begins
+        /// </summary>
+        public DateTime PartialEclispeBegin{get{ return partialEclispeBegin; }}
+        /// <summary>
+        /// DateTime when an Annular or Total eclipse begins (if applicable)
+        /// </summary>
+        public DateTime AorTEclipseBegin{get{ return aorTEclipseBegin; }}
+        /// <summary>
+        /// DateTime when eclipse is at Maximum
+        /// </summary>
+        public DateTime MaximumEclipse{get{ return maximumEclipse; }}
+        /// <summary>
+        /// DateTime when the partial elipse ends
+        /// </summary>
+        public DateTime PartialEclispeEnd{get{ return partialEclispeEnd; }}
+        /// <summary>
+        /// DateTime when the Annular or Total eclipse ends (if applicable)
+        /// </summary>
+        public DateTime AorTEclipseEnd{get{ return aorTEclipseEnd; }}
+        /// <summary>
+        /// Duration of Annular or Total eclipse (if applicable)
+        /// </summary>
+        public TimeSpan AorTDuration{get{ return aorTDuration; }}
+    }
+    /// <summary>
+    /// Class containing specific lunar eclipse information
+    /// </summary>
+    public class LunarEclipseDetails
+    {
+        private DateTime date;
+        private LunarEclipseType type;
+        private DateTime penumbralEclipseBegin;
+        private DateTime partialEclispeBegin;
+        private DateTime totalEclipseBegin;
+        private DateTime midEclipse;
+        private DateTime penumbralEclipseEnd;
+        private DateTime partialEclispeEnd;
+        private DateTime totalEclipseEnd;
+    
+        private bool hasEclipseData;
+
+        /// <summary>
+        /// Initialize a LunarEclipseDetails object
+        /// </summary>
+        /// <param name="values">Lunar Eclipse String Values</param>
+        public LunarEclipseDetails(List<string> values)
+        {
+            //Eclipse has value
+            hasEclipseData = true;
+            //Set Eclipse Date
+            date = Convert.ToDateTime(values[0]);
+            switch (values[1])
+            {
+                case "T":
+                    type = LunarEclipseType.Total;
+                    break;
+                case "P":
+                    type = LunarEclipseType.Partial;
+                    break;
+                case "N":
+                    type = LunarEclipseType.Penumbral;
+                    break;
+                default:
+                    break;
+            }
+            TimeSpan ts;
+            //Penumbral Eclipse start
+            if (TimeSpan.TryParse(values[4], out ts))
+            {
+                penumbralEclipseBegin = date.Add(ts);
+            }
+            //PartialEclipse start
+            if (TimeSpan.TryParse(values[6], out ts))
+            {
+                partialEclispeBegin = date.Add(ts);
+            }
+            //Total start
+            if (TimeSpan.TryParse(values[8], out ts))
+            {
+                totalEclipseBegin = date.Add(ts);
+            }
+            //Mid Eclipse
+            if (TimeSpan.TryParse(values[10], out ts))
+            {
+                midEclipse= date.Add(ts);
+            }
+            //Total ends
+            if (TimeSpan.TryParse(values[12], out ts))
+            {
+                totalEclipseEnd = date.Add(ts);
+            }
+            //Partial Eclipse end
+            if (TimeSpan.TryParse(values[14], out ts))
+            {
+                partialEclispeEnd = date.Add(ts);
+            }
+            //Penumbral Eclipse end
+            if (TimeSpan.TryParse(values[16], out ts))
+            {
+                penumbralEclipseEnd = date.Add(ts);
+            }
+        }
+        /// <summary>
+        /// Initialize an empty LunarEclipseDetails object
+        /// </summary>
+        public LunarEclipseDetails()
+        {
+            hasEclipseData = false;
+        }
+        /// <summary>
+        /// Determine if the LunarEclipseDetails object has been populated
+        /// </summary>
+        public bool HasEclipseData { get { return hasEclipseData; } }
+        /// <summary>
+        /// Date of lunar eclipse
+        /// </summary>
+        public DateTime Date { get { return date; } }
+        /// <summary>
+        /// Lunar eclipse type
+        /// </summary>
+        public LunarEclipseType Type { get { return type; } }
+        /// <summary>
+        /// DateTime when the penumbral eclipse begins
+        /// </summary>
+        public DateTime PenumbralEclipseBegin { get { return penumbralEclipseBegin; } }
+        /// <summary>
+        /// DateTime when the partial eclipse begins (if applicable)
+        /// </summary>
+        public DateTime PartialEclispeBegin { get { return partialEclispeBegin; } }
+        /// <summary>
+        /// DateTime when Total eclipse begins (if applicable)
+        /// </summary>
+        public DateTime TotalEclipseBegin { get { return totalEclipseBegin; } }
+        /// <summary>
+        /// DateTime when eclipse is at Mid
+        /// </summary>
+        public DateTime MidEclipse { get { return midEclipse; } }
+        /// <summary>
+        /// DateTime when the penumbral elipse ends
+        /// </summary>
+        public DateTime PenumbralEclispeEnd { get { return penumbralEclipseEnd; } }
+        /// <summary>
+        /// DateTime when the partial elipse ends (if applicable)
+        /// </summary>
+        public DateTime PartialEclispeEnd { get { return partialEclispeEnd; } }
+        /// <summary>
+        /// DateTime when Total eclipse ends (if applicable)
+        /// </summary>
+        public DateTime TotalEclipseEnd { get { return totalEclipseEnd; } }
+    }
+    /// <summary>
+    /// Solar eclipse type
+    /// </summary>
+    public enum SolarEclipseType
+    {
+        /// <summary>
+        /// Partial Eclipse
+        /// </summary>
+        Partial,
+        /// <summary>
+        /// Annular Eclipse
+        /// </summary>
+        Annular,
+        /// <summary>
+        /// Total Eclipse...of the heart...
+        /// </summary>
+        Total
+    }
+    /// <summary>
+    /// Lunar eclipse type
+    /// </summary>
+    public enum LunarEclipseType
+    {
+        /// <summary>
+        /// Penumbral Eclipse
+        /// </summary>
+        Penumbral,
+        /// <summary>
+        /// Partial Eclipse
+        /// </summary>
+        Partial,
+        /// <summary>
+        /// Total Eclipse...of the heart...
+        /// </summary>
+        Total
     }
 }
