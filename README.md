@@ -200,7 +200,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   * -Moon Illumination (Phase, Phase Name, etc)
   * -Additional Solar Times (Civil/Nautical Dawn/Dusk)
   * -Astrological Information (Moon Sign, Zodiac Sign, Moon Name If Full Moon")
-  * -Solar/Lunar Eclipse information (see below).
+  * -(BETA) Solar/Lunar Eclipse information (see below).
     
   Sun/Moon Set and Rise DateTimes are nullable. If a null value is returned the Sun or Moon Condition needs to be viewed to see why. In the below example we are using a lat/long near the North Pole with a date in August. The sun does not set that far North during the specified time of year.
   
@@ -231,7 +231,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   
   NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a been discovered to have standard distance deviation of 3,388 km with Perigee and Apogee approximate time deviations of 36 hours. Results may be innacurate at times and should be used for estimations only. This formula will be worked for accuracy in future releases.
   
-  The Solar and Lunar Eclipse models act similar, but are located in different areas. Solar eclipse information is located under the `AdditionalSunTimes` property while Lunar eclipse information is located under the `MoonIllum` property. With either, you can access the locations Last and Next eclipse based on the provided coordinate and date.
+  (BETA) The Solar and Lunar Eclipse models act similar, but are located in different areas. Solar eclipse information is located under the `AdditionalSunTimes` property while Lunar eclipse information is located under the `MoonIllum` property. With either, you can access the locations Last and Next eclipse based on the provided coordinate and date.
   
   ```C#
   Coordinate seattle = new Coordinate(47.6062, -122.3321, DateTime.Now);
@@ -243,9 +243,15 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   LunarEclipse le = seattle.CelestialInfo.MoonIllum.LunarEclipse;
   se.NextEclipse.Date;
   se.NextEclipse.Type;
-  
-  
   ```
+  
+  You may also grab a list of eclipse data based on the century for the locations date.
+  
+  ```C#
+  List<SolarEclipseDetails> events = Celestial.Get_Solar_Eclipse_Table(seattle.Latitude.ToDouble(), seattle.Longitude.ToDouble(),  DateTime.Now);
+ ```
+  NOTE REGARDING ECLIPSE DATA: Eclipse data can only be obtained from the years 1701-2400. Thas range will be expanded with future updates.
+ 
   NOTE REGARDING SOLAR/LUNAR ECLIPSE PROPERTIES: The `Date` property for both the Lunar and Solar eclipse classes will only return the date of the event. Other properties such as `PartialEclipseBegin` will give more exact timing for event parts.
   
   Certain properties will return a `0001/1/1 12:00:00` if the referenced event didn't occur. For example if a solar eclipse is not a Total or Annular eclipse, the `AorTEclipseBegin` property won't return a populated DateTime. 
