@@ -6,6 +6,8 @@ A simple library designed to assist with geographic coordinate string formatting
 * -Added ability to convert to/from cartesian
 * -Added ability to calculate distance between to points (Haversine Formula)
 * -Added ability to get radians from CoordinatePart
+* -Added Solar/Lunar eclipse information
+* -Expanded eager loading options
 
 ### 1.1.2.4 Change Notes
 * -Added ability to pass custom datum for UTM and MGRS conversions
@@ -198,6 +200,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   * -Moon Illumination (Phase, Phase Name, etc)
   * -Additional Solar Times (Civil/Nautical Dawn/Dusk)
   * -Astrological Information (Moon Sign, Zodiac Sign, Moon Name If Full Moon")
+  * -Solar/Lunar Eclipse information (see below).
     
   Sun/Moon Set and Rise DateTimes are nullable. If a null value is returned the Sun or Moon Condition needs to be viewed to see why. In the below example we are using a lat/long near the North Pole with a date in August. The sun does not set that far North during the specified time of year.
   
@@ -227,6 +230,27 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   ```
   
   NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a been discovered to have standard distance deviation of 3,388 km with Perigee and Apogee approximate time deviations of 36 hours. Results may be innacurate at times and should be used for estimations only. This formula will be worked for accuracy in future releases.
+  
+  The Solar and Lunar Eclipse models act similar, but are located in different areas. Solar eclipse information is located under the `AdditionalSunTimes` property while Lunar eclipse information is located under the `MoonIllum` property. With either, you can access the locations Last and Next eclipse based on the provided coordinate and date.
+  
+  ```C#
+  Coordinate seattle = new Coordinate(47.6062, -122.3321, DateTime.Now);
+  //Solar
+  SolarEclipse se = seattle.CelestialInfo.AdditionalSolarTimes.SolarEclipse;
+  se.LastEclipse.Date;
+  se.LastEclipse.Type;
+  //Lunar
+  LunarEclipse le = seattle.CelestialInfo.MoonIllum.LunarEclipse;
+  se.NextEclipse.Date;
+  se.NextEclipse.Type;
+  
+  
+  ```
+  NOTE REGARDING SOLAR/LUNAR ECLIPSE PROPERTIES: The `Date` property for both the Lunar and Solar eclipse classes will only return the date of the event. Other properties such as `PartialEclipseBegin` will give more exact timing for event parts.
+  
+  Certain properties will return a `0001/1/1 12:00:00` if the referenced event didn't occur. For example if a solar eclipse is not a Total or Annular eclipse, the `AorTEclipseBegin` property won't return a populated DateTime. 
+
+  NOTE REGARDING SOLAR ECLIPSE CALCULATIONS: The formulas used take into account the locations altitude. Currently all calculations for eclipse timing are set with an altitude of 100 meters. Slight deviations in actual eclipse timing may occur based on the locations actual altitude. Deviations are minimal and should suffice for most applications.
   
 ### Eager Loading (BETA)
 
@@ -258,3 +282,5 @@ suncalc's moon calculations are based on "Astronomical Algorithms" 2nd edition b
 Calculations for illumination parameters of the moon based on [NASA Formulas](http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro) and Chapter 48 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
 
 UTM & MGRS Conversions were referenced from [Sami Salkosuo's j-coordconvert library](https://www.ibm.com/developerworks/library/j-coordconvert/) & [Steven Dutch, Natural and Applied Sciences,University of Wisconsin - Green Bay](https://www.uwgb.edu/dutchs/UsefulData/ConvertUTMNoOZ.HTM)
+
+Solar and Lunar Eclipse calculations were adapted from NASA's [Eclipse Calculator](https://eclipse.gsfc.nasa.gov/)
