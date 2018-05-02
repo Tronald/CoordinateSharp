@@ -15,7 +15,7 @@ A simple library designed to assist with geographic coordinate string formatting
 * [Celestial Information](#celestial-information)
 * [Eager Loading](#eager-loading)
 ### Acknoledgments
-* [Acknowledgments](#acknowledgments)
+* [Acknowledgements](#acknowledgements)
 
 # Introduction
 
