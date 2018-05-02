@@ -9,6 +9,8 @@ A simple library designed to assist with geographic coordinate string formatting
 * [Getting Started](#getting-started)
 ### Usage Instructions
 * [Creating a Coordinate Object](#creating-a-coordinate-object)
+* [Formatting a Coordinate](#formatting-a-coordinate)
+* [UTM/MGRS](#universal-transverse-mercator-(utm)-&-military-grid-reference-system/nato-utm-(mgrs/-nato-utm)-formats)
 
 ## Change Notes
 
