@@ -20,7 +20,7 @@ A simple library designed to assist with geographic coordinate string formatting
 # Introduction
 
 ### 1.1.2.5 Change Notes
-* -Added ability to convert to/from cartesian
+* -Added ability to convert to/from Cartesian
 * -Added ability to calculate distance between two points (Haversine Formula)
 * -Added ability to get radians from `CoordinatePart` class
 * -Added Solar/Lunar eclipse information to `Celestial` class (BETA)
