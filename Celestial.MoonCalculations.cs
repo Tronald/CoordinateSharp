@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
 namespace CoordinateSharp
 {
     internal class MoonCalc
@@ -134,7 +131,7 @@ namespace CoordinateSharp
             return mc;
         }
       
-        public static void GetMoonIllumination(DateTime date, Celestial c)
+        public static void GetMoonIllumination(DateTime date, Celestial c, double lat, double lng)
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
          
@@ -248,6 +245,41 @@ namespace CoordinateSharp
                 c.AstrologicalSigns.MoonName = moonName;
             }
             else { c.AstrologicalSigns.MoonName = ""; }
+            CalculateLunarEclipse(date, lat, lng, c);
+
+        }
+        public static void CalculateLunarEclipse(DateTime date, double lat, double longi, Celestial c)
+        {
+            //Convert to Radian
+            double latR = lat * Math.PI / 180;
+            double longR = longi * Math.PI / 180;
+            List<List<string>> se = LunarEclipseCalc.CalculateLunarEclipse(date, latR, longR);
+            //RETURN FIRST AND LAST
+            if (se.Count == 0) { return; }
+            //FIND LAST AND NEXT ECLIPSE
+            int lastE = -1;
+            int nextE = -1;
+            int currentE = 0;
+            DateTime lastDate = new DateTime();
+            DateTime nextDate = new DateTime(3300, 1, 1);
+            //Iterate to get last and next eclipse
+         
+            foreach (List<string> values in se)
+            {                  
+                DateTime ld = Convert.ToDateTime(values[0]);
+                if (ld < date && ld > lastDate) { lastDate = ld; lastE = currentE; }
+                if (ld >= date && ld < nextDate) { nextDate = ld; nextE = currentE; }
+                currentE++;
+            }
+            //SET ECLIPSE DATA
+            if (lastE >= 0)
+            {
+                c.LunarEclipse.LastEclipse = new LunarEclipseDetails(se[lastE]);
+            }
+            if (nextE >= 0)
+            {
+                c.LunarEclipse.NextEclipse = new LunarEclipseDetails(se[nextE]);
+            }
         }
 
         private static string GetMoonName(int month, string name)

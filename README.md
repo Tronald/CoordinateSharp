@@ -1,6 +1,30 @@
-# CoordinateSharp v1.1.2.4
+# CoordinateSharp v1.1.2.5
 
-A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
+A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM) and Cartesian (X, Y, Z). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
+
+### Introduction
+* [Change Notes](#introduction)
+* [Getting Started](#getting-started)
+### Usage Instructions
+* [Creating a Coordinate Object](#creating-a-coordinate-object)
+* [Formatting a Coordinate](#formatting-a-coordinate)
+* [UTM/MGRS](#universal-transverse-mercator-and-military-grid-reference-system)
+* [Cartesian](#cartesian-format)
+* [Calculating Distance](#calculating-distance)
+* [Binding and MVVM](#binding-and-mvvm)
+* [Celestial Information](#celestial-information)
+* [Eager Loading](#eager-loading)
+### Acknoledgments
+* [Acknowledgements](#acknowledgements)
+
+# Introduction
+
+### 1.1.2.5 Change Notes
+* -Added ability to convert to/from Cartesian
+* -Added ability to calculate distance between two points (Haversine Formula)
+* -Added ability to get radians from `CoordinatePart` class
+* -Added Solar/Lunar eclipse information to `Celestial` class (BETA)
+* -Expanded eager loading options
 
 ### 1.1.2.4 Change Notes
 * -Added ability to pass custom datum for UTM and MGRS conversions
@@ -71,9 +95,9 @@ c.Latitude.ToString();// N 40º 34.609'
 c.Longitude.ToString();// W 070º 45.407'
 ```
 
-### Universal Transverse Mercator (UTM) & Military Grid Reference System/NATO UTM (MGRS/ NATO UTM) Formats
+### Universal Transverse Mercator and Military Grid Reference System
 
-UTM and MGRS formats are available for display. They are converted from the lat/long decimal values. The default datum is WGS84 but a custom datum may be passed. These formats are accessible from the ```Coordinate``` object.
+UTM and MGRS (NATO UTM) formats are available for display. They are converted from the lat/long decimal values. The default datum is WGS84 but a custom datum may be passed. These formats are accessible from the ```Coordinate``` object.
 
 ```C#
 Coordinate c = new Coordinate(40.57682, -70.75678);
@@ -121,6 +145,39 @@ Debug.Print(c.ToString() + "  " + nc.ToString()); // N 0º 33' 35.988" W 60º 0'
 ```
 In the above example, the MGRS values are different once converted, but the Lat/Long is almost the same once converted back.
 
+### Cartesian Format
+
+Cartesian (X, Y, Z) is available for display. They are converted from the lat/long radian values. These formats are accessible from the ```Coordinate``` object. You may also convert a Cartesian coordinate into a lat/long coordinate.
+
+To Cartesian:
+```C#
+Coordinate c = new Coordinate(40.7143538, -74.0059731);
+c.Cartesian.ToString(); //Outputs 0.20884915 -0.72863022 0.65228831
+```
+
+To Lat/Long:
+```C#
+Cartesian cart = new Cartesian(0.20884915, -0.72863022, 0.65228831);
+Coordinate c = Cartesian.CartesianToLatLong(cart);
+//OR
+Coordinate c = Cartesian.CartesianToLatLong(0.20884915, -0.72863022, 0.65228831);
+```
+
+### Calculating Distance
+
+Distance can be calculated between two Coordinates. Various distance values are stored in the Distance object. 
+
+```C#
+Distance d = new Distance(coord1, coord2);
+d.Kilometers;
+```
+
+You may also grab a distance by passing a second Coordinate to an existing Coordinate.
+
+```C#
+coord1.Get_Distance_From_Coordinate(coord2).Miles;
+```
+
 ### Binding and MVVM
 
 The properties in CoordinateSharp implement INotifyPropertyChanged and may be bound. If you wish to bind to the entire ```CoordinatePart``` bind to the ```Display``` property. This property can be notified of changes, unlike the overridden ```ToString()```. The ```Display``` will reflect the formats previously specified for the ```Coordinate``` object in the code-behind.
@@ -160,6 +217,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   * -Moon Illumination (Phase, Phase Name, etc)
   * -Additional Solar Times (Civil/Nautical Dawn/Dusk)
   * -Astrological Information (Moon Sign, Zodiac Sign, Moon Name If Full Moon")
+  * -(BETA) Solar/Lunar Eclipse information (see below).
     
   Sun/Moon Set and Rise DateTimes are nullable. If a null value is returned the Sun or Moon Condition needs to be viewed to see why. In the below example we are using a lat/long near the North Pole with a date in August. The sun does not set that far North during the specified time of year.
   
@@ -190,9 +248,36 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   
   NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a been discovered to have standard distance deviation of 3,388 km with Perigee and Apogee approximate time deviations of 36 hours. Results may be innacurate at times and should be used for estimations only. This formula will be worked for accuracy in future releases.
   
-### Eager Loading (BETA)
+  (BETA) The Solar and Lunar Eclipse.
+  
+  ```C#
+  Coordinate seattle = new Coordinate(47.6062, -122.3321, DateTime.Now);
+  //Solar
+  SolarEclipse se = seattle.CelestialInfo.SolarEclipse;
+  se.LastEclipse.Date;
+  se.LastEclipse.Type;
+  //Lunar
+  LunarEclipse le = seattle.CelestialInfo.LunarEclipse;
+  se.NextEclipse.Date;
+  se.NextEclipse.Type;
+  ```
+  
+  You may also grab a list of eclipse data based on the century for the location's date.
+  
+  ```C#
+  List<SolarEclipseDetails> events = Celestial.Get_Solar_Eclipse_Table(seattle.Latitude.ToDouble(), seattle.Longitude.ToDouble(),  DateTime.Now);
+ ```
+  NOTE REGARDING ECLIPSE DATA: Eclipse data can only be obtained from the years 1701-2400. Thas range will be expanded with future updates.
+ 
+  NOTE REGARDING SOLAR/LUNAR ECLIPSE PROPERTIES: The `Date` property for both the Lunar and Solar eclipse classes will only return the date of the event. Other properties such as `PartialEclipseBegin` will give more exact timing for event parts.
+  
+  Properties will return `0001/1/1 12:00:00` if the referenced event didn't occur. For example if a solar eclipse is not a Total or Annular eclipse, the `AorTEclipseBegin` property won't return a populated DateTime. 
 
-CoordinateSharp values are all eager loaded upon initialization of the Coordinate object. Anytime a Coordinate object property changes, everything is recalculated. The calculations are generally small, but you may wish to turn off eager loading if you are trying to maximize performance. This will allow you to specify when certain calculations take place. At this time you may only turn eager loading off for the celestial property. This feature will expand with future updates.
+  NOTE REGARDING CALCULATIONS: The formulas used take into account the locations altitude. Currently all calculations for eclipse timing are set with an altitude of 100 meters. Slight deviations in actual eclipse timing may occur based on the locations actual altitude. Deviations are very minimal and should suffice for most applications.
+  
+### Eager Loading
+
+CoordinateSharp values are all eager loaded upon initialization of the Coordinate object. Anytime a Coordinate object property changes, everything is recalculated. The calculations are generally small, but you may wish to turn off eager loading if you are trying to maximize performance. This will allow you to specify when certain calculations take place. 
 
 ```C#
 EagerLoad eagerLoad = New EagerLoad();
@@ -220,3 +305,5 @@ suncalc's moon calculations are based on "Astronomical Algorithms" 2nd edition b
 Calculations for illumination parameters of the moon based on [NASA Formulas](http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro) and Chapter 48 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
 
 UTM & MGRS Conversions were referenced from [Sami Salkosuo's j-coordconvert library](https://www.ibm.com/developerworks/library/j-coordconvert/) & [Steven Dutch, Natural and Applied Sciences,University of Wisconsin - Green Bay](https://www.uwgb.edu/dutchs/UsefulData/ConvertUTMNoOZ.HTM)
+
+Solar and Lunar Eclipse calculations were adapted from NASA's [Eclipse Calculator](https://eclipse.gsfc.nasa.gov/) created by Chris O'Byrne and Fred Espenak.

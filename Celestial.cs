@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
 using System.ComponentModel;
-
+using System.Collections.Generic;
 namespace CoordinateSharp
 {
     /// <summary>
@@ -15,7 +11,7 @@ namespace CoordinateSharp
     /// </remarks>
     public class Celestial : INotifyPropertyChanged
     {
-      
+
         //When as rise or a set does not occur, the DateTime will return null
         /// <summary>
         /// Creates an empty Celestial object
@@ -23,13 +19,18 @@ namespace CoordinateSharp
         public Celestial()
         {
             AstrologicalSigns = new AstrologicalSigns();
-            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1,0,0,0,DateTimeKind.Utc));   
+            LunarEclipse = new LunarEclipse();
+            SolarEclipse = new SolarEclipse();
+            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+          
         }
         private Celestial(bool hasCalcs)
         {
-            
+
             AstrologicalSigns = new AstrologicalSigns();
-            if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1,0,0,0,DateTimeKind.Utc)); }
+            LunarEclipse = new LunarEclipse();
+            SolarEclipse = new SolarEclipse();
+            if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)); }
         }
         /// <summary>
         /// Creates a Celestial object based on a geographic lat/long coordinate and specified date
@@ -41,6 +42,8 @@ namespace CoordinateSharp
         {
             DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
             AstrologicalSigns = new AstrologicalSigns();
+            LunarEclipse = new LunarEclipse();
+            SolarEclipse = new SolarEclipse();
             CalculateCelestialTime(lat, longi, d);
         }
         /// <summary>
@@ -51,12 +54,14 @@ namespace CoordinateSharp
         public static Celestial LoadCelestial(Coordinate c)
         {
             DateTime geoDate = c.GeoDate;
+
             DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
             Celestial cel = new Celestial(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate);
+
             return cel;
         }
-       
-       
+
+
         /// <summary>
         /// UTC Sunset time
         /// </summary>
@@ -115,6 +120,16 @@ namespace CoordinateSharp
         public AstrologicalSigns AstrologicalSigns { get; set; }
 
         /// <summary>
+        /// Returns a SolarEclipse object
+        /// </summary>
+        public SolarEclipse SolarEclipse { get; set; }
+        /// <summary>
+        /// Returns a LunarEclipse object
+        /// </summary>
+        public LunarEclipse LunarEclipse { get; set; }
+
+
+        /// <summary>
         /// Moon illumination phase
         /// </summary>
         /// <remarks>
@@ -122,7 +137,7 @@ namespace CoordinateSharp
         /// </remarks>
         [Obsolete("MoonPhase can be accessed through the MoonIllum property.")]
         public double MoonPhase { get { return this.MoonIllum.Phase; } }
-       
+
         /// <summary>
         /// Calculates all celestial data. Coordinates will notify as changes occur
         /// </summary>
@@ -141,7 +156,7 @@ namespace CoordinateSharp
             SunCalc.CalculateZodiacSign(date, this);
             MoonCalc.GetMoonSign(date, this);
 
-            MoonCalc.GetMoonIllumination(date, this);
+            MoonCalc.GetMoonIllumination(date, this,lat,longi);
 
             SunCalc.CalculateAdditionSolarTimes(date, longi, lat, this);
 
@@ -158,7 +173,7 @@ namespace CoordinateSharp
         public static Celestial CalculateCelestialTimes(double lat, double longi, DateTime date)
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-          
+
             Celestial c = new Celestial(false);
 
             SunCalc.CalculateSunTime(lat, longi, date, c);
@@ -166,7 +181,7 @@ namespace CoordinateSharp
             MoonCalc.GetMoonDistance(date, c);
             SunCalc.CalculateZodiacSign(date, c);
             MoonCalc.GetMoonSign(date, c);
-            MoonCalc.GetMoonIllumination(date, c);
+            MoonCalc.GetMoonIllumination(date, c,lat,longi);
             SunCalc.CalculateAdditionSolarTimes(date, longi, lat, c);
 
             return c;
@@ -181,7 +196,7 @@ namespace CoordinateSharp
         public static Celestial CalculateSunData(double lat, double longi, DateTime date)
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-          
+
             Celestial c = new Celestial(false);
             SunCalc.CalculateSunTime(lat, longi, date, c);
             SunCalc.CalculateZodiacSign(date, c);
@@ -200,17 +215,52 @@ namespace CoordinateSharp
         public static Celestial CalculateMoonData(double lat, double longi, DateTime date)
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-          
+
             Celestial c = new Celestial(false);
 
             MoonCalc.GetMoonTimes(date, lat, longi, c);
             MoonCalc.GetMoonDistance(date, c);
             MoonCalc.GetMoonSign(date, c);
-            MoonCalc.GetMoonIllumination(date, c);
+            MoonCalc.GetMoonIllumination(date, c,lat,longi);
 
             return c;
         }
-        
+        /// <summary>
+        /// Returns a List containing solar eclipse data for the century.
+        /// Century return is based on the date passed.
+        /// </summary>
+        /// <param name="lat">Latitude</param>
+        /// <param name="longi">Longitude</param>
+        /// <param name="date">Date</param>
+        /// <returns></returns>
+        public static List<SolarEclipseDetails> Get_Solar_Eclipse_Table(double lat, double longi, DateTime date)
+        {
+            //Convert to Radians
+            double latR = lat * Math.PI / 180;
+            double longR = longi * Math.PI / 180;
+            //Get solar data based on date
+            double[] events = Eclipse.SolarData.SolarDateData_100Year(date);
+            //Return list of solar data.
+            return SolarEclipseCalc.CalculateSolarEclipse(date, latR, longR, events);
+        }
+        /// <summary>
+        /// Returns a List containing solar eclipse data for the century.
+        /// Century return is based on the date passed.
+        /// </summary>
+        /// <param name="lat">Latitude</param>
+        /// <param name="longi">Longitude</param>
+        /// <param name="date">Date</param>
+        /// <returns></returns>
+        public static List<LunarEclipseDetails> Get_Lunar_Eclipse_Table(double lat, double longi, DateTime date)
+        {
+            //Convert to Radians
+            double latR = lat * Math.PI / 180;
+            double longR = longi * Math.PI / 180;
+            //Get solar data based on date
+            double[] events = Eclipse.LunarData.LunarDateData_100Year(date);
+            //Return list of solar data.
+            return LunarEclipseCalc.CalculateLunarEclipse(date, latR, longR, events);
+        }
         /// <summary>
         /// Property changed event
         /// </summary>
@@ -224,7 +274,7 @@ namespace CoordinateSharp
         {
             if (this.PropertyChanged != null)
             {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
     }
