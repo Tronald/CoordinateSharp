@@ -400,13 +400,23 @@ namespace CoordinateSharp
         /// </summary>
         public EagerLoad()
         {      
-            Celestial = true;        
+            Celestial = true;
+            UTM_MGRS = true;
+            Cartesian = true;
         }
   
         /// <summary>
         /// Eager load celestial information
         /// </summary>
-        public bool Celestial { get; set; }     
+        public bool Celestial { get; set; }
+        /// <summary>
+        /// Eager load UTM and MGRS information
+        /// </summary>
+        public bool UTM_MGRS { get; set; }
+        /// <summary>
+        /// Eager load Cartesian information
+        /// </summary>
+        public bool Cartesian { get; set; }
     }
     /// <summary>
     /// Contains distance values between two coordinates.
@@ -588,9 +598,22 @@ namespace CoordinateSharp
                 partialEclispeEnd = date.Add(ts);
             }
             //A or T Duration
-            if (TimeSpan.TryParse(values[13], out ts))
+            if (values[13] != "-")
             {
-                aorTDuration = ts;
+                string s = values[13].Replace("m", ":").Replace("s", "");
+                string[] ns = s.Split(':');
+                int mins=0;
+                int secs=0;
+               
+                int.TryParse(ns[0], out mins);
+                if(ns.Count()>0)
+                {
+                    int.TryParse(ns[1], out secs);
+                }
+                
+                TimeSpan time = new TimeSpan(0,mins,secs);
+
+                aorTDuration = time;
             }
             else
             {

@@ -5,13 +5,19 @@ using System.Text;
 
 namespace CoordinateSharp
 {
-    //CURRENT ALTITUDE IS SET CONSTANT AT 100M. NEED TO ADJUST TO ALLOW USER PASS.
+    //CURRENT ALTITUDE IS SET CONSTANT AT 100M. POSSIBLY NEED TO ADJUST TO ALLOW USER PASS.
+    //Altitude adjustments appear to have minimal effect on eclipse timing. These were mainly used
+    //to signify eclipses that had already started during rise and set times on the NASA calculator
+
     //SOME TIMES AND ALTS WERE RETURNED WITH COLOR AND STYLING. DETERMINE WHY AND ADJUST VALUE AS REQUIRED. SEARCH "WAS ITALIC".
-    //CONFIRM ELLIPSOID VALUES FOR WGS84 AND ALLOW ADJUSTMENT.
-    //ERROR HANDLES FOR OUT OF RANGE DATETIMES. 
-    //TEST TURN OF CENTURY DATETIME CALCS.
-    //CHECK ANNULAR OR TOTAL ECLIPSE DURATION
-    //FINISH LUNAR DATA
+
+    //ELLIPSOID ADJUSTMENT
+    //6378140.0 Ellipsoid is used in the NASA Calculator
+    //WGS84 Ellipsoid is 6378137.0. Adjustments to the ellipsoid appear to effect eclipse seconds in fractions.
+    //This can be modified if need to allow users to pass custom number with the Coordinate SetDatum() functions.
+
+    //CURRENT RANGE 1700=2400.
+    //CURRENT ALGORYTHM MAY SHAVE OFF DATES PASS AT MAX RANGE 1700 or 2400. INVESTIGATE AND ADJUST.
     internal class SolarEclipseCalc
     {
         private static  double[] obsvconst = new double[7];
@@ -174,6 +180,7 @@ namespace CoordinateSharp
             double tmp = Math.Atan(0.99664719 * Math.Tan(obsvconst[0]));
             obsvconst[4] = 0.99664719 * Math.Sin(tmp) + (obsvconst[2] / 6378140.0) * Math.Sin(obsvconst[0]);
             obsvconst[5] = Math.Cos(tmp) + (obsvconst[2] / 6378140.0 * Math.Cos(obsvconst[0]));
+          
         }
         // Populate the c1, c2, mid, c3 and c4 arrays
         private static  void GetAll(double[] elements)
