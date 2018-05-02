@@ -557,6 +557,7 @@ namespace CoordinateSharp
             hasEclipseData = true;
             //Set Eclipse Date
             date = Convert.ToDateTime(values[0]);
+            
             switch(values[1])
             {
                 case "P":
@@ -619,6 +620,7 @@ namespace CoordinateSharp
             {
                 aorTDuration = new TimeSpan();
             }
+            Adjust_Dates();//Adjust dates if required (needed when eclipse crosses into next day).
         }
         /// <summary>
         /// Initialize an empty SolarEclipseDetails object
@@ -626,6 +628,54 @@ namespace CoordinateSharp
         public SolarEclipseDetails()
         {
             hasEclipseData = false;
+        }
+        /// <summary>
+        /// JS Eclipse Calc formulas didn't account for Z time calculation.
+        /// Iterate through and adjust Z dates where eclipse is passed midnight.
+        /// </summary>
+        private void Adjust_Dates()
+        {
+            //Load array in reverse event order
+            DateTime[] dateArray = new DateTime[] {partialEclispeBegin,aorTEclipseBegin, maximumEclipse,aorTEclipseEnd, partialEclispeEnd};
+            DateTime baseTime= partialEclispeEnd;
+            bool multiDay = false; //used to detrmine if eclipse crossed into next Z day
+          
+            for(int x = 4; x>=0;x--)
+            {
+                DateTime d = dateArray[x];
+                //Check if date exist
+                if(d>new DateTime())
+                {
+                  
+                    //Adjust if time is less than then baseTime.
+                    if(d>baseTime)
+                    {
+                        switch(x)
+                        {
+                            case 3:
+                                aorTEclipseEnd = aorTEclipseEnd.AddDays(-1);
+                                break;
+                            case 2:
+                                maximumEclipse = maximumEclipse.AddDays(-1);
+                                break;
+                            case 1:
+                                aorTEclipseBegin = aorTEclipseBegin.AddDays(-1);
+                                break;
+                            case 0:
+                                partialEclispeBegin = partialEclispeBegin.AddDays(-1);
+                                break;
+                            default:
+                                break;
+                        }
+                        
+                        multiDay = true;//Set true to change base date value.
+                    }                    
+                }             
+            }
+            if(multiDay)
+            {
+                this.date = this.date.AddDays(-1); //Shave day off base date if multiday.
+            }
         }
         /// <summary>
         /// Determine if the SolarEclipseDetails object has been populated
