@@ -4,7 +4,7 @@ A simple library designed to assist with geographic coordinate string formatting
 
 [Change Notes](#1.1.2.2-change-notes)
 
-### 1.1.2.5 Change Notes
+(###-1.1.2.5-Change-Notes)
 * -Added ability to convert to/from cartesian
 * -Added ability to calculate distance between two points (Haversine Formula)
 * -Added ability to get radians from CoordinatePart
