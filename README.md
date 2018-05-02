@@ -11,6 +11,11 @@ A simple library designed to assist with geographic coordinate string formatting
 * [UTM/MGRS](#universal-transverse-mercator-and-military-grid-reference-system)
 * [Cartesian](#cartesian-format)
 * [Calculating Distance](#calculating-distance)
+* [Binding and MVVM](#binding-and-mvvm)
+* [Celestial Information](#celestial information)
+* [Eager Loading](#eager-loading)
+### Acknoledgments
+* [Acknowledgments](#acknowledgments)
 
 # Introduction
 
