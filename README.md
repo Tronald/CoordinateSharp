@@ -11,6 +11,8 @@ A simple library designed to assist with geographic coordinate string formatting
 * [Creating a Coordinate Object](#creating-a-coordinate-object)
 * [Formatting a Coordinate](#formatting-a-coordinate)
 * [UTM/MGRS](#universal-transverse-mercator-and-military-grid-reference-system)
+* [Cartesian](#cartesian-format)
+* [Calculating Distance](#calculating-distance)
 
 ## Change Notes
 
@@ -92,7 +94,7 @@ c.Longitude.ToString();// W 070º 45.407'
 
 ### Universal Transverse Mercator and Military Grid Reference System
 
-UTM and MGRS formats are available for display. They are converted from the lat/long decimal values. The default datum is WGS84 but a custom datum may be passed. These formats are accessible from the ```Coordinate``` object.
+UTM and MGRS (NATO UTM) formats are available for display. They are converted from the lat/long decimal values. The default datum is WGS84 but a custom datum may be passed. These formats are accessible from the ```Coordinate``` object.
 
 ```C#
 Coordinate c = new Coordinate(40.57682, -70.75678);
