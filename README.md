@@ -10,7 +10,7 @@ A simple library designed to assist with geographic coordinate string formatting
 ### Usage Instructions
 * [Creating a Coordinate Object](#creating-a-coordinate-object)
 * [Formatting a Coordinate](#formatting-a-coordinate)
-* [UTM/MGRS](#universal-transverse-mercator-&-military-grid-reference-system-(nato-utm))
+* [UTM/MGRS](#universal-transverse-mercator-and-military-grid-reference-system-(nato-utm))
 
 ## Change Notes
 
@@ -90,7 +90,7 @@ c.Latitude.ToString();// N 40º 34.609'
 c.Longitude.ToString();// W 070º 45.407'
 ```
 
-### Universal Transverse Mercator & Military Grid Reference System (NATO UTM)
+### Universal Transverse Mercator and Military Grid Reference System (NATO UTM)
 
 UTM and MGRS formats are available for display. They are converted from the lat/long decimal values. The default datum is WGS84 but a custom datum may be passed. These formats are accessible from the ```Coordinate``` object.
 
