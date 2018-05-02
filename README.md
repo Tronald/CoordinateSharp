@@ -231,21 +231,21 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   
   NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a been discovered to have standard distance deviation of 3,388 km with Perigee and Apogee approximate time deviations of 36 hours. Results may be innacurate at times and should be used for estimations only. This formula will be worked for accuracy in future releases.
   
-  (BETA) The Solar and Lunar Eclipse models act similar, but are located in different areas. Solar eclipse information is located under the `AdditionalSunTimes` property while Lunar eclipse information is located under the `MoonIllum` property. With either, you can access the locations Last and Next eclipse based on the provided coordinate and date.
+  (BETA) The Solar and Lunar Eclipse.
   
   ```C#
   Coordinate seattle = new Coordinate(47.6062, -122.3321, DateTime.Now);
   //Solar
-  SolarEclipse se = seattle.CelestialInfo.AdditionalSolarTimes.SolarEclipse;
+  SolarEclipse se = seattle.CelestialInfo.SolarEclipse;
   se.LastEclipse.Date;
   se.LastEclipse.Type;
   //Lunar
-  LunarEclipse le = seattle.CelestialInfo.MoonIllum.LunarEclipse;
+  LunarEclipse le = seattle.CelestialInfo.LunarEclipse;
   se.NextEclipse.Date;
   se.NextEclipse.Type;
   ```
   
-  You may also grab a list of eclipse data based on the century for the locations date.
+  You may also grab a list of eclipse data based on the century for the location's date.
   
   ```C#
   List<SolarEclipseDetails> events = Celestial.Get_Solar_Eclipse_Table(seattle.Latitude.ToDouble(), seattle.Longitude.ToDouble(),  DateTime.Now);
@@ -254,13 +254,13 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
  
   NOTE REGARDING SOLAR/LUNAR ECLIPSE PROPERTIES: The `Date` property for both the Lunar and Solar eclipse classes will only return the date of the event. Other properties such as `PartialEclipseBegin` will give more exact timing for event parts.
   
-  Certain properties will return a `0001/1/1 12:00:00` if the referenced event didn't occur. For example if a solar eclipse is not a Total or Annular eclipse, the `AorTEclipseBegin` property won't return a populated DateTime. 
+  Properties will return `0001/1/1 12:00:00` if the referenced event didn't occur. For example if a solar eclipse is not a Total or Annular eclipse, the `AorTEclipseBegin` property won't return a populated DateTime. 
 
-  NOTE REGARDING SOLAR ECLIPSE CALCULATIONS: The formulas used take into account the locations altitude. Currently all calculations for eclipse timing are set with an altitude of 100 meters. Slight deviations in actual eclipse timing may occur based on the locations actual altitude. Deviations are minimal and should suffice for most applications.
+  NOTE REGARDING CALCULATIONS: The formulas used take into account the locations altitude. Currently all calculations for eclipse timing are set with an altitude of 100 meters. Slight deviations in actual eclipse timing may occur based on the locations actual altitude. Deviations are very minimal and should suffice for most applications.
   
-### Eager Loading (BETA)
+### Eager Loading
 
-CoordinateSharp values are all eager loaded upon initialization of the Coordinate object. Anytime a Coordinate object property changes, everything is recalculated. The calculations are generally small, but you may wish to turn off eager loading if you are trying to maximize performance. This will allow you to specify when certain calculations take place. At this time you may only turn eager loading off for the celestial property. This feature will expand with future updates.
+CoordinateSharp values are all eager loaded upon initialization of the Coordinate object. Anytime a Coordinate object property changes, everything is recalculated. The calculations are generally small, but you may wish to turn off eager loading if you are trying to maximize performance. This will allow you to specify when certain calculations take place. 
 
 ```C#
 EagerLoad eagerLoad = New EagerLoad();
