@@ -18,6 +18,7 @@ A simple library designed to assist with geographic coordinate string formatting
 ### 1.1.2.3 Change Notes
 * -Makes AdditionalSolarTimes nullable (fixes issue #24)
 
+#1.1.2.2-change-notes
 ### 1.1.2.2 Change Notes
 * -Fixes issue #21
 
