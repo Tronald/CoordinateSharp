@@ -12,6 +12,8 @@ A simple library designed to assist with geographic coordinate string formatting
 * [Cartesian](#cartesian-format)
 * [Calculating Distance](#calculating-distance)
 
+# Introduction
+
 ## Change Notes
 
 ### 1.1.2.5 Change Notes
