@@ -221,11 +221,11 @@ namespace CoordinateSharp
             //SET ECLIPSE DATA
             if (lastE >= 0)
             {
-                c.AdditionalSolarTimes.SolarEclipse.LastEclipse = new SolarEclipseDetails(se[lastE]);
+                c.SolarEclipse.LastEclipse = new SolarEclipseDetails(se[lastE]);
             }
             if (nextE >= 0)
             {
-                c.AdditionalSolarTimes.SolarEclipse.NextEclipse = new SolarEclipseDetails(se[nextE]);
+                c.SolarEclipse.NextEclipse = new SolarEclipseDetails(se[nextE]);
             }
         }
 

@@ -305,13 +305,7 @@ namespace CoordinateSharp
     /// </summary>
     public class MoonIllum
     {
-        /// <summary>
-        /// Create a new MoonIllum object
-        /// </summary>
-        public MoonIllum()
-        {
-            LunarEclipse = new LunarEclipse();
-        }
+     
         /// <summary>
         /// Moon's fraction
         /// </summary>
@@ -328,11 +322,7 @@ namespace CoordinateSharp
         /// Moon's phase name for the specified day
         /// </summary>
         public string PhaseName { get; set; }
-        /// <summary>
-        /// Returns a LunarEclipse object
-        /// </summary>
-        public LunarEclipse LunarEclipse {get;set;}
-
+      
     }
     /// <summary>
     /// Astrological Signs
@@ -367,7 +357,7 @@ namespace CoordinateSharp
             CivilDusk = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             NauticalDawn = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             NauticalDusk = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            SolarEclipse = new SolarEclipse();
+       
         }
         /// <summary>
         /// Returns Civil Dawn Time
@@ -385,10 +375,6 @@ namespace CoordinateSharp
         /// Returns Nautical Dusk Time
         /// </summary>
         public DateTime? NauticalDusk { get; set; }
-        /// <summary>
-        /// Returns a SolarEclipse object
-        /// </summary>
-        public SolarEclipse SolarEclipse { get; set; }
     }
     /// <summary>
     /// Turn on/off eager loading of certain properties
@@ -542,8 +528,8 @@ namespace CoordinateSharp
         private DateTime partialEclispeBegin;      
         private DateTime aorTEclipseBegin;
         private DateTime maximumEclipse;
-        private DateTime partialEclispeEnd;
         private DateTime aorTEclipseEnd;
+        private DateTime partialEclispeEnd;
         private TimeSpan aorTDuration;
         private bool hasEclipseData;
 
@@ -701,18 +687,27 @@ namespace CoordinateSharp
         /// DateTime when eclipse is at Maximum
         /// </summary>
         public DateTime MaximumEclipse{get{ return maximumEclipse; }}
-        /// <summary>
-        /// DateTime when the partial elipse ends
-        /// </summary>
-        public DateTime PartialEclispeEnd{get{ return partialEclispeEnd; }}
+      
         /// <summary>
         /// DateTime when the Annular or Total eclipse ends (if applicable)
         /// </summary>
         public DateTime AorTEclipseEnd{get{ return aorTEclipseEnd; }}
         /// <summary>
+        /// DateTime when the partial elipse ends
+        /// </summary>
+        public DateTime PartialEclispeEnd { get { return partialEclispeEnd; } }
+        /// <summary>
         /// Duration of Annular or Total eclipse (if applicable)
         /// </summary>
         public TimeSpan AorTDuration{get{ return aorTDuration; }}
+        /// <summary>
+        /// Solat eclipse default string
+        /// </summary>
+        /// <returns>Solar eclipse base date string</returns>
+        public override string ToString()
+        {
+            return date.ToString("dd-MMM-yyyy");
+        }
     }
     /// <summary>
     /// Class containing specific lunar eclipse information
@@ -724,11 +719,11 @@ namespace CoordinateSharp
         private DateTime penumbralEclipseBegin;
         private DateTime partialEclispeBegin;
         private DateTime totalEclipseBegin;
-        private DateTime midEclipse;
-        private DateTime penumbralEclipseEnd;
-        private DateTime partialEclispeEnd;
+        private DateTime midEclipse;    
         private DateTime totalEclipseEnd;
-    
+        private DateTime partialEclispeEnd;
+        private DateTime penumbralEclipseEnd;
+
         private bool hasEclipseData;
 
         /// <summary>
@@ -791,6 +786,7 @@ namespace CoordinateSharp
             {
                 penumbralEclipseEnd = date.Add(ts);
             }
+            Adjust_Dates();
         }
         /// <summary>
         /// Initialize an empty LunarEclipseDetails object
@@ -799,6 +795,58 @@ namespace CoordinateSharp
         {
             hasEclipseData = false;
         }
+        /// <summary>
+        /// JS Eclipse Calc formulas didn't account for Z time calculation.
+        /// Iterate through and adjust Z dates where eclipse is passed midnight.
+        /// </summary>
+        private void Adjust_Dates()
+        {
+            //Load array in squential order.
+            DateTime[] dateArray = new DateTime[] { penumbralEclipseBegin,partialEclispeBegin,totalEclipseBegin, midEclipse,totalEclipseEnd,partialEclispeEnd,penumbralEclipseEnd };
+            DateTime baseTime = partialEclispeEnd;
+            bool multiDay = false; //used to detrmine if eclipse crossed into next Z day
+            baseTime = penumbralEclipseBegin;
+            for(int x = 0; x<dateArray.Count(); x++)
+            {
+                DateTime d = dateArray[x];
+                //Check if date exist
+                if (d > new DateTime())
+                {
+                   if(d<baseTime)
+                    {
+                        multiDay = true;
+                    }
+                }
+                baseTime = dateArray[x];
+                if(multiDay == true)
+                {
+                    switch(x)
+                    {
+                        case 1:
+                            partialEclispeBegin = partialEclispeBegin.AddDays(1);
+                            break;
+                        case 2:
+                            totalEclipseBegin = totalEclipseBegin.AddDays(1);
+                            break;
+                        case 3:
+                            midEclipse = midEclipse.AddDays(1);
+                            break;
+                        case 4:
+                            totalEclipseEnd = totalEclipseEnd.AddDays(1);
+                            break;
+                        case 5:
+                            partialEclispeEnd= partialEclispeEnd.AddDays(1);
+                            break;
+                        case 6:
+                            penumbralEclipseEnd = penumbralEclipseEnd.AddDays(1);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }          
+        }
+      
         /// <summary>
         /// Determine if the LunarEclipseDetails object has been populated
         /// </summary>
@@ -828,17 +876,26 @@ namespace CoordinateSharp
         /// </summary>
         public DateTime MidEclipse { get { return midEclipse; } }
         /// <summary>
-        /// DateTime when the penumbral elipse ends
+        /// DateTime when Total eclipse ends (if applicable)
         /// </summary>
-        public DateTime PenumbralEclispeEnd { get { return penumbralEclipseEnd; } }
+        public DateTime TotalEclipseEnd { get { return totalEclipseEnd; } }
         /// <summary>
         /// DateTime when the partial elipse ends (if applicable)
         /// </summary>
         public DateTime PartialEclispeEnd { get { return partialEclispeEnd; } }
         /// <summary>
-        /// DateTime when Total eclipse ends (if applicable)
+        /// DateTime when the penumbral elipse ends
         /// </summary>
-        public DateTime TotalEclipseEnd { get { return totalEclipseEnd; } }
+        public DateTime PenumbralEclispeEnd { get { return penumbralEclipseEnd; } }
+        /// <summary>
+        /// Lunar eclipse default string
+        /// </summary>
+        /// <returns>Lunar eclipse base date string</returns>
+        public override string ToString()
+        {
+            return date.ToString("dd-MMM-yyyy");
+        }
+
     }
     /// <summary>
     /// Solar eclipse type

@@ -103,15 +103,19 @@ namespace CoordinateSharp
             this.geoDate = this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(CoordinateType.Lat, this);
             longitude = new CoordinatePart(CoordinateType.Long, this);
-            cartesian = new Cartesian(this);
+            if (eagerLoad.Cartesian)
+            {
+                cartesian = new Cartesian(this);
+            }
             if (eagerLoad.Celestial)
             {
                 celestialInfo = new Celestial();
-            }           
-           
+            }
+            if (eagerLoad.UTM_MGRS)
+            {
                 utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
                 mgrs = new MilitaryGridReferenceSystem(this.utm);
-            
+            }
            
             EagerLoadSettings = eagerLoad;
         }
@@ -135,10 +139,15 @@ namespace CoordinateSharp
             {
                 celestialInfo = new Celestial(lat, longi, this.geoDate);
             }
-
-            utm = new UniversalTransverseMercator(lat, longi, this);
-            mgrs = new MilitaryGridReferenceSystem(this.utm);
-            cartesian = new Cartesian(this);
+            if (eagerLoad.UTM_MGRS)
+            {
+                utm = new UniversalTransverseMercator(lat, longi, this);
+                mgrs = new MilitaryGridReferenceSystem(this.utm);
+            }
+            if (eagerLoad.Cartesian)
+            {
+                cartesian = new Cartesian(this);
+            }
 
             EagerLoadSettings = eagerLoad;
         }
@@ -161,9 +170,15 @@ namespace CoordinateSharp
                 celestialInfo = new Celestial(lat, longi, date);
             }
 
-            utm = new UniversalTransverseMercator(lat, longi, this);
-            mgrs = new MilitaryGridReferenceSystem(this.utm);
-            cartesian = new Cartesian(this);
+            if (eagerLoad.UTM_MGRS)
+            {
+                utm = new UniversalTransverseMercator(lat, longi, this);
+                mgrs = new MilitaryGridReferenceSystem(this.utm);
+            }
+            if (eagerLoad.Cartesian)
+            {
+                cartesian = new Cartesian(this);
+            }
 
             EagerLoadSettings = eagerLoad;
         }
@@ -195,10 +210,16 @@ namespace CoordinateSharp
                     }
                     if (longitude != null)
                     {
-                     
-                        utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this,utm.equatorial_radius,utm.inverse_flattening);
-                        mgrs = new MilitaryGridReferenceSystem(this.utm);
-                        cartesian = new Cartesian(this);
+
+                        if (EagerLoadSettings.UTM_MGRS)
+                        {
+                            utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, utm.equatorial_radius, utm.inverse_flattening);
+                            mgrs = new MilitaryGridReferenceSystem(this.utm);
+                        }
+                        if (EagerLoadSettings.Cartesian)
+                        {
+                            cartesian = new Cartesian(this);
+                        }
                     }
                 }
             }
@@ -222,9 +243,15 @@ namespace CoordinateSharp
                     }
                     if (latitude != null)
                     {
-                        utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, utm.equatorial_radius, utm.inverse_flattening);                      
-                        mgrs = new MilitaryGridReferenceSystem(this.utm);
-                        cartesian = new Cartesian(this);
+                        if (EagerLoadSettings.UTM_MGRS)
+                        {
+                            utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, utm.equatorial_radius, utm.inverse_flattening);
+                            mgrs = new MilitaryGridReferenceSystem(this.utm);
+                        }
+                        if (EagerLoadSettings.Cartesian)
+                        {
+                            cartesian = new Cartesian(this);
+                        }
                     }
                 }
             }
@@ -318,6 +345,22 @@ namespace CoordinateSharp
             this.celestialInfo = Celestial.LoadCelestial(this);
         }
         /// <summary>
+        /// Initialize UTM and MGRS information (required if eager loading is turned off).
+        /// </summary>
+
+        public void LoadUTM_MGRS_Info()
+        {
+            utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
+            mgrs = new MilitaryGridReferenceSystem(this.utm);
+        }
+        /// <summary>
+        /// Initialize cartesian information (required if eager loading is turned off).
+        /// </summary>
+        public void LoadCartesianInfo()
+        {
+            cartesian = new Cartesian(this);
+        }
+        /// <summary>
         /// Coordinate string formatting options
         /// </summary>
         public CoordinateFormatOptions FormatOptions { get; set; }
@@ -384,6 +427,10 @@ namespace CoordinateSharp
             //WGS84
             //RADIUS 6378137.0;
             //FLATTENING 298.257223563;
+            if(utm == null)
+            {
+                throw new NullReferenceException("UTM and MGRS objects have not been loaded. If Eagerloading, ensure they are loaded prior to setting a datum.");
+            }
             this.utm.equatorial_radius = radius;
             this.utm.inverse_flattening = flat;
             this.utm.ToUTM(this.Latitude.ToDouble(), this.Longitude.ToDouble(), this.utm);

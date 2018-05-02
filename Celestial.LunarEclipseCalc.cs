@@ -17,7 +17,6 @@ namespace CoordinateSharp
     //This can be modified if need to allow users to pass custom number with the Coordinate SetDatum() functions.
 
     //CURRENT RANGE 1700-2400.
-    //CURRENT ALGORITHM MAY SHAVE OFF DATES PASSED AT MAX RANGE 1700 or 2400. INVESTIGATE AND ADJUST.
     internal class LunarEclipseCalc
     {
         private static double[] obsvconst = new double[6];

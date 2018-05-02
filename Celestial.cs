@@ -19,12 +19,17 @@ namespace CoordinateSharp
         public Celestial()
         {
             AstrologicalSigns = new AstrologicalSigns();
+            LunarEclipse = new LunarEclipse();
+            SolarEclipse = new SolarEclipse();
             CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+          
         }
         private Celestial(bool hasCalcs)
         {
 
             AstrologicalSigns = new AstrologicalSigns();
+            LunarEclipse = new LunarEclipse();
+            SolarEclipse = new SolarEclipse();
             if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)); }
         }
         /// <summary>
@@ -37,6 +42,8 @@ namespace CoordinateSharp
         {
             DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
             AstrologicalSigns = new AstrologicalSigns();
+            LunarEclipse = new LunarEclipse();
+            SolarEclipse = new SolarEclipse();
             CalculateCelestialTime(lat, longi, d);
         }
         /// <summary>
@@ -47,8 +54,10 @@ namespace CoordinateSharp
         public static Celestial LoadCelestial(Coordinate c)
         {
             DateTime geoDate = c.GeoDate;
+
             DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
             Celestial cel = new Celestial(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate);
+
             return cel;
         }
 
@@ -109,6 +118,16 @@ namespace CoordinateSharp
         /// Contains zodiac, moon sign and moon name during full moon events
         /// </remarks>
         public AstrologicalSigns AstrologicalSigns { get; set; }
+
+        /// <summary>
+        /// Returns a SolarEclipse object
+        /// </summary>
+        public SolarEclipse SolarEclipse { get; set; }
+        /// <summary>
+        /// Returns a LunarEclipse object
+        /// </summary>
+        public LunarEclipse LunarEclipse { get; set; }
+
 
         /// <summary>
         /// Moon illumination phase
