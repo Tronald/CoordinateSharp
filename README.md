@@ -14,7 +14,7 @@ A simple library designed to assist with geographic coordinate string formatting
 * [Binding and MVVM](#binding-and-mvvm)
 * [Celestial Information](#celestial-information)
 * [Eager Loading](#eager-loading)
-### Acknoledgments
+### Acknowledgements
 * [Acknowledgements](#acknowledgements)
 
 # Introduction
