@@ -147,7 +147,7 @@ In the above example, the MGRS values are different once converted, but the Lat/
 
 ### Cartesian Format
 
-Cartesian (X, Y, Z) is available for display. They are converted from the lat/long radian values. These formats are accessible from the ```Coordinate``` object. You may also convert a Cartesian coordinate into a lat/long coordinate.
+Cartesian (X, Y, Z) is available for display. They are converted from the lat/long radian values. These formats are accessible from the ```Coordinate``` object. You may also convert a Cartesian coordinate into a lat/long coordinate. This conversion uses the Haversine formula. It is sufficient for basic application only as it assumes a spherical earth. 
 
 To Cartesian:
 ```C#
