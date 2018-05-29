@@ -933,4 +933,43 @@ namespace CoordinateSharp
         /// </summary>
         Total
     }
+    /// <summary>
+    /// Used for easy read math functions
+    /// </summary>
+    internal static class ModM
+    {
+        public static double Mod(double x, double y)
+        {
+            return x - y * Math.Floor(x / y);
+        }
+
+        public static double ModLon(double x)
+        {
+            return Mod(x + Math.PI, 2 * Math.PI) - Math.PI;
+        }
+
+        public static double ModCrs(double x)
+        {
+            return Mod(x, 2 * Math.PI);
+        }
+
+        public static double ModLat(double x)
+        {
+            return Mod(x + Math.PI / 2, 2 * Math.PI) - Math.PI / 2;
+        }
+    }
+    /// <summary>
+    /// Earth Shape for Calculations
+    /// </summary>
+    public enum Shape
+    {
+        /// <summary>
+        /// Calculate as sphere (less accurate, more efficient).
+        /// </summary>
+        Sphere,
+        /// <summary>
+        /// Calculate as ellipsoid (more accurate, less efficient).
+        /// </summary>
+        Ellipsoid
+    }
 }
