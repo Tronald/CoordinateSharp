@@ -112,7 +112,9 @@ UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 23343
 Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
 ```
 
-You may change or pass a custom datum by using the Equatorial Radius (Semi-Major Axis) and Inverse of Flattening of the datum. This will cause UTM/MGRS conversions to be based on the new datum.
+You may change or pass a custom datum by using the Equatorial Radius (Semi-Major Axis) and Inverse of Flattening of the datum. This will cause UTM/MGRS conversions to be based on the new datum. 
+
+Note Regarding Datums: When setting a custom "datum" you aren't truly setting a datum point, but a reference ellipsoid. This library isn't designed for mapping and has no way of knowing how a coordinate corelates with an actual map. This is solely used to changed the earth's shape during calculations to increase accuracy in specific regions. In most cases the default datum value is sufficient. 
 
 To change the current datum.
 
