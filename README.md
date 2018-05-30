@@ -21,8 +21,10 @@ A simple library designed to assist with geographic coordinate string formatting
 
 ### 1.1.2.6 Change Notes
 * -Added ability to move coordinate based on distance and bearing.
+* -Added various properties to distance class.
 * -Added option to calculate distance based on Haversine (Sphere) or Vincenty (Ellipsoid).
 * -Fixed bug with Degree Decimal Minute formatted strings sometimes returning 60 minutes instead of rounding up to the next degree.
+
 ### 1.1.2.5 Change Notes
 * -Added ability to convert to/from Cartesian
 * -Added ability to calculate distance between two points (Haversine Formula)
@@ -176,8 +178,11 @@ Distance is calculated with 2 methods based on how you define the shape of the e
 Distance can be calculated between two Coordinates. Various distance values are stored in the Distance object. 
 
 ```C#
-Distance d = new Distance(coord1, coord2);
+Distance d = new Distance(coord1, coord2); //Default. Uses Haversine (Spherical Earth)
+//OR
+Distance d = new Distance(coord1, coord2, Sphere.Ellipsoid); 
 d.Kilometers;
+d.Bearing;
 ```
 
 You may also grab a distance by passing a second Coordinate to an existing Coordinate.
