@@ -20,9 +20,9 @@ A simple library designed to assist with geographic coordinate string formatting
 # Introduction
 
 ### 1.1.2.6 Change Notes
-*-Added ability to move coordinate based on distance and bearing.
-*-Added option to calculate distance based on Haversine (Sphere) or Vincenty (Ellipsoid).
-*-Fixed bug with Degree Decimal Minute formatted strings sometimes returning 60 minutes instead of rounding up to the next degree.
+* -Added ability to move coordinate based on distance and bearing.
+* -Added option to calculate distance based on Haversine (Sphere) or Vincenty (Ellipsoid).
+* -Fixed bug with Degree Decimal Minute formatted strings sometimes returning 60 minutes instead of rounding up to the next degree.
 ### 1.1.2.5 Change Notes
 * -Added ability to convert to/from Cartesian
 * -Added ability to calculate distance between two points (Haversine Formula)
@@ -169,7 +169,9 @@ Coordinate c = Cartesian.CartesianToLatLong(cart);
 Coordinate c = Cartesian.CartesianToLatLong(0.20884915, -0.72863022, 0.65228831);
 ```
 
-### Calculating Distance
+### Calculating Distance and Moving a Coordinate
+
+Distance is calculated with 2 methods based on how you define the shape of the earth. If you pass the shape as a `Sphere` calculations will be more efficient, but less accurate. The other option is to pass the shape as an `Ellipsoid`. Ellipsoid calculations have a higher accuracy. The default ellipsoid of a coordinate is WGS84, but can be changed using the `SetDatum` function or by initializing a coordinate with a custom datum.
 
 Distance can be calculated between two Coordinates. Various distance values are stored in the Distance object. 
 
@@ -182,6 +184,14 @@ You may also grab a distance by passing a second Coordinate to an existing Coord
 
 ```C#
 coord1.Get_Distance_From_Coordinate(coord2).Miles;
+```
+
+If you wish to move a coordinate based on a known distance and bearing you can do so with the `Move` function. Distance must be passed in meters. The coordinate values will update in place. 
+
+```C#
+//1000 Meters
+//270 degree bearing
+coord1.Move(1000, 270, Shape.Ellipsoid);
 ```
 
 ### Binding and MVVM
@@ -223,7 +233,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   * -Moon Illumination (Phase, Phase Name, etc)
   * -Additional Solar Times (Civil/Nautical Dawn/Dusk)
   * -Astrological Information (Moon Sign, Zodiac Sign, Moon Name If Full Moon")
-  * -(BETA) Solar/Lunar Eclipse information (see below).
+  * -Solar/Lunar Eclipse information (see below).
     
   Sun/Moon Set and Rise DateTimes are nullable. If a null value is returned the Sun or Moon Condition needs to be viewed to see why. In the below example we are using a lat/long near the North Pole with a date in August. The sun does not set that far North during the specified time of year.
   
