@@ -448,115 +448,6 @@ namespace CoordinateSharp
         {
             return new Distance(this, c2);
         }
-        /// <summary>
-        /// Returns new geodetic coordinate in radians
-        /// </summary>
-        /// <param name="lat1">Latitude in radians</param>
-        /// <param name="lon1">Longitude in radians</param>
-        /// <param name="crs12">Bearing</param>
-        /// <param name="d12">Distance</param>
-        /// <returns>double[]</returns>
-        private double[] Direct(double lat1, double lon1, double crs12, double d12)
-        {
-            var EPS = 0.00000000005;//Used to determine if near pole.
-            double dlon, lat, lon;
-            d12 = d12 * 0.0005399565; //convert meter to nm
-            d12 = d12 / (180 * 60 / Math.PI);//Convert to Radian
-            //Determine if near pole
-            if ((Math.Abs(Math.Cos(lat1)) < EPS) && !(Math.Abs(Math.Sin(crs12)) < EPS))
-            {
-                Trace.WriteLine("Warning: Location is at earth's pole. Only N-S courses are meaningful at this location.");
-            }
-   
-            lat = Math.Asin(Math.Sin(lat1) * Math.Cos(d12) +
-                          Math.Cos(lat1) * Math.Sin(d12) * Math.Cos(crs12));
-            if (Math.Abs(Math.Cos(lat)) < EPS)
-            {
-                lon = 0.0; //endpoint a pole
-            }
-            else
-            {
-                dlon = Math.Atan2(Math.Sin(crs12) * Math.Sin(d12) * Math.Cos(lat1),
-                              Math.Cos(d12) - Math.Sin(lat1) * Math.Sin(lat));
-                lon = ModM.Mod(lon1 - dlon + Math.PI, 2 * Math.PI) - Math.PI;
-            }
-
-            return new double[] { lat, lon };
-        }
-        /// <summary>
-        /// Returns new geodetic coordinate in radians
-        /// </summary>
-        /// <param name="glat1">Latitude in Radians</param>
-        /// <param name="glon1">Longitude in Radians</param>
-        /// <param name="faz">Bearing</param>
-        /// <param name="s">Distance</param>
-        /// <param name="ellipse">Earth Ellipse Values</param>
-        /// <returns>double[]</returns>
-        private double[] Direct_Ell(double glat1, double glon1, double faz, double s, double[] ellipse)
-        {
-            double EPS = 0.00000000005;//Used to determine if starting at pole.
-            double r, tu, sf, cf, b, cu, su, sa, c2a, x, c, d, y, sy = 0, cy = 0, cz = 0, e = 0;
-            double glat2, glon2, f;
-           
-            //Determine if near pole
-            if ((Math.Abs(Math.Cos(glat1)) < EPS) && !(Math.Abs(Math.Sin(faz)) < EPS))
-            {
-                Trace.WriteLine("Warning: Location is at earth's pole. Only N-S courses are meaningful at this location.");
-            }
-           
-
-            double a = ellipse[0];//Equitorial Radius
-            f = 1 / ellipse[1];//Flattening
-            r = 1 - f;
-            tu = r * Math.Tan(glat1);
-            sf = Math.Sin(faz);
-            cf = Math.Cos(faz);
-            if (cf == 0)
-            {
-                b = 0.0;
-            }
-            else
-            {
-                b = 2.0 * Math.Atan2(tu, cf);
-            }
-            cu = 1.0 / Math.Sqrt(1 + tu * tu);
-            su = tu * cu;
-            sa = cu * sf;
-            c2a = 1 - sa * sa;
-            x = 1.0 + Math.Sqrt(1.0 + c2a * (1.0 / (r * r) - 1.0));
-            x = (x - 2.0) / x;
-            c = 1.0 - x;
-            c = (x * x / 4.0 + 1.0) / c;
-            d = (0.375 * x * x - 1.0) * x;
-            tu = s / (r * a * c);
-            y = tu;
-            c = y + 1;
-            while (Math.Abs(y - c) > EPS)
-            {
-                sy = Math.Sin(y);
-                cy = Math.Cos(y);
-                cz = Math.Cos(b + y);
-                e = 2.0 * cz * cz - 1.0;
-                c = y;
-                x = e * cy;
-                y = e + e - 1.0;
-                y = (((sy * sy * 4.0 - 3.0) * y * cz * d / 6.0 + x) *
-                        d / 4.0 - cz) * sy * d + tu;
-            }
-
-            b = cu * cy * cf - su * sy;
-            c = r * Math.Sqrt(sa * sa + b * b);
-            d = su * cy + cu * sy * cf;
-
-            glat2 = ModM.ModLat(Math.Atan2(d, c));
-            c = cu * cy - su * sy * cf;
-            x = Math.Atan2(sy * sf, c);
-            c = ((-3.0 * c2a + 4.0) * f + 4.0) * c2a * f / 16.0;
-            d = ((e * cy * c + cz) * sy * c + y) * sa;
-            glon2 = ModM.ModLon(glon1 + x - (1.0 - c) * d * f);  //Adjust for IDL
-            //baz = ModM.ModCrs(Math.Atan2(sa, b) + Math.PI);
-            return new double[] { glat2, glon2};
-        }
 
         /// <summary>
         /// Move coordinate based on provided bearing and distance
@@ -575,7 +466,7 @@ namespace CoordinateSharp
 
             if (shape == Shape.Sphere)
             {
-                double[] cd = Direct(lat1, lon1, crs12, distance);
+                double[] cd = Distance_Assistant.Direct(lat1, lon1, crs12, distance);
                 double lat2 = cd[0] * (180 / Math.PI);
                 double lon2 = cd[1] * (180 / Math.PI);
 
@@ -585,7 +476,7 @@ namespace CoordinateSharp
             }
             else
             {
-                double[] cde = Direct_Ell(lat1, -lon1, crs12, distance, ellipse);  // ellipse uses East negative
+                double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance, ellipse);  // ellipse uses East negative
                 //Convert back from radians 
                 double lat2 = cde[0] * (180 / Math.PI);
                 double lon2 = -cde[1] * (180 / Math.PI); // ellipse uses East negative             
@@ -593,6 +484,43 @@ namespace CoordinateSharp
                 Latitude.DecimalDegree = lat2;
                 Longitude.DecimalDegree = lon2;
             }        
+        }
+        /// <summary>
+        /// Move coordinate based on provided target coordinate and distance
+        /// </summary>
+        /// <param name="c">Target coordinate</param>
+        /// <param name="distance">Distance toward target</param>
+        /// <param name="shape">Shape of earth</param>
+        public void Move(Coordinate c, double distance, Shape shape)
+        {
+            Distance d = new Distance(this, c, shape);
+            //Convert to Radians for formula
+            double lat1 = latitude.ToRadians();
+            double lon1 = longitude.ToRadians();
+            double crs12 = d.Bearing * Math.PI / 180; //Convert bearing to radians
+
+            double[] ellipse = new double[] { this.utm.Equatorial_Radius, this.UTM.Inverse_Flattening };
+
+            if (shape == Shape.Sphere)
+            {
+                double[] cd = Distance_Assistant.Direct(lat1, lon1, crs12, distance);
+                double lat2 = cd[0] * (180 / Math.PI);
+                double lon2 = cd[1] * (180 / Math.PI);
+
+                //ADJUST CORD
+                Latitude.DecimalDegree = lat2;
+                Longitude.DecimalDegree = lon2;
+            }
+            else
+            {
+                double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance, ellipse);  // ellipse uses East negative
+                //Convert back from radians 
+                double lat2 = cde[0] * (180 / Math.PI);
+                double lon2 = -cde[1] * (180 / Math.PI); // ellipse uses East negative             
+                //ADJUST CORD
+                Latitude.DecimalDegree = lat2;
+                Longitude.DecimalDegree = lon2;
+            }
         }
 
         /// <summary>
