@@ -24,7 +24,7 @@ A simple library designed to assist with geographic coordinate string formatting
 * -Added various properties to distance class.
 * -Added option to calculate distance based on Haversine (Sphere) or Vincenty (Ellipsoid).
 * -Expanded Eclipse tables to 1601-2600.
-* -Eclipse calculations now account for turn of century Leap Year skips.
+* -Eclipse calculations now account for turn of century leap year skips.
 * -Fixed bug with Degree Decimal Minute formatted strings sometimes returning 60 minutes instead of rounding up to the next degree.
 
 ### 1.1.2.5 Change Notes
