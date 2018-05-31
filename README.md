@@ -10,7 +10,7 @@ A simple library designed to assist with geographic coordinate string formatting
 * [Formatting a Coordinate](#formatting-a-coordinate)
 * [UTM/MGRS](#universal-transverse-mercator-and-military-grid-reference-system)
 * [Cartesian](#cartesian-format)
-* [Calculating Distance](#calculating-distance)
+* [Calculating Distance](#calculating-distance-and-moving-a-coordinate)
 * [Binding and MVVM](#binding-and-mvvm)
 * [Celestial Information](#celestial-information)
 * [Eager Loading](#eager-loading)
