@@ -668,20 +668,31 @@ namespace CoordinateSharp
             {
                 e = e - 13;
             }
+            double year;
             if (e > 2.5)
             {
                 ans = c - 4716 + "-";
+                year = c - 4716;
             }
             else
             {
                 ans = c - 4715 + "-";
+                year = c - 4715;
             }
-            ans += month[(int)e - 1] + "-";
+            string m = month[(int)e - 1];
+            ans += m + "-";
             if (d < 10)
             {
                 ans = ans + "0";
             }
+           
             ans = ans + d;
+            ////Leap Year Integrity Check
+            //Reimplement once issue with 2500 is figured out
+            //if(m  =="Feb" && d ==29 && !DateTime.IsLeapYear((int)year))
+            //{
+            //    ans = year.ToString() + "-Mar-01";
+            //}
             return ans;
         }
         // Calculate the time of sunset
