@@ -20,9 +20,11 @@ A simple library designed to assist with geographic coordinate string formatting
 # Introduction
 
 ### 1.1.2.6 Change Notes
-* -Added ability to move coordinate based on distance and bearing.
+* -Added ability to move coordinate based on distance and bearing / target and distance.
 * -Added various properties to distance class.
 * -Added option to calculate distance based on Haversine (Sphere) or Vincenty (Ellipsoid).
+* -Expanded Eclipse tables to 1601-2600.
+* -Eclipse calculations now account for turn of century Leap Year skips.
 * -Fixed bug with Degree Decimal Minute formatted strings sometimes returning 60 minutes instead of rounding up to the next degree.
 
 ### 1.1.2.5 Change Notes
@@ -199,6 +201,13 @@ If you wish to move a coordinate based on a known distance and bearing you can d
 coord1.Move(1000, 270, Shape.Ellipsoid);
 ```
 
+You may also move a specified distance toward a target coordinate if you do not have a bearing toward it.
+
+```C#
+//Move coordinate 1 10,000 meters toward coordinate 2
+coord1.Move(Coord2, 10000, Shape.Ellipsoid);
+```
+
 ### Binding and MVVM
 
 The properties in CoordinateSharp implement INotifyPropertyChanged and may be bound. If you wish to bind to the entire ```CoordinatePart``` bind to the ```Display``` property. This property can be notified of changes, unlike the overridden ```ToString()```. The ```Display``` will reflect the formats previously specified for the ```Coordinate``` object in the code-behind.
@@ -269,7 +278,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   
   NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a been discovered to have standard distance deviation of 3,388 km with Perigee and Apogee approximate time deviations of 36 hours. Results may be innacurate at times and should be used for estimations only. This formula will be worked for accuracy in future releases.
   
-  (BETA) The Solar and Lunar Eclipse.
+  Solar and Lunar Eclipse.
   
   ```C#
   Coordinate seattle = new Coordinate(47.6062, -122.3321, DateTime.Now);
@@ -288,9 +297,11 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   ```C#
   List<SolarEclipseDetails> events = Celestial.Get_Solar_Eclipse_Table(seattle.Latitude.ToDouble(), seattle.Longitude.ToDouble(),  DateTime.Now);
  ```
-  NOTE REGARDING ECLIPSE DATA: Eclipse data can only be obtained from the years 1701-2400. Thas range will be expanded with future updates.
+  NOTE REGARDING ECLIPSE DATA: Eclipse data can only be obtained from the years 1601-2600. Thas range will be expanded with future updates.
  
   NOTE REGARDING SOLAR/LUNAR ECLIPSE PROPERTIES: The `Date` property for both the Lunar and Solar eclipse classes will only return the date of the event. Other properties such as `PartialEclipseBegin` will give more exact timing for event parts.
+
+  Solar eclipses sometimes occur during sunrise/sunset. Eclipse times account for this and will not start or end while the sun is below the horizon.
   
   Properties will return `0001/1/1 12:00:00` if the referenced event didn't occur. For example if a solar eclipse is not a Total or Annular eclipse, the `AorTEclipseBegin` property won't return a populated DateTime. 
 
