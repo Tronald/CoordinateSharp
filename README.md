@@ -1,4 +1,4 @@
-# CoordinateSharp v1.1.2.5
+# CoordinateSharp v1.1.2.6
 
 A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM) and Cartesian (X, Y, Z). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
 
@@ -10,7 +10,7 @@ A simple library designed to assist with geographic coordinate string formatting
 * [Formatting a Coordinate](#formatting-a-coordinate)
 * [UTM/MGRS](#universal-transverse-mercator-and-military-grid-reference-system)
 * [Cartesian](#cartesian-format)
-* [Calculating Distance](#calculating-distance)
+* [Calculating Distance](#calculating-distance-and-moving-a-coordinate)
 * [Binding and MVVM](#binding-and-mvvm)
 * [Celestial Information](#celestial-information)
 * [Eager Loading](#eager-loading)
@@ -18,6 +18,14 @@ A simple library designed to assist with geographic coordinate string formatting
 * [Acknowledgements](#acknowledgements)
 
 # Introduction
+
+### 1.1.2.6 Change Notes
+* -Added ability to move coordinate based on distance and bearing / target and distance.
+* -Added various properties to distance class.
+* -Added option to calculate distance based on Haversine (Sphere) or Vincenty (Ellipsoid).
+* -Expanded eclipse tables to 1601-2600.
+* -Eclipse calculations now account for turn of century leap year skips.
+* -Fixed bug with Degree Decimal Minute formatted strings sometimes returning 60 minutes instead of rounding up to the next degree.
 
 ### 1.1.2.5 Change Notes
 * -Added ability to convert to/from Cartesian
@@ -165,19 +173,39 @@ Coordinate c = Cartesian.CartesianToLatLong(cart);
 Coordinate c = Cartesian.CartesianToLatLong(0.20884915, -0.72863022, 0.65228831);
 ```
 
-### Calculating Distance
+### Calculating Distance and Moving a Coordinate
+
+Distance is calculated with 2 methods based on how you define the shape of the earth. If you pass the shape as a `Sphere` calculations will be more efficient, but less accurate. The other option is to pass the shape as an `Ellipsoid`. Ellipsoid calculations have a higher accuracy. The default ellipsoid of a coordinate is WGS84, but can be changed using the `Coordinate.SetDatum` function.
 
 Distance can be calculated between two Coordinates. Various distance values are stored in the Distance object. 
 
 ```C#
-Distance d = new Distance(coord1, coord2);
+Distance d = new Distance(coord1, coord2); //Default. Uses Haversine (Spherical Earth)
+//OR
+Distance d = new Distance(coord1, coord2, Sphere.Ellipsoid); 
 d.Kilometers;
+d.Bearing;
 ```
 
 You may also grab a distance by passing a second Coordinate to an existing Coordinate.
 
 ```C#
 coord1.Get_Distance_From_Coordinate(coord2).Miles;
+```
+
+If you wish to move a coordinate based on a known distance and bearing you can do so with the `Move` function. Distance must be passed in meters. The coordinate values will update in place. 
+
+```C#
+//1000 Meters
+//270 degree bearing
+coord1.Move(1000, 270, Shape.Ellipsoid);
+```
+
+You may also move a specified distance toward a target coordinate if you do not have a bearing toward it.
+
+```C#
+//Move coordinate 1 10,000 meters toward coordinate 2
+coord1.Move(Coord2, 10000, Shape.Ellipsoid);
 ```
 
 ### Binding and MVVM
@@ -219,7 +247,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   * -Moon Illumination (Phase, Phase Name, etc)
   * -Additional Solar Times (Civil/Nautical Dawn/Dusk)
   * -Astrological Information (Moon Sign, Zodiac Sign, Moon Name If Full Moon")
-  * -(BETA) Solar/Lunar Eclipse information (see below).
+  * -Solar/Lunar Eclipse information (see below).
     
   Sun/Moon Set and Rise DateTimes are nullable. If a null value is returned the Sun or Moon Condition needs to be viewed to see why. In the below example we are using a lat/long near the North Pole with a date in August. The sun does not set that far North during the specified time of year.
   
@@ -250,7 +278,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   
   NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a been discovered to have standard distance deviation of 3,388 km with Perigee and Apogee approximate time deviations of 36 hours. Results may be innacurate at times and should be used for estimations only. This formula will be worked for accuracy in future releases.
   
-  (BETA) The Solar and Lunar Eclipse.
+  Solar and Lunar Eclipse.
   
   ```C#
   Coordinate seattle = new Coordinate(47.6062, -122.3321, DateTime.Now);
@@ -269,9 +297,11 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   ```C#
   List<SolarEclipseDetails> events = Celestial.Get_Solar_Eclipse_Table(seattle.Latitude.ToDouble(), seattle.Longitude.ToDouble(),  DateTime.Now);
  ```
-  NOTE REGARDING ECLIPSE DATA: Eclipse data can only be obtained from the years 1701-2400. Thas range will be expanded with future updates.
+  NOTE REGARDING ECLIPSE DATA: Eclipse data can only be obtained from the years 1601-2600. Thas range will be expanded with future updates.
  
   NOTE REGARDING SOLAR/LUNAR ECLIPSE PROPERTIES: The `Date` property for both the Lunar and Solar eclipse classes will only return the date of the event. Other properties such as `PartialEclipseBegin` will give more exact timing for event parts.
+
+  Solar eclipses sometimes occur during sunrise/sunset. Eclipse times account for this and will not start or end while the sun is below the horizon.
   
   Properties will return `0001/1/1 12:00:00` if the referenced event didn't occur. For example if a solar eclipse is not a Total or Annular eclipse, the `AorTEclipseBegin` property won't return a populated DateTime. 
 
@@ -309,3 +339,5 @@ Calculations for illumination parameters of the moon based on [NASA Formulas](ht
 UTM & MGRS Conversions were referenced from [Sami Salkosuo's j-coordconvert library](https://www.ibm.com/developerworks/library/j-coordconvert/) & [Steven Dutch, Natural and Applied Sciences,University of Wisconsin - Green Bay](https://www.uwgb.edu/dutchs/UsefulData/ConvertUTMNoOZ.HTM)
 
 Solar and Lunar Eclipse calculations were adapted from NASA's [Eclipse Calculator](https://eclipse.gsfc.nasa.gov/) created by Chris O'Byrne and Fred Espenak.
+
+Aspects of distance calculations referenced worked by [Ed Williams Great Circle Calculator](http://www.edwilliams.org/gccalc.htm)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace CoordinateSharp
 {   
@@ -447,6 +448,81 @@ namespace CoordinateSharp
         {
             return new Distance(this, c2);
         }
+
+        /// <summary>
+        /// Move coordinate based on provided bearing and distance
+        /// </summary>
+        /// <param name="distance">distance in meters</param>
+        /// <param name="bearing">bearing</param>
+        /// <param name="shape">shape of earth</param>
+        public void Move(Double distance, double bearing, Shape shape)
+        {
+            //Convert to Radians for formula
+            double lat1 = latitude.ToRadians();
+            double lon1 = longitude.ToRadians();
+            double crs12 = bearing * Math.PI / 180; //Convert bearing to radians
+
+            double[] ellipse = new double[] { this.utm.Equatorial_Radius, this.UTM.Inverse_Flattening };
+
+            if (shape == Shape.Sphere)
+            {
+                double[] cd = Distance_Assistant.Direct(lat1, lon1, crs12, distance);
+                double lat2 = cd[0] * (180 / Math.PI);
+                double lon2 = cd[1] * (180 / Math.PI);
+
+                //ADJUST CORD
+                Latitude.DecimalDegree = lat2;
+                Longitude.DecimalDegree = lon2;
+            }
+            else
+            {
+                double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance, ellipse);  // ellipse uses East negative
+                //Convert back from radians 
+                double lat2 = cde[0] * (180 / Math.PI);
+                double lon2 = -cde[1] * (180 / Math.PI); // ellipse uses East negative             
+                //ADJUST CORD
+                Latitude.DecimalDegree = lat2;
+                Longitude.DecimalDegree = lon2;
+            }        
+        }
+        /// <summary>
+        /// Move coordinate based on provided target coordinate and distance
+        /// </summary>
+        /// <param name="c">Target coordinate</param>
+        /// <param name="distance">Distance toward target</param>
+        /// <param name="shape">Shape of earth</param>
+        public void Move(Coordinate c, double distance, Shape shape)
+        {
+            Distance d = new Distance(this, c, shape);
+            //Convert to Radians for formula
+            double lat1 = latitude.ToRadians();
+            double lon1 = longitude.ToRadians();
+            double crs12 = d.Bearing * Math.PI / 180; //Convert bearing to radians
+
+            double[] ellipse = new double[] { this.utm.Equatorial_Radius, this.UTM.Inverse_Flattening };
+
+            if (shape == Shape.Sphere)
+            {
+                double[] cd = Distance_Assistant.Direct(lat1, lon1, crs12, distance);
+                double lat2 = cd[0] * (180 / Math.PI);
+                double lon2 = cd[1] * (180 / Math.PI);
+
+                //ADJUST CORD
+                Latitude.DecimalDegree = lat2;
+                Longitude.DecimalDegree = lon2;
+            }
+            else
+            {
+                double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance, ellipse);  // ellipse uses East negative
+                //Convert back from radians 
+                double lat2 = cde[0] * (180 / Math.PI);
+                double lon2 = -cde[1] * (180 / Math.PI); // ellipse uses East negative             
+                //ADJUST CORD
+                Latitude.DecimalDegree = lat2;
+                Longitude.DecimalDegree = lon2;
+            }
+        }
+
         /// <summary>
         /// Property changed event
         /// </summary>
@@ -1400,6 +1476,7 @@ namespace CoordinateSharp
 
             double ns = Seconds / 60;
             double c = Math.Round(Minutes + ns, rounding);
+            if(c == 60 && Degrees+1 <91) { c = 0;d = string.Format(leadString, Degrees + 1); }//Adjust for rounded maxed out Seconds. will Convert 42 60.0 to 43
             string ms = string.Format(leadTrail, c);
             string hs = " ";
             string ds = "";

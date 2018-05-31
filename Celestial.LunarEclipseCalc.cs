@@ -16,7 +16,7 @@ namespace CoordinateSharp
     //WGS84 Ellipsoid is 6378137.0. Adjustments to the ellipsoid appear to effect eclipse seconds in fractions.
     //This can be modified if need to allow users to pass custom number with the Coordinate SetDatum() functions.
 
-    //CURRENT RANGE 1700-2400.
+    //CURRENT RANGE 1601-2600.
     internal class LunarEclipseCalc
     {
         private static double[] obsvconst = new double[6];
@@ -318,20 +318,30 @@ namespace CoordinateSharp
             {
                 e = e - 13;
             }
+            double year;
             if (e > 2.5)
             {
                 ans = c - 4716 + "-";
+                year = c - 4716;
             }
             else
             {
                 ans = c - 4715 + "-";
+                year = c - 4715;
             }
-            ans += month[(int)e - 1] + "-";
+            string m = month[(int)e - 1];
+            ans += m+ "-";
             if (d < 10)
             {
                 ans = ans + "0";
             }
             ans = ans + d;
+            //Leap Year Integrity Check
+
+            if (m == "Feb" && d == 29 && !DateTime.IsLeapYear((int)year))
+            {
+                ans = year.ToString() + "-Mar-01";
+            }
             return ans;
         }
         // Get the time of an event
