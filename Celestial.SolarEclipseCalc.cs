@@ -16,7 +16,7 @@ namespace CoordinateSharp
     //WGS84 Ellipsoid is 6378137.0. Adjustments to the ellipsoid appear to effect eclipse seconds in fractions.
     //This can be modified if need to allow users to pass custom number with the Coordinate SetDatum() functions.
 
-    //CURRENT RANGE 1700-2400.
+    //CURRENT RANGE 1601-2600.
     internal class SolarEclipseCalc
     {
         private static  double[] obsvconst = new double[7];
@@ -687,12 +687,12 @@ namespace CoordinateSharp
             }
            
             ans = ans + d;
-            ////Leap Year Integrity Check
-            //Reimplement once issue with 2500 is figured out
-            //if(m  =="Feb" && d ==29 && !DateTime.IsLeapYear((int)year))
-            //{
-            //    ans = year.ToString() + "-Mar-01";
-            //}
+            //Leap Year Integrity Check
+
+            if(m  =="Feb" && d ==29 && !DateTime.IsLeapYear((int)year))
+            {
+                ans = year.ToString() + "-Mar-01";
+            }
             return ans;
         }
         // Calculate the time of sunset
