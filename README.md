@@ -175,7 +175,7 @@ Coordinate c = Cartesian.CartesianToLatLong(0.20884915, -0.72863022, 0.65228831)
 
 ### Calculating Distance and Moving a Coordinate
 
-Distance is calculated with 2 methods based on how you define the shape of the earth. If you pass the shape as a `Sphere` calculations will be more efficient, but less accurate. The other option is to pass the shape as an `Ellipsoid`. Ellipsoid calculations have a higher accuracy. The default ellipsoid of a coordinate is WGS84, but can be changed using the `SetDatum` function or by initializing a coordinate with a custom datum.
+Distance is calculated with 2 methods based on how you define the shape of the earth. If you pass the shape as a `Sphere` calculations will be more efficient, but less accurate. The other option is to pass the shape as an `Ellipsoid`. Ellipsoid calculations have a higher accuracy. The default ellipsoid of a coordinate is WGS84, but can be changed using the `Coordinate.SetDatum` function.
 
 Distance can be calculated between two Coordinates. Various distance values are stored in the Distance object. 
 
@@ -339,3 +339,5 @@ Calculations for illumination parameters of the moon based on [NASA Formulas](ht
 UTM & MGRS Conversions were referenced from [Sami Salkosuo's j-coordconvert library](https://www.ibm.com/developerworks/library/j-coordconvert/) & [Steven Dutch, Natural and Applied Sciences,University of Wisconsin - Green Bay](https://www.uwgb.edu/dutchs/UsefulData/ConvertUTMNoOZ.HTM)
 
 Solar and Lunar Eclipse calculations were adapted from NASA's [Eclipse Calculator](https://eclipse.gsfc.nasa.gov/) created by Chris O'Byrne and Fred Espenak.
+
+Aspects of distance calculations referenced worked by [Ed Williams Great Circle Calculator](http://www.edwilliams.org/gccalc.htm)
