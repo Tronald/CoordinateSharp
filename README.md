@@ -23,7 +23,7 @@ A simple library designed to assist with geographic coordinate string formatting
 * -Added ability to move coordinate based on distance and bearing / target and distance.
 * -Added various properties to distance class.
 * -Added option to calculate distance based on Haversine (Sphere) or Vincenty (Ellipsoid).
-* -Expanded Eclipse tables to 1601-2600.
+* -Expanded eclipse tables to 1601-2600.
 * -Eclipse calculations now account for turn of century leap year skips.
 * -Fixed bug with Degree Decimal Minute formatted strings sometimes returning 60 minutes instead of rounding up to the next degree.
 
