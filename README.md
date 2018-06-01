@@ -62,7 +62,7 @@ These instructions will get a copy of the library running on your local machine 
 .NET 4.0 or greater.
 
 ### Installing
-CoordinateSharp is now available as a nuget packet from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
+CoordinateSharp is now available as a nuget package from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
 
 # Usage Instructions
 
