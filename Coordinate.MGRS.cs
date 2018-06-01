@@ -9,6 +9,7 @@ namespace CoordinateSharp
     /// Military Grid Reference System (MGRS). Uses the WGS 84 Datum.
     /// Relies upon values from the UniversalTransverseMercator class
     /// </summary>
+    [Serializable]
     public class MilitaryGridReferenceSystem : INotifyPropertyChanged
     {
         /// <summary>

@@ -13,6 +13,7 @@ namespace CoordinateSharp
     /// <remarks>
     /// All information should be pulled from this class to include celestial information
     /// </remarks>
+    [Serializable]
     public class Coordinate : INotifyPropertyChanged
     {     
         /// <summary>
@@ -567,6 +568,7 @@ namespace CoordinateSharp
     /// <remarks>
     /// Objects can be passed to Coordinate object Latitude and Longitude properties
     /// </remarks>
+    [Serializable]
     public class CoordinatePart : INotifyPropertyChanged
     {
         //Format Example String "FS:R4:LT:TT:MF:HT" = N-075º-40'-35.3645"

@@ -5,6 +5,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Cartesian (X, Y, Z) Coordinate
     /// </summary>
+    [Serializable]
     public class Cartesian : INotifyPropertyChanged
     {
         /// <summary>
