@@ -205,7 +205,7 @@ You may also move a specified distance toward a target coordinate if you do not 
 
 ```C#
 //Move coordinate 1 10,000 meters toward coordinate 2
-coord1.Move(Coord2, 10000, Shape.Ellipsoid);
+coord1.Move(coord2, 10000, Shape.Ellipsoid);
 ```
 
 ### Binding and MVVM
