@@ -190,7 +190,7 @@ d.Bearing;
 You may also grab a distance by passing a second Coordinate to an existing Coordinate.
 
 ```C#
-coord1.Get_Distance_From_Coordinate(coord2).Miles;
+coord1.Get_Distance_From_Coordinate(coord2).Miles; //Haversine only. Will update on next release.
 ```
 
 If you wish to move a coordinate based on a known distance and bearing you can do so with the `Move` function. Distance must be passed in meters. The coordinate values will update in place. 
