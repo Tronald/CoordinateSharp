@@ -7,6 +7,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Used to pass coordinate formatting values to the Coordinate object
     /// </summary>
+    [Serializable]
     public class CoordinateFormatOptions
     {
         /// <summary>
@@ -70,6 +71,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Coordinate Format Types
     /// </summary>
+    [Serializable]
     public enum CoordinateFormatType
     {
         /// <summary>
@@ -104,6 +106,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Used for UTM/MGRS Conversions
     /// </summary>
+    [Serializable]
     internal class LatZones
     {
         public static List<string> longZongLetters = new List<string>(new string[]{"C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T",
@@ -112,6 +115,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Used for handling diagraph determination
     /// </summary>
+    [Serializable]
     internal class Digraphs
     {
         private List<Digraph> digraph1;
@@ -233,6 +237,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Diagraph model
     /// </summary>
+    [Serializable]
     internal class Digraph
     {
         public int Zone { get; set; }
@@ -241,6 +246,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Used for setting whether a coordinate part is latitudinal or longitudinal
     /// </summary>
+    [Serializable]
     public enum CoordinateType
     {
         /// <summary>
@@ -255,6 +261,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Used to set a coordinate parts position
     /// </summary>
+    [Serializable]
     public enum CoordinatesPosition
     {
         /// <summary>
@@ -277,6 +284,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Used to display a celestial condition for a set day
     /// </summary>
+    [Serializable]
     public enum CelestialStatus
     {
         /// <summary>
@@ -303,6 +311,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Moon Illumination Information
     /// </summary>
+    [Serializable]
     public class MoonIllum
     {
      
@@ -327,6 +336,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Astrological Signs
     /// </summary>
+    [Serializable]
     public class AstrologicalSigns
     {
         /// <summary>
@@ -345,6 +355,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Additional Solar Time Information
     /// </summary>
+    [Serializable]
     public class AdditionalSolarTimes
     {
         /// <summary>
@@ -379,6 +390,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Turn on/off eager loading of certain properties
     /// </summary>
+    [Serializable]
     public class EagerLoad
     {
         /// <summary>
@@ -407,6 +419,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Contains distance values between two coordinates.
     /// </summary>
+    [Serializable]
     public class Distance
     {     
         private double kilometers;        
@@ -554,6 +567,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Class containing solar eclipse information
     /// </summary>
+    [Serializable]
     public class SolarEclipse
     {
         /// <summary>
@@ -576,6 +590,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Class containing lunar eclipse information
     /// </summary>
+    [Serializable]
     public class LunarEclipse
     {
         /// <summary>
@@ -598,6 +613,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Class containing specific solar eclipse information
     /// </summary>
+    [Serializable]
     public class SolarEclipseDetails
     {
         private DateTime date;
@@ -789,6 +805,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Class containing specific lunar eclipse information
     /// </summary>
+    [Serializable]
     public class LunarEclipseDetails
     {
         private DateTime date;
@@ -977,6 +994,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Solar eclipse type
     /// </summary>
+    [Serializable]
     public enum SolarEclipseType
     {
         /// <summary>
@@ -995,6 +1013,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Lunar eclipse type
     /// </summary>
+    [Serializable]
     public enum LunarEclipseType
     {
         /// <summary>
@@ -1013,6 +1032,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Used for easy read math functions
     /// </summary>
+    [Serializable]
     internal static class ModM
     {
         public static double Mod(double x, double y)
@@ -1038,6 +1058,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Earth Shape for Calculations
     /// </summary>
+    [Serializable]
     public enum Shape
     {
         /// <summary>
@@ -1049,6 +1070,7 @@ namespace CoordinateSharp
         /// </summary>
         Ellipsoid
     }
+    [Serializable]
     internal class Distance_Assistant
     {
         /// <summary>

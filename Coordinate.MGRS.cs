@@ -9,6 +9,7 @@ namespace CoordinateSharp
     /// Military Grid Reference System (MGRS). Uses the WGS 84 Datum.
     /// Relies upon values from the UniversalTransverseMercator class
     /// </summary>
+    [Serializable]
     public class MilitaryGridReferenceSystem : INotifyPropertyChanged
     {
         /// <summary>
@@ -28,7 +29,7 @@ namespace CoordinateSharp
             if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
             if (d.Count() < 2 || d.Count() > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             if (digraphLettersE.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
-            if (digraphLettersN.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (digraphLettersN.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[1].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             this.latZone = latz;
             this.longZone = longz;
             this.digraph = d;
@@ -57,7 +58,7 @@ namespace CoordinateSharp
             if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
             if (d.Count() < 2 || d.Count() > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             if (digraphLettersE.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
-            if (digraphLettersN.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (digraphLettersN.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[1].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             this.latZone = latz;
             this.longZone = longz;
             this.digraph = d;
