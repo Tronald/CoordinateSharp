@@ -9,6 +9,7 @@ namespace CoordinateSharp
     /// <remarks>
     /// This class can calculate various pieces of solar and lunar data, based on location and date
     /// </remarks>
+    [Serializable]
     public class Celestial : INotifyPropertyChanged
     {
 

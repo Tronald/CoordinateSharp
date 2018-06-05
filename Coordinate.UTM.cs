@@ -8,6 +8,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Universal Transverse Mercator (UTM) coordinate system. Uses the WGS 84 Datum.
     /// </summary>
+    [Serializable]
     public class UniversalTransverseMercator : INotifyPropertyChanged
     {
         /// <summary>
