@@ -265,8 +265,8 @@ namespace CoordinateSharp
             //Iterate to get last and next eclipse
          
             foreach (List<string> values in se)
-            {                  
-                DateTime ld = Convert.ToDateTime(values[0]);
+            {
+                DateTime ld = Convert.ToDateTime(values[0], System.Globalization.CultureInfo.InvariantCulture);
                 if (ld < date && ld > lastDate) { lastDate = ld; lastE = currentE; }
                 if (ld >= date && ld < nextDate) { nextDate = ld; nextE = currentE; }
                 currentE++;

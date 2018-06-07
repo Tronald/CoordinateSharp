@@ -1083,7 +1083,7 @@ namespace CoordinateSharp
             }
             else
             {
-                if (deg + (minSec / 60) > 90) { throw new ArgumentOutOfRangeException("Degree out of range", "Longitudinal degrees cannot be greater than 180."); }
+                if (deg + (minSec / 60) > 180) { throw new ArgumentOutOfRangeException("Degree out of range", "Longitudinal degrees cannot be greater than 180."); }
             }
             this.degrees = deg;
             this.decimalMinute = minSec;
