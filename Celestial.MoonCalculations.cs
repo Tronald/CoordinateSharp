@@ -5,7 +5,7 @@ namespace CoordinateSharp
     internal class MoonCalc
     {
         static double rad = Math.PI / 180;
-        static double dayMs = 1000 * 60 * 60 * 24, J1970 = 2440588, J2000 = 2451545;
+        
         static double e = rad * 23.4397;
 
         public static void GetMoonTimes(DateTime date, double lat, double lng, Celestial c)
@@ -92,7 +92,7 @@ namespace CoordinateSharp
         static MoonPosition GetMoonPosition(DateTime date, double lat, double lng, Celestial cel)
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-            double d = toDays(date);
+            double d = JulianConversions.toDays(date);
 
             CelCoords c = GetMoonCoords(d, cel);
             double lw = rad * -lng;
@@ -135,7 +135,7 @@ namespace CoordinateSharp
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
          
-            double d = toDays(date);
+            double d = JulianConversions.toDays(date);
             CelCoords s = GetSunCoords(d);
             CelCoords m = GetMoonCoords(d, c);
 
@@ -164,7 +164,7 @@ namespace CoordinateSharp
             for(int x = 1;x<= date.Day;x++)
             {               
                 DateTime nDate = new DateTime(dMon.Year, dMon.Month, x, 0, 0, 0, DateTimeKind.Utc);
-                d = toDays(nDate);
+                d = JulianConversions.toDays(nDate);
                 s = GetSunCoords(d);
                 m = GetMoonCoords(d, c);
 
@@ -176,7 +176,7 @@ namespace CoordinateSharp
                 double startPhase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
 
                 nDate = new DateTime(dMon.Year, dMon.Month, x, 23, 59, 59, DateTimeKind.Utc);
-                d = toDays(nDate);
+                d = JulianConversions.toDays(nDate);
                 s = GetSunCoords(d);
                 m = GetMoonCoords(d, c);
 
@@ -319,7 +319,7 @@ namespace CoordinateSharp
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
            
-            double d = toDays(date);
+            double d = JulianConversions.toDays(date);
             
             CelCoords cel = GetMoonCoords(d, c);
             c.MoonDistance = cel.dist;          
@@ -346,23 +346,6 @@ namespace CoordinateSharp
         private static DateTime hoursLater(DateTime date, double h)
         {
             return date.AddHours(h);
-        }
-     
-        static double toJulian(DateTime date)
-        {
-            DateTime d = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            DateTime t = date;
-            double l = (double)(t - d).TotalMilliseconds;
-            double tj = l / dayMs - 0.5 + J1970;
-           
-            return tj;
-            
-        }
-        static double toDays(DateTime date)
-        {
-            double d = toJulian(date) - J2000;
-  
-            return d;
         }
 
         static double rightAscension(double l, double b) { return Math.Atan2(Math.Sin(l) * Math.Cos(e) - Math.Tan(b) * Math.Sin(e), Math.Cos(l)); }
