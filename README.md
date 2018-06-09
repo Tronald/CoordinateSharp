@@ -20,7 +20,7 @@ A simple library designed to assist with geographic coordinate string formatting
 # Introduction
 
 ### 1.1.3.1 Change Notes
-* -Adds ability to get Perigee and Apogee dates of Moon.
+* -Adds ability to get Moon's Perigee and Apogee information based on date.
 ### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
 ### 1.1.2.7 Change Notes
