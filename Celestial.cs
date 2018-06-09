@@ -262,6 +262,25 @@ namespace CoordinateSharp
             //Return list of solar data.
             return LunarEclipseCalc.CalculateLunarEclipse(date, latR, longR, events);
         }
+       
+        /// <summary>
+        /// Returns Apogee object containing last and next apogee based on the specified date.
+        /// </summary>
+        /// <param name="d">Date</param>
+        /// <returns>Apogee</returns>
+        public static Apogee GetApogees(DateTime d)
+        {
+            return MoonCalc.GetApogeeEvents(d);
+        }
+        /// <summary>
+        /// Returns Perigee object containing last and next perigee based on the specified date.
+        /// </summary>
+        /// <param name="d">Date</param>
+        /// <returns>Perigee</returns>
+        public static Perigee GetPerigees(DateTime d)
+        {
+            return MoonCalc.GetPerigeeEvents(d);
+        }
         /// <summary>
         /// Property changed event
         /// </summary>

@@ -335,7 +335,6 @@ namespace CoordinateSharp
             return c;
         }
         private static double solarMeanAnomaly(double d) { return rad * (357.5291 + 0.98560028 * d); }
-        
         private static double eclipticLongitude(double M)
         {
             double C = rad * (1.9148 * Math.Sin(M) + 0.02 * Math.Sin(2 * M) + 0.0003 * Math.Sin(3 * M)), // equation of center
@@ -443,6 +442,138 @@ namespace CoordinateSharp
         private static double FNs(double x)
         { return Math.Sin(Math.PI / 180 * x); }
 
+        //v1.1.3 Formulas
+
+        /// <summary>
+        /// Grabs Perigee or Apogee of Moon based on specified time.
+        /// Results will return event just before, or just after specified DateTime
+        /// </summary>
+        /// <param name="d">DateTime</param>
+        /// <param name="md">Event Type</param>
+        /// <returns></returns>
+        private static PerigeeApogee MoonPerigeeOrApogee(DateTime d, MoonDistanceType md)
+        {
+            //Perigee & Apogee Algorithms from Jean Meeus Astronomical Algorithms Ch. 50
+
+            //50.1
+            //JDE = 2451534.6698 + 27.55454989 * k 
+            //                     -0.0006691 * Math.Pow(T,2)
+            //                     -0.000.01098 * Math.Pow(T,3)
+            //                     -0.0000000052 * Math.Pow(T,4)
+
+            //50.2
+            //K approx = (yv - 1999.97)*13.2555
+            //yv is the year + percentage of days that have occured in the year. 1998 Oct 1 is approx 1998.75
+            //k ending in .0 represent perigee and .5 apogee. Anything > .5 is an error.
+
+            //50.3
+            //T = k/1325.55
+
+            double yt = 365; //days in year
+            if (DateTime.IsLeapYear(d.Year)) { yt = 366; } //days in year if leap year
+            double f = d.DayOfYear / yt; //Get percentage of year that as passed
+            double yv = d.Year + f; //add percentage of year passed to year.
+            double k = (yv - 1999.97) * 13.2555; //find approximate k using formula 50.2
+
+            //Set k decimal based on apogee or perigee
+            if (md == MoonDistanceType.Apogee)
+            {
+                k = Math.Floor(k) + .5;
+            }
+            else
+            {
+                k = Math.Floor(k);
+            }
+
+            //Find T using formula 50.3
+            double T = k / 1325.55;
+            //Find JDE using formula 50.1
+            double JDE = 2451534.6698 + 27.55454989 * k -
+                0.0006691 * Math.Pow(T, 2) -
+                0.00001098 * Math.Pow(T, 3) -
+                0.0000000052 * Math.Pow(T, 4);
+
+            //Find Moon's mean elongation at time JDE.
+            double D = 171.9179 + 335.9106046 * k -
+                0.0100383 * Math.Pow(T, 2) -
+                0.00001156 * Math.Pow(T, 3) +
+                0.000000055 * Math.Pow(T, 4);
+
+            //Find Sun's mean anomaly at time JDE
+            double M = 347.3477 + 27.1577721 * k -
+                0.0008130 * Math.Pow(T, 2) -
+                0.0000010 * Math.Pow(T, 3);
+
+            //Find Moon's argument of latitude at Time JDE
+            double F = 316.6109 + 364.5287911 * k -
+                0.0125053 * Math.Pow(T, 2) -
+                0.0000148 * Math.Pow(T, 3);
+
+            //Normalize DMF to a 0-360 degree number
+            D %= 360;
+            if (D < 0) { D += 360; }
+            M %= 360;
+            if (M < 0) { M += 360; }
+            F %= 360;
+            if (F < 0) { F += 360; }
+
+            //Convert DMF to radians
+            D = D * Math.PI / 180;
+            M = M * Math.PI / 180;
+            F = F * Math.PI / 180;
+            double termsA;
+            //Find Terms A from Table 50.A 
+            if (md == MoonDistanceType.Apogee)
+            {
+                termsA = MeeusTables.ApogeeTermsA(D, M, F, T);
+            }
+            else
+            {
+                termsA = MeeusTables.PerigeeTermsA(D, M, F, T);
+            }
+            JDE += termsA;
+            double termsB;
+            if (md == MoonDistanceType.Apogee)
+            {
+                termsB = MeeusTables.ApogeeTermsB(D, M, F, T);
+            }
+            else
+            {
+                termsB = MeeusTables.PerigeeTermsB(D, M, F, T);
+            }
+            PerigeeApogee ap = new PerigeeApogee(JulianConversions.fromJulian(JDE).Value, termsB);
+            return ap;
+        }
+        public static Perigee GetPerigeeEvents(DateTime d)
+        {        
+            PerigeeApogee per1 = MoonPerigeeOrApogee(d, MoonDistanceType.Perigee);
+            PerigeeApogee per2;
+            if(per1.Date < d)
+            {
+                per2 = MoonPerigeeOrApogee(d.AddMonths(1), MoonDistanceType.Perigee);
+                return new Perigee(per1, per2);
+            }
+            else
+            {
+                per2 = MoonPerigeeOrApogee(d.AddMonths(-1), MoonDistanceType.Perigee);
+                return new Perigee(per2, per1);
+            }                     
+        }       
+        public static Apogee GetApogeeEvents(DateTime d)
+        {
+            PerigeeApogee apo1 = MoonPerigeeOrApogee(d, MoonDistanceType.Apogee);
+            PerigeeApogee apo2;
+            if (apo1.Date < d)
+            {
+                apo2 = MoonPerigeeOrApogee(d.AddMonths(1), MoonDistanceType.Apogee);
+                return new Apogee(apo1, apo2);
+            }
+            else
+            {
+                apo2 = MoonPerigeeOrApogee(d.AddMonths(-1), MoonDistanceType.Apogee);
+                return new Apogee(apo2, apo1);
+            }
+        }
 
         public class MoonTimes
         {

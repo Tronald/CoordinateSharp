@@ -15,7 +15,7 @@ namespace CoordinateSharp
         /// <param name="F">Moon's arguement f latitude</param>
         /// <param name="T">Time in Julian centuries since epoch 2000</param>
         /// <returns>double</returns>
-        static double ApogeeTermsA(double D, double M, double F, double T)
+        public static double ApogeeTermsA(double D, double M, double F, double T)
         {
             double sum;
          
@@ -62,7 +62,7 @@ namespace CoordinateSharp
         /// <param name="F">Moon's arguement f latitude</param>
         /// <param name="T">Time in Julian centuries since epoch 2000</param>
         /// <returns>double</returns>
-        static double PerigeeTermsA(double D, double M, double F, double T)
+        public static double PerigeeTermsA(double D, double M, double F, double T)
         {
             double sum;
 
@@ -138,7 +138,7 @@ namespace CoordinateSharp
         /// <param name="F">Moon's arguement f latitude</param>
         /// <param name="T">Time in Julian centuries since epoch 2000</param>
         /// <returns>double</returns>
-        static double ApogeeTermsB(double D, double M, double F, double T)
+        public static double ApogeeTermsB(double D, double M, double F, double T)
         {
             double sum = 3245.251;
 
@@ -171,7 +171,7 @@ namespace CoordinateSharp
         /// <param name="F">Moon's arguement f latitude</param>
         /// <param name="T">Time in Julian centuries since epoch 2000</param>
         /// <returns>double</returns>
-        static double PerigeeTermsB(double D, double M, double F, double T)
+        public static double PerigeeTermsB(double D, double M, double F, double T)
         {
             //Sum of Perigee Terms from Jean Meeus Astronomical Algorithms Table 50.B          
             double sum = 3629.215;
@@ -290,5 +290,62 @@ namespace CoordinateSharp
             return dtDateTime;
 
         }
+    }
+    /// <summary>
+    /// Contains last and next perigee
+    /// </summary>
+    public class Perigee
+    {
+        private PerigeeApogee lastPerigee;
+        private PerigeeApogee nextPerigee;
+
+        /// <summary>
+        /// Initializes an Perigee object.
+        /// </summary>
+        /// <param name="last"></param>
+        /// <param name="next"></param>
+        public Perigee(PerigeeApogee last, PerigeeApogee next)
+        {
+            lastPerigee = last;
+            nextPerigee = next;
+        }
+
+        /// <summary>
+        /// Last perigee
+        /// </summary>
+        public PerigeeApogee LastPerigee { get { return lastPerigee; } }
+        /// <summary>
+        /// Next perigee
+        /// </summary>
+        public PerigeeApogee NextPerigee { get { return NextPerigee; } }
+
+    }
+    /// <summary>
+    /// Contains last and next apogee
+    /// </summary>
+    public class Apogee
+    {
+        private PerigeeApogee lastApogee;
+        private PerigeeApogee nextApogee;
+
+        /// <summary>
+        /// Initializes an Apogee object.
+        /// </summary>
+        /// <param name="last"></param>
+        /// <param name="next"></param>
+        public Apogee(PerigeeApogee last, PerigeeApogee next)
+        {
+            lastApogee = last;
+            nextApogee = next;
+        }
+
+        /// <summary>
+        /// Last apogee
+        /// </summary>
+        public PerigeeApogee LastApogee { get { return lastApogee; } }
+        /// <summary>
+        /// Next apogee
+        /// </summary>
+        public PerigeeApogee NextApogee { get { return NextApogee; } }
     }
 }
