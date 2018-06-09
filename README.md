@@ -19,7 +19,7 @@ A simple library designed to assist with geographic coordinate string formatting
 
 # Introduction
 
-### 1.1.2.8 Change Nots
+### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
 ### 1.1.2.7 Change Notes
 * -Fixed Digraph validation error for new MGRS objects initialized with W,X,Y,Z Digraphs.
