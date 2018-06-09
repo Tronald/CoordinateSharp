@@ -20,6 +20,7 @@ A simple library designed to assist with geographic coordinate string formatting
 # Introduction
 
 ### 1.1.3.1 Change Notes
+* -Celestial.Assistant.cs added to reduce class file size.
 * -Adds ability to get Moon's Perigee and Apogee information based on date.
 ### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
