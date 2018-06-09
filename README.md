@@ -20,6 +20,7 @@ A simple library designed to assist with geographic coordinate string formatting
 # Introduction
 
 ### 1.1.3.1 Change Notes
+* -Adds ability to get Perigee and Apogee dates of Moon.
 ### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
 ### 1.1.2.7 Change Notes
@@ -254,6 +255,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   * -Additional Solar Times (Civil/Nautical Dawn/Dusk)
   * -Astrological Information (Moon Sign, Zodiac Sign, Moon Name If Full Moon")
   * -Solar/Lunar Eclipse information (see below).
+  * -Perigee/Apogee dates (static functions only as these values are not dependent upon location).
     
   Sun/Moon Set and Rise DateTimes are nullable. If a null value is returned the Sun or Moon Condition needs to be viewed to see why. In the below example we are using a lat/long near the North Pole with a date in August. The sun does not set that far North during the specified time of year.
   
@@ -281,6 +283,13 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   Celestial cel = Celestial.CalculateCelestialTimes(85.57682, -70.75678, new DateTime(2017,8,21));
   cel.SunRise.Value.ToString();
   ```
+  
+  Pergee and Apogee information is available, but must be called specifically as these properties are not location dependent.
+
+```C#
+Perigee p = Celestial.GetPerigee(date);
+p.LastApogee.Date;
+```
   
   NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a been discovered to have standard distance deviation of 3,388 km with Perigee and Apogee approximate time deviations of 36 hours. Results may be innacurate at times and should be used for estimations only. This formula will be worked for accuracy in future releases.
   
