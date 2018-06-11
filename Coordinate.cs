@@ -442,15 +442,24 @@ namespace CoordinateSharp
             NotifyPropertyChanged("MGRS");
         }
         /// <summary>
-        /// Returns a Distance object based on the current and specified coordinate
+        /// Returns a Distance object based on the current and specified coordinate (Haversine / Spherical Earth).
         /// </summary>
         /// <param name="c2">Coordinate</param>
-        /// <returns></returns>
+        /// <returns>Distance</returns>
         public Distance Get_Distance_From_Coordinate(Coordinate c2)
         {
             return new Distance(this, c2);
         }
-
+        /// <summary>
+        /// Returns a Distance object based on the current and specified coordinate and specified earth shape.
+        /// </summary>
+        /// <param name="c2">Coordinate</param>
+        /// <param name="shape">Earth shape</param>
+        /// <returns>Distance</returns>
+        public Distance Get_Distance_From_Coordinate(Coordinate c2, Shape shape)
+        {
+            return new Distance(this, c2, shape);
+        }
         /// <summary>
         /// Move coordinate based on provided bearing and distance
         /// </summary>
