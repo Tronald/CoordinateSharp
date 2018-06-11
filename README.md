@@ -2,7 +2,7 @@
 
 A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM) and Cartesian (X, Y, Z). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
 
-CAUTION: v.1.1.3.1 is considered a breaking change as `MoonDistance` has been converted from a `double?` object to a `Distance' object.
+CAUTION: v.1.1.3.1 is considered a breaking change as `MoonDistance` has been converted from a `double?` object to a `Distance' object. Obsolete properties from 1.1.1.5 have also been removed as scheduled.
 
 ### Introduction
 * [Change Notes](#introduction)
@@ -24,9 +24,10 @@ CAUTION: v.1.1.3.1 is considered a breaking change as `MoonDistance` has been co
 ### 1.1.3.1 Change Notes
 * -Celestial.Assistant.cs added to reduce class file size.
 * -Adds ability to get Moon's Perigee and Apogee information based on date.
-* -Improved moon distance calculations.
+* -Improved moon distance accuracy.
 * -Converted `MoonDistance` property from `double?` to `Distance`. 
 * -Updated Julian conversion for more accuracy when dates occur before Gregorian. 
+* -Removed scheduled obsolete properties.
 ### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
 ### 1.1.2.7 Change Notes
@@ -292,13 +293,11 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   
   Pergee and Apogee information is available, but must be called specifically as these properties are not location dependent.
 
-```C#
-Perigee p = Celestial.GetPerigee(date);
-p.LastApogee.Date;
-```
-  
-  NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a been discovered to have standard distance deviation of 3,388 km with Perigee and Apogee approximate time deviations of 36 hours. Results may be innacurate at times and should be used for estimations only. This formula will be worked for accuracy in future releases.
-  
+  ```C#
+  Perigee p = Celestial.GetPerigee(date);
+  p.LastApogee.Date;
+  ```
+
   Solar and Lunar Eclipse.
   
   ```C#
