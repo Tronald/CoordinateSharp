@@ -16,6 +16,7 @@ namespace CoordinateSharp
     [Serializable]
     public class Coordinate : INotifyPropertyChanged
     {     
+
         /// <summary>
         /// Creates an empty Coordinates object
         /// </summary>
@@ -62,7 +63,7 @@ namespace CoordinateSharp
         /// Geodate will default to 1/1/1900 GMT until provided
         /// </remarks>
         public Coordinate(double lat, double longi)
-        {
+        {         
             this.FormatOptions = new CoordinateFormatOptions();
             this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
@@ -391,22 +392,7 @@ namespace CoordinateSharp
             string longSting = longitude.ToString();
             return latString + " " + longSting;
         }
-        /// <summary>
-        /// Overridden Coordinate ToString() method that accepts formatting. 
-        /// Refer to documentation for coordinate format options
-        /// </summary>
-        /// <remarks>
-        /// Obsolete method. Pass formatting options for most up to date options.
-        /// </remarks>
-        /// <param name="format">Format string</param>
-        /// <returns>Custom formatted coordinate</returns>
-        [System.Obsolete("The 2 character format string method is deprecated. The CoordinateFormatOptions method should be used when passing formats with ToString().")]      
-        public string ToString(string format)
-        {
-            string latString = latitude.ToString(format.ToUpper());
-            string longSting = longitude.ToString(format.ToUpper());
-            return latString + " " + longSting;         
-        }
+      
         /// <summary>
         /// Overridden Coordinate ToString() method that accepts formatting. 
         /// Refer to documentation for coordinate format options
@@ -441,15 +427,24 @@ namespace CoordinateSharp
             NotifyPropertyChanged("MGRS");
         }
         /// <summary>
-        /// Returns a Distance object based on the current and specified coordinate
+        /// Returns a Distance object based on the current and specified coordinate (Haversine / Spherical Earth).
         /// </summary>
         /// <param name="c2">Coordinate</param>
-        /// <returns></returns>
+        /// <returns>Distance</returns>
         public Distance Get_Distance_From_Coordinate(Coordinate c2)
         {
             return new Distance(this, c2);
         }
-
+        /// <summary>
+        /// Returns a Distance object based on the current and specified coordinate and specified earth shape.
+        /// </summary>
+        /// <param name="c2">Coordinate</param>
+        /// <param name="shape">Earth shape</param>
+        /// <returns>Distance</returns>
+        public Distance Get_Distance_From_Coordinate(Coordinate c2, Shape shape)
+        {
+            return new Distance(this, c2, shape);
+        }
         /// <summary>
         /// Move coordinate based on provided bearing and distance
         /// </summary>
@@ -570,26 +565,7 @@ namespace CoordinateSharp
     /// </remarks>
     [Serializable]
     public class CoordinatePart : INotifyPropertyChanged
-    {
-        //Format Example String "FS:R4:LT:TT:MF:HT" = N-075º-40'-35.3645"
-
-        //Format rules are passed in string format with each rule being seperated by a colon
-        //Format rules can be passed in any order
-        //Format rules are 2 characters long. The first character declares the rule type, and the second declares a value.
-        //All rules contain default values. Consider only including a rule in your format string when a default is being overridden
-
-        //Rules:
-        //F(D,M,S,C) = Format. Format values must be either 'D' (Decimal Degree) 'M' (Degree Decimal Minute) 'S' (Degree Minute Second) 'C' (Decimal): ex. 'FS' = N 70º 40' 56.678"
-        //R(0-9) = Rounding. Rounding values may be 0-9. Any decimals will be rounded to the declared digit. ex. 70.635473 with 'R3' = 70.635
-        //L(T,F) = Leading Zeros. Leading zeros may be set 'T' (true) or 'F' (false). ex. W 70.645 with 'LT' = 070.645
-        //T(T,F) = Trailing Zeros. Trailing zeros may be set 'T' (true) or 'F' (false). Will only trail to the specified Rounding rule. ex 70.746 with 'R5' & 'TT' = 70.74600
-        //B(T,F) = Display Symbols. Display symbols may be set 'T' (true) or 'F' (false). Will hide degree, minute, seconds symbols if false
-        //D(T,F) = Degree Symbol. May be set 'T' (true) or 'F' (false). May only be set when displaying symbols. Will hide degree symbol if false
-        //M(T,F) = Minute Symbol. May be set 'T' (true) or 'F' (false). May only be set when displaying symbols. Will hide minute symbol if false
-        //S(T,F) = Second Symbol. May be set 'T' (true) or 'F' (false). May only be set when displaying symbols. Will hide seconds symbol if false
-        //H(T,F) = Display Hyphens. May be set 'T' (true) or 'F' (false). Will display hyphens between degrees, minute, seconds if set true.
-        //P(F,L) = Position Display. May be set to 'F' (first) or 'L' (last). Will display postion letter where disired
-
+    {       
         //Defaults:
         //Format: Degrees Minutes Seconds
         //Rounding: Dependent upon selected format
@@ -1122,22 +1098,7 @@ namespace CoordinateSharp
         {
             return FormatString(this.Parent.FormatOptions);
         }
-        /// <summary>
-        /// Overridden Coordinate ToString() method that accepts formatting.
-        /// Does not require the CoordinatePart format property to be set.
-        /// Refer to documentation for coordinate format options.
-        /// </summary>
-        /// <param name="format">Format string</param>
-        /// <returns>Custom formatted coordinate part</returns>
-        [System.Obsolete("The 2 character format string method is deprecated. The CoordinateFormatOptions method should be used when passing formats with ToString().")]
-        public string ToString(string format)
-        {
-            if (format == null)
-            {
-                return FormatString("");
-            }
-            return FormatString(format.ToUpper());
-        }
+       
         /// <summary>
         /// Formatted CoordinatePart string.
         /// </summary>
@@ -1147,202 +1108,7 @@ namespace CoordinateSharp
         {
             return FormatString(options);
         }
-        /// <summary>
-        /// String formatting logic
-        /// </summary>
-        /// <param name="format">Formated Coordinate</param>
-        /// <returns>Formatted coordinate part string</returns>
-        private string FormatString(string format)
-        {
-            ToStringType type = ToStringType.Degree_Minute_Second;
-            int? rounding = null;
-            bool lead = false;
-            bool trail = false;
-            bool hyphen = false;
-            bool symbols = true;
-            bool degreeSymbol = true;
-            bool minuteSymbol = true;
-            bool secondsSymbol = true;
-            bool positionFirst = true;
-
-            if (format == string.Empty || format == null)
-            {
-                return ToDegreeMinuteSecondString(3, lead, trail, symbols, degreeSymbol, minuteSymbol, secondsSymbol, hyphen, positionFirst);
-            }
-
-            List<string> fl = format.Split(':').ToList();
-
-            #region Assign Formatting Rules
-
-            foreach (string s in fl)
-            {
-                if (s == string.Empty) { continue; }
-                if (s.ToCharArray().Count() != 2) { throw new FormatException("'" + s + "' is not a valid string format argument."); }
-                switch (s[0])
-                {
-                    case 'F':
-                        switch (s[1])
-                        {
-                            case 'D':
-                                type = ToStringType.Decimal_Degree;
-                                break;
-                            case 'M':
-                                type = ToStringType.Degree_Decimal_Minute;
-                                break;
-                            case 'S':
-                                type = ToStringType.Degree_Minute_Second;
-                                break;
-                            case 'C':
-                                type = ToStringType.Decimal;
-                                break;
-                            default:
-                                throw new FormatException(FormatError(s[1].ToString(), "Format (F)"));
-
-                        }
-                        break;
-                    case 'R':
-                        try
-                        {
-                            rounding = Convert.ToInt32(s[1].ToString());
-                        }
-                        catch (FormatException)
-                        {
-                            throw new FormatException(FormatError(s[1].ToString(), "Rounding (R)"));
-                        }
-                        break;
-                    case 'L':
-                        switch (s[1])
-                        {
-                            case 'T':
-                                lead = true;
-                                break;
-                            case 'F':
-                                lead = false;
-                                break;
-                            default:
-                                throw new FormatException(FormatError(s[1].ToString(), "Leading Zeros (L)"));
-                        }
-                        break;
-                    case 'T':
-                        switch (s[1])
-                        {
-                            case 'T':
-                                trail = true;
-                                break;
-                            case 'F':
-                                trail = false;
-                                break;
-                            default:
-                                throw new FormatException(FormatError(s[1].ToString(), "Trailing Zeros (T)"));
-                        }
-                        break;
-                    case 'B':
-                        switch (s[1])
-                        {
-                            case 'T':
-                                symbols = true;
-                                break;
-                            case 'F':
-                                symbols = false;
-                                break;
-                            default:
-                                throw new FormatException(FormatError(s[1].ToString(), "Display Symbols (B)"));
-                        }
-                        break;
-                    case 'D':
-                        switch (s[1])
-                        {
-                            case 'T':
-                                degreeSymbol = true;
-                                break;
-                            case 'F':
-                                degreeSymbol = false;
-                                break;
-                            default:
-                                throw new FormatException(FormatError(s[1].ToString(), "Display Degree Symbol (D)"));
-                        }
-                        break;
-                    case 'M':
-                        switch (s[1])
-                        {
-                            case 'T':
-                                minuteSymbol = true;
-                                break;
-                            case 'F':
-                                minuteSymbol = false;
-                                break;
-                            default:
-                                throw new FormatException(FormatError(s[1].ToString(), "Display Minutes Symbol (M)"));
-                        }
-                        break;
-                    case 'S':
-                        switch (s[1])
-                        {
-                            case 'T':
-                                secondsSymbol = true;
-                                break;
-                            case 'F':
-                                secondsSymbol = false;
-                                break;
-                            default:
-                                throw new FormatException(FormatError(s[1].ToString(), "Display Seconds Symbol (S)"));
-                        }
-                        break;
-                    case 'H':
-                        switch (s[1])
-                        {
-                            case 'T':
-                                hyphen = true;
-                                break;
-                            case 'F':
-                                hyphen = false;
-                                break;
-                            default:
-                                throw new FormatException(FormatError(s[1].ToString(), "Display Hyphens (H)"));
-                        }
-                        break;
-                    case 'P':
-                        switch (s[1])
-                        {
-                            case 'F':
-                                positionFirst = true;
-                                break;
-                            case 'L':
-                                positionFirst = false;
-                                break;
-                            default:
-                                throw new FormatException(FormatError(s[1].ToString(), "Display Position (P). If using position argument must be either 'F' (first) or 'L' (last)"));
-                        }
-                        break;
-                    default:
-                        throw new FormatException("Invalid string format rule passed. '" + s + "' is not a valid argument.");
-
-                }
-            }
-            #endregion
-
-            switch (type)
-            {
-                case ToStringType.Decimal_Degree:
-                    if (rounding == null) { rounding = 6; }
-                    return ToDecimalDegreeString(rounding.Value, lead, trail, symbols, degreeSymbol, positionFirst, hyphen);
-                case ToStringType.Degree_Decimal_Minute:
-                    if (rounding == null) { rounding = 3; }
-                    return ToDegreeDecimalMinuteString(rounding.Value, lead, trail, symbols, degreeSymbol, minuteSymbol, hyphen, positionFirst);
-                case ToStringType.Degree_Minute_Second:
-                    if (rounding == null) { rounding = 3; }
-                    return ToDegreeMinuteSecondString(rounding.Value, lead, trail, symbols, degreeSymbol, minuteSymbol, secondsSymbol, hyphen, positionFirst);
-                case ToStringType.Decimal:
-                    if (rounding == null) { rounding = 9; }
-                    double dub = this.ToDouble();
-                    dub = Math.Round(dub, rounding.Value);
-                    string lt = Leading_Trailing_Format(lead, trail, rounding.Value, Position);
-                    return string.Format(lt, dub);
-            }
-
-            return string.Empty;
-        }
-        /// <summary>
+       /// <summary>
         /// String formatting logic
         /// </summary>
         /// <param name="options">CoordinateFormatOptions</param>

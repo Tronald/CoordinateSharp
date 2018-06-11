@@ -4,6 +4,7 @@ namespace CoordinateSharp
 {
     internal class SunCalc
     {     
+
         public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c)
         {
             if (date.Year == 1900) { return; } //Return if date vaue hasn't been established.
@@ -12,7 +13,7 @@ namespace CoordinateSharp
             //Sun Time Calculations
             date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);      
             double zone = -(int)Math.Round(TimeZone.CurrentTimeZone.GetUtcOffset(date).TotalSeconds / 3600);     
-            double jd = GetJulianDay(date) - 2451545;  // Julian day relative to Jan 1.5, 2000
+            double jd = JulianConversions.GetJulianDay(date) - 2451545;  // Julian day relative to Jan 1.5, 2000
 
             double lon = longi / 360;
             double tz = zone / 24;
@@ -213,7 +214,8 @@ namespace CoordinateSharp
             //Iterate to get last and next eclipse
             foreach(List<string> values in se)
             {               
-                DateTime ld = Convert.ToDateTime(values[0], System.Globalization.CultureInfo.InvariantCulture);
+                DateTime ld = DateTime.ParseExact(values[0], "yyyy-MMM-dd", System.Globalization.CultureInfo.InvariantCulture);
+             
                 if (ld < date && ld>lastDate) { lastDate = ld;lastE = currentE; }
                 if(ld>= date && ld < nextDate) { nextDate = ld;nextE = currentE; }
                 currentE++;
@@ -230,12 +232,8 @@ namespace CoordinateSharp
         }
 
         #region Private Suntime Members
-
+        private static double dayMS = 1000 * 60 * 60 * 24, j1970 = 2440588, j2000 = 2451545;
         private static double rad = Math.PI / 180;
-
-        private static double j2000 = 2451545; //Julian from year 2000
-        private static double j1970 = 2440588; //Julian from year 1970
-        private static double dayMS = 1000 * 60 * 60 * 24; //Day in milliseconds
 
         private const double mDR = Math.PI / 180;
         private const double mK1 = 15 * mDR * 1.0027379;
@@ -256,46 +254,7 @@ namespace CoordinateSharp
         #endregion
         #region Private Suntime Functions
 
-        private static double GetJulianDay(DateTime date)
-        {
-            int month = date.Month;
-            int day = date.Day;
-            int year = date.Year;
-
-            bool gregorian = (year < 1583) ? false : true;
-
-            if ((month == 1) || (month == 2))
-            {
-                year = year - 1;
-                month = month + 12;
-            }
-
-            double a = Math.Truncate((double)year / 100);
-            double b = 0;
-
-            if (gregorian)
-                b = 2 - a + Math.Truncate(a / 4);
-            else
-                b = 0.0;
-
-            double jd = Math.Truncate(365.25 * (year + 4716))
-                       + Math.Truncate(30.6001 * (month + 1))
-                       + day + b - 1524.5;
-            
-            return jd;
-        }
-        private static DateTime? fromJulian(double j)
-        {
-            if (Double.IsNaN(j)) { return null; } //No Event Occured
-
-            double unixTime = (j + 0.5 - j1970) * 86400;
-
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1);
-            dtDateTime = dtDateTime.AddSeconds(unixTime);
-
-            return dtDateTime;
-
-        }
+        
 
         private static double LocalSiderealTimeForTimeZone(double lon, double jd, double z)
         {
@@ -349,7 +308,7 @@ namespace CoordinateSharp
         private static void getTimes(DateTime date, double lng, double lat, Celestial c)
         {
             //Get Julian
-            double d = GetJulianDay(date) - j2000 + .5; //LESS PRECISE JULIAN NEEDED
+            double d = JulianConversions.GetJulianDay(date) - j2000 + .5; //LESS PRECISE JULIAN NEEDED
             
             double lw = rad * -lng;
             double phi = rad * lat;
@@ -368,8 +327,8 @@ namespace CoordinateSharp
             double Jset;
             double Jrise;
 
-            DateTime? solarNoon = fromJulian(Jnoon);
-            DateTime? nadir = fromJulian(Jnoon - 0.5);
+            DateTime? solarNoon = JulianConversions.fromJulian(Jnoon);
+            DateTime? nadir = JulianConversions.fromJulian(Jnoon - 0.5);
 
             c.AdditionalSolarTimes = new AdditionalSolarTimes();
 
@@ -377,14 +336,14 @@ namespace CoordinateSharp
             Jset = GetTime(-6 * rad, lw, phi, dec, n, M, L); 
             Jrise = Jnoon - (Jset - Jnoon);
            
-            c.AdditionalSolarTimes.CivilDawn = fromJulian(Jrise);
-            c.AdditionalSolarTimes.CivilDusk = fromJulian(Jset);
+            c.AdditionalSolarTimes.CivilDawn = JulianConversions.fromJulian(Jrise);
+            c.AdditionalSolarTimes.CivilDusk = JulianConversions.fromJulian(Jset);
 
             Jset = GetTime(-12 * rad, lw, phi, dec, n, M, L);        
             Jrise = Jnoon - (Jset - Jnoon);
         
-            c.AdditionalSolarTimes.NauticalDawn = fromJulian(Jrise);
-            c.AdditionalSolarTimes.NauticalDusk = fromJulian(Jset);          
+            c.AdditionalSolarTimes.NauticalDawn = JulianConversions.fromJulian(Jrise);
+            c.AdditionalSolarTimes.NauticalDusk = JulianConversions.fromJulian(Jset);          
         }
        
         private static void CalculateSunPosition(double jd, double ct)

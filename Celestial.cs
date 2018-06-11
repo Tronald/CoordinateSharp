@@ -90,7 +90,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Estimated moon distance from the earth in kilometers
         /// </summary>
-        public double? MoonDistance { get; set; }
+        public Distance MoonDistance { get; set; }
         /// <summary>
         /// Sun's Condition based on the provided UTC date
         /// </summary>
@@ -129,16 +129,6 @@ namespace CoordinateSharp
         /// </summary>
         public LunarEclipse LunarEclipse { get; set; }
 
-
-        /// <summary>
-        /// Moon illumination phase
-        /// </summary>
-        /// <remarks>
-        /// This property is obsolete and has moved to the MoonIllum property
-        /// </remarks>
-        [Obsolete("MoonPhase can be accessed through the MoonIllum property.")]
-        public double MoonPhase { get { return this.MoonIllum.Phase; } }
-
         /// <summary>
         /// Calculates all celestial data. Coordinates will notify as changes occur
         /// </summary>
@@ -152,7 +142,7 @@ namespace CoordinateSharp
             SunCalc.CalculateSunTime(lat, longi, date, this);
             MoonCalc.GetMoonTimes(date, lat, longi, this);
             MoonCalc.GetMoonDistance(date, this);
-
+            
 
             SunCalc.CalculateZodiacSign(date, this);
             MoonCalc.GetMoonSign(date, this);
@@ -261,6 +251,25 @@ namespace CoordinateSharp
             double[] events = Eclipse.LunarData.LunarDateData_100Year(date);
             //Return list of solar data.
             return LunarEclipseCalc.CalculateLunarEclipse(date, latR, longR, events);
+        }
+       
+        /// <summary>
+        /// Returns Apogee object containing last and next apogee based on the specified date.
+        /// </summary>
+        /// <param name="d">Date</param>
+        /// <returns>Apogee</returns>
+        public static Apogee GetApogees(DateTime d)
+        {
+            return MoonCalc.GetApogeeEvents(d);
+        }
+        /// <summary>
+        /// Returns Perigee object containing last and next perigee based on the specified date.
+        /// </summary>
+        /// <param name="d">Date</param>
+        /// <returns>Perigee</returns>
+        public static Perigee GetPerigees(DateTime d)
+        {
+            return MoonCalc.GetPerigeeEvents(d);
         }
         /// <summary>
         /// Property changed event
