@@ -402,6 +402,19 @@ namespace CoordinateSharp
                 Vincenty(c1, c2);
             }
         }
+        /// <summary>
+        /// Initializes distance object based on distance in KM
+        /// </summary>
+        /// <param name="km">Kilometers</param>
+        public Distance(double km)
+        {
+            kilometers = km;
+            meters = km * 1000;
+            feet = meters * 3.28084;
+            miles = meters * 0.000621371;
+            nauticalMiles = meters * 0.0005399565;
+            bearing = 0;//None specified
+        }
         private void Vincenty(Coordinate c1, Coordinate c2)
         {
             double lat1, lat2, lon1, lon2;

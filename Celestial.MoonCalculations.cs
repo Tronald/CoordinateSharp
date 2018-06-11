@@ -108,7 +108,7 @@ namespace CoordinateSharp
             MoonPosition mp = new MoonPosition();
             mp.Azimuth = azimuth(H, phi, c.dec);
             mp.Altitude = h;
-            mp.Distance = c.dist;
+            mp.Distance = GetMoonDistance(date); 
             mp.ParallacticAngle = pa;
             return mp;
         }
@@ -322,7 +322,7 @@ namespace CoordinateSharp
             double d = JulianConversions.toDays(date);
             
             CelCoords cel = GetMoonCoords(d, c);
-            c.MoonDistance = cel.dist;          
+            c.MoonDistance = GetMoonDistance(date);      //Updating distance formula    
         }
         //Moon Time Functions
         private static CelCoords GetSunCoords(double d)
@@ -504,6 +504,7 @@ namespace CoordinateSharp
                 0.0008130 * Math.Pow(T, 2) -
                 0.0000010 * Math.Pow(T, 3);
 
+
             //Find Moon's argument of latitude at Time JDE
             double F = 316.6109 + 364.5287911 * k -
                 0.0125053 * Math.Pow(T, 2) -
@@ -541,9 +542,12 @@ namespace CoordinateSharp
             {
                 termsB = MeeusTables.PerigeeTermsB(D, M, F, T);
             }
-            PerigeeApogee ap = new PerigeeApogee(JulianConversions.fromJulian(JDE).Value, termsB);
+            DateTime date = JulianConversions.fromJulian(JDE).Value;
+            Distance dist = GetMoonDistance(date);
+            PerigeeApogee ap = new PerigeeApogee(date, termsB, dist);
             return ap;
         }
+
         public static Perigee GetPerigeeEvents(DateTime d)
         {        
             PerigeeApogee per1 = MoonPerigeeOrApogee(d, MoonDistanceType.Perigee);
@@ -575,6 +579,45 @@ namespace CoordinateSharp
             }
         }
 
+        public static Distance GetMoonDistance(DateTime d)
+        {
+            //Ch 47
+            double JDE = JulianConversions.toJulian(d);//Get julian in centeries from epoch 2000
+            double T = (JDE - 2451545) / 36525; //Get dynamic time.
+
+            //Moon's mean elongation 
+            double D = 297.8501921 + 445267.1114034 * T -
+                0.0018819 * Math.Pow(T, 2) + Math.Pow(T, 3) / 545868 - Math.Pow(T, 4) / 113065000;
+            //Sun's mean anomaly
+            double M = 357.5291092 + 35999.0502909 * T -
+                .0001536 * Math.Pow(T, 2) + Math.Pow(T, 3) / 24490000;
+            //Moon's mean anomaly
+            double N = 134.9633964 + 477198.8675055 * T + .0087414 * Math.Pow(T, 2) +
+                Math.Pow(T, 3) / 69699 - Math.Pow(T, 4) / 14712000;
+            //Moon's argument of latitude
+            double F=93.2720950+483202.0175233*T-.0036539*Math.Pow(T,2)-Math.Pow(T,3) / 
+                3526000+Math.Pow(T,4)/863310000;
+
+            //Normalize DMF to a 0-360 degree number
+            D %= 360;
+            if (D < 0) { D += 360; }
+            M %= 360;
+            if (M < 0) { M += 360; }
+            N %= 360;
+            if (N < 0) { N += 360; }
+            F %= 360;
+            if (F < 0) { F += 360; }
+
+            //Convert DMF to radians
+            D = D * Math.PI / 180;
+            M = M * Math.PI / 180;
+            N = N * Math.PI / 180;
+            F = F * Math.PI / 180;
+
+            double dist = 385000.56 + (MeeusTables.Moon_Periodic_Er(D,M,N,F,T) / 1000);
+            return new Distance(dist);
+        }
+
         public class MoonTimes
         {
             public DateTime set { get; set; }
@@ -585,7 +628,7 @@ namespace CoordinateSharp
         {
             public double Azimuth { get; set; }
             public double Altitude { get; set; }
-            public double Distance { get; set; }
+            public Distance Distance { get; set; }
             public double ParallacticAngle { get; set; }
         }
         public class CelCoords

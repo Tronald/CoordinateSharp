@@ -90,7 +90,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Estimated moon distance from the earth in kilometers
         /// </summary>
-        public double? MoonDistance { get; set; }
+        public Distance MoonDistance { get; set; }
         /// <summary>
         /// Sun's Condition based on the provided UTC date
         /// </summary>
@@ -152,7 +152,7 @@ namespace CoordinateSharp
             SunCalc.CalculateSunTime(lat, longi, date, this);
             MoonCalc.GetMoonTimes(date, lat, longi, this);
             MoonCalc.GetMoonDistance(date, this);
-
+            
 
             SunCalc.CalculateZodiacSign(date, this);
             MoonCalc.GetMoonSign(date, this);
