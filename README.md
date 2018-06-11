@@ -26,6 +26,7 @@ CAUTION: v.1.1.3.1 is considered a breaking change as `MoonDistance` has been co
 * -Adds ability to get Moon's Perigee and Apogee information based on date.
 * -Improved moon distance calculations.
 * -Converted `MoonDistance` property from `double?` to `Distance`. 
+* -Updated Julian conversion for more accuracy when dates occur before Gregorian. 
 ### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
 ### 1.1.2.7 Change Notes
