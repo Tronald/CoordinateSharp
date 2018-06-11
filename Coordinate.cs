@@ -16,6 +16,7 @@ namespace CoordinateSharp
     [Serializable]
     public class Coordinate : INotifyPropertyChanged
     {     
+
         /// <summary>
         /// Creates an empty Coordinates object
         /// </summary>
@@ -62,7 +63,7 @@ namespace CoordinateSharp
         /// Geodate will default to 1/1/1900 GMT until provided
         /// </remarks>
         public Coordinate(double lat, double longi)
-        {
+        {         
             this.FormatOptions = new CoordinateFormatOptions();
             this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);

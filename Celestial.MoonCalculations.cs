@@ -266,7 +266,7 @@ namespace CoordinateSharp
          
             foreach (List<string> values in se)
             {
-                DateTime ld = Convert.ToDateTime(values[0], System.Globalization.CultureInfo.InvariantCulture);
+                DateTime ld = DateTime.ParseExact(values[0], "yyyy-MMM-dd", System.Globalization.CultureInfo.InvariantCulture);
                 if (ld < date && ld > lastDate) { lastDate = ld; lastE = currentE; }
                 if (ld >= date && ld < nextDate) { nextDate = ld; nextE = currentE; }
                 currentE++;
@@ -319,7 +319,7 @@ namespace CoordinateSharp
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
            
-            double d = JulianConversions.GetJulian_FromEpoch2000(date);
+            double d = JulianConversions.GetJulian(date);
             
             CelCoords cel = GetMoonCoords(d, c);
             c.MoonDistance = GetMoonDistance(date);      //Updating distance formula    
@@ -549,40 +549,63 @@ namespace CoordinateSharp
         }
 
         public static Perigee GetPerigeeEvents(DateTime d)
-        {        
-            PerigeeApogee per1 = MoonPerigeeOrApogee(d, MoonDistanceType.Perigee);
-            PerigeeApogee per2;
-            if(per1.Date < d)
+        {
+            //Iterate in 5 month increments due to formula variations.
+            //Determine closest events to date.
+            //apo1 is last date
+            //apo2 is next date
+            PerigeeApogee per1 = MoonPerigeeOrApogee(d.AddMonths(-2), MoonDistanceType.Perigee);
+            PerigeeApogee per2 = MoonPerigeeOrApogee(d.AddMonths(-2), MoonDistanceType.Perigee);
+            for (int x = -1; x < 3; x++)
             {
-                per2 = MoonPerigeeOrApogee(d.AddMonths(1), MoonDistanceType.Perigee);
-                return new Perigee(per1, per2);
+                PerigeeApogee t = MoonPerigeeOrApogee(d.AddMonths(x), MoonDistanceType.Perigee);
+                //Is event date greater the date
+                if (t.Date > per2.Date && t.Date >= d)
+                {
+                    per2 = t;
+                    break;
+                }
+                if (t.Date > per1.Date && t.Date < d)
+                {
+                    per1 = t;
+                    per2 = t;
+                }
+
             }
-            else
-            {
-                per2 = MoonPerigeeOrApogee(d.AddMonths(-1), MoonDistanceType.Perigee);
-                return new Perigee(per2, per1);
-            }                     
-        }       
+            return new Perigee(per1, per2);
+        }
         public static Apogee GetApogeeEvents(DateTime d)
         {
-            PerigeeApogee apo1 = MoonPerigeeOrApogee(d, MoonDistanceType.Apogee);
-            PerigeeApogee apo2;
-            if (apo1.Date < d)
+            //Iterate in 5 month increments due to formula variations.
+            //Determine closest events to date.
+            //apo1 is last date
+            //apo2 is next date
+            PerigeeApogee apo1 = MoonPerigeeOrApogee(d.AddMonths(-2), MoonDistanceType.Apogee);
+            PerigeeApogee apo2 = MoonPerigeeOrApogee(d.AddMonths(-2), MoonDistanceType.Apogee);
+            for (int x = -1; x < 3; x++)
             {
-                apo2 = MoonPerigeeOrApogee(d.AddMonths(1), MoonDistanceType.Apogee);
-                return new Apogee(apo1, apo2);
+                PerigeeApogee t = MoonPerigeeOrApogee(d.AddMonths(x), MoonDistanceType.Apogee);
+                //Is event date greater the date
+                if (t.Date > apo2.Date && t.Date >= d)
+                {
+                    apo2 = t;
+                    break;
+                }
+                if (t.Date > apo1.Date && t.Date < d)
+                {
+                    apo1 = t;
+                    apo2 = t;
+                }
+                
             }
-            else
-            {
-                apo2 = MoonPerigeeOrApogee(d.AddMonths(-1), MoonDistanceType.Apogee);
-                return new Apogee(apo2, apo1);
-            }
+            return new Apogee(apo1, apo2);
+
         }
 
         public static Distance GetMoonDistance(DateTime d)
         {
             //Ch 47
-            double JDE = JulianConversions.GetJulian_FromEpoch2000(d);//Get julian in centeries from epoch 2000
+            double JDE = JulianConversions.GetJulian(d);//Get julian 
             double T = (JDE - 2451545) / 36525; //Get dynamic time.
 
             //Moon's mean elongation 

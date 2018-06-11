@@ -629,8 +629,8 @@ namespace CoordinateSharp
             return circumstances;
         }
         // Get the date of an event
-        private static  string GetDate(double[] elements, double[] circumstances)
-        {
+        private static string GetDate(double[] elements, double[] circumstances)
+        {           
             double t, jd, a, b, c, d, e, index;
             string ans = "";
             index = obsvconst[6];

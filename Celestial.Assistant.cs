@@ -506,16 +506,7 @@ namespace CoordinateSharp
             double JD = (int)(365.25 * (y + 4716)) + (int)(30.6001 * (m + 1)) + dy + B - 1524.5;
             return JD;
         }
-        /// <summary>
-        /// Returns JD from Epoch2000.
-        /// Meeus Ch 7.
-        /// </summary>
-        /// <param name="d">DateTime</param>
-        /// <returns>JDE</returns>
-        public static double GetJulian_FromEpoch2000(DateTime d)
-        {
-            return GetJulian(d) - J2000;
-        }
+       
         /// <summary>
         /// Returns date from Julian
         /// Meeus ch. 7
@@ -596,7 +587,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Next perigee
         /// </summary>
-        public PerigeeApogee NextPerigee { get { return NextPerigee; } }
+        public PerigeeApogee NextPerigee { get { return nextPerigee; } }
 
     }
     /// <summary>
