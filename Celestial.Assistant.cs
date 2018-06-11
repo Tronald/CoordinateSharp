@@ -177,6 +177,53 @@ namespace CoordinateSharp
             double sum = 3629.215;
 
             sum += Math.Cos(2 * D) * 63.224;
+            sum += Math.Cos(4 * D) * -6.990;
+            sum += Math.Cos(2 * D - M) * 2.834 - .0071 * T;
+            sum += Math.Cos(6 * D) * 1.927;
+            sum += Math.Cos(D) *-1.263;
+            sum += Math.Cos(8*D) *-.702;
+            sum += Math.Cos(M) *.696-.0017*T;
+            sum += Math.Cos(2*F) *-.690;
+            sum += Math.Cos(4 * D - M) * -.629 + .0016 * T;
+            sum += Math.Cos(2*D-2*F) *-.392;
+            sum += Math.Cos(10*D) *.297;
+            sum += Math.Cos(6*D-M) *.260;
+            sum += Math.Cos(3*D) *.201;
+            sum += Math.Cos(2*D+M) *-.161;
+            sum += Math.Cos(D+M) *.157;
+            sum += Math.Cos(12*D) *-.138;
+            sum += Math.Cos(8*D-M) *-.127;
+            sum += Math.Cos(2*D+2*F) *.104;
+            sum += Math.Cos(2*D-2*M) *.104;
+            sum += Math.Cos(5*D) *-.079;
+            sum += Math.Cos(14*D) *.068;
+
+            sum += Math.Cos(10*D-M) *.067;
+            sum += Math.Cos(4*D+M) *.054;
+            sum += Math.Cos(12*D-M) *-.038;
+            sum += Math.Cos(4*D-2*M) *-.038;
+            sum += Math.Cos(7*D) *.037;
+            sum += Math.Cos(4*D+2*F) *-.037;
+            sum += Math.Cos(16*D) *-.035;
+            sum += Math.Cos(3*D+M) *-.030;
+            sum += Math.Cos(D-M) *.029;
+            sum += Math.Cos(6*D+M) *-.025;
+            sum += Math.Cos(2*M) *.023;
+            sum += Math.Cos(14*D-M) *.023;
+            sum += Math.Cos(2*D+2*M) *-.023;
+            sum += Math.Cos(6*D-2*M) *.022;
+            sum += Math.Cos(2*D-2*F-M) *-.021;
+            sum += Math.Cos(9*D) *-.020;
+            sum += Math.Cos(18*D) *.019;
+            sum += Math.Cos(6*D+2*F) *.017;
+            sum += Math.Cos(2*F-M) *.014;
+            sum += Math.Cos(16*D-M) *-.014;
+            sum += Math.Cos(4*D-2*F) *.013;
+            sum += Math.Cos(8*D+M) *.012;
+            sum += Math.Cos(11*D) *.011;
+            sum += Math.Cos(5*D+M) *.010;
+            sum += Math.Cos(20*D) *-.010;
+
             return sum;
         }
     }
