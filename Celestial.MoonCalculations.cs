@@ -319,7 +319,7 @@ namespace CoordinateSharp
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
            
-            double d = JulianConversions.toDays(date);
+            double d = JulianConversions.GetJulian_FromEpoch2000(date);
             
             CelCoords cel = GetMoonCoords(d, c);
             c.MoonDistance = GetMoonDistance(date);      //Updating distance formula    
@@ -542,7 +542,7 @@ namespace CoordinateSharp
             {
                 termsB = MeeusTables.PerigeeTermsB(D, M, F, T);
             }
-            DateTime date = JulianConversions.fromJulian(JDE).Value;
+            DateTime date = JulianConversions.GetDate_FromJulian(JDE).Value;
             Distance dist = GetMoonDistance(date);
             PerigeeApogee ap = new PerigeeApogee(date, termsB, dist);
             return ap;
@@ -582,7 +582,7 @@ namespace CoordinateSharp
         public static Distance GetMoonDistance(DateTime d)
         {
             //Ch 47
-            double JDE = JulianConversions.toJulian(d);//Get julian in centeries from epoch 2000
+            double JDE = JulianConversions.GetJulian_FromEpoch2000(d);//Get julian in centeries from epoch 2000
             double T = (JDE - 2451545) / 36525; //Get dynamic time.
 
             //Moon's mean elongation 

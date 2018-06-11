@@ -367,7 +367,7 @@ namespace CoordinateSharp
     /// Contains distance values between two coordinates.
     /// </summary>
     [Serializable]
-    public class Distance
+    public class Distance 
     {     
         private double kilometers;        
         private double miles;
@@ -375,7 +375,7 @@ namespace CoordinateSharp
         private double meters;
         private double bearing;
         private double nauticalMiles;
-
+        
         /// <summary>
         /// Initializes a distance object using Haversine (Spherical Earth).
         /// </summary>
