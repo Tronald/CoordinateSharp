@@ -27,6 +27,7 @@ CAUTION: v.1.1.3.1 is considered a breaking change as `MoonDistance` has been co
 * -Improved moon distance accuracy.
 * -Converted `MoonDistance` property from `double?` to `Distance`. 
 * -Updated Julian conversion for more accuracy when dates occur before Gregorian. 
+* -Exposed Julian conversion for users to access.
 * -Removed scheduled obsolete properties.
 ### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
