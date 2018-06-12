@@ -129,16 +129,6 @@ namespace CoordinateSharp
         /// </summary>
         public LunarEclipse LunarEclipse { get; set; }
 
-
-        /// <summary>
-        /// Moon illumination phase
-        /// </summary>
-        /// <remarks>
-        /// This property is obsolete and has moved to the MoonIllum property
-        /// </remarks>
-        [Obsolete("MoonPhase can be accessed through the MoonIllum property.")]
-        public double MoonPhase { get { return this.MoonIllum.Phase; } }
-
         /// <summary>
         /// Calculates all celestial data. Coordinates will notify as changes occur
         /// </summary>

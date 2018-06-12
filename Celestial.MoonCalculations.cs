@@ -92,7 +92,7 @@ namespace CoordinateSharp
         static MoonPosition GetMoonPosition(DateTime date, double lat, double lng, Celestial cel)
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-            double d = JulianConversions.toDays(date);
+            double d = JulianConversions.GetJulian_Epoch2000(date);
 
             CelCoords c = GetMoonCoords(d, cel);
             double lw = rad * -lng;
@@ -135,7 +135,7 @@ namespace CoordinateSharp
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
          
-            double d = JulianConversions.toDays(date);
+            double d = JulianConversions.GetJulian_Epoch2000(date);
             CelCoords s = GetSunCoords(d);
             CelCoords m = GetMoonCoords(d, c);
 
@@ -164,7 +164,7 @@ namespace CoordinateSharp
             for(int x = 1;x<= date.Day;x++)
             {               
                 DateTime nDate = new DateTime(dMon.Year, dMon.Month, x, 0, 0, 0, DateTimeKind.Utc);
-                d = JulianConversions.toDays(nDate);
+                d = JulianConversions.GetJulian_Epoch2000(nDate);
                 s = GetSunCoords(d);
                 m = GetMoonCoords(d, c);
 
@@ -176,7 +176,7 @@ namespace CoordinateSharp
                 double startPhase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
 
                 nDate = new DateTime(dMon.Year, dMon.Month, x, 23, 59, 59, DateTimeKind.Utc);
-                d = JulianConversions.toDays(nDate);
+                d = JulianConversions.GetJulian_Epoch2000(nDate);
                 s = GetSunCoords(d);
                 m = GetMoonCoords(d, c);
 
@@ -630,14 +630,14 @@ namespace CoordinateSharp
             if (N < 0) { N += 360; }
             F %= 360;
             if (F < 0) { F += 360; }
-
+            
             //Convert DMF to radians
             D = D * Math.PI / 180;
             M = M * Math.PI / 180;
             N = N * Math.PI / 180;
             F = F * Math.PI / 180;
-
-            double dist = 385000.56 + (MeeusTables.Moon_Periodic_Er(D,M,N,F,T) / 1000);
+           
+            double dist = 385000.56 + (MeeusTables.Moon_Periodic_Er(D, M, N, F, T) / 1000);
             return new Distance(dist);
         }
 

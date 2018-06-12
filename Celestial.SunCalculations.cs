@@ -13,7 +13,7 @@ namespace CoordinateSharp
             //Sun Time Calculations
             date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);      
             double zone = -(int)Math.Round(TimeZone.CurrentTimeZone.GetUtcOffset(date).TotalSeconds / 3600);     
-            double jd = JulianConversions.GetJulianDay(date) - 2451545;  // Julian day relative to Jan 1.5, 2000
+            double jd = JulianConversions.GetJulian(date) - 2451545;  // Julian day relative to Jan 1.5, 2000
 
             double lon = longi / 360;
             double tz = zone / 24;
@@ -308,7 +308,7 @@ namespace CoordinateSharp
         private static void getTimes(DateTime date, double lng, double lat, Celestial c)
         {
             //Get Julian
-            double d = JulianConversions.GetJulianDay(date) - j2000 + .5; //LESS PRECISE JULIAN NEEDED
+            double d = JulianConversions.GetJulian(date) - j2000 + .5; //LESS PRECISE JULIAN NEEDED
             
             double lw = rad * -lng;
             double phi = rad * lat;
@@ -327,8 +327,8 @@ namespace CoordinateSharp
             double Jset;
             double Jrise;
 
-            DateTime? solarNoon = JulianConversions.fromJulian(Jnoon);
-            DateTime? nadir = JulianConversions.fromJulian(Jnoon - 0.5);
+            DateTime? solarNoon = JulianConversions.GetDate_FromJulian(Jnoon);
+            DateTime? nadir = JulianConversions.GetDate_FromJulian(Jnoon - 0.5);
 
             c.AdditionalSolarTimes = new AdditionalSolarTimes();
 
@@ -336,14 +336,14 @@ namespace CoordinateSharp
             Jset = GetTime(-6 * rad, lw, phi, dec, n, M, L); 
             Jrise = Jnoon - (Jset - Jnoon);
            
-            c.AdditionalSolarTimes.CivilDawn = JulianConversions.fromJulian(Jrise);
-            c.AdditionalSolarTimes.CivilDusk = JulianConversions.fromJulian(Jset);
+            c.AdditionalSolarTimes.CivilDawn = JulianConversions.GetDate_FromJulian(Jrise);
+            c.AdditionalSolarTimes.CivilDusk = JulianConversions.GetDate_FromJulian(Jset);
 
             Jset = GetTime(-12 * rad, lw, phi, dec, n, M, L);        
             Jrise = Jnoon - (Jset - Jnoon);
         
-            c.AdditionalSolarTimes.NauticalDawn = JulianConversions.fromJulian(Jrise);
-            c.AdditionalSolarTimes.NauticalDusk = JulianConversions.fromJulian(Jset);          
+            c.AdditionalSolarTimes.NauticalDawn = JulianConversions.GetDate_FromJulian(Jrise);
+            c.AdditionalSolarTimes.NauticalDusk = JulianConversions.GetDate_FromJulian(Jset);          
         }
        
         private static void CalculateSunPosition(double jd, double ct)
