@@ -29,6 +29,7 @@ CAUTION: v.1.1.3.1 is considered a breaking change as `MoonDistance` has been co
 * -Updated Julian conversion for more accuracy when dates occur before Gregorian. 
 * -Exposed Julian conversion for users to access.
 * -Removed scheduled obsolete properties.
+* -Adjusted string conversion in eclipse calculations to account for different thread culture.
 ### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
 ### 1.1.2.7 Change Notes
