@@ -420,68 +420,13 @@ namespace CoordinateSharp
         }
     }
     /// <summary>
-    /// Used for Julian date conversions
+    /// Julian date conversions
     /// </summary>
-    internal class JulianConversions
+    public class JulianConversions
     {
-        private static double dayMs = 1000 * 60 * 60 * 24, J1970 = 2440588, J2000 = 2451545;
-        public static double toJulian(DateTime date)
-        {
-            DateTime d = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            DateTime t = date;
-            double l = (double)(t - d).TotalMilliseconds;
-            double tj = l / dayMs - 0.5 + J1970;
-
-            return tj;
-
-        }
-        public static double toDays(DateTime date)
-        {
-            double d = toJulian(date) - J2000;
-
-            return d;
-        }
-        public static double GetJulianDay(DateTime date)
-        {
-            int month = date.Month;
-            int day = date.Day;
-            int year = date.Year;
-
-            bool gregorian = (year < 1583) ? false : true;
-
-            if ((month == 1) || (month == 2))
-            {
-                year = year - 1;
-                month = month + 12;
-            }
-
-            double a = Math.Truncate((double)year / 100);
-            double b = 0;
-
-            if (gregorian)
-                b = 2 - a + Math.Truncate(a / 4);
-            else
-                b = 0.0;
-
-            double jd = Math.Truncate(365.25 * (year + 4716))
-                       + Math.Truncate(30.6001 * (month + 1))
-                       + day + b - 1524.5;
-
-            return jd;
-        }
-        public static DateTime? fromJulian(double j)
-        {
-            if (Double.IsNaN(j)) { return null; } //No Event Occured
-
-            double unixTime = (j + 0.5 - J1970) * 86400;
-
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1);
-            dtDateTime = dtDateTime.AddSeconds(unixTime);
-
-            return dtDateTime;
-
-        }
         //1.1.3.1
+        private static double J1970 = 2440588, J2000 = 2451545;
+
         /// <summary>
         /// Returns JD.
         /// Meeus Ch 7.
@@ -508,7 +453,27 @@ namespace CoordinateSharp
             double JD = (int)(365.25 * (y + 4716)) + (int)(30.6001 * (m + 1)) + dy + B - 1524.5;
             return JD;
         }
-       
+        /// <summary>
+        /// Returns JD from epoch 2000.
+        /// Meeus Ch 7.
+        /// </summary>
+        /// <param name="d">DateTime</param>
+        /// <returns>JDE</returns>
+        public static double GetJulian_Epoch2000(DateTime d)
+        {
+            return GetJulian(d) - J2000;
+        }
+        /// <summary>
+        /// Returns JD from epoch 1970.
+        /// Meeus Ch 7.
+        /// </summary>
+        /// <param name="d">DateTime</param>
+        /// <returns>JDE</returns>
+        public static double GetJulian_Epoch1970(DateTime d)
+        {
+            return GetJulian(d) - J1970;
+        }
+
         /// <summary>
         /// Returns date from Julian
         /// Meeus ch. 7
@@ -560,7 +525,26 @@ namespace CoordinateSharp
             DateTime? date = new DateTime?(new DateTime((int)year, (int)month, (int)day, (int)hours, (int)minutes, (int)seconds));
             return date;
         }
-       
+        /// <summary>
+        /// Returns date from Julian based on epoch 2000
+        /// Meeus ch. 7
+        /// </summary>
+        /// <param name="j">Julian</param>
+        /// <returns>DateTime</returns>
+        public static DateTime? GetDate_FromJulian_Epoch2000(double j)
+        {
+            return GetDate_FromJulian(j+J2000);
+        }
+        /// <summary>
+        /// Returns date from Julian based on epoch 1970
+        /// Meeus ch. 7
+        /// </summary>
+        /// <param name="j">Julian</param>
+        /// <returns>DateTime</returns>
+        public static DateTime? GetDate_FromJulian_Epoch1970(double j)
+        {
+            return GetDate_FromJulian(j + J1970);
+        }
     }
     /// <summary>
     /// Contains last and next perigee
