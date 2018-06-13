@@ -263,8 +263,8 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   * -Moon Illumination (Phase, Phase Name, etc)
   * -Additional Solar Times (Civil/Nautical Dawn/Dusk)
   * -Astrological Information (Moon Sign, Zodiac Sign, Moon Name If Full Moon")
-  * -Solar/Lunar Eclipse information (see below).
-  * -Perigee/Apogee dates (static functions only as these values are not dependent upon location).
+  * -Solar/Lunar Eclipse information.
+  * -Perigee/Apogee information.
     
   Sun/Moon Set and Rise DateTimes are nullable. If a null value is returned the Sun or Moon Condition needs to be viewed to see why. In the below example we are using a lat/long near the North Pole with a date in August. The sun does not set that far North during the specified time of year.
   
@@ -293,11 +293,11 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   cel.SunRise.Value.ToString();
   ```
   
-  Pergee and Apogee information is available, but must be called specifically as these properties are not location dependent.
-
+  Pergee and Apogee information is available in the `Celestial` class but may be called specifically as it is not location dependent.
   ```C#
   Perigee p = Celestial.GetPerigee(date);
-  p.LastApogee.Date;
+  p.LastPerigee.Date;
+  p.LastPerigee.Distance.Kilometers;
   ```
 
   Solar and Lunar Eclipse.
