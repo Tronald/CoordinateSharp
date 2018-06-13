@@ -339,7 +339,7 @@ The Julian date converters used by the library have been exposed for use. The co
  double jul = JulianConversions.GetJulian(date);
  
  //From Julian
- DateTime date =JulianConversions.GetDate_FromJulian(jul));
+ DateTime date = JulianConversions.GetDate_FromJulian(jul));
  
  //Epoch options also exist
  JulianConversions.GetJulian_Epoch2000(date);    
