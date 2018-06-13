@@ -15,6 +15,7 @@ CAUTION: v.1.1.3.1 is considered a breaking change as `MoonDistance` has been co
 * [Calculating Distance](#calculating-distance-and-moving-a-coordinate)
 * [Binding and MVVM](#binding-and-mvvm)
 * [Celestial Information](#celestial-information)
+* [Julian Date Conversions](#julian-date-conversions)
 * [Eager Loading](#eager-loading)
 ### Acknowledgements
 * [Acknowledgements](#acknowledgements)
@@ -328,6 +329,21 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   Properties will return `0001/1/1 12:00:00` if the referenced event didn't occur. For example if a solar eclipse is not a Total or Annular eclipse, the `AorTEclipseBegin` property won't return a populated DateTime. 
 
   NOTE REGARDING CALCULATIONS: The formulas used take into account the locations altitude. Currently all calculations for eclipse timing are set with an altitude of 100 meters. Slight deviations in actual eclipse timing may occur based on the locations actual altitude. Deviations are very minimal and should suffice for most applications.
+
+### Julian Date Conversions
+
+The Julian date converters used by the library have been exposed for use. They converters account for both Julian and Gregorian calendars.
+
+```C#
+ //To Julian
+ double jul = JulianConversions.GetJulian(date);
+ 
+ //From Julian
+ DateTime date =JulianConversions.GetDate_FromJulian(jul));
+ 
+ //Epoch options also exist
+ JulianConversions.GetJulian_Epoch2000(date);    
+```
   
 ### Eager Loading
 
@@ -347,6 +363,8 @@ c.EagerLoadSettings.Celestial = false;
  ```
    
 # Acknowledgements
+
+Most celestial calculations are based on "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
 
 SunTime calculations were adapted from NOAA and Zacky Pickholz 2008 "C# Class for Calculating Sunrise and Sunset Times" 
  [NOAA](https://www.esrl.noaa.gov/gmd/grad/solcalc/main.js)
