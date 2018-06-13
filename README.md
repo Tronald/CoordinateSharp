@@ -332,7 +332,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
 
 ### Julian Date Conversions
 
-The Julian date converters used by the library have been exposed for use. They converters account for both Julian and Gregorian calendars.
+The Julian date converters used by the library have been exposed for use. The converters account for both Julian and Gregorian calendars.
 
 ```C#
  //To Julian
