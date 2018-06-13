@@ -550,15 +550,18 @@ namespace CoordinateSharp
 
         public static Perigee GetPerigeeEvents(DateTime d)
         {
-            //Iterate in 5 month increments due to formula variations.
+            //Iterate in 15 day increments due to formula variations.
             //Determine closest events to date.
             //apo1 is last date
             //apo2 is next date
-            PerigeeApogee per1 = MoonPerigeeOrApogee(d.AddMonths(-2), MoonDistanceType.Perigee);
-            PerigeeApogee per2 = MoonPerigeeOrApogee(d.AddMonths(-2), MoonDistanceType.Perigee);
-            for (int x = -1; x < 3; x++)
+            PerigeeApogee per1 = MoonPerigeeOrApogee(d.AddDays(-45), MoonDistanceType.Perigee);
+            PerigeeApogee per2 = MoonPerigeeOrApogee(d.AddDays(-45), MoonDistanceType.Perigee);
+            for (int x = -30; x <= 45; x+=15)
             {
-                PerigeeApogee t = MoonPerigeeOrApogee(d.AddMonths(x), MoonDistanceType.Perigee);
+              
+                PerigeeApogee t = MoonPerigeeOrApogee(d.AddDays(x), MoonDistanceType.Perigee);
+                System.Diagnostics.Debug.Print("per: " + x.ToString() + " " + per1.Date.ToString());
+                System.Diagnostics.Debug.Print("t: " + x.ToString() + " " + t.Date.ToString());
                 //Is event date greater the date
                 if (t.Date > per2.Date && t.Date >= d)
                 {
@@ -580,11 +583,11 @@ namespace CoordinateSharp
             //Determine closest events to date.
             //apo1 is last date
             //apo2 is next date
-            PerigeeApogee apo1 = MoonPerigeeOrApogee(d.AddMonths(-2), MoonDistanceType.Apogee);
-            PerigeeApogee apo2 = MoonPerigeeOrApogee(d.AddMonths(-2), MoonDistanceType.Apogee);
-            for (int x = -1; x < 3; x++)
+            PerigeeApogee apo1 = MoonPerigeeOrApogee(d.AddDays(-45), MoonDistanceType.Apogee);
+            PerigeeApogee apo2 = MoonPerigeeOrApogee(d.AddDays(-45), MoonDistanceType.Apogee);
+            for (int x = -30; x <= 45; x+=15)
             {
-                PerigeeApogee t = MoonPerigeeOrApogee(d.AddMonths(x), MoonDistanceType.Apogee);
+                PerigeeApogee t = MoonPerigeeOrApogee(d.AddDays(x), MoonDistanceType.Apogee);
                 //Is event date greater the date
                 if (t.Date > apo2.Date && t.Date >= d)
                 {

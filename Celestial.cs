@@ -22,8 +22,7 @@ namespace CoordinateSharp
             AstrologicalSigns = new AstrologicalSigns();
             LunarEclipse = new LunarEclipse();
             SolarEclipse = new SolarEclipse();
-            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-          
+            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc));                     
         }
         private Celestial(bool hasCalcs)
         {
@@ -108,6 +107,15 @@ namespace CoordinateSharp
         /// </remarks>
         public MoonIllum MoonIllum { get; set; }
         /// <summary>
+        /// Moons perigee details based on the provided UTC date.
+        /// </summary>
+        public Perigee Perigee { get; set; }
+        /// <summary>
+        /// Moons apogee details based on the provided UTC date.
+        /// </summary>
+        public Apogee Apogee { get; set; }
+
+        /// <summary>
         /// Additional solar event times based on the provided UTC date and location
         /// </summary>
         /// <remarks>Contains civil and nautical dawn and dusk times.</remarks>
@@ -151,7 +159,8 @@ namespace CoordinateSharp
 
             SunCalc.CalculateAdditionSolarTimes(date, longi, lat, this);
 
-
+            this.Perigee = MoonCalc.GetPerigeeEvents(date);
+            this.Apogee = MoonCalc.GetApogeeEvents(date);
 
         }
         /// <summary>
@@ -174,6 +183,9 @@ namespace CoordinateSharp
             MoonCalc.GetMoonSign(date, c);
             MoonCalc.GetMoonIllumination(date, c,lat,longi);
             SunCalc.CalculateAdditionSolarTimes(date, longi, lat, c);
+
+            c.Perigee = MoonCalc.GetPerigeeEvents(date);
+            c.Apogee = MoonCalc.GetApogeeEvents(date);
 
             return c;
         }
@@ -213,6 +225,9 @@ namespace CoordinateSharp
             MoonCalc.GetMoonDistance(date, c);
             MoonCalc.GetMoonSign(date, c);
             MoonCalc.GetMoonIllumination(date, c,lat,longi);
+
+            c.Perigee = MoonCalc.GetPerigeeEvents(date);
+            c.Apogee = MoonCalc.GetApogeeEvents(date);
 
             return c;
         }
