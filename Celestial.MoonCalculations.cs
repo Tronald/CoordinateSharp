@@ -75,7 +75,8 @@ namespace CoordinateSharp
 
             if (rise != null) { c.MoonRise = hoursLater(t, rise.Value); }
             if (set != null) { c.MoonSet = hoursLater(t, set.Value); }
-
+            isRise = rise.HasValue;
+            isSet = set.HasValue;
             if (isRise && isSet) { c.MoonCondition = CelestialStatus.RiseAndSet; }
             else
             {
@@ -87,6 +88,7 @@ namespace CoordinateSharp
                 if (!isRise && isSet) { c.MoonCondition = CelestialStatus.NoRise; }
                 if (isRise && !isSet) { c.MoonCondition = CelestialStatus.NoSet; }
             }
+            //integrity check.
 
         }
         static MoonPosition GetMoonPosition(DateTime date, double lat, double lng, Celestial cel)
@@ -560,8 +562,7 @@ namespace CoordinateSharp
             {
               
                 PerigeeApogee t = MoonPerigeeOrApogee(d.AddDays(x), MoonDistanceType.Perigee);
-                System.Diagnostics.Debug.Print("per: " + x.ToString() + " " + per1.Date.ToString());
-                System.Diagnostics.Debug.Print("t: " + x.ToString() + " " + t.Date.ToString());
+             
                 //Is event date greater the date
                 if (t.Date > per2.Date && t.Date >= d)
                 {
