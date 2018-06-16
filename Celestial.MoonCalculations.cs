@@ -612,6 +612,23 @@ namespace CoordinateSharp
             double JDE = JulianConversions.GetJulian(d);//Get julian 
             double T = (JDE - 2451545) / 36525; //Get dynamic time.
 
+            double[] values = Get_Moon_LDMNF(T);
+
+            double D = values[1];
+            double M = values[2];
+            double N = values[3];
+            double F = values[4];
+
+            double dist = 385000.56 + (MeeusTables.Moon_Periodic_Er(D, M, N, F, T) / 1000);
+            return new Distance(dist);
+        }
+
+        static double[] Get_Moon_LDMNF(double T)
+        {
+            //T = dynamic time
+
+            double L = 0;
+
             //Moon's mean elongation 
             double D = 297.8501921 + 445267.1114034 * T -
                 0.0018819 * Math.Pow(T, 2) + Math.Pow(T, 3) / 545868 - Math.Pow(T, 4) / 113065000;
@@ -622,8 +639,8 @@ namespace CoordinateSharp
             double N = 134.9633964 + 477198.8675055 * T + .0087414 * Math.Pow(T, 2) +
                 Math.Pow(T, 3) / 69699 - Math.Pow(T, 4) / 14712000;
             //Moon's argument of latitude
-            double F=93.2720950+483202.0175233*T-.0036539*Math.Pow(T,2)-Math.Pow(T,3) / 
-                3526000+Math.Pow(T,4)/863310000;
+            double F = 93.2720950 + 483202.0175233 * T - .0036539 * Math.Pow(T, 2) - Math.Pow(T, 3) /
+                3526000 + Math.Pow(T, 4) / 863310000;
 
             //Normalize DMF to a 0-360 degree number
             D %= 360;
@@ -634,15 +651,13 @@ namespace CoordinateSharp
             if (N < 0) { N += 360; }
             F %= 360;
             if (F < 0) { F += 360; }
-            
+
             //Convert DMF to radians
             D = D * Math.PI / 180;
             M = M * Math.PI / 180;
             N = N * Math.PI / 180;
             F = F * Math.PI / 180;
-           
-            double dist = 385000.56 + (MeeusTables.Moon_Periodic_Er(D, M, N, F, T) / 1000);
-            return new Distance(dist);
+            return new double[] { L, D, M, N, F };
         }
 
         public class MoonTimes
