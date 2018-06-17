@@ -267,17 +267,22 @@ namespace CoordinateSharp
             if (A1 < 0) { A1 += 360; }
             A2 %= 360;
             if (A2 < 0) { A2 += 360; }
-         
+
             //Convert DMF to radians
             A1 = A1 * Math.PI / 180;
             A2 = A2 * Math.PI / 180;
 
+            //L TO RADIANS
+            L %= 360;
+            if (L < 0) { L += 360; }
+
+            //Convert DMF to radians
+            L = L * Math.PI / 180;
+
             sum += 3958 * Math.Sin(A1);
             sum += 1962 * Math.Sin(L - F);
             sum += 318 * Math.Sin(A2);
-            double nSum = sum % 360;
             
-            //System.Diagnostics.Debug.Print("EL SUM: " + nSum.ToString());
             return sum;
         }
         /// <summary>
@@ -314,14 +319,20 @@ namespace CoordinateSharp
             A1 = A1 * Math.PI / 180;
             A3 = A3 * Math.PI / 180;
 
+            //L TO RADIANS
+            L %= 360;
+            if (L < 0) { L += 360; }
+
+            //Convert DMF to radians
+            L = L * Math.PI / 180;
+
             sum += -2235 * Math.Sin(L);
             sum += 382 * Math.Sin(A3);
             sum += 175 * Math.Sin(A1 - F);
             sum += 175 * Math.Sin(A1 + F);
             sum += 127 * Math.Sin(L - M);
             sum += -115 * Math.Sin(L + M);
-
-            // System.Diagnostics.Debug.Print("EB SUM: " + sum.ToString());
+            
             return sum;
         }
         //Ch 50

@@ -670,7 +670,7 @@ namespace CoordinateSharp
             double F = 93.2720950 + 483202.0175233 * T - .0036539 * Math.Pow(T, 2) - Math.Pow(T, 3) /
                 3526000 + Math.Pow(T, 4) / 863310000;
 
-            //Normalize DMF to a 0-360 degree number
+            //Normalize DMF to a 0-360 degree number      
             D %= 360;
             if (D < 0) { D += 360; }
             M %= 360;
@@ -679,8 +679,9 @@ namespace CoordinateSharp
             if (N < 0) { N += 360; }
             F %= 360;
             if (F < 0) { F += 360; }
-
+           
             //Convert DMF to radians
+          
             D = D * Math.PI / 180;
             M = M * Math.PI / 180;
             N = N * Math.PI / 180;
@@ -694,8 +695,10 @@ namespace CoordinateSharp
             CelCoords cc = new CelCoords();
             double lat = LDMNF[0] + (MeeusTables.Moon_Periodic_El(LDMNF[0], LDMNF[1], LDMNF[2], LDMNF[3], LDMNF[4],T)/1000000);
             double longi = MeeusTables.Moon_Periodic_Eb(LDMNF[0], LDMNF[1], LDMNF[2], LDMNF[3], LDMNF[4], T) / 1000000;
+           
             double l = rad *  lat; // longitude
             double b = rad * longi;    // latitude
+           
             return new double[] { l, b };
         }
 
