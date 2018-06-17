@@ -25,7 +25,7 @@ CAUTION: v.1.1.3.1 is considered a breaking change as `MoonDistance` has been co
 ### 1.1.3.1 Change Notes
 * -Celestial.Assistant.cs added to reduce class file size.
 * -Adds ability to get Moon's Perigee and Apogee information based on date.
-* -Improved moon distance accuracy.
+* -Improved accuracy of lunar properties.
 * -Converted `MoonDistance` property from `double?` to `Distance`. 
 * -Updated Julian conversion for more accuracy when dates occur before Gregorian. 
 * -Exposed Julian conversion for users to access.
