@@ -95,8 +95,13 @@ namespace CoordinateSharp
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
             double d = JulianConversions.GetJulian_Epoch2000(date);
-
-            CelCoords c = GetMoonCoords(d, cel);
+            
+            //Ch 47
+            double JDE = JulianConversions.GetJulian(date);//Get julian 
+            double T = (JDE - 2451545) / 36525; //Get dynamic time.
+            double[] LDMNF = Get_Moon_LDMNF(T);
+            CelCoords c = GetMoonCoords(d, cel,LDMNF, T);
+    
             double lw = rad * -lng;
             double phi = rad * lat;
             double H = siderealTime(d, lw) - c.ra;
@@ -114,22 +119,21 @@ namespace CoordinateSharp
             mp.ParallacticAngle = pa;
             return mp;
         }
-        static CelCoords GetMoonCoords(double d, Celestial c)
-        {   
+        static CelCoords GetMoonCoords(double d, Celestial c, double[] LDMNF, double t)
+        {
+            // Legacy function. Updated with Meeus Calcs for increased accuracy.
             // geocentric ecliptic coordinates of the moon
-            //Formulas used from http://aa.quae.nl/en/reken/hemelpositie.html#1_3
-            double L = rad * (218.316 + 13.176396 * d), // ecliptic longitude
-                M = rad * (134.963 + 13.064993 * d), // mean anomaly
-                F = rad * (93.272 + 13.229350 * d),  // mean distance
+            // Meeus Ch 47
+            double[] cs = Get_Moon_Coordinates(LDMNF, t);
 
-                l = L + rad * 6.289 * Math.Sin(M), // longitude
-                b = rad * 5.128 * Math.Sin(F),     // latitude
-                dt = 385001 - 20905 * Math.Cos(M);  // distance to the moon in km
+            double l = cs[0]; // longitude
+            double b = cs[1];    // latitude
+
             //c.MoonSign = MoonSign(l);
             CelCoords mc = new CelCoords();
             mc.ra = rightAscension(l, b);
             mc.dec = declination(l, b);
-            mc.dist = dt;
+
             return mc;
         }
       
@@ -139,7 +143,11 @@ namespace CoordinateSharp
          
             double d = JulianConversions.GetJulian_Epoch2000(date);
             CelCoords s = GetSunCoords(d);
-            CelCoords m = GetMoonCoords(d, c);
+            double JDE = JulianConversions.GetJulian(date);//Get julian 
+            double T = (JDE - 2451545) / 36525; //Get dynamic time.
+            double[] LDMNF = Get_Moon_LDMNF(T);
+          
+            CelCoords m = GetMoonCoords(d, c,LDMNF, T);
 
             double sdist = 149598000,
             phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra)),
@@ -168,7 +176,10 @@ namespace CoordinateSharp
                 DateTime nDate = new DateTime(dMon.Year, dMon.Month, x, 0, 0, 0, DateTimeKind.Utc);
                 d = JulianConversions.GetJulian_Epoch2000(nDate);
                 s = GetSunCoords(d);
-                m = GetMoonCoords(d, c);
+                JDE = JulianConversions.GetJulian(nDate);//Get julian 
+                T = (JDE - 2451545) / 36525; //Get dynamic time.
+                LDMNF = Get_Moon_LDMNF(T);        
+                m = GetMoonCoords(d, c,LDMNF,T);
 
                 phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra));
                 inc = Math.Atan2(sdist * Math.Sin(phi), m.dist - sdist * Math.Cos(phi));
@@ -180,7 +191,10 @@ namespace CoordinateSharp
                 nDate = new DateTime(dMon.Year, dMon.Month, x, 23, 59, 59, DateTimeKind.Utc);
                 d = JulianConversions.GetJulian_Epoch2000(nDate);
                 s = GetSunCoords(d);
-                m = GetMoonCoords(d, c);
+                JDE = JulianConversions.GetJulian(nDate);//Get julian 
+                T = (JDE - 2451545) / 36525; //Get dynamic time.
+                LDMNF = Get_Moon_LDMNF(T);
+                m = GetMoonCoords(d, c,LDMNF,T);
 
                 phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra));
                 inc = Math.Atan2(sdist * Math.Sin(phi), m.dist - sdist * Math.Cos(phi));
@@ -321,9 +335,6 @@ namespace CoordinateSharp
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
            
-            double d = JulianConversions.GetJulian(date);
-            
-            CelCoords cel = GetMoonCoords(d, c);
             c.MoonDistance = GetMoonDistance(date);      //Updating distance formula    
         }
         //Moon Time Functions
@@ -622,12 +633,29 @@ namespace CoordinateSharp
             double dist = 385000.56 + (MeeusTables.Moon_Periodic_Er(D, M, N, F, T) / 1000);
             return new Distance(dist);
         }
+        private static Distance GetMoonDistance(DateTime d, double[] values)
+        {
+            //Ch 47
+            double JDE = JulianConversions.GetJulian(d);//Get julian 
+            double T = (JDE - 2451545) / 36525; //Get dynamic time.        
+
+            double D = values[1];
+            double M = values[2];
+            double N = values[3];
+            double F = values[4];
+
+            double dist = 385000.56 + (MeeusTables.Moon_Periodic_Er(D, M, N, F, T) / 1000);
+            return new Distance(dist);
+        }
 
         static double[] Get_Moon_LDMNF(double T)
         {
             //T = dynamic time
 
-            double L = 0;
+            //Moon's mean longitude
+            double L = 218.316447 + 481267.88123421 * T -
+                 .0015786 * Math.Pow(T, 2) + Math.Pow(T, 3) / 538841 -
+                 Math.Pow(T, 4) / 65194000;
 
             //Moon's mean elongation 
             double D = 297.8501921 + 445267.1114034 * T -
@@ -657,7 +685,18 @@ namespace CoordinateSharp
             M = M * Math.PI / 180;
             N = N * Math.PI / 180;
             F = F * Math.PI / 180;
+
             return new double[] { L, D, M, N, F };
+        }
+
+        static double[] Get_Moon_Coordinates(double[] LDMNF,double T)
+        {
+            CelCoords cc = new CelCoords();
+            double lat = LDMNF[0] + (MeeusTables.Moon_Periodic_El(LDMNF[0], LDMNF[1], LDMNF[2], LDMNF[3], LDMNF[4],T)/1000000);
+            double longi = MeeusTables.Moon_Periodic_Eb(LDMNF[0], LDMNF[1], LDMNF[2], LDMNF[3], LDMNF[4], T) / 1000000;
+            double l = rad *  lat; // longitude
+            double b = rad * longi;    // latitude
+            return new double[] { l, b };
         }
 
         public class MoonTimes
