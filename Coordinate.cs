@@ -1,4 +1,15 @@
-﻿using System;
+﻿/*
+ (c) 2017, Justin Gielski
+ CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate 
+ format conversions and location based celestial calculations.
+ https://github.com/Tronald/CoordinateSharp
+
+ Many celestial formulas in this library are based on Jean Meeus's 
+ Astronomical Algorithms (2nd Edition). Comments that reference only a chapter
+ are refering to this work.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
@@ -16,7 +27,6 @@ namespace CoordinateSharp
     [Serializable]
     public class Coordinate : INotifyPropertyChanged
     {     
-
         /// <summary>
         /// Creates an empty Coordinates object
         /// </summary>
