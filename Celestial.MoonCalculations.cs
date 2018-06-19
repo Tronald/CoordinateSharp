@@ -170,7 +170,7 @@ namespace CoordinateSharp
              int moonDate = 0;
             //GET PHASE NAME
 
-            //CHECK MOON AT BEGINNING AT END OF DAY TO GET DAY PHASE IN UTC
+            //CHECK MOON AT BEGINNING AT END OF DAY TO GET DAY PHASE
             DateTime dMon = new DateTime(date.Year, date.Month, 1);
             for(int x = 1;x<= date.Day;x++)
             {               

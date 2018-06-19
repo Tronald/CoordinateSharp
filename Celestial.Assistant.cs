@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Reflection;
 namespace CoordinateSharp
 {
     internal class MeeusTables
@@ -615,6 +615,24 @@ namespace CoordinateSharp
         {
             get { return distance; }
         }
+
+        internal void Convert_To_Local_Time(double offset)
+        {
+            FieldInfo[] fields = typeof(PerigeeApogee).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (FieldInfo field in fields)
+            {
+                if (field.FieldType == typeof(DateTime))
+                {
+                    DateTime d = (DateTime)field.GetValue(this);
+                    if (d > new DateTime())
+                    {
+                        d = d.AddHours(offset);
+                        field.SetValue(this, d);
+                    }
+                }
+            }
+        }
+
     }
     /// <summary>
     /// Julian date conversions
@@ -772,6 +790,12 @@ namespace CoordinateSharp
         /// </summary>
         public PerigeeApogee NextPerigee { get { return nextPerigee; } }
 
+        internal void ConvertTo_Local_Time(double offset)
+        {
+            LastPerigee.Convert_To_Local_Time(offset);
+            NextPerigee.Convert_To_Local_Time(offset);
+        }
+
     }
     /// <summary>
     /// Contains last and next apogee
@@ -801,6 +825,12 @@ namespace CoordinateSharp
         /// Next apogee
         /// </summary>
         public PerigeeApogee NextApogee { get { return nextApogee; } }
+
+        internal void ConvertTo_Local_Time(double offset)
+        {
+            LastApogee.Convert_To_Local_Time(offset);
+            NextApogee.Convert_To_Local_Time(offset);
+        }
     }
     /// <summary>
     /// Astrological Signs
@@ -855,6 +885,26 @@ namespace CoordinateSharp
         /// Returns Nautical Dusk Time
         /// </summary>
         public DateTime? NauticalDusk { get; set; }
+
+        internal void Convert_To_Local_Time(double offset)
+        {
+            FieldInfo[] fields = typeof(AdditionalSolarTimes).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (FieldInfo field in fields)
+            {
+                if (field.FieldType == typeof(DateTime?))
+                {
+                    DateTime? d = (DateTime?)field.GetValue(this);
+                    if (d.HasValue)
+                    {
+                        if (d > new DateTime())
+                        {
+                            d = d.Value.AddHours(offset);
+                            field.SetValue(this, d);
+                        }
+                    }
+                }
+            }
+        }
     }
     /// <summary>
     /// Class containing solar eclipse information
@@ -878,6 +928,12 @@ namespace CoordinateSharp
         /// Details about the next solar eclipse
         /// </summary>
         public SolarEclipseDetails NextEclipse { get; set; }
+
+        internal void ConvertTo_LocalTime(double offset)
+        {
+            LastEclipse.Convert_To_Local_Time(offset);
+            NextEclipse.Convert_To_Local_Time(offset);
+        }
     }
     /// <summary>
     /// Class containing lunar eclipse information
@@ -901,6 +957,12 @@ namespace CoordinateSharp
         /// Details about the next lunar eclipse
         /// </summary>
         public LunarEclipseDetails NextEclipse { get; set; }
+
+        internal void ConvertTo_LocalTime(double offset)
+        {
+            LastEclipse.Convert_To_Local_Time(offset);
+            NextEclipse.Convert_To_Local_Time(offset);
+        }
     }
     /// <summary>
     /// Class containing specific solar eclipse information
@@ -1093,6 +1155,25 @@ namespace CoordinateSharp
         {
             return date.ToString("dd-MMM-yyyy");
         }
+
+        internal void Convert_To_Local_Time(double offset)
+        {
+            FieldInfo[] fields = typeof(SolarEclipseDetails).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (FieldInfo field in fields)
+            {
+                if (field.FieldType == typeof(DateTime))
+                {
+                    DateTime d = (DateTime)field.GetValue(this);
+                    if (d > new DateTime())
+                    {
+                        d = d.AddHours(offset);
+                        field.SetValue(this, d);
+                    }
+                }
+            }
+          
+            date = partialEclispeBegin.Date;
+        }
     }
     /// <summary>
     /// Class containing specific lunar eclipse information
@@ -1280,6 +1361,25 @@ namespace CoordinateSharp
         public override string ToString()
         {
             return date.ToString("dd-MMM-yyyy");
+        }
+
+        internal void Convert_To_Local_Time(double offset)
+        {       
+            FieldInfo[] fields = typeof(LunarEclipseDetails).GetFields(BindingFlags.NonPublic |BindingFlags.Instance);
+            foreach (FieldInfo field in fields)
+            {
+                if (field.FieldType == typeof(DateTime))
+                {
+                    DateTime d = (DateTime)field.GetValue(this);
+                    if (d > new DateTime())
+                    {
+                        d = d.AddHours(offset);
+                        field.SetValue(this, d);
+                    }
+                }
+            }
+            date = penumbralEclipseBegin.Date;
+           
         }
 
     }

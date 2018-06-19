@@ -5,7 +5,7 @@ namespace CoordinateSharp
     internal class SunCalc
     {     
 
-        public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c)
+        public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c,double offset = 0)
         {
             if (date.Year == 1900) { return; } //Return if date vaue hasn't been established.
             DateTime actualDate = new DateTime(date.Year,date.Month,date.Day,date.Hour,date.Minute, date.Second, DateTimeKind.Utc);
@@ -16,7 +16,7 @@ namespace CoordinateSharp
             double jd = JulianConversions.GetJulian(date) - 2451545;  // Julian day relative to Jan 1.5, 2000
 
             double lon = longi / 360;
-            double tz = zone / 24;
+            double tz = -1* offset / 24;
             double ct = jd / 36525 + 1; // centuries since 1900.0
             double t0 = LocalSiderealTimeForTimeZone(lon, jd, tz);      // local sidereal time
 
