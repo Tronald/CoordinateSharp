@@ -106,8 +106,33 @@ namespace CoordinateSharp
             //MoonSet
             i = Determine_Slipped_Event_Index(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, d);
             cel.MoonSet = Get_Correct_Slipped_Date(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, i);
-            
+
+            //Local Conditions
+            CelestialStatus[] cels = new CelestialStatus[]
+            {
+                celPre.MoonCondition,cel.MoonCondition,celPost.MoonCondition
+            };
+            cel.MoonCondition = Celestial.GetStatus(cel.MoonRise, cel.MoonSet, cels);
+            cels = new CelestialStatus[]
+            {
+                celPre.SunCondition, cel.SunCondition, celPost.SunCondition
+            };
+            cel.SunCondition = Celestial.GetStatus(cel.SunRise, cel.SunSet, cels);
             return cel;
+        }
+        private static CelestialStatus GetStatus(DateTime? rise, DateTime? set,  CelestialStatus[] cels)
+        {  
+            if (set.HasValue && rise.HasValue) { return CelestialStatus.RiseAndSet; }
+            if (set.HasValue && !rise.HasValue) { return CelestialStatus.NoRise; }
+            if (!set.HasValue && rise.HasValue) { return CelestialStatus.NoSet; }
+            for (int x=0; x < 3;x++)
+            {
+                if(cels[x] == CelestialStatus.DownAllDay || cels[x] == CelestialStatus.UpAllDay)
+                {
+                    return cels[x];
+                }
+            }
+            return cels[1];
         }
         private void Local_Convert(Coordinate c, double offset)
         {
@@ -155,23 +180,25 @@ namespace CoordinateSharp
                 case 2:
                     return post;
                 default:
-                    return actual;
+                    return null;
             }
         }
         private static int Determine_Slipped_Event_Index(DateTime? actual, DateTime? pre, DateTime? post, DateTime d)
         {
+            System.Diagnostics.Debug.Print(actual + " " + pre + " " + post);
             if (actual.HasValue)
             {
                 if (actual.Value.Day != d.Day)
                 {
                     if (pre.HasValue)
-                    {
+                    {                        
                         if (pre.Value.Day == d.Day) { return 0; }
                     }
                     if (post.HasValue)
                     {
                         if (post.Value.Day == d.Day) { return 2; }
                     }
+                    return 3;
                 }
             }
             else
@@ -184,7 +211,7 @@ namespace CoordinateSharp
                 {
                     if (post.Value.Day == d.Day) { return 2; }
                 }
-            }
+            }         
             return 1;
         }
 
