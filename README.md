@@ -261,7 +261,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   //Create a new Celestial object by converting the existing one to Local
   Celestial celestial = Celestial.Celestial_LocalTime(c, -4);
   ```
-  NOTE ABOUT LOCAL TIME CONVERSIONS: Conversions are currently made by grabbing celestial information for the day before and after the specified date. It then compares values to the user specified date to find correct local times. 
+  NOTE ABOUT LOCAL TIME CONVERSIONS: Conversions are currently made by grabbing celestial information for the day before and after the specified date. It then compares values to the user specified date to find correct local times. This will be reworked for efficiency by adding sidereal times to calculations in the future.
   
   The following pieces of celestial information are available:
   
