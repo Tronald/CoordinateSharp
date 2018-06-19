@@ -233,7 +233,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
  
  ### Celestial Information
  
- You may pull the following pieces of celestial information by passing a UTC date to a Coordinate object. You can initialize an object with a date or pass it later. CoordinateSharp operates in UTC so all dates will be assumed in UTC regardless of the specified `DateTimeKind`. With that said, the ability to convert to local time after all celestial calculations have been accomplished exists and is explained in this section.
+ You may pull the following pieces of celestial information by passing a UTC date to a Coordinate object. You can initialize an object with a date or pass it later. CoordinateSharp operates in UTC so all dates will be assumed in UTC regardless of the specified `DateTimeKind`. 
  
   Accessing celestial information (all times in UTC).
   
@@ -241,27 +241,6 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   Coordinate c = new Coordinate(40.57682, -70.75678, new DateTime(2017,3,21));
   c.CelestialInfo.SunRise.ToString(); //Outputs 3/21/2017 10:44:00 AM
   ```
-  
-  Getting times in local is more involved then just adding or subtracting hours to a specified property. This is due to the fact that a moon rise or sunset may not occur on the local day, even though it can on a UTC day. Because of this, you must create a new `Celestial` object using the `Celestial.Celestial_LocalTime(Coordinate c, double offset)` function. This will create a new `Celestial` object populated in local time. 
-  
-  Let's assume a user input a date into a box that was in local instead of UTC. 
-  
-  ```C#
-  DateTime d = UsersSpecifiedDate.
-  
-  //Get the local offset time from UTC
-  double offset = -4; //Eastern time is -4 hours from UTC. 
-  
-  //Convert users date to UTC time
-  d.AddHours(offset*-1);
-  
-  //Create a Coordinate with the UTC time
- Coordinate c = new Coordinate(39.0000,-72.0000, d); 
- 
-  //Create a new Celestial object by converting the existing one to Local
-  Celestial celestial = Celestial.Celestial_LocalTime(c, -4);
-  ```
-  NOTE ABOUT LOCAL TIME CONVERSIONS: Conversions are currently made by grabbing celestial information for the day before and after the specified date. It then compares values to the user specified date to find correct local times. This will be reworked for efficiency by adding sidereal times to calculations in the future.
   
   The following pieces of celestial information are available:
   
