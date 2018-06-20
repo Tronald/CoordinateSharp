@@ -131,67 +131,67 @@ namespace CoordinateSharp
             //Sagittarius (November 22-December 21)
             //Capricorn (December 22-January 19)
            
-            if (date >= new DateTime(date.Year, 1, 1) && date <= new DateTime(date.Year, 1, 19))
+            if (date >= new DateTime(date.Year, 1, 1) && date <= new DateTime(date.Year, 1, 19, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Capricorn";
                 return;
             }
-            if (date >= new DateTime(date.Year, 1, 20) && date <= new DateTime(date.Year, 2, 18))
+            if (date >= new DateTime(date.Year, 1, 20) && date <= new DateTime(date.Year, 2, 18, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Aquarius";
                 return;
             }
-            if (date >= new DateTime(date.Year, 2, 19) && date <= new DateTime(date.Year, 3, 20))
+            if (date >= new DateTime(date.Year, 2, 19) && date <= new DateTime(date.Year, 3, 20, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Pisces";
                 return;
             }
-            if (date >= new DateTime(date.Year, 3, 21) && date <= new DateTime(date.Year, 4, 19))
+            if (date >= new DateTime(date.Year, 3, 21) && date <= new DateTime(date.Year, 4, 19, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Aries";
                 return;
             }
-            if (date >= new DateTime(date.Year, 4, 20) && date <= new DateTime(date.Year, 5, 20))
+            if (date >= new DateTime(date.Year, 4, 20) && date <= new DateTime(date.Year, 5, 20, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Taurus";
                 return;
             }
-            if (date >= new DateTime(date.Year, 5, 21) && date <= new DateTime(date.Year, 6, 20))
+            if (date >= new DateTime(date.Year, 5, 21) && date <= new DateTime(date.Year, 6, 20,23,59,59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Gemini";
                 return;
             }
-            if (date >= new DateTime(date.Year, 6, 21) && date <= new DateTime(date.Year, 7, 22))
+            if (date >= new DateTime(date.Year, 6, 21) && date <= new DateTime(date.Year, 7, 22, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Cancer";
                 return;
             }
-            if (date >= new DateTime(date.Year, 7, 23) && date <= new DateTime(date.Year, 8, 22))
+            if (date >= new DateTime(date.Year, 7, 23) && date <= new DateTime(date.Year, 8, 22, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Leo";
                 return;
             }
-            if (date >= new DateTime(date.Year, 8, 23) && date <= new DateTime(date.Year, 9, 22))
+            if (date >= new DateTime(date.Year, 8, 23) && date <= new DateTime(date.Year, 9, 22, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Virgo";
                 return;
             }
-            if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 10, 22))
+            if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 10, 22, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Libra";
                 return;
             }
-            if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 11, 21))
+            if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 11, 21, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Scorpio";
                 return;
             }
-            if (date >= new DateTime(date.Year, 11, 21) && date <= new DateTime(date.Year, 12, 21))
+            if (date >= new DateTime(date.Year, 11, 21) && date <= new DateTime(date.Year, 12, 21, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Sagittarius";
                 return;
             }
-            if (date >= new DateTime(date.Year, 12, 22) && date <= new DateTime(date.Year, 12, 31))
+            if (date >= new DateTime(date.Year, 12, 22) && date <= new DateTime(date.Year, 12, 31, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Capricorn";
                 return;

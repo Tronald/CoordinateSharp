@@ -161,6 +161,9 @@ namespace CoordinateSharp
 
             //Eclipse
             this.SolarEclipse.ConvertTo_LocalTime(offset);
+            SunCalc.CalculateZodiacSign(c.GeoDate.AddHours(offset), this);
+            MoonCalc.GetMoonSign(c.GeoDate.AddHours(offset), this);
+            
         }
 
         private PerigeeApogee Get_Correct_Slipped_Date(PerigeeApogee actual, PerigeeApogee pre, PerigeeApogee post, int i)
