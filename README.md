@@ -33,6 +33,7 @@ CAUTION: v.1.1.3.1 is considered a breaking change as `MoonDistance` has been co
 * -Adjusted string conversion in eclipse calculations to account for different thread culture.
 * -Fixed issue with `MoonCondition` signaling a moon set when none occurs.
 * -Adds ability to create Celestial object with local times.
+* -Fixes issue with zodiac signs not populatingin July.
 ### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
 ### 1.1.2.7 Change Notes
