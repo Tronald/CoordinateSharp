@@ -161,7 +161,7 @@ namespace CoordinateSharp
                 c.AstrologicalSigns.ZodiacSign = "Gemini";
                 return;
             }
-            if (date >= new DateTime(date.Year, 6, 21) && date <= new DateTime(date.Year, 6, 22))
+            if (date >= new DateTime(date.Year, 6, 21) && date <= new DateTime(date.Year, 7, 22))
             {
                 c.AstrologicalSigns.ZodiacSign = "Cancer";
                 return;

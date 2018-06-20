@@ -70,6 +70,7 @@ namespace CoordinateSharp
         /// <returns></returns>
         public static Celestial Celestial_LocalTime(Coordinate c, double offset)
         {
+            if(offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 12 or less than -12."); }
             //Probably need to offset initial UTC date so user can op in local
             //Determine best way to do this.
             DateTime d = c.GeoDate.AddHours(offset);
@@ -120,6 +121,7 @@ namespace CoordinateSharp
             cel.SunCondition = Celestial.GetStatus(cel.SunRise, cel.SunSet, cels);
             return cel;
         }
+
         private static CelestialStatus GetStatus(DateTime? rise, DateTime? set,  CelestialStatus[] cels)
         {  
             if (set.HasValue && rise.HasValue) { return CelestialStatus.RiseAndSet; }
@@ -134,6 +136,12 @@ namespace CoordinateSharp
             }
             return cels[1];
         }
+
+        /// <summary>
+        /// In place time slip
+        /// </summary>
+        /// <param name="c">Coordinate</param>
+        /// <param name="offset">hour offset</param>
         private void Local_Convert(Coordinate c, double offset)
         {
             //Find new lunar set rise times
