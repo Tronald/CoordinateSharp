@@ -267,6 +267,7 @@ You may pull the following pieces of celestial information by passing a UTC date
   DateTime d = UsersSpecifiedDate.
   
   //Get the local offset time from UTC
+  //For ease we will manually input an offset
   double offset = -4; //Eastern time is -4 hours from UTC. 
   
   //Convert users date to UTC time
@@ -276,7 +277,7 @@ You may pull the following pieces of celestial information by passing a UTC date
  Coordinate c = new Coordinate(39.0000,-72.0000, d); 
  
   //Create a new Celestial object by converting the existing one to Local
-  Celestial celestial = Celestial.Celestial_LocalTime(c, -4);
+  Celestial celestial = Celestial.Celestial_LocalTime(c, offset);
   ```
   NOTE ABOUT LOCAL TIME CONVERSIONS: Conversions are currently made by grabbing celestial information for the day before and after the specified date. It then compares values to the user specified date to find correct local times. This will be reworked for efficiency by adding sidereal times to calculations in the future.
   
