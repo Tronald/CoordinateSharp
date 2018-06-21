@@ -5,8 +5,9 @@ namespace CoordinateSharp
     internal class MoonCalc
     {
         static double rad = Math.PI / 180;
-        
-        static double e = rad * 23.4397;
+
+        //obliquity of the ecliptic in radians based on standard equinox 2000.
+        static double e = rad * 23.4392911; 
 
         public static void GetMoonTimes(DateTime date, double lat, double lng, Celestial c)
         {
@@ -75,7 +76,8 @@ namespace CoordinateSharp
 
             if (rise != null) { c.MoonRise = hoursLater(t, rise.Value); }
             if (set != null) { c.MoonSet = hoursLater(t, set.Value); }
-
+            isRise = rise.HasValue;
+            isSet = set.HasValue;
             if (isRise && isSet) { c.MoonCondition = CelestialStatus.RiseAndSet; }
             else
             {
@@ -87,14 +89,20 @@ namespace CoordinateSharp
                 if (!isRise && isSet) { c.MoonCondition = CelestialStatus.NoRise; }
                 if (isRise && !isSet) { c.MoonCondition = CelestialStatus.NoSet; }
             }
+            //integrity check.
 
         }
         static MoonPosition GetMoonPosition(DateTime date, double lat, double lng, Celestial cel)
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
             double d = JulianConversions.GetJulian_Epoch2000(date);
-
-            CelCoords c = GetMoonCoords(d, cel);
+            
+            //Ch 47
+            double JDE = JulianConversions.GetJulian(date);//Get julian 
+            double T = (JDE - 2451545) / 36525; //Get dynamic time.
+            double[] LDMNF = Get_Moon_LDMNF(T);
+            CelCoords c = GetMoonCoords(d, cel,LDMNF, T);
+    
             double lw = rad * -lng;
             double phi = rad * lat;
             double H = siderealTime(d, lw) - c.ra;
@@ -112,22 +120,21 @@ namespace CoordinateSharp
             mp.ParallacticAngle = pa;
             return mp;
         }
-        static CelCoords GetMoonCoords(double d, Celestial c)
-        {   
+        static CelCoords GetMoonCoords(double d, Celestial c, double[] LDMNF, double t)
+        {
+            // Legacy function. Updated with Meeus Calcs for increased accuracy.
             // geocentric ecliptic coordinates of the moon
-            //Formulas used from http://aa.quae.nl/en/reken/hemelpositie.html#1_3
-            double L = rad * (218.316 + 13.176396 * d), // ecliptic longitude
-                M = rad * (134.963 + 13.064993 * d), // mean anomaly
-                F = rad * (93.272 + 13.229350 * d),  // mean distance
+            // Meeus Ch 47
+            double[] cs = Get_Moon_Coordinates(LDMNF, t);
 
-                l = L + rad * 6.289 * Math.Sin(M), // longitude
-                b = rad * 5.128 * Math.Sin(F),     // latitude
-                dt = 385001 - 20905 * Math.Cos(M);  // distance to the moon in km
+            double l = cs[0]; // longitude
+            double b = cs[1];    // latitude
+
             //c.MoonSign = MoonSign(l);
             CelCoords mc = new CelCoords();
             mc.ra = rightAscension(l, b);
             mc.dec = declination(l, b);
-            mc.dist = dt;
+
             return mc;
         }
       
@@ -137,7 +144,11 @@ namespace CoordinateSharp
          
             double d = JulianConversions.GetJulian_Epoch2000(date);
             CelCoords s = GetSunCoords(d);
-            CelCoords m = GetMoonCoords(d, c);
+            double JDE = JulianConversions.GetJulian(date);//Get julian 
+            double T = (JDE - 2451545) / 36525; //Get dynamic time.
+            double[] LDMNF = Get_Moon_LDMNF(T);
+          
+            CelCoords m = GetMoonCoords(d, c,LDMNF, T);
 
             double sdist = 149598000,
             phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra)),
@@ -159,14 +170,17 @@ namespace CoordinateSharp
              int moonDate = 0;
             //GET PHASE NAME
 
-            //CHECK MOON AT BEGINNING AT END OF DAY TO GET DAY PHASE IN UTC
+            //CHECK MOON AT BEGINNING AT END OF DAY TO GET DAY PHASE
             DateTime dMon = new DateTime(date.Year, date.Month, 1);
             for(int x = 1;x<= date.Day;x++)
             {               
                 DateTime nDate = new DateTime(dMon.Year, dMon.Month, x, 0, 0, 0, DateTimeKind.Utc);
                 d = JulianConversions.GetJulian_Epoch2000(nDate);
                 s = GetSunCoords(d);
-                m = GetMoonCoords(d, c);
+                JDE = JulianConversions.GetJulian(nDate);//Get julian 
+                T = (JDE - 2451545) / 36525; //Get dynamic time.
+                LDMNF = Get_Moon_LDMNF(T);        
+                m = GetMoonCoords(d, c,LDMNF,T);
 
                 phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra));
                 inc = Math.Atan2(sdist * Math.Sin(phi), m.dist - sdist * Math.Cos(phi));
@@ -178,7 +192,10 @@ namespace CoordinateSharp
                 nDate = new DateTime(dMon.Year, dMon.Month, x, 23, 59, 59, DateTimeKind.Utc);
                 d = JulianConversions.GetJulian_Epoch2000(nDate);
                 s = GetSunCoords(d);
-                m = GetMoonCoords(d, c);
+                JDE = JulianConversions.GetJulian(nDate);//Get julian 
+                T = (JDE - 2451545) / 36525; //Get dynamic time.
+                LDMNF = Get_Moon_LDMNF(T);
+                m = GetMoonCoords(d, c,LDMNF,T);
 
                 phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra));
                 inc = Math.Atan2(sdist * Math.Sin(phi), m.dist - sdist * Math.Cos(phi));
@@ -319,9 +336,6 @@ namespace CoordinateSharp
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
            
-            double d = JulianConversions.GetJulian(date);
-            
-            CelCoords cel = GetMoonCoords(d, c);
             c.MoonDistance = GetMoonDistance(date);      //Updating distance formula    
         }
         //Moon Time Functions
@@ -347,8 +361,7 @@ namespace CoordinateSharp
             return date.AddHours(h);
         }
 
-        static double rightAscension(double l, double b) { return Math.Atan2(Math.Sin(l) * Math.Cos(e) - Math.Tan(b) * Math.Sin(e), Math.Cos(l)); }
-        static double declination(double l, double b) { return Math.Asin(Math.Sin(b) * Math.Cos(e) + Math.Cos(b) * Math.Sin(e) * Math.Sin(l)); }
+         static double declination(double l, double b) { return Math.Asin(Math.Sin(b) * Math.Cos(e) + Math.Cos(b) * Math.Sin(e) * Math.Sin(l)); }
         static double azimuth(double H, double phi, double dec) { return Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(dec) * Math.Cos(phi)); }
         static double altitude(double H, double phi, double dec) { return Math.Asin(Math.Sin(phi) * Math.Sin(dec) + Math.Cos(phi) * Math.Cos(dec) * Math.Cos(H)); }
         static double siderealTime(double d, double lw) { return rad * (280.16 + 360.9856235 * d) - lw; }
@@ -443,6 +456,8 @@ namespace CoordinateSharp
         { return Math.Sin(Math.PI / 180 * x); }
 
         //v1.1.3 Formulas
+        //The following formulas are either additions 
+        //or conversions of SunCalcs formulas into more accurate Meeus
 
         /// <summary>
         /// Grabs Perigee or Apogee of Moon based on specified time.
@@ -450,7 +465,7 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="d">DateTime</param>
         /// <param name="md">Event Type</param>
-        /// <returns></returns>
+        /// <returns>PerigeeApogee</returns>
         private static PerigeeApogee MoonPerigeeOrApogee(DateTime d, MoonDistanceType md)
         {
             //Perigee & Apogee Algorithms from Jean Meeus Astronomical Algorithms Ch. 50
@@ -542,29 +557,40 @@ namespace CoordinateSharp
             {
                 termsB = MeeusTables.PerigeeTermsB(D, M, F, T);
             }
+            //Convert julian back to date
             DateTime date = JulianConversions.GetDate_FromJulian(JDE).Value;
+            //Obtain distance
             Distance dist = GetMoonDistance(date);
+
             PerigeeApogee ap = new PerigeeApogee(date, termsB, dist);
             return ap;
         }
 
         public static Perigee GetPerigeeEvents(DateTime d)
         {
-            //Iterate in 5 month increments due to formula variations.
+            //Iterate in 15 day increments due to formula variations.
             //Determine closest events to date.
-            //apo1 is last date
-            //apo2 is next date
-            PerigeeApogee per1 = MoonPerigeeOrApogee(d.AddMonths(-2), MoonDistanceType.Perigee);
-            PerigeeApogee per2 = MoonPerigeeOrApogee(d.AddMonths(-2), MoonDistanceType.Perigee);
-            for (int x = -1; x < 3; x++)
+            //per1 is last date
+            //per2 is next date
+
+            //integrity for new date.
+            if (d.Year <= 0001) { return new Perigee(new PerigeeApogee(new DateTime(), 0, new Distance(0)), new PerigeeApogee(new DateTime(), 0, new Distance(0))); }
+            //Start at lowest increment
+            PerigeeApogee per1 = MoonPerigeeOrApogee(d.AddDays(-45), MoonDistanceType.Perigee);
+            PerigeeApogee per2 = MoonPerigeeOrApogee(d.AddDays(-45), MoonDistanceType.Perigee);
+
+            for (int x = -30; x <= 45; x+=15)
             {
-                PerigeeApogee t = MoonPerigeeOrApogee(d.AddMonths(x), MoonDistanceType.Perigee);
-                //Is event date greater the date
+                //used for comparison 
+                PerigeeApogee t = MoonPerigeeOrApogee(d.AddDays(x), MoonDistanceType.Perigee);
+             
+                //Find the next pergiee after specified date           
                 if (t.Date > per2.Date && t.Date >= d)
                 {
-                    per2 = t;
+                    per2 = t; 
                     break;
                 }
+                //Find last perigee before specified date
                 if (t.Date > per1.Date && t.Date < d)
                 {
                     per1 = t;
@@ -580,17 +606,22 @@ namespace CoordinateSharp
             //Determine closest events to date.
             //apo1 is last date
             //apo2 is next date
-            PerigeeApogee apo1 = MoonPerigeeOrApogee(d.AddMonths(-2), MoonDistanceType.Apogee);
-            PerigeeApogee apo2 = MoonPerigeeOrApogee(d.AddMonths(-2), MoonDistanceType.Apogee);
-            for (int x = -1; x < 3; x++)
+
+            //integrity for new date.
+            if (d.Year <= 0001) { return new Apogee(new PerigeeApogee(new DateTime(), 0, new Distance(0)), new PerigeeApogee(new DateTime(), 0, new Distance(0))); }
+
+            PerigeeApogee apo1 = MoonPerigeeOrApogee(d.AddDays(-45), MoonDistanceType.Apogee);
+            PerigeeApogee apo2 = MoonPerigeeOrApogee(d.AddDays(-45), MoonDistanceType.Apogee);
+            for (int x = -30; x <= 45; x+=15)
             {
-                PerigeeApogee t = MoonPerigeeOrApogee(d.AddMonths(x), MoonDistanceType.Apogee);
-                //Is event date greater the date
+                PerigeeApogee t = MoonPerigeeOrApogee(d.AddDays(x), MoonDistanceType.Apogee);
+                //Find next apogee after specified date
                 if (t.Date > apo2.Date && t.Date >= d)
                 {
                     apo2 = t;
                     break;
                 }
+                //Find last apogee before specified date
                 if (t.Date > apo1.Date && t.Date < d)
                 {
                     apo1 = t;
@@ -602,11 +633,58 @@ namespace CoordinateSharp
 
         }
 
+        /// <summary>
+        /// Gets moon distance (Ch 47).
+        /// </summary>
+        /// <param name="d">DateTime</param>
+        /// <returns>Distance</returns>
         public static Distance GetMoonDistance(DateTime d)
         {
             //Ch 47
             double JDE = JulianConversions.GetJulian(d);//Get julian 
             double T = (JDE - 2451545) / 36525; //Get dynamic time.
+
+            double[] values = Get_Moon_LDMNF(T);
+
+            double D = values[1];
+            double M = values[2];
+            double N = values[3];
+            double F = values[4];
+
+            //Ch 47 distance formula
+            double dist = 385000.56 + (MeeusTables.Moon_Periodic_Er(D, M, N, F, T) / 1000); 
+            return new Distance(dist);
+        }
+
+        private static Distance GetMoonDistance(DateTime d, double[] values)
+        {
+            //Ch 47
+            double JDE = JulianConversions.GetJulian(d);//Get julian 
+            double T = (JDE - 2451545) / 36525; //Get dynamic time.        
+
+            double D = values[1];
+            double M = values[2];
+            double N = values[3];
+            double F = values[4];
+
+            double dist = 385000.56 + (MeeusTables.Moon_Periodic_Er(D, M, N, F, T) / 1000);
+            return new Distance(dist);
+        }
+
+        /// <summary>
+        /// Gets Moon L, D, M, N, F values
+        /// Ch. 47 
+        /// </summary>
+        /// <param name="T">Dynamic Time</param>
+        /// <returns>double[] containing L,D,M,N,F</returns>
+        static double[] Get_Moon_LDMNF(double T)
+        {
+            //T = dynamic time
+
+            //Moon's mean longitude
+            double L = 218.316447 + 481267.88123421 * T -
+                 .0015786 * Math.Pow(T, 2) + Math.Pow(T, 3) / 538841 -
+                 Math.Pow(T, 4) / 65194000;
 
             //Moon's mean elongation 
             double D = 297.8501921 + 445267.1114034 * T -
@@ -618,10 +696,10 @@ namespace CoordinateSharp
             double N = 134.9633964 + 477198.8675055 * T + .0087414 * Math.Pow(T, 2) +
                 Math.Pow(T, 3) / 69699 - Math.Pow(T, 4) / 14712000;
             //Moon's argument of latitude
-            double F=93.2720950+483202.0175233*T-.0036539*Math.Pow(T,2)-Math.Pow(T,3) / 
-                3526000+Math.Pow(T,4)/863310000;
+            double F = 93.2720950 + 483202.0175233 * T - .0036539 * Math.Pow(T, 2) - Math.Pow(T, 3) /
+                3526000 + Math.Pow(T, 4) / 863310000;
 
-            //Normalize DMF to a 0-360 degree number
+            //Normalize DMF to a 0-360 degree number      
             D %= 360;
             if (D < 0) { D += 360; }
             M %= 360;
@@ -630,16 +708,50 @@ namespace CoordinateSharp
             if (N < 0) { N += 360; }
             F %= 360;
             if (F < 0) { F += 360; }
-            
+           
             //Convert DMF to radians
+          
             D = D * Math.PI / 180;
             M = M * Math.PI / 180;
             N = N * Math.PI / 180;
             F = F * Math.PI / 180;
-           
-            double dist = 385000.56 + (MeeusTables.Moon_Periodic_Er(D, M, N, F, T) / 1000);
-            return new Distance(dist);
+
+            return new double[] { L, D, M, N, F };
         }
+        /// <summary>
+        /// Get moons lat/long in radians (Ch 47).
+        /// </summary>
+        /// <param name="LDMNF">L,D,M,N,F</param>
+        /// <param name="T">Dynamic Time</param>
+        /// <returns>Lat[0], Long[1]</returns>
+        private static double[] Get_Moon_Coordinates(double[] LDMNF,double T)
+        {
+            //Refence Ch 47.
+            double lat = LDMNF[0] + (MeeusTables.Moon_Periodic_El(LDMNF[0], LDMNF[1], LDMNF[2], LDMNF[3], LDMNF[4],T)/1000000);
+            double longi = MeeusTables.Moon_Periodic_Eb(LDMNF[0], LDMNF[1], LDMNF[2], LDMNF[3], LDMNF[4], T) / 1000000;
+           
+            //Convert to radians
+            double l = rad *  lat; // longitude
+            double b = rad * longi; // latitude
+           
+            return new double[] { l, b };
+        }
+        
+        /// <summary>
+        /// Gets right Ascension of celestial object (Ch 13 Fig 13.3)
+        /// </summary>
+        /// <param name="l">latitude in radians</param>
+        /// <param name="b">longitude in radian</param>
+        /// <returns>Right Ascension</returns>
+        private static double rightAscension(double l, double b)
+        {
+            //Ch 13 Fig 13.3
+            //tan a = ( sin(l) * cos(e) - tan(b)-sin(e) ) / cons(l)
+            //Converts to the following using Atan2 for 4 quadriatic regions
+            return Math.Atan2(Math.Sin(l) * Math.Cos(e) - Math.Tan(b) * Math.Sin(e), Math.Cos(l));
+        }
+
+
 
         public class MoonTimes
         {

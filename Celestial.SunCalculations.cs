@@ -5,9 +5,9 @@ namespace CoordinateSharp
     internal class SunCalc
     {     
 
-        public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c)
+        public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c,double offset = 0)
         {
-            if (date.Year == 1900) { return; } //Return if date vaue hasn't been established.
+            if (date.Year == 0001) { return; } //Return if date vaue hasn't been established.
             DateTime actualDate = new DateTime(date.Year,date.Month,date.Day,date.Hour,date.Minute, date.Second, DateTimeKind.Utc);
            
             //Sun Time Calculations
@@ -16,7 +16,7 @@ namespace CoordinateSharp
             double jd = JulianConversions.GetJulian(date) - 2451545;  // Julian day relative to Jan 1.5, 2000
 
             double lon = longi / 360;
-            double tz = zone / 24;
+            double tz = -1* offset / 24;
             double ct = jd / 36525 + 1; // centuries since 1900.0
             double t0 = LocalSiderealTimeForTimeZone(lon, jd, tz);      // local sidereal time
 
@@ -106,7 +106,7 @@ namespace CoordinateSharp
         }
         public static void CalculateAdditionSolarTimes(DateTime date, double longi, double lat, Celestial c)
         {   
-            if (c.SunCondition == CelestialStatus.RiseAndSet && date.Year>1900)
+            if (c.SunCondition == CelestialStatus.RiseAndSet && date.Year>0001)
             {          
                 getTimes(date, longi, lat, c);
             }
@@ -131,67 +131,67 @@ namespace CoordinateSharp
             //Sagittarius (November 22-December 21)
             //Capricorn (December 22-January 19)
            
-            if (date >= new DateTime(date.Year, 1, 1) && date <= new DateTime(date.Year, 1, 19))
+            if (date >= new DateTime(date.Year, 1, 1) && date <= new DateTime(date.Year, 1, 19, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Capricorn";
                 return;
             }
-            if (date >= new DateTime(date.Year, 1, 20) && date <= new DateTime(date.Year, 2, 18))
+            if (date >= new DateTime(date.Year, 1, 20) && date <= new DateTime(date.Year, 2, 18, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Aquarius";
                 return;
             }
-            if (date >= new DateTime(date.Year, 2, 19) && date <= new DateTime(date.Year, 3, 20))
+            if (date >= new DateTime(date.Year, 2, 19) && date <= new DateTime(date.Year, 3, 20, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Pisces";
                 return;
             }
-            if (date >= new DateTime(date.Year, 3, 21) && date <= new DateTime(date.Year, 4, 19))
+            if (date >= new DateTime(date.Year, 3, 21) && date <= new DateTime(date.Year, 4, 19, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Aries";
                 return;
             }
-            if (date >= new DateTime(date.Year, 4, 20) && date <= new DateTime(date.Year, 5, 20))
+            if (date >= new DateTime(date.Year, 4, 20) && date <= new DateTime(date.Year, 5, 20, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Taurus";
                 return;
             }
-            if (date >= new DateTime(date.Year, 5, 21) && date <= new DateTime(date.Year, 6, 20))
+            if (date >= new DateTime(date.Year, 5, 21) && date <= new DateTime(date.Year, 6, 20,23,59,59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Gemini";
                 return;
             }
-            if (date >= new DateTime(date.Year, 6, 21) && date <= new DateTime(date.Year, 6, 22))
+            if (date >= new DateTime(date.Year, 6, 21) && date <= new DateTime(date.Year, 7, 22, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Cancer";
                 return;
             }
-            if (date >= new DateTime(date.Year, 7, 23) && date <= new DateTime(date.Year, 8, 22))
+            if (date >= new DateTime(date.Year, 7, 23) && date <= new DateTime(date.Year, 8, 22, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Leo";
                 return;
             }
-            if (date >= new DateTime(date.Year, 8, 23) && date <= new DateTime(date.Year, 9, 22))
+            if (date >= new DateTime(date.Year, 8, 23) && date <= new DateTime(date.Year, 9, 22, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Virgo";
                 return;
             }
-            if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 10, 22))
+            if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 10, 22, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Libra";
                 return;
             }
-            if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 11, 21))
+            if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 11, 21, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Scorpio";
                 return;
             }
-            if (date >= new DateTime(date.Year, 11, 21) && date <= new DateTime(date.Year, 12, 21))
+            if (date >= new DateTime(date.Year, 11, 21) && date <= new DateTime(date.Year, 12, 21, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Sagittarius";
                 return;
             }
-            if (date >= new DateTime(date.Year, 12, 22) && date <= new DateTime(date.Year, 12, 31))
+            if (date >= new DateTime(date.Year, 12, 22) && date <= new DateTime(date.Year, 12, 31, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Capricorn";
                 return;
@@ -336,16 +336,30 @@ namespace CoordinateSharp
             Jset = GetTime(-6 * rad, lw, phi, dec, n, M, L); 
             Jrise = Jnoon - (Jset - Jnoon);
            
-            c.AdditionalSolarTimes.CivilDawn = JulianConversions.GetDate_FromJulian(Jrise);
-            c.AdditionalSolarTimes.CivilDusk = JulianConversions.GetDate_FromJulian(Jset);
+            c.AdditionalSolarTimes.CivilDawn = DayMatch(JulianConversions.GetDate_FromJulian(Jrise),date);
+            c.AdditionalSolarTimes.CivilDusk = DayMatch(JulianConversions.GetDate_FromJulian(Jset),date);
 
             Jset = GetTime(-12 * rad, lw, phi, dec, n, M, L);        
             Jrise = Jnoon - (Jset - Jnoon);
         
-            c.AdditionalSolarTimes.NauticalDawn = JulianConversions.GetDate_FromJulian(Jrise);
-            c.AdditionalSolarTimes.NauticalDusk = JulianConversions.GetDate_FromJulian(Jset);          
+            c.AdditionalSolarTimes.NauticalDawn = DayMatch(JulianConversions.GetDate_FromJulian(Jrise),date);
+            c.AdditionalSolarTimes.NauticalDusk = DayMatch(JulianConversions.GetDate_FromJulian(Jset), date);  
+            
+           
         }
-       
+        //Math days for now. Rework with sidereal for future updates and accuracy
+        private static DateTime? DayMatch(DateTime? d, DateTime day)
+        {
+            if(d.HasValue)
+            {
+                if(d.Value.Day != day.Day)
+                {
+                    DateTime dd = d.Value;
+                    d = new DateTime(day.Year, day.Month, day.Day, dd.Hour, dd.Minute, dd.Second);;
+                }
+            }
+            return d;
+        }
         private static void CalculateSunPosition(double jd, double ct)
         {
             double g, lo, s, u, v, w;
