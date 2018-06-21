@@ -336,16 +336,30 @@ namespace CoordinateSharp
             Jset = GetTime(-6 * rad, lw, phi, dec, n, M, L); 
             Jrise = Jnoon - (Jset - Jnoon);
            
-            c.AdditionalSolarTimes.CivilDawn = JulianConversions.GetDate_FromJulian(Jrise);
-            c.AdditionalSolarTimes.CivilDusk = JulianConversions.GetDate_FromJulian(Jset);
+            c.AdditionalSolarTimes.CivilDawn = DayMatch(JulianConversions.GetDate_FromJulian(Jrise),date.Day);
+            c.AdditionalSolarTimes.CivilDusk = DayMatch(JulianConversions.GetDate_FromJulian(Jset),date.Day);
 
             Jset = GetTime(-12 * rad, lw, phi, dec, n, M, L);        
             Jrise = Jnoon - (Jset - Jnoon);
         
-            c.AdditionalSolarTimes.NauticalDawn = JulianConversions.GetDate_FromJulian(Jrise);
-            c.AdditionalSolarTimes.NauticalDusk = JulianConversions.GetDate_FromJulian(Jset);          
+            c.AdditionalSolarTimes.NauticalDawn = DayMatch(JulianConversions.GetDate_FromJulian(Jrise),date.Day);
+            c.AdditionalSolarTimes.NauticalDusk = DayMatch(JulianConversions.GetDate_FromJulian(Jset), date.Day);  
+            
+           
         }
-       
+        //Math days for now. Rework with sidereal for future updates and accuracy
+        private static DateTime? DayMatch(DateTime? d, int day)
+        {
+            if(d.HasValue)
+            {
+                if(d.Value.Day != day)
+                {
+                    DateTime dd = d.Value;
+                    d = new DateTime(dd.Year, dd.Month, day, dd.Hour, dd.Minute, dd.Second);;
+                }
+            }
+            return d;
+        }
         private static void CalculateSunPosition(double jd, double ct)
         {
             double g, lo, s, u, v, w;
