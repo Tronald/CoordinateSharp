@@ -38,7 +38,7 @@ CAUTION: v1.1.3.1 is considered a breaking change as `MoonDistance` has been con
 * -Fixes issue with zodiac signs not populating in July.
 * -Fixes binding issue with out of range Degrees.
 * -Fixes value notification issue.
-* -Fixes Additional Solar Time day skip occuring at certain latitudes.
+* -Fixes Additional Solar Time day skip occurring at certain latitudes.
 
 ### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
