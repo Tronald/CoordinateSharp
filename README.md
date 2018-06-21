@@ -39,6 +39,7 @@ CAUTION: v1.1.3.1 is considered a breaking change as `MoonDistance` has been con
 * -Fixes binding issue with out of range Degrees.
 * -Fixes value notification issue.
 * -Fixes Additional Solar Time day skip occuring at certain latitudes.
+
 ### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
 ### 1.1.2.7 Change Notes
@@ -253,7 +254,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
  
  ### Celestial Information
  
-You may pull the following pieces of celestial information by passing a UTC date to a `Coordinate` object. You can initialize an object with a date or pass it later. CoordinateSharp operates in UTC so all dates will be assumed in UTC regardless of the specified `DateTimeKind`. With that said, the ability to convert to local time after all celestial calculations have been accomplished exists and is explained in this section.
+  You may pull the following pieces of celestial information by passing a UTC date to a `Coordinate` object. You can initialize an object with a date or pass it later. CoordinateSharp operates in UTC so all dates will be assumed in UTC regardless of the specified `DateTimeKind`. With that said, the ability to convert to local time after all celestial calculations have been accomplished exists and is explained in this section.
  
   Accessing celestial information (all times in UTC).
   
