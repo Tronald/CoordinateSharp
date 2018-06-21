@@ -36,6 +36,8 @@ CAUTION: v1.1.3.1 is considered a breaking change as `MoonDistance` has been con
 * -Fixed issue with `MoonCondition` signaling a moon set when none occurs.
 * -Adds ability to create `Celestial` object with local times.
 * -Fixes issue with zodiac signs not populating in July.
+* -Fixes binding issue with out of range Degrees.
+* -Fixes value notification issue.
 ### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
 ### 1.1.2.7 Change Notes
