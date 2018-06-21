@@ -336,26 +336,26 @@ namespace CoordinateSharp
             Jset = GetTime(-6 * rad, lw, phi, dec, n, M, L); 
             Jrise = Jnoon - (Jset - Jnoon);
            
-            c.AdditionalSolarTimes.CivilDawn = DayMatch(JulianConversions.GetDate_FromJulian(Jrise),date.Day);
-            c.AdditionalSolarTimes.CivilDusk = DayMatch(JulianConversions.GetDate_FromJulian(Jset),date.Day);
+            c.AdditionalSolarTimes.CivilDawn = DayMatch(JulianConversions.GetDate_FromJulian(Jrise),date);
+            c.AdditionalSolarTimes.CivilDusk = DayMatch(JulianConversions.GetDate_FromJulian(Jset),date);
 
             Jset = GetTime(-12 * rad, lw, phi, dec, n, M, L);        
             Jrise = Jnoon - (Jset - Jnoon);
         
-            c.AdditionalSolarTimes.NauticalDawn = DayMatch(JulianConversions.GetDate_FromJulian(Jrise),date.Day);
-            c.AdditionalSolarTimes.NauticalDusk = DayMatch(JulianConversions.GetDate_FromJulian(Jset), date.Day);  
+            c.AdditionalSolarTimes.NauticalDawn = DayMatch(JulianConversions.GetDate_FromJulian(Jrise),date);
+            c.AdditionalSolarTimes.NauticalDusk = DayMatch(JulianConversions.GetDate_FromJulian(Jset), date);  
             
            
         }
         //Math days for now. Rework with sidereal for future updates and accuracy
-        private static DateTime? DayMatch(DateTime? d, int day)
+        private static DateTime? DayMatch(DateTime? d, DateTime day)
         {
             if(d.HasValue)
             {
-                if(d.Value.Day != day)
+                if(d.Value.Day != day.Day)
                 {
                     DateTime dd = d.Value;
-                    d = new DateTime(dd.Year, dd.Month, day, dd.Hour, dd.Minute, dd.Second);;
+                    d = new DateTime(day.Year, day.Month, day.Day, dd.Hour, dd.Minute, dd.Second);;
                 }
             }
             return d;

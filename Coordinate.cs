@@ -542,7 +542,6 @@ namespace CoordinateSharp
             switch (propName)
             {
                 case "CelestialInfo":
-                    Debug.Print("CALC");
                     this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);
                     break;
                 case "UTM":
