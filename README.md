@@ -4,7 +4,7 @@ A simple library designed to assist with geographic coordinate string formatting
 
 An example of CoordinateSharp in action can be seen at [www.coordinatesharp.com](https://www.coordinatesharp.com/)
 
-CAUTION: v.1.1.3.1 is considered a breaking change as `MoonDistance` has been converted from a `double?` object to a `Distance` object. Obsolete properties from 1.1.1.5 have also been removed as scheduled.
+CAUTION: v1.1.3.1 is considered a breaking change as `MoonDistance` has been converted from a `double?` object to a `Distance` object. Obsolete properties from 1.1.1.5 have also been removed as scheduled.
 
 ### Introduction
 * [Change Notes](#introduction)
