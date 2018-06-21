@@ -863,10 +863,10 @@ namespace CoordinateSharp
         public AdditionalSolarTimes()
         {
             //Set dates to avoid null errors. If year return 1900 event did not occur.
-            CivilDawn = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            CivilDusk = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            NauticalDawn = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            NauticalDusk = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            CivilDawn = new DateTime();
+            CivilDusk = new DateTime();
+            NauticalDawn = new DateTime();
+            NauticalDusk = new DateTime();
 
         }
         /// <summary>

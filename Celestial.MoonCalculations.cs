@@ -573,6 +573,8 @@ namespace CoordinateSharp
             //per1 is last date
             //per2 is next date
 
+            //integrity for new date.
+            if (d.Year <= 0001) { return new Perigee(new PerigeeApogee(new DateTime(), 0, new Distance(0)), new PerigeeApogee(new DateTime(), 0, new Distance(0))); }
             //Start at lowest increment
             PerigeeApogee per1 = MoonPerigeeOrApogee(d.AddDays(-45), MoonDistanceType.Perigee);
             PerigeeApogee per2 = MoonPerigeeOrApogee(d.AddDays(-45), MoonDistanceType.Perigee);
@@ -604,6 +606,10 @@ namespace CoordinateSharp
             //Determine closest events to date.
             //apo1 is last date
             //apo2 is next date
+
+            //integrity for new date.
+            if (d.Year <= 0001) { return new Apogee(new PerigeeApogee(new DateTime(), 0, new Distance(0)), new PerigeeApogee(new DateTime(), 0, new Distance(0))); }
+
             PerigeeApogee apo1 = MoonPerigeeOrApogee(d.AddDays(-45), MoonDistanceType.Apogee);
             PerigeeApogee apo2 = MoonPerigeeOrApogee(d.AddDays(-45), MoonDistanceType.Apogee);
             for (int x = -30; x <= 45; x+=15)

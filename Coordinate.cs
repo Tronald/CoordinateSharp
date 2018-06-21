@@ -539,30 +539,31 @@ namespace CoordinateSharp
         /// <param name="propName">Property name</param>
         public void NotifyPropertyChanged(string propName)
         {
-            if (this.PropertyChanged != null)
+            switch (propName)
             {
-                switch (propName)
-                {
-                    case "CelestialInfo":
-                        this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);
-                        break;
-                    case "UTM":
-                        this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
-                        break;
-                    case "utm":
-                        //Adjust case and notify of change. 
-                        //Use to notify without calling ToUTM()
-                        propName = "UTM";
-                        break;
-                    case "MGRS":
-                        this.MGRS.ToMGRS(this.utm);
-                        break;
-                    case "Cartesian":
-                        Cartesian.ToCartesian(this);
-                        break;
-                    default:
-                        break;
-                }
+                case "CelestialInfo":
+                    Debug.Print("CALC");
+                    this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);
+                    break;
+                case "UTM":
+                    this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
+                    break;
+                case "utm":
+                    //Adjust case and notify of change. 
+                    //Use to notify without calling ToUTM()
+                    propName = "UTM";
+                    break;
+                case "MGRS":
+                    this.MGRS.ToMGRS(this.utm);
+                    break;
+                case "Cartesian":
+                    Cartesian.ToCartesian(this);
+                    break;
+                default:
+                    break;
+            }
+            if (this.PropertyChanged != null)
+            {                         
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
@@ -751,38 +752,41 @@ namespace CoordinateSharp
         {
             get { return this.degrees; }
             set
-            {
+            {              
                 //Validate Value
                 if (this.degrees != value)
                 {
+                   
                     if (value < 0) { value *= -1; }//Adjust accidental negative input
+                    
                     if (type == CoordinateType.Lat)
                     {
-                        if (value + this.decimalMinute > 90)
+                        if (value + this.decimalMinute /100.0 > 90)
                         {
                             throw new ArgumentOutOfRangeException("Degrees", "Latitude degrees cannot be greater than 90");
                         }
                     }
                     if (type == CoordinateType.Long)
-                    {
-                        if (value + this.decimalMinute > 180)
+                    {                    
+                        if (value + this.decimalMinute /100.0 > 180)
                         {
                             throw new ArgumentOutOfRangeException("Degrees", "Longitude degrees cannot be greater than 180");
                         }
 
                     }
+
                     decimal f = Convert.ToDecimal(this.degrees);
 
                     this.degrees = value;
 
                     double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive for calculations
                     decimal dDec = Convert.ToDecimal(degABS); //Convert to Decimal for precision during calculations              
-                    //Convert degrees to decimal to keep precision        
+                                                              //Convert degrees to decimal to keep precision        
                     decimal dm = dDec - f; //Extract minutes                                      
                     decimal newDD = this.degrees + dm; //Add minutes to new degree for decimalDegree
-
+                 
                     if (this.decimalDegree < 0) { newDD *= -1; } //Set negative as required
-
+                   
                     this.decimalDegree = Convert.ToDouble(newDD); // Convert decimalDegree to double for storage
                     NotifyProperties(PropertyTypes.Degree);
                 }
@@ -1027,8 +1031,9 @@ namespace CoordinateSharp
             secD /= 60; //Decimal Seconds
             decimal minD = Convert.ToDecimal(min);
             minD += secD; //Decimal Minutes
+
             if (type == CoordinateType.Long)
-            {
+            {           
                 if (deg + (minD / 60) > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal Degrees cannot be greater than 180."); }
             }
             else
@@ -1055,6 +1060,7 @@ namespace CoordinateSharp
         public CoordinatePart(int deg, double minSec, CoordinatesPosition pos, Coordinate c)
         {
             this.Parent = c;
+         
             if (pos == CoordinatesPosition.N || pos == CoordinatesPosition.S) { this.type = CoordinateType.Lat; }
             else { this.type = CoordinateType.Long; }
 

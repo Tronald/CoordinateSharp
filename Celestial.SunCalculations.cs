@@ -7,7 +7,7 @@ namespace CoordinateSharp
 
         public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c,double offset = 0)
         {
-            if (date.Year == 1900) { return; } //Return if date vaue hasn't been established.
+            if (date.Year == 0001) { return; } //Return if date vaue hasn't been established.
             DateTime actualDate = new DateTime(date.Year,date.Month,date.Day,date.Hour,date.Minute, date.Second, DateTimeKind.Utc);
            
             //Sun Time Calculations
@@ -106,7 +106,7 @@ namespace CoordinateSharp
         }
         public static void CalculateAdditionSolarTimes(DateTime date, double longi, double lat, Celestial c)
         {   
-            if (c.SunCondition == CelestialStatus.RiseAndSet && date.Year>1900)
+            if (c.SunCondition == CelestialStatus.RiseAndSet && date.Year>0001)
             {          
                 getTimes(date, longi, lat, c);
             }

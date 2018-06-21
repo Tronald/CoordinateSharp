@@ -196,7 +196,7 @@ namespace CoordinateSharp
         }
         private static int Determine_Slipped_Event_Index(DateTime? actual, DateTime? pre, DateTime? post, DateTime d)
         {
-            System.Diagnostics.Debug.Print(actual + " " + pre + " " + post);
+           
             if (actual.HasValue)
             {
                 if (actual.Value.Day != d.Day)
