@@ -1,6 +1,10 @@
-# CoordinateSharp v1.1.2.8
+# CoordinateSharp v1.1.3.1
 
 A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM) and Cartesian (X, Y, Z). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
+
+An example of CoordinateSharp in action can be seen at [www.coordinatesharp.com](https://www.coordinatesharp.com/)
+
+CAUTION: v1.1.3.1 is considered a breaking change as `MoonDistance` has been converted from a `double?` object to a `Distance` object. Obsolete properties from 1.1.1.5 have also been removed as scheduled.
 
 ### Introduction
 * [Change Notes](#introduction)
@@ -13,11 +17,28 @@ A simple library designed to assist with geographic coordinate string formatting
 * [Calculating Distance](#calculating-distance-and-moving-a-coordinate)
 * [Binding and MVVM](#binding-and-mvvm)
 * [Celestial Information](#celestial-information)
+* [Julian Date Conversions](#julian-date-conversions)
 * [Eager Loading](#eager-loading)
 ### Acknowledgements
 * [Acknowledgements](#acknowledgements)
 
 # Introduction
+
+### 1.1.3.1 Change Notes
+* -Celestial.Assistant.cs added to reduce class file size.
+* -Adds ability to get Moon's Perigee and Apogee information based on date.
+* -Improved accuracy of lunar properties.
+* -Converted `MoonDistance` property from `double?` to `Distance`. 
+* -Updated Julian conversion for more accuracy when dates occur before Gregorian. 
+* -Exposed Julian conversion for users to access.
+* -Removed scheduled obsolete properties.
+* -Adjusted string conversion in eclipse calculations to account for different thread culture.
+* -Fixed issue with `MoonCondition` signaling a moon set when none occurs.
+* -Adds ability to create `Celestial` object with local times.
+* -Fixes issue with zodiac signs not populating in July.
+* -Fixes binding issue with out of range Degrees.
+* -Fixes value notification issue.
+* -Fixes Additional Solar Time day skip occuring at certain latitudes.
 
 ### 1.1.2.8 Change Notes
 * -Fixed issue with CoordinatePart Longitude validation.
@@ -233,7 +254,7 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
  
  ### Celestial Information
  
- You may pull the following pieces of celestial information by passing a UTC date to a Coordinate object. You can initialize an object with a date or pass it later. CoordinateSharp operates in UTC so all dates will be assumed in UTC regardless of the specified `DateTimeKind`. 
+  You may pull the following pieces of celestial information by passing a UTC date to a `Coordinate` object. You can initialize an object with a date or pass it later. CoordinateSharp operates in UTC so all dates will be assumed in UTC regardless of the specified `DateTimeKind`. With that said, the ability to convert to local time after all celestial calculations have been accomplished exists and is explained in this section.
  
   Accessing celestial information (all times in UTC).
   
@@ -241,6 +262,29 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   Coordinate c = new Coordinate(40.57682, -70.75678, new DateTime(2017,3,21));
   c.CelestialInfo.SunRise.ToString(); //Outputs 3/21/2017 10:44:00 AM
   ```
+  
+  Getting times in local is more involved then just adding or subtracting hours to a specified property. This is due to the fact that a moon rise or sunset may not occur on the local day, even though it can on a UTC day. Because of this, you must create a new `Celestial` object using the `Celestial.Celestial_LocalTime(Coordinate c, double offset)` function. This will create a new `Celestial` object populated in local time. 
+  
+  Let's assume a user input a date into a box that's intended to be local instead of UTC. 
+  
+  ```C#
+  DateTime d = UsersSpecifiedDate.
+  
+  //Get the local offset time from UTC
+  //For ease we will manually input an offset
+  double offset = -4; //Eastern time is -4 hours from UTC. 
+  
+  //Convert users date to UTC time
+  d.AddHours(offset*-1);
+  
+  //Create a Coordinate with the UTC time
+ Coordinate c = new Coordinate(39.0000,-72.0000, d); 
+ 
+  //Create a new Celestial object by converting the existing one to Local
+  Celestial celestial = Celestial.Celestial_LocalTime(c, offset);
+  ```
+  NOTE ABOUT LOCAL TIME CONVERSIONS: Conversions are currently made by grabbing celestial information for the day before and after the specified date. It then compares values to the user specified date to find correct local times. This will be reworked for efficiency by adding sidereal times to calculations in the future.
+  
   
   The following pieces of celestial information are available:
   
@@ -254,7 +298,8 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   * -Moon Illumination (Phase, Phase Name, etc)
   * -Additional Solar Times (Civil/Nautical Dawn/Dusk)
   * -Astrological Information (Moon Sign, Zodiac Sign, Moon Name If Full Moon")
-  * -Solar/Lunar Eclipse information (see below).
+  * -Solar/Lunar Eclipse information.
+  * -Perigee/Apogee information.
     
   Sun/Moon Set and Rise DateTimes are nullable. If a null value is returned the Sun or Moon Condition needs to be viewed to see why. In the below example we are using a lat/long near the North Pole with a date in August. The sun does not set that far North during the specified time of year.
   
@@ -283,8 +328,13 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   cel.SunRise.Value.ToString();
   ```
   
-  NOTE REGARDING MOON DISTANCE: The formula used to calculate moon distance in this library has a been discovered to have standard distance deviation of 3,388 km with Perigee and Apogee approximate time deviations of 36 hours. Results may be innacurate at times and should be used for estimations only. This formula will be worked for accuracy in future releases.
-  
+  Pergee and Apogee information is available in the `Celestial` class but may be called specifically as it is not location dependent.
+  ```C#
+  Perigee p = Celestial.GetPerigee(date);
+  p.LastPerigee.Date;
+  p.LastPerigee.Distance.Kilometers;
+  ```
+
   Solar and Lunar Eclipse.
   
   ```C#
@@ -313,6 +363,21 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   Properties will return `0001/1/1 12:00:00` if the referenced event didn't occur. For example if a solar eclipse is not a Total or Annular eclipse, the `AorTEclipseBegin` property won't return a populated DateTime. 
 
   NOTE REGARDING CALCULATIONS: The formulas used take into account the locations altitude. Currently all calculations for eclipse timing are set with an altitude of 100 meters. Slight deviations in actual eclipse timing may occur based on the locations actual altitude. Deviations are very minimal and should suffice for most applications.
+
+### Julian Date Conversions
+
+The Julian date converters used by the library have been exposed for use. The converters account for both Julian and Gregorian calendars.
+
+```C#
+ //To Julian
+ double jul = JulianConversions.GetJulian(date);
+ 
+ //From Julian
+ DateTime date = JulianConversions.GetDate_FromJulian(jul));
+ 
+ //Epoch options also exist
+ JulianConversions.GetJulian_Epoch2000(date);    
+```
   
 ### Eager Loading
 
@@ -332,6 +397,8 @@ c.EagerLoadSettings.Celestial = false;
  ```
    
 # Acknowledgements
+
+Most celestial calculations are based on "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
 
 SunTime calculations were adapted from NOAA and Zacky Pickholz 2008 "C# Class for Calculating Sunrise and Sunset Times" 
  [NOAA](https://www.esrl.noaa.gov/gmd/grad/solcalc/main.js)
