@@ -249,6 +249,14 @@ namespace CoordinateSharp
         /// <summary>
         /// Sun altitude in degrees
         /// </summary>
+        public double MoonAltitude { get; set; }
+        /// <summary>
+        /// Moon azimuth in degrees
+        /// </summary>
+        public double MoonAzimuth { get; set; }
+        /// <summary>
+        /// Moon altitude in degrees
+        /// </summary>
         public double SunAltitude { get; set; }
         /// <summary>
         /// Estimated moon distance from the earth in kilometers

@@ -11,6 +11,10 @@ namespace CoordinateSharp
 
         public static void GetMoonTimes(DateTime date, double lat, double lng, Celestial c)
         {
+            //Get current Moon Pos
+            MoonPosition mp = GetMoonPosition(date, lat, lng, c);
+            c.MoonAltitude = mp.Altitude;
+            c.MoonAzimuth = mp.Azimuth;
             c.MoonRise = null;
             c.MoonSet = null;
             DateTime t = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
@@ -89,7 +93,7 @@ namespace CoordinateSharp
                 if (!isRise && isSet) { c.MoonCondition = CelestialStatus.NoRise; }
                 if (isRise && !isSet) { c.MoonCondition = CelestialStatus.NoSet; }
             }
-            //integrity check.
+            
 
         }
         static MoonPosition GetMoonPosition(DateTime date, double lat, double lng, Celestial cel)
