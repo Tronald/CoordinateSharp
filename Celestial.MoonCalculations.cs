@@ -13,8 +13,10 @@ namespace CoordinateSharp
         {
             //Get current Moon Pos
             MoonPosition mp = GetMoonPosition(date, lat, lng, c);
-            c.MoonAltitude = mp.Altitude;
-            c.MoonAzimuth = mp.Azimuth;
+            
+            c.MoonAltitude = mp.Altitude * 180 / Math.PI;
+            c.MoonAzimuth = mp.Azimuth * 180 / Math.PI;
+
             c.MoonRise = null;
             c.MoonSet = null;
             DateTime t = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
@@ -367,7 +369,10 @@ namespace CoordinateSharp
 
          static double declination(double l, double b) { return Math.Asin(Math.Sin(b) * Math.Cos(e) + Math.Cos(b) * Math.Sin(e) * Math.Sin(l)); }
         static double azimuth(double H, double phi, double dec) { return Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(dec) * Math.Cos(phi)); }
-        static double altitude(double H, double phi, double dec) { return Math.Asin(Math.Sin(phi) * Math.Sin(dec) + Math.Cos(phi) * Math.Cos(dec) * Math.Cos(H)); }
+        static double altitude(double H, double phi, double dec)
+        {
+            return Math.Asin(Math.Sin(phi) * Math.Sin(dec) + Math.Cos(phi) * Math.Cos(dec) * Math.Cos(H));
+        }
         static double siderealTime(double d, double lw) { return rad * (280.16 + 360.9856235 * d) - lw; }
         static double astroRefraction(double h)
         {
