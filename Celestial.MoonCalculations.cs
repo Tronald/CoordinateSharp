@@ -15,8 +15,7 @@ namespace CoordinateSharp
             //Get current Moon Pos
             MoonPosition mp = GetMoonPosition(date, lat, lng, c);
             double altRad = mp.Altitude / Math.PI*180;
-            c.MoonAltitude = (altRad - mp.ParallaxCorection);
-            Debug.Print(mp.ParallaxCorection.ToString());
+            c.MoonAltitude = (altRad - mp.ParallaxCorection);                   
             c.MoonAzimuth = mp.Azimuth / Math.PI*180 + 180;  //For NE
 
             c.MoonRise = null;
@@ -25,6 +24,7 @@ namespace CoordinateSharp
             c.MoonSet = null;
             c.MoonSet = null;
             double hc = (.7275* mp.ParallaxCorection - .34) * rad,
+            
             h0 = GetMoonPosition(t, lat, lng, c).Altitude - hc,
             h1, h2, a, b, xe, ye, d, roots, dx;
             double? x1 = null, x2 = null, rise = null, set = null;
@@ -43,8 +43,10 @@ namespace CoordinateSharp
             // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
             for (var i = 1; i <= 24; i += 2)
             {
-                h1 = GetMoonPosition(hoursLater(t, i), lat, lng, c).Altitude - hc;
-                h2 = GetMoonPosition(hoursLater(t, i + 1), lat, lng, c).Altitude - hc;
+                MoonPosition pos = GetMoonPosition(hoursLater(t, i), lat, lng, c);
+                h1 = pos.Altitude - ((.7275 * pos.ParallaxCorection - .34) * rad);
+                pos = GetMoonPosition(hoursLater(t, i + 1), lat, lng, c);
+                h2 =pos.Altitude - ((.7275 * pos.ParallaxCorection - .34) * rad);
                 if (isNeg && h1 >= hor || isNeg && h2 >= hor) { isNeg = false; isRise = true; }
                 if (!isNeg && h1 < hor || !isNeg && h2 < hor) { isNeg = true; isSet = true; }
 
@@ -126,18 +128,19 @@ namespace CoordinateSharp
             double tDEC = Parallax_Dec(dist.Meters, H, pCosE, pSinE, dec, cRA);
             double tRA = ra - cRA;
             dec = tDEC;
+           
             ra = tRA;
             double h = altitude(H, phi, dec);
 
             // formula 14.1 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
             double pa = Math.Atan2(Math.Sin(H), Math.Tan(phi) * Math.Cos(dec) - Math.Sin(dec) * Math.Cos(H));
-
-            h = h + astroRefraction(h); // altitude correction for refraction
-
+            Debug.Print("h: " + h);
+            // altitude correction for refraction
+            h = h + astroRefraction(h);
 
             MoonPosition mp = new MoonPosition();
             mp.Azimuth = azimuth(H, phi, dec);
-            mp.Altitude = h /Math.PI * 180;
+            mp.Altitude = h / Math.PI * 180;
             mp.Distance = dist; 
             mp.ParallacticAngle = pa;
 
@@ -145,11 +148,14 @@ namespace CoordinateSharp
             double p = Math.Asin(Math.Cos(h) * Math.Sin(horParal/3600)); // parallax in altitude (degrees)
             p *= 1000;
            
+           
+
             mp.ParallaxCorection = p;
 
             //mp.Altitude -= p; 
            
             mp.Altitude *= rad;
+           
             return mp;
         }
         static CelCoords GetMoonCoords(double d, Celestial c, double[] LDMNF, double t)
@@ -404,15 +410,39 @@ namespace CoordinateSharp
        // static double siderealTime(double d, double lw) { return rad * (280.16 + 360.9856235 * d) - lw; }
         static double astroRefraction(double h)
         {
-            // the following formula works for positive altitudes only.
-            if (h < 0)
+            double P = 1200;
+            double T = 15;
+            double alt = h / Math.PI * 180;
+            double Ref = P * (.1594 + .0196 * alt + .00002 * Math.Pow(alt, 2)) / ((273 + T) * (1 + .505 * alt + .0845 * Math.Pow(alt, 2)));
+            return Ref / 60;
+            Debug.Print("Ref: " + Ref.ToString());
+            //1.1.3 Ch 16 Formula 16.4
+            //h = h / Math.PI / 180;
+            double a = 1.02 * rad / 60;
+            double b = 10.3 * rad / 60;
+            double c = 5.11 * rad;
+            double cor = 0;
+            Debug.Print((h/Math.PI*180).ToString());
+            if(h<.1047)
             {
-                h = 0; // if h = -0.08901179 a div/0 would occur.
-            }
+                cor = .0019279;
+            }      
+            double R = a / Math.Tan(h + b / (h + c)) + cor;
+
+            Debug.Print("Ref2: " + R.ToString());
+            //R *= rad;
+            return R;
+
+            // the following formula works for positive altitudes only.
+            //if (h < .00593)
+            //{
+            //    h = .00593; // if h = -0.08901179 a div/0 would occur.
+            //}
 
             // formula 16.4 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
             // 1.02 / tan(h + 10.26 / (h + 5.10)) h in degrees, result in arc minutes -> converted to rad:
-            return 0.0002967 / Math.Tan(h + 0.00312536 / (h + 0.08901179));
+
+            return (a * rad / 60) / Math.Tan(h + (b * rad / 60) / (h + (c*rad)));
         }
 
         public static void GetMoonSign(DateTime date, Celestial c)
@@ -818,7 +848,7 @@ namespace CoordinateSharp
         {
             //Ch 40 (Correction for parallax
             //H - geocentric hour angle of the body (sidereal) IAW Ch 12
-            double pi = (8.794 / distance) * Math.PI / 180; // 40.1 in radians
+            double pi = Math.Asin((Math.Sin(8.794 / distance))) * Math.PI / 180; // 40.1 in radians
             H = H * Math.PI / 180;
             //Directly to topocencric dec
             double tDEC = Math.Atan2((Math.Sin(dec) - pSinE * Math.Sin(pi)) * Math.Cos(cRA), Math.Cos(dec) - pCosE * Math.Sin(pi) * Math.Cos(H));
@@ -832,7 +862,7 @@ namespace CoordinateSharp
             //Ch 40 (Correction for parallax
             //H - geocentric hour angle of the body (sidereal) IAW Ch 12
 
-            double pi = (8.794 / distance) * Math.PI / 180; // 40.1
+            double pi = Math.Asin((Math.Sin(8.794 / distance))) * Math.PI / 180; // 40.1
 
 
             //Convert to Radian
