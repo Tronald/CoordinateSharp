@@ -23,9 +23,9 @@ namespace CoordinateSharp
             DateTime t = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
             c.MoonSet = null;
             c.MoonSet = null;
-            double hc = (.7275* mp.ParallaxCorection - .34) * rad,
-            
-            h0 = GetMoonPosition(t, lat, lng, c).Altitude - hc,
+            double hc = (.7275 * mp.ParallaxCorection - .34) * rad;
+            //double hc = mp.ParallaxCorection * rad;
+            double h0 = GetMoonPosition(t, lat, lng, c).Altitude - hc,
             h1, h2, a, b, xe, ye, d, roots, dx;
             double? x1 = null, x2 = null, rise = null, set = null;
             double hor = 0; //Horizon for moon
@@ -410,12 +410,15 @@ namespace CoordinateSharp
        // static double siderealTime(double d, double lw) { return rad * (280.16 + 360.9856235 * d) - lw; }
         static double astroRefraction(double h)
         {
-            double P = 1200;
-            double T = 15;
+            double P = 1013.25; //Average pressure of earth
+            double T = 16; //Average temp of earth
             double alt = h / Math.PI * 180;
             double Ref = P * (.1594 + .0196 * alt + .00002 * Math.Pow(alt, 2)) / ((273 + T) * (1 + .505 * alt + .0845 * Math.Pow(alt, 2)));
             return Ref / 60;
-            Debug.Print("Ref: " + Ref.ToString());
+
+            //Below code contains other Meeus Formulas. The above seems to give most
+            //accurate result in comparison to US NAVY tables.
+            //Slight deviations of  occuring at horizon due to refraction as expected of up to .1 degree.
             //1.1.3 Ch 16 Formula 16.4
             //h = h / Math.PI / 180;
             double a = 1.02 * rad / 60;
@@ -423,8 +426,9 @@ namespace CoordinateSharp
             double c = 5.11 * rad;
             double cor = 0;
             Debug.Print((h/Math.PI*180).ToString());
-            if(h<.1047)
+            if(h<0)
             {
+                //cor = 0;
                 cor = .0019279;
             }      
             double R = a / Math.Tan(h + b / (h + c)) + cor;
