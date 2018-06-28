@@ -5,91 +5,103 @@ namespace CoordinateSharp
 {
     internal class MoonCalc
     {
-        static double rad = Math.PI / 180;
+        static double rad = Math.PI / 180; //For converting radians
 
         //obliquity of the ecliptic in radians based on standard equinox 2000.
         static double e = rad * 23.4392911; 
-
+        /// <summary>
+        /// Gets Moon Times, Altitude and Azimuth
+        /// </summary>
+        /// <param name="date">Date</param>
+        /// <param name="lat">Latitude</param>
+        /// <param name="lng">Longitude</param>
+        /// <param name="c">Celestial</param>
         public static void GetMoonTimes(DateTime date, double lat, double lng, Celestial c)
         {
-            //Get current Moon Pos
+            //Get current Moon Position to populate passed Alt / Azi for user specified date
             MoonPosition mp = GetMoonPosition(date, lat, lng, c);
-            double altRad = mp.Altitude / Math.PI*180;
-            c.MoonAltitude = (altRad - mp.ParallaxCorection);                   
-            c.MoonAzimuth = mp.Azimuth / Math.PI*180 + 180;  //For NE
-
-            c.MoonRise = null;
-            c.MoonSet = null;
-            DateTime t = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
-            c.MoonSet = null;
-            c.MoonSet = null;
-            double hc = (.7275 * mp.ParallaxCorection - .34) * rad;
-            //double hc = mp.ParallaxCorection * rad;
-            MoonPosition initMP = GetMoonPosition(t, lat, lng, c);
-            ////New Iteration.
+            double altRad = mp.Altitude / Math.PI*180; //Convert alt to degrees
+            c.MoonAltitude = (altRad - mp.ParallaxCorection); //Set altitude with adjusted parallax                
+            c.MoonAzimuth = mp.Azimuth / Math.PI*180 + 180;  //Azimuth in degrees + 180 for E by N.
+   
+            ////New Iterations for Moon set / rise
             bool moonRise = false;
             bool moonSet = false;
+
+            //Start at beginning of day
+            DateTime t = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
+
             //Get start of day Moon Pos
             MoonPosition moonPos = GetMoonPosition(t, lat, lng, c);
             double alt1 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
+
             DateTime? setTime = null;
             DateTime? riseTime = null;
-            double hz = -.3 * rad;//Horizon degrees
-            Debug.Print("HOR: " + hz);
+            double hz = -.3 * rad;//Horizon degrees at -.3 for appearant rise / set
+
+            //Iterate for each hour of the day
             for(int x = 1;x<=24;x++)
-            {
-                
+            {               
                 moonPos = GetMoonPosition(t.AddHours(x), lat, lng, c);//Get the next hours altitude for comparison
                 double alt2 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
+                //If hour 1 is below horizon and hour 2 is above
                 if(alt1 <hz && alt2 >=hz)
                 {
                     //Moon Rise Occurred
                     moonRise = true;
                     DateTime dt1 = t.AddHours(x - 1);
                     moonPos = GetMoonPosition(dt1, lat, lng, c);//Get the next hours altitude for comparison
-                    alt1 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
+                    double altM1 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
+                    //Iterate through each minute to determine at which minute the horizon is crossed.
+                    //Interpolation is more efficient, but yielded results with deviations up to 5 minutes. 
+                    //Investigate formula efficiency 
                     for (int y = 1;y<=60;y++)
                     {
                         DateTime dt2 = t.AddHours(x-1).AddMinutes(y);
                         moonPos = GetMoonPosition(dt2, lat, lng, c);//Get the next hours altitude for comparison
-                        alt2 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
-                        if (alt1<hz && alt2>=hz)
+                        double altM2 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
+                        if (altM1<hz && altM2>=hz)
                         {
-                            Debug.Print("hz: " + hz + " Alt1: " + (alt1/Math.PI*180) +  " Alt2: " + (alt2 / Math.PI * 180));
-                            //Debug.Print(((hz - alt1) / (alt2 - alt1)).ToString());
-                            double p = 60 * ((hz - alt1) / (alt2 - alt1));
+                            //interpolate seconds
+                            double p = 60 * ((hz - altM1) / (altM2 - altM1));
                             riseTime = dt1.AddMinutes(y-1).AddSeconds(p);
                             break;
                         }
-                        alt1 = alt2;
+                        altM1 = altM2;
                         
                     }             
                 }
+                //if hour 2 is above horizon and hour 1 below
                 if(alt1>=hz && alt2 <hz)
                 {
                     //Moon Set Occured
                     moonSet = true;
                     DateTime dt1 = t.AddHours(x - 1);
                     moonPos = GetMoonPosition(dt1, lat, lng, c);//Get the next hours altitude for comparison
-                    alt1 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
+                    double altM1 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
+                    //Iterate through each minute to determine at which minute the horizon is crossed.
+                    //Interpolation is more efficient, but yielded results with deviations up to 5 minutes. 
+                    //Investigate formula efficiency 
                     for (int y = 1; y <= 60; y++)
                     {
                         DateTime dt2 = t.AddHours(x - 1).AddMinutes(y);
                         moonPos = GetMoonPosition(dt2, lat, lng, c);//Get the next hours altitude for comparison
-                        alt2 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
-                        if (alt1 >= hz && alt2 < hz)
+                        double altM2 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
+                        if (altM1 >= hz && altM2 < hz)
                         {
-                            double p = 60 * ((hz - alt2) / (alt1 - alt2));
+                            //Interpolate seconds 
+                            double p = 60 * ((hz - altM2) / (altM1 - altM2));
                             setTime = dt1.AddMinutes(y).AddSeconds(-p);
                             break;
                         }
-                        alt1 = alt2;
+                        altM1 = altM2;
 
                     }
                 }
                 alt1 = alt2;
                 if(moonRise && moonSet) { break; }
             }
+
             c.MoonSet = setTime;
             c.MoonRise = riseTime;
             if (moonRise && moonSet) { c.MoonCondition = CelestialStatus.RiseAndSet; }
@@ -102,88 +114,14 @@ namespace CoordinateSharp
                 }
                 if (!moonRise && moonSet) { c.MoonCondition = CelestialStatus.NoRise; }
                 if (moonRise && !moonSet) { c.MoonCondition = CelestialStatus.NoSet; }
-            }
-            /////REGION OLD
-            return;
-            double h0 = initMP.Altitude - ((.7275 * initMP.ParallaxCorection -.34) * rad),
-            h1, h2, a, b, xe, ye, d, roots, dx;
-            double? x1 = null, x2 = null, rise = null, set = null;
-            double hor = 0; //Horizon for moon
-            bool isRise = false;
-            bool isSet = false;
-            bool isNeg;
-            if (h0 < hor)
-            {
-                isNeg = true;
-            }
-            else
-            {
-                isNeg = false;
-            }
-            // go in 2-hour chunks, each time seeing if a 3-point quadratic curve crosses zero (which means rise or set)
-            for (var i = 1; i <= 24; i += 2)
-            {
-                MoonPosition pos = GetMoonPosition(hoursLater(t, i), lat, lng, c);
-                h1 = pos.Altitude - ((.7275 * pos.ParallaxCorection - .34) * rad);
-                pos = GetMoonPosition(hoursLater(t, i + 1), lat, lng, c);
-                h2 = pos.Altitude - ((.7275 * pos.ParallaxCorection - .34) * rad);
-                if (isNeg && h1 >= hor || isNeg && h2 >= hor) { isNeg = false; isRise = true; }
-                if (!isNeg && h1 < hor || !isNeg && h2 < hor) { isNeg = true; isSet = true; }
-
-                a = (h0 + h2) / 2 - h1;
-                b = (h2 - h0) / 2;
-                xe = -b / (2 * a);
-                ye = (a * xe + b) * xe + h1;
-                d = b * b - 4 * a * h1;
-                roots = 0;
-                if (d >= hor)
-                {
-                    dx = Math.Sqrt(d) / (Math.Abs(a) * 2);
-                    x1 = xe - dx;
-                    x2 = xe + dx;
-                    if (Math.Abs(x1.Value) <= 1) roots++;
-                    if (Math.Abs(x2.Value) <= 1) roots++;
-                    if (x1 < -1) x1 = x2;
-                }
-
-                if (roots == 1)
-                {
-                    if (h0 < hor) rise = i + x1;
-                    else set = i + x1;
-                }
-                else if (roots == 2)
-                {
-                    rise = i + (ye < hor ? x2 : x1);
-                    set = i + (ye < hor ? x1 : x2);
-                }
-
-                if (rise != null && set != null) break;
-
-                h0 = h2;
-            }
-
-
-            if (rise != null) { c.MoonRise = hoursLater(t, rise.Value); }
-            if (set != null) { c.MoonSet = hoursLater(t, set.Value); }
-            isRise = rise.HasValue;
-            isSet = set.HasValue;
-            if (isRise && isSet) { c.MoonCondition = CelestialStatus.RiseAndSet; }
-            else
-            {
-                if (!isRise && !isSet)
-                {
-                    if (h0 >= hor) { c.MoonCondition = CelestialStatus.UpAllDay; }
-                    else { c.MoonCondition = CelestialStatus.DownAllDay; }
-                }
-                if (!isRise && isSet) { c.MoonCondition = CelestialStatus.NoRise; }
-                if (isRise && !isSet) { c.MoonCondition = CelestialStatus.NoSet; }
-            }
-            
-
+            }          
         }
-        static MoonPosition GetMoonPosition(DateTime date, double lat, double lng, Celestial cel)
+
+        private static MoonPosition GetMoonPosition(DateTime date, double lat, double lng, Celestial cel)
         {
+            //Set UTC date integrity
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+            
             double d = JulianConversions.GetJulian_Epoch2000(date);
             
             //Ch 47
@@ -197,25 +135,27 @@ namespace CoordinateSharp
             double phi = rad * lat;
        
             double H = rad * Get_Sidereal_Time(JDE, lw) - lw - c.ra;
-
-            //GET l (latitude) nutation in future, for more accuracy.
-            //Get dec and ra parallax corrections
+            
             double ra = c.ra; //Adjust current RA formula to avoid needless RAD conversions
             double dec = c.dec; //Adjust current RA formula to avoid needless RAD conversions
+
+            //Adjust for parallax (low accuracry increases may not be worth cost)
+            //Investigate
             double pSinE = Get_pSinE(dec, dist.Meters) * Math.PI / 180;
             double pCosE = Get_pCosE(dec, dist.Meters) * Math.PI / 180;
             double cRA = Parallax_RA(dist.Meters, H, pCosE, dec, ra);
             double tDEC = Parallax_Dec(dist.Meters, H, pCosE, pSinE, dec, cRA);
             double tRA = ra - cRA;
             dec = tDEC;
-           
             ra = tRA;
+
+            //Get true altitude
             double h = altitude(H, phi, dec);
 
             // formula 14.1 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
             double pa = Math.Atan2(Math.Sin(H), Math.Tan(phi) * Math.Cos(dec) - Math.Sin(dec) * Math.Cos(H));
            
-            // altitude correction for refraction
+            //altitude correction for refraction
             h = h + astroRefraction(h);
 
             MoonPosition mp = new MoonPosition();
@@ -227,18 +167,13 @@ namespace CoordinateSharp
             double horParal = 8.794 / (dist.Meters / 149.59787E6); // horizontal parallax (arcseconds), Meeus S. 263  
             double p = Math.Asin(Math.Cos(h) * Math.Sin(horParal/3600)); // parallax in altitude (degrees)
             p *= 1000;
-           
-           
-
-            mp.ParallaxCorection = p;
-
-            //mp.Altitude -= p; 
-           
+          
+            mp.ParallaxCorection = p;          
             mp.Altitude *= rad;
            
             return mp;
         }
-        static CelCoords GetMoonCoords(double d, Celestial c, double[] LDMNF, double t)
+        private static CelCoords GetMoonCoords(double d, Celestial c, double[] LDMNF, double t)
         {
             // Legacy function. Updated with Meeus Calcs for increased accuracy.
             // geocentric ecliptic coordinates of the moon
@@ -477,44 +412,43 @@ namespace CoordinateSharp
 
             return M + C + P + Math.PI;
         }
-        private static DateTime hoursLater(DateTime date, double h)
-        {
-            return date.AddHours(h);
-        }
-
+       
         static double azimuth(double H, double phi, double dec) { return Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(dec) * Math.Cos(phi)); }
         static double altitude(double H, double phi, double dec)
         {
             return Math.Asin(Math.Sin(phi) * Math.Sin(dec) + Math.Cos(phi) * Math.Cos(dec) * Math.Cos(H));
         }
-       // static double siderealTime(double d, double lw) { return rad * (280.16 + 360.9856235 * d) - lw; }
         static double astroRefraction(double h)
         {
-            //double P = 1013.25; //Average pressure of earth
-            //double T = 16; //Average temp of earth
-            //double alt = h / Math.PI * 180;
-            //double Ref = P * (.1594 + .0196 * alt + .00002 * Math.Pow(alt, 2)) / ((273 + T) * (1 + .505 * alt + .0845 * Math.Pow(alt, 2)));
-            //return Ref / 60;
+            //CH 16
+            double P = 1013.25; //Average pressure of earth
+            double T = 16; //Average temp of earth
+            double alt = h / Math.PI * 180;
+            double Ref = P * (.1594 + .0196 * alt + .00002 * Math.Pow(alt, 2)) / ((273 + T) * (1 + .505 * alt + .0845 * Math.Pow(alt, 2)));
+            return Ref / 60;
 
             //Below code contains other Meeus Formulas. The above seems to give most
             //accurate result in comparison to US NAVY tables.
-            //Slight deviations of  occuring at horizon due to refraction as expected of up to .1 degree.
+            //Deviations from navy table up to .1 degree or .002 arc minutes.
+            //Legacy formulas will remain in code as "uncreachable" for now for future research.
+
             //1.1.3 Ch 16 Formula 16.4
             //h = h / Math.PI / 180;
             double a = 1.02 * rad / 60;
             double b = 10.3 * rad / 60;
             double c = 5.11 * rad;
-            double cor = 0;
-            if(h<0)
-            {
-                //cor = 0;
-                cor = .0019279;
-            }      
-            double R = a / Math.Tan(h + b / (h + c)) + cor;
+            //double cor = 0;
+            //if(h<0)
+            //{
+            //    //cor = 0;
+            //    cor = .0019279;
+            //}      
+            double R = a / Math.Tan(h + b / (h + c));
             
             //R *= rad;
             return R;
 
+            //LEGACY SUNCALC. REMOVE ONCE NEEDED
             // the following formula works for positive altitudes only.
             //if (h < .00593)
             //{

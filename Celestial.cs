@@ -247,11 +247,11 @@ namespace CoordinateSharp
         /// </summary>
         public double SunAzimuth { get; set; }
         /// <summary>
-        /// Sun altitude in degrees
+        /// Moon altitude in degrees (corrected for parallax and refraction).
         /// </summary>
         public double MoonAltitude { get; set; }
         /// <summary>
-        /// Moon azimuth in degrees
+        /// Moon azimuth in degrees (E of N)
         /// </summary>
         public double MoonAzimuth { get; set; }
         /// <summary>
