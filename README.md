@@ -1,10 +1,10 @@
-# CoordinateSharp v1.1.3.1
+# CoordinateSharp v1.1.3.2
 
 A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM) and Cartesian (X, Y, Z). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
 
 An example of CoordinateSharp in action can be seen at [www.coordinatesharp.com](https://www.coordinatesharp.com/)
 
-CAUTION: v1.1.3.1 is considered a breaking change as `MoonDistance` has been converted from a `double?` object to a `Distance` object. Obsolete properties from 1.1.1.5 have also been removed as scheduled.
+CAUTION: v1.1.3.1 and above is considered a breaking change as `MoonDistance` has been converted from a `double?` object to a `Distance` object. Obsolete properties from 1.1.1.5 have also been removed as scheduled.
 
 ### Introduction
 * [Change Notes](#introduction)
@@ -24,6 +24,9 @@ CAUTION: v1.1.3.1 is considered a breaking change as `MoonDistance` has been con
 
 # Introduction
 
+### 1.1.3.2 Change Notes
+* -Exposes moon altitude and azimuth properties.
+* -Further increases lunar accuracy. 
 ### 1.1.3.1 Change Notes
 * -Celestial.Assistant.cs added to reduce class file size.
 * -Adds ability to get Moon's Perigee and Apogee information based on date.
@@ -295,6 +298,8 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   * -MoonSet          
   * -Moon Rise        
   * -Moon Distance
+  * -Moon Altitude
+  * -Moon Azimuth
   * -Moon Illumination (Phase, Phase Name, etc)
   * -Additional Solar Times (Civil/Nautical Dawn/Dusk)
   * -Astrological Information (Moon Sign, Zodiac Sign, Moon Name If Full Moon")
