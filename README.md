@@ -298,6 +298,8 @@ NOTE: It is important that input boxes be set with 'ValidatesOnExceptions=True'.
   * -MoonSet          
   * -Moon Rise        
   * -Moon Distance
+  * -Moon Altitude
+  * -Moon Azimuth
   * -Moon Illumination (Phase, Phase Name, etc)
   * -Additional Solar Times (Civil/Nautical Dawn/Dusk)
   * -Astrological Information (Moon Sign, Zodiac Sign, Moon Name If Full Moon")
