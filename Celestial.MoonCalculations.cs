@@ -412,54 +412,6 @@ namespace CoordinateSharp
 
             return M + C + P + Math.PI;
         }
-       
-        static double azimuth(double H, double phi, double dec) { return Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(dec) * Math.Cos(phi)); }
-        static double altitude(double H, double phi, double dec)
-        {
-            return Math.Asin(Math.Sin(phi) * Math.Sin(dec) + Math.Cos(phi) * Math.Cos(dec) * Math.Cos(H));
-        }
-        static double astroRefraction(double h)
-        {
-            //CH 16
-            double P = 1013.25; //Average pressure of earth
-            double T = 16; //Average temp of earth
-            double alt = h / Math.PI * 180;
-            double Ref = P * (.1594 + .0196 * alt + .00002 * Math.Pow(alt, 2)) / ((273 + T) * (1 + .505 * alt + .0845 * Math.Pow(alt, 2)));
-            return Ref / 60;
-
-            //Below code contains other Meeus Formulas. The above seems to give most
-            //accurate result in comparison to US NAVY tables.
-            //Deviations from navy table up to .1 degree or .002 arc minutes.
-            //Legacy formulas will remain in code as "uncreachable" for now for future research.
-
-            //1.1.3 Ch 16 Formula 16.4
-            //h = h / Math.PI / 180;
-            double a = 1.02 * rad / 60;
-            double b = 10.3 * rad / 60;
-            double c = 5.11 * rad;
-            //double cor = 0;
-            //if(h<0)
-            //{
-            //    //cor = 0;
-            //    cor = .0019279;
-            //}      
-            double R = a / Math.Tan(h + b / (h + c));
-            
-            //R *= rad;
-            return R;
-
-            //LEGACY SUNCALC. REMOVE ONCE NEEDED
-            // the following formula works for positive altitudes only.
-            //if (h < .00593)
-            //{
-            //    h = .00593; // if h = -0.08901179 a div/0 would occur.
-            //}
-
-            // formula 16.4 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-            // 1.02 / tan(h + 10.26 / (h + 5.10)) h in degrees, result in arc minutes -> converted to rad:
-
-            return (a * rad / 60) / Math.Tan(h + (b * rad / 60) / (h + (c*rad)));
-        }
 
         public static void GetMoonSign(DateTime date, Celestial c)
         {
@@ -540,7 +492,7 @@ namespace CoordinateSharp
 
         //v1.1.3 Formulas
         //The following formulas are either additions 
-        //or conversions of SunCalcs formulas into more accurate Meeus
+        //or conversions of SunCalcs formulas into Meeus
 
         /// <summary>
         /// Grabs Perigee or Apogee of Moon based on specified time.
@@ -912,6 +864,54 @@ namespace CoordinateSharp
 
             double ps = Math.Cos(u) + (H / 6378140) * Math.Cos(dec);
             return ps;
+        }
+
+        static double azimuth(double H, double phi, double dec) { return Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(dec) * Math.Cos(phi)); }
+        static double altitude(double H, double phi, double dec)
+        {
+            return Math.Asin(Math.Sin(phi) * Math.Sin(dec) + Math.Cos(phi) * Math.Cos(dec) * Math.Cos(H));
+        }
+        static double astroRefraction(double h)
+        {
+            //CH 16
+            double P = 1013.25; //Average pressure of earth
+            double T = 16; //Average temp of earth
+            double alt = h / Math.PI * 180;
+            double Ref = P * (.1594 + .0196 * alt + .00002 * Math.Pow(alt, 2)) / ((273 + T) * (1 + .505 * alt + .0845 * Math.Pow(alt, 2)));
+            return Ref / 60;
+
+            //Below code contains other Meeus Formulas. The above seems to give most
+            //accurate result in comparison to US NAVY tables.
+            //Deviations from navy table up to .1 degree or .002 arc minutes.
+            //Legacy formulas will remain in code as "uncreachable" for now for future research.
+
+            //1.1.3 Ch 16 Formula 16.4
+            //h = h / Math.PI / 180;
+            double a = 1.02 * rad / 60;
+            double b = 10.3 * rad / 60;
+            double c = 5.11 * rad;
+            //double cor = 0;
+            //if(h<0)
+            //{
+            //    //cor = 0;
+            //    cor = .0019279;
+            //}      
+            double R = a / Math.Tan(h + b / (h + c));
+
+            //R *= rad;
+            return R;
+
+            //LEGACY SUNCALC. REMOVE ONCE NEEDED
+            // the following formula works for positive altitudes only.
+            //if (h < .00593)
+            //{
+            //    h = .00593; // if h = -0.08901179 a div/0 would occur.
+            //}
+
+            // formula 16.4 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
+            // 1.02 / tan(h + 10.26 / (h + 5.10)) h in degrees, result in arc minutes -> converted to rad:
+
+            return (a * rad / 60) / Math.Tan(h + (b * rad / 60) / (h + (c * rad)));
         }
 
         public class MoonTimes
