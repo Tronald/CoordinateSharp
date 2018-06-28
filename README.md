@@ -25,7 +25,8 @@ CAUTION: v1.1.3.1 and above is considered a breaking change as `MoonDistance` ha
 # Introduction
 
 ### 1.1.3.2 Change Notes
-* -Exposes moon position properties.
+* -Exposes moon altitude and azimuth properties.
+* -Further increases lunar accuracy. 
 ### 1.1.3.1 Change Notes
 * -Celestial.Assistant.cs added to reduce class file size.
 * -Adds ability to get Moon's Perigee and Apogee information based on date.
