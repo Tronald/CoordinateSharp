@@ -7,7 +7,7 @@ An example of CoordinateSharp in action can be seen at [www.coordinatesharp.com]
 CAUTION: v1.1.3.1 and above is considered a breaking change as `MoonDistance` has been converted from a `double?` object to a `Distance` object. Obsolete properties from 1.1.1.5 have also been removed as scheduled.
 
 ### Introduction
-* [Change Notes](#introduction)
+* [Change Notes](#change-notes)
 * [Getting Started](#getting-started)
 ### Usage Instructions
 * [Creating a Coordinate Object](#creating-a-coordinate-object)
@@ -24,65 +24,8 @@ CAUTION: v1.1.3.1 and above is considered a breaking change as `MoonDistance` ha
 
 # Introduction
 
-### 1.1.3.2 Change Notes
-* -Exposes moon altitude and azimuth properties.
-* -Further increases lunar accuracy. 
-### 1.1.3.1 Change Notes
-* -Celestial.Assistant.cs added to reduce class file size.
-* -Adds ability to get Moon's Perigee and Apogee information based on date.
-* -Improved accuracy of lunar properties.
-* -Converted `MoonDistance` property from `double?` to `Distance`. 
-* -Updated Julian conversion for more accuracy when dates occur before Gregorian. 
-* -Exposed Julian conversion for users to access.
-* -Removed scheduled obsolete properties.
-* -Adjusted string conversion in eclipse calculations to account for different thread culture.
-* -Fixed issue with `MoonCondition` signaling a moon set when none occurs.
-* -Adds ability to create `Celestial` object with local times.
-* -Fixes issue with zodiac signs not populating in July.
-* -Fixes binding issue with out of range Degrees.
-* -Fixes value notification issue.
-* -Fixes Additional Solar Time day skip occurring at certain latitudes.
-
-### 1.1.2.8 Change Notes
-* -Fixed issue with CoordinatePart Longitude validation.
-### 1.1.2.7 Change Notes
-* -Fixed Digraph validation error for new MGRS objects initialized with W,X,Y,Z Digraphs.
-* -Allows serialization of objects.
-### 1.1.2.6 Change Notes
-* -Added ability to move coordinate based on distance and bearing / target and distance.
-* -Added various properties to distance class.
-* -Added option to calculate distance based on Haversine (Sphere) or Vincenty (Ellipsoid).
-* -Expanded eclipse tables to 1601-2600.
-* -Eclipse calculations now account for turn of century leap year skips.
-* -Fixed bug with Degree Decimal Minute formatted strings sometimes returning 60 minutes instead of rounding up to the next degree.
-
-### 1.1.2.5 Change Notes
-* -Added ability to convert to/from Cartesian
-* -Added ability to calculate distance between two points (Haversine Formula)
-* -Added ability to get radians from `CoordinatePart` class
-* -Added Solar/Lunar eclipse information to `Celestial` class (BETA)
-* -Expanded eager loading options
-
-### 1.1.2.4 Change Notes
-* -Added ability to pass custom datum for UTM and MGRS conversions
-* -Adjusted UTM conversion formula to be more readable
-
-### 1.1.2.3 Change Notes
-* -Makes AdditionalSolarTimes nullable (fixes issue #24)
-
-### 1.1.2.2 Change Notes
-* -Fixes issue #21
-
-### 1.1.2.1 Change Notes
-* -Added UTM to Lat/Long conversion.
-* -Added MGRS(NATO UTM) to Lat/Long conversion.
-* -Added sun altitude and azimuth properties.
-* -Added additional solar times.
-* -Added additional moon illumination properties.
-* -Added astrological sign properties.
-* -XML documentation added to assembly.
-* -Added UTC time integrity to calculations.
-* -Minor bug fixes.
+### Change Notes
+Change notes can be viewed at [www.coordinatesharp.com](https://www.coordinatesharp.com/ChangeNotes)
 
 # Getting Started
 These instructions will get a copy of the library running on your local machine for development and testing purposes.
