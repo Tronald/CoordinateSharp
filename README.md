@@ -26,7 +26,6 @@ Change notes can be viewed at [www.coordinatesharp.com/ChangeNotes](https://www.
 * [Acknowledgements](#acknowledgements)
 
 
-# Introduction
 
 # Getting Started
 These instructions will get a copy of the library running on your local machine for development and testing purposes.
