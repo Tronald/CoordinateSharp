@@ -6,8 +6,11 @@ An example of CoordinateSharp in action can be seen at [www.coordinatesharp.com]
 
 CAUTION: v1.1.3.1 and above is considered a breaking change as `MoonDistance` has been converted from a `double?` object to a `Distance` object. Obsolete properties from 1.1.1.5 have also been removed as scheduled.
 
+Change notes can be viewed at [www.coordinatesharp.com/ChangeNotes](https://www.coordinatesharp.com/ChangeNotes)
+
+# Contents
+
 ### Introduction
-* [Change Notes](#change-notes)
 * [Getting Started](#getting-started)
 ### Usage Instructions
 * [Creating a Coordinate Object](#creating-a-coordinate-object)
@@ -22,10 +25,8 @@ CAUTION: v1.1.3.1 and above is considered a breaking change as `MoonDistance` ha
 ### Acknowledgements
 * [Acknowledgements](#acknowledgements)
 
-# Introduction
 
-### Change Notes
-Change notes can be viewed at [www.coordinatesharp.com](https://www.coordinatesharp.com/ChangeNotes)
+# Introduction
 
 # Getting Started
 These instructions will get a copy of the library running on your local machine for development and testing purposes.
