@@ -28,7 +28,7 @@ namespace CoordinateSharp
     public class Coordinate : INotifyPropertyChanged
     {     
         /// <summary>
-        /// Creates an empty Coordinates object
+        /// Creates an empty Coordinate
         /// </summary>
         /// <remarks>
         /// Values will need to be provided to latitude/longitude CoordinateParts manually
@@ -46,7 +46,7 @@ namespace CoordinateSharp
             EagerLoadSettings = new EagerLoad();
         }
         /// <summary>
-        /// Creates an empty Coordinates object with a custom datum
+        /// Creates an empty Coordinate with custom datum
         /// </summary>
         /// <remarks>
         /// Values will need to be provided to latitude/longitude CoordinateParts manually
@@ -65,7 +65,7 @@ namespace CoordinateSharp
             EagerLoadSettings = new EagerLoad();
         }
         /// <summary>
-        /// Creates a populated Coordinate object based on decimal formated latitude and longitude
+        /// Creates a populated Coordinate based on decimal (signed degrees) formated latitude and longitude
         /// </summary>
         /// <param name="lat">Decimal format latitude</param>
         /// <param name="longi">Decimal format longitude</param>
@@ -350,6 +350,7 @@ namespace CoordinateSharp
         {
             get { return this.celestialInfo; }          
         }
+
         /// <summary>
         /// Initialize celestial information (required if eager loading is turned off).
         /// </summary>
@@ -360,7 +361,6 @@ namespace CoordinateSharp
         /// <summary>
         /// Initialize UTM and MGRS information (required if eager loading is turned off).
         /// </summary>
-
         public void LoadUTM_MGRS_Info()
         {
             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
@@ -373,6 +373,7 @@ namespace CoordinateSharp
         {
             cartesian = new Cartesian(this);
         }
+
         /// <summary>
         /// Coordinate string formatting options
         /// </summary>
@@ -381,6 +382,7 @@ namespace CoordinateSharp
         /// Eager loading settings
         /// </summary>
         public EagerLoad EagerLoadSettings { get; set; }
+
         /// <summary>
         /// Formatted coordinate String
         /// </summary>
@@ -401,8 +403,7 @@ namespace CoordinateSharp
             string latString = latitude.ToString();
             string longSting = longitude.ToString();
             return latString + " " + longSting;
-        }
-      
+        }     
         /// <summary>
         /// Overridden Coordinate ToString() method that accepts formatting. 
         /// Refer to documentation for coordinate format options
@@ -415,6 +416,7 @@ namespace CoordinateSharp
             string longSting = longitude.ToString(options);
             return latString + " " + longSting;
         }
+
         /// <summary>
         /// Set a custom datum for UTM and MGRS coordinates
         /// </summary>
@@ -592,8 +594,6 @@ namespace CoordinateSharp
         private double seconds;
         private CoordinatesPosition position;
         private CoordinateType type;    
-
-
 
         /// <summary>
         /// Used to determine and notify the CoordinatePart parent Coordinate object.
@@ -1444,6 +1444,7 @@ namespace CoordinateSharp
         {
             DecimalDegree, DecimalMinute, Position, Degree, Minute, Second, FormatChange
         }
+
         /// <summary>
         /// Returns CoordinatePart in radians
         /// </summary>
@@ -1452,6 +1453,20 @@ namespace CoordinateSharp
         {
             return decimalDegree * Math.PI / 180;
         }
-        
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate.
+        /// </summary>
+        /// <param name="s">Coordinate string</param>
+        /// <param name="c">Coordinate</param>
+        /// <returns>boolean</returns>
+        public bool TryParse(string s, out Coordinate c)
+        {
+            c = null;
+            if(FormatFinder.TryParse(s,out c))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

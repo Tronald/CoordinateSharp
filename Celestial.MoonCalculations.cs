@@ -134,7 +134,7 @@ namespace CoordinateSharp
             double lw = rad * -lng;
             double phi = rad * lat;
        
-            double H = rad * Get_Sidereal_Time(JDE, lw) - lw - c.ra;
+            double H = rad * MeeusFormulas.Get_Sidereal_Time(JDE) - lw - c.ra;
             
             double ra = c.ra; //Adjust current RA formula to avoid needless RAD conversions
             double dec = c.dec; //Adjust current RA formula to avoid needless RAD conversions
@@ -472,6 +472,7 @@ namespace CoordinateSharp
             }
 
         }
+
         private static double FNp(double x)
         {
             double sgn;
@@ -483,10 +484,8 @@ namespace CoordinateSharp
         }
         private static double FNu(double x)
         { return x - (Math.Floor(x / 360) * 360); }
-
         private static double FNr(double x)
         { return Math.PI / 180 * x; }
-
         private static double FNs(double x)
         { return Math.Sin(Math.PI / 180 * x); }
 
@@ -800,18 +799,7 @@ namespace CoordinateSharp
             //Converts to the following using Asin
             return Math.Asin(Math.Sin(b) * Math.Cos(e) + Math.Cos(b) * Math.Sin(e) * Math.Sin(l));
         }
-
-        private static double Get_Sidereal_Time(double JD, double lat)
-        {
-            //Ch. 12
-            //T = Dynamic Time
-            //Oo = mean sidereal time at Greenwich at 0h UT
-            double T = (JD - 2451545) / 36525;
-            double Oo = 280.46061837 + 360.98564736629 * (JD-2451545) +
-                .000387933 * Math.Pow(T, 2) - Math.Pow(T, 3) / 38710000;
-            return Oo;
-        }
-
+        
         static double Parallax_Dec(double distance, double H, double pCosE, double pSinE, double dec, double cRA)
         {
             //Ch 40 (Correction for parallax
@@ -913,27 +901,5 @@ namespace CoordinateSharp
 
             return (a * rad / 60) / Math.Tan(h + (b * rad / 60) / (h + (c * rad)));
         }
-
-        public class MoonTimes
-        {
-            public DateTime set { get; set; }
-            public DateTime rise { get; set; }
-            public CelestialStatus status { get; set; }
-        }
-        public class MoonPosition
-        {
-            public double Azimuth { get; set; }
-            public double Altitude { get; set; }
-            public Distance Distance { get; set; }
-            public double ParallacticAngle { get; set; }
-            public double ParallaxCorection { get; set; }
-        };
-        public class CelCoords
-        {
-            public double ra { get; set; }
-            public double dec { get; set; }
-            public double dist { get; set; }
-        }
-       
     }
 }

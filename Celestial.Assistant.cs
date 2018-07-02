@@ -165,9 +165,9 @@ namespace CoordinateSharp
             //sine true returns El
             //sine false return Er
             //Er values start at 60 in the Table47A_El_Er array.
-           
+
             int nl = l * 4;
-            
+
             if (sine)
             {
                 double e = 1;
@@ -182,21 +182,21 @@ namespace CoordinateSharp
                     }
                 }
                 return (Table47A_El_Er[l] * e) * Math.Sin(Table47A_Arguments[nl] * values[0] + Table47A_Arguments[nl + 1] * values[1] +
-                   Table47A_Arguments[nl + 2] * values[2] + Table47A_Arguments[nl + 3]*values[3]);
+                   Table47A_Arguments[nl + 2] * values[2] + Table47A_Arguments[nl + 3] * values[3]);
             }
             else
             {
                 double e = 1;
-                if(Table47A_Arguments[nl + 1] != 0)
+                if (Table47A_Arguments[nl + 1] != 0)
                 {
                     e = 1 - .002516 * t - .0000074 * Math.Pow(t, 2);
-                    
+
                     if (Math.Abs(Table47A_Arguments[nl + 1]) == 2)
                     {
                         e *= e;
                     }
                 }
-                return (Table47A_El_Er[l + 60]*e) * Math.Cos(Table47A_Arguments[nl] * values[0] + Table47A_Arguments[nl + 1] * values[1] +
+                return (Table47A_El_Er[l + 60] * e) * Math.Cos(Table47A_Arguments[nl] * values[0] + Table47A_Arguments[nl + 1] * values[1] +
                    Table47A_Arguments[nl + 2] * values[2] + Table47A_Arguments[nl + 3] * values[3]);
             }
         }
@@ -231,11 +231,11 @@ namespace CoordinateSharp
             //Table 47A contains 60 lines to sum
             double[] values = new double[] { D, M, N, F };
             double sum = 0;
-            for(int x=0;x<60;x++)
+            for (int x = 0; x < 60; x++)
             {
                 sum += Get_Table47A_Values(values, x, T, false);
             }
-          
+
             return sum;
         }
         /// <summary>
@@ -261,7 +261,7 @@ namespace CoordinateSharp
             //Planetary adjustments
             double A1 = 119.75 + 131.849 * T;
             double A2 = 53.09 + 479264.290 * T;
-           
+
             //Normalize 0-360 degree number
             A1 %= 360;
             if (A1 < 0) { A1 += 360; }
@@ -282,7 +282,7 @@ namespace CoordinateSharp
             sum += 3958 * Math.Sin(A1);
             sum += 1962 * Math.Sin(L - F);
             sum += 318 * Math.Sin(A2);
-            
+
             return sum;
         }
         /// <summary>
@@ -332,7 +332,7 @@ namespace CoordinateSharp
             sum += 175 * Math.Sin(A1 + F);
             sum += 127 * Math.Sin(L - M);
             sum += -115 * Math.Sin(L + M);
-            
+
             return sum;
         }
         //Ch 50
@@ -347,7 +347,7 @@ namespace CoordinateSharp
         public static double ApogeeTermsA(double D, double M, double F, double T)
         {
             double sum;
-         
+
             sum = Math.Sin(2 * D) * 0.4392;
             sum += Math.Sin(4 * D) * 0.0684;
             sum += Math.Sin(M) * .0456 - 0.00011 * T;
@@ -509,53 +509,67 @@ namespace CoordinateSharp
             sum += Math.Cos(4 * D) * -6.990;
             sum += Math.Cos(2 * D - M) * 2.834 - .0071 * T;
             sum += Math.Cos(6 * D) * 1.927;
-            sum += Math.Cos(D) *-1.263;
-            sum += Math.Cos(8*D) *-.702;
-            sum += Math.Cos(M) *.696-.0017*T;
-            sum += Math.Cos(2*F) *-.690;
+            sum += Math.Cos(D) * -1.263;
+            sum += Math.Cos(8 * D) * -.702;
+            sum += Math.Cos(M) * .696 - .0017 * T;
+            sum += Math.Cos(2 * F) * -.690;
             sum += Math.Cos(4 * D - M) * -.629 + .0016 * T;
-            sum += Math.Cos(2*D-2*F) *-.392;
-            sum += Math.Cos(10*D) *.297;
-            sum += Math.Cos(6*D-M) *.260;
-            sum += Math.Cos(3*D) *.201;
-            sum += Math.Cos(2*D+M) *-.161;
-            sum += Math.Cos(D+M) *.157;
-            sum += Math.Cos(12*D) *-.138;
-            sum += Math.Cos(8*D-M) *-.127;
-            sum += Math.Cos(2*D+2*F) *.104;
-            sum += Math.Cos(2*D-2*M) *.104;
-            sum += Math.Cos(5*D) *-.079;
-            sum += Math.Cos(14*D) *.068;
+            sum += Math.Cos(2 * D - 2 * F) * -.392;
+            sum += Math.Cos(10 * D) * .297;
+            sum += Math.Cos(6 * D - M) * .260;
+            sum += Math.Cos(3 * D) * .201;
+            sum += Math.Cos(2 * D + M) * -.161;
+            sum += Math.Cos(D + M) * .157;
+            sum += Math.Cos(12 * D) * -.138;
+            sum += Math.Cos(8 * D - M) * -.127;
+            sum += Math.Cos(2 * D + 2 * F) * .104;
+            sum += Math.Cos(2 * D - 2 * M) * .104;
+            sum += Math.Cos(5 * D) * -.079;
+            sum += Math.Cos(14 * D) * .068;
 
-            sum += Math.Cos(10*D-M) *.067;
-            sum += Math.Cos(4*D+M) *.054;
-            sum += Math.Cos(12*D-M) *-.038;
-            sum += Math.Cos(4*D-2*M) *-.038;
-            sum += Math.Cos(7*D) *.037;
-            sum += Math.Cos(4*D+2*F) *-.037;
-            sum += Math.Cos(16*D) *-.035;
-            sum += Math.Cos(3*D+M) *-.030;
-            sum += Math.Cos(D-M) *.029;
-            sum += Math.Cos(6*D+M) *-.025;
-            sum += Math.Cos(2*M) *.023;
-            sum += Math.Cos(14*D-M) *.023;
-            sum += Math.Cos(2*D+2*M) *-.023;
-            sum += Math.Cos(6*D-2*M) *.022;
-            sum += Math.Cos(2*D-2*F-M) *-.021;
-            sum += Math.Cos(9*D) *-.020;
-            sum += Math.Cos(18*D) *.019;
-            sum += Math.Cos(6*D+2*F) *.017;
-            sum += Math.Cos(2*F-M) *.014;
-            sum += Math.Cos(16*D-M) *-.014;
-            sum += Math.Cos(4*D-2*F) *.013;
-            sum += Math.Cos(8*D+M) *.012;
-            sum += Math.Cos(11*D) *.011;
-            sum += Math.Cos(5*D+M) *.010;
-            sum += Math.Cos(20*D) *-.010;
+            sum += Math.Cos(10 * D - M) * .067;
+            sum += Math.Cos(4 * D + M) * .054;
+            sum += Math.Cos(12 * D - M) * -.038;
+            sum += Math.Cos(4 * D - 2 * M) * -.038;
+            sum += Math.Cos(7 * D) * .037;
+            sum += Math.Cos(4 * D + 2 * F) * -.037;
+            sum += Math.Cos(16 * D) * -.035;
+            sum += Math.Cos(3 * D + M) * -.030;
+            sum += Math.Cos(D - M) * .029;
+            sum += Math.Cos(6 * D + M) * -.025;
+            sum += Math.Cos(2 * M) * .023;
+            sum += Math.Cos(14 * D - M) * .023;
+            sum += Math.Cos(2 * D + 2 * M) * -.023;
+            sum += Math.Cos(6 * D - 2 * M) * .022;
+            sum += Math.Cos(2 * D - 2 * F - M) * -.021;
+            sum += Math.Cos(9 * D) * -.020;
+            sum += Math.Cos(18 * D) * .019;
+            sum += Math.Cos(6 * D + 2 * F) * .017;
+            sum += Math.Cos(2 * F - M) * .014;
+            sum += Math.Cos(16 * D - M) * -.014;
+            sum += Math.Cos(4 * D - 2 * F) * .013;
+            sum += Math.Cos(8 * D + M) * .012;
+            sum += Math.Cos(11 * D) * .011;
+            sum += Math.Cos(5 * D + M) * .010;
+            sum += Math.Cos(20 * D) * -.010;
 
             return sum;
         }
-       
+
+    }
+    internal class MeeusFormulas
+    {
+        public static double Get_Sidereal_Time(double JD)
+        {
+            //Ch. 12
+            //T = Dynamic Time
+            //Oo = mean sidereal time at Greenwich at 0h UT
+            double T = (JD - 2451545) / 36525;
+            double Oo = 280.46061837 + 360.98564736629 * (JD - 2451545) +
+                .000387933 * Math.Pow(T, 2) - Math.Pow(T, 3) / 38710000;
+            return Oo;
+        }
+
     }
     /// <summary>
     ///  moon perigee or apogee indicator
@@ -1383,6 +1397,27 @@ namespace CoordinateSharp
         }
 
     }
+    internal class MoonTimes
+    {
+        public DateTime set { get; set; }
+        public DateTime rise { get; set; }
+        public CelestialStatus status { get; set; }
+    }
+    internal class MoonPosition
+    {
+        public double Azimuth { get; set; }
+        public double Altitude { get; set; }
+        public Distance Distance { get; set; }
+        public double ParallacticAngle { get; set; }
+        public double ParallaxCorection { get; set; }
+    }
+    internal class CelCoords
+    {
+        public double ra { get; set; }
+        public double dec { get; set; }
+        public double dist { get; set; }
+    }
+
     /// <summary>
     /// Solar eclipse type
     /// </summary>

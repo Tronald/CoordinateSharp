@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
+
 namespace CoordinateSharp
 {
     /// <summary>
@@ -102,6 +104,468 @@ namespace CoordinateSharp
         /// Example: 40.57674 -70.46574
         /// </remarks>
         Decimal
+    }
+    internal class FormatFinder
+    {
+        //Add main to Coordinate and tunnel to Format class. Add private methods to format.
+        //WHEN PARSING NO EXCPETIONS FOR OUT OF RANGE ARGS WILL BE THROWN
+        public static bool TryParse(string coordString, out Coordinate c)
+        {
+            c = new Coordinate();
+            string s = coordString;
+            s = s.Trim(); //Trim all spaces before and after string
+            double[] d;
+            //Try Signed Degree
+            if (TrySignedDegree(s, out d))
+            {
+                try
+                {
+                    c = new Coordinate(d[0], d[1]);
+                    return true;
+                }
+                catch
+                {//Parser failed try next method 
+                }
+            }
+            //Try Decimal Degree
+            if (TryDecimalDegree(s, out d))
+            {
+                try
+                {
+                    c = new Coordinate(d[0], d[1]);
+                    return true;
+                }
+                catch
+                {//Parser failed try next method 
+                }
+            }
+            //Try DDM
+            if (TryDegreeDecimalMinute(s, out d))
+            {
+                try
+                {
+                    //0 Lat Degree
+                    //1 Lat Minute
+                    //2 Lat Direction (0 = N, 1 = S)
+                    //3 Long Degree
+                    //4 Long Minute
+                    //5 Long Direction (0 = E, 1 = W)
+                    CoordinatesPosition latP = CoordinatesPosition.N;
+                    CoordinatesPosition lngP = CoordinatesPosition.E;
+                    if (d[2] != 0) { latP = CoordinatesPosition.S; }
+                    if (d[5] != 0) { lngP = CoordinatesPosition.W; }
+                    CoordinatePart lat = new CoordinatePart((int)d[0], d[1], latP, c);
+                    CoordinatePart lng = new CoordinatePart((int)d[3], d[4], lngP, c);
+                    c = new Coordinate();
+                    c.Latitude = lat;
+                    c.Longitude = lng;
+                    return true;
+                }
+                catch
+                {//Parser failed try next method 
+                }
+            }
+            //Try DMS
+            if (TryDegreeMinuteSecond(s, out d))
+            {
+                try
+                {
+                    //0 Lat Degree
+                    //1 Lat Minute
+                    //2 Lat Second
+                    //3 Lat Direction (0 = N, 1 = S)
+                    //4 Long Degree
+                    //5 Long Minute
+                    //6 Long Second
+                    //7 Long Direction (0 = E, 1 = W)
+                    CoordinatesPosition latP = CoordinatesPosition.N;
+                    CoordinatesPosition lngP = CoordinatesPosition.E;
+                    if (d[3] != 0) { latP = CoordinatesPosition.S; }
+                    if (d[7] != 0) { lngP = CoordinatesPosition.W; }
+
+                    CoordinatePart lat = new CoordinatePart((int)d[0], (int)d[1], d[2], latP, c);
+                    CoordinatePart lng = new CoordinatePart((int)d[4], (int)d[5], d[6], lngP, c);
+                    c = new Coordinate();
+                    c.Latitude = lat;
+                    c.Longitude = lng;
+                    return true;
+                }
+                catch
+                {//Parser failed try next method 
+                }
+            }
+
+            string[] um;
+            //Try MGRS
+            if (TryMGRS(s, out um))
+            {
+                try
+                {
+                    double zone = Convert.ToDouble(um[0]);
+                    double easting = Convert.ToDouble(um[3]);
+                    double northing = Convert.ToDouble(um[4]);
+                    MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem(um[1], (int)zone, um[2], easting, northing);
+                    c = MilitaryGridReferenceSystem.MGRStoLatLong(mgrs);
+                    return true;
+                }
+                catch
+                {//Parser failed try next method 
+                }
+            }
+            //Try UTM
+            if (TryUTM(s, out um))
+            {
+                try
+                {
+                    double zone = Convert.ToDouble(um[0]);
+                    double easting = Convert.ToDouble(um[2]);
+                    double northing = Convert.ToDouble(um[3]);
+                    UniversalTransverseMercator utm = new UniversalTransverseMercator(um[1], (int)zone, easting, northing);
+                    c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
+                    return true;
+                }
+                catch
+                {//Parser failed try next method 
+                }
+            }
+            if (TryCartesian(s, out d))
+            {
+                try
+                {
+                    Cartesian cart = new Cartesian(d[0], d[1], d[2]);
+                    c = Cartesian.CartesianToLatLong(cart);
+                    return true;
+                }
+                catch
+                {//Parser failed try next method 
+                }
+            }
+            //Try Cartesian
+            return false;
+        }
+        private static bool TrySignedDegree(string s, out double[] d)
+        {
+            d = null;
+
+            string[] sA = SpecialSplit(s);
+            if (sA.Count() == 2)
+            {
+                double lat;
+                double lng;
+
+                if (!double.TryParse(sA[0], out lat))
+                { return false; }
+                if (!double.TryParse(sA[1], out lng))
+                { return false; }
+                d = new double[] { lat, lng };
+                return true;
+            }
+
+            return false;
+        }
+        private static bool TryDecimalDegree(string s, out double[] d)
+        {
+            d = null;
+
+            string[] sA = SpecialSplit(s);
+            if (sA.Count() == 2 || sA.Count() == 4)
+            {
+                double lat;
+                double lng;
+
+                double latR = 1; //Sets negative if South
+                double lngR = 1; //Sets negative if West
+
+                //Contact get brin directional indicator together with string
+                if (sA.Count() == 4)
+                {
+                    sA[0] += sA[1];
+                    sA[1] = sA[2] + sA[3];
+                }
+
+                //Find Directions
+                if (!sA[0].Contains("N") && !sA[0].Contains("n"))
+                {
+                    if (!sA[0].Contains("S") && !sA[0].Contains("s"))
+                    {
+                        return false;//No Direction Found
+                    }
+                    latR = -1;
+                }
+                if (!sA[1].Contains("E") && !sA[1].Contains("e"))
+                {
+                    if (!sA[1].Contains("W") && !sA[1].Contains("w"))
+                    {
+                        return false;//No Direction Found
+                    }
+                    lngR = -1;
+                }
+
+                sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
+                sA[1] = Regex.Replace(sA[0], "[^0-9.]", "");
+
+                if (!double.TryParse(sA[0], out lat))
+                { return false; }
+                if (!double.TryParse(sA[1], out lng))
+                { return false; }
+                lat *= latR;
+                lng *= lngR;
+                d = new double[] { lat, lng };
+                return true;
+            }
+
+            return false;
+        }
+        private static bool TryDegreeDecimalMinute(string s, out double[] d)
+        {
+            d = null;
+
+            string[] sA = SpecialSplit(s);
+            if (sA.Count() == 4 || sA.Count() == 6)
+            {
+                double latD;
+                double latMS;
+                double lngD;
+                double lngMS;
+
+                double latR = 0; //Sets 1 if South
+                double lngR = 0; //Sets 1 if West
+
+                //Contact get in order to combine directional indicator together with string
+                //Should reduce 6 items to 4
+                if (sA.Count() == 6)
+                {
+                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; }
+                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; }
+                    else if (char.IsLetter(sA[2][0])) { sA[0] += sA[2]; }
+                    else { return false; }
+
+                    if (char.IsLetter(sA[3][0])) { sA[3] += sA[4]; sA[4] = sA[5]; }
+                    else if (char.IsLetter(sA[4][0])) { sA[3] += sA[4]; sA[4] = sA[5]; }
+                    else if (char.IsLetter(sA[5][0])) { sA[3] += sA[5]; }
+                    else { return false; }
+
+                    //Shift values for below logic
+                    sA[2] = sA[3];
+                    sA[3] = sA[4];
+                }
+
+                //Find Directions
+                if (!sA[0].Contains("N") && !sA[0].Contains("n") && !sA[1].Contains("N") && !sA[1].Contains("n"))
+                {
+                    if (!sA[0].Contains("S") && !sA[0].Contains("s") && !sA[1].Contains("S") && !sA[1].Contains("s"))
+                    {
+                        return false;//No Direction Found
+                    }
+                    latR = 1;
+                }
+                if (!sA[2].Contains("E") && !sA[2].Contains("e") && !sA[3].Contains("E") && !sA[3].Contains("e"))
+                {
+                    if (!sA[2].Contains("W") && !sA[2].Contains("w") && !sA[3].Contains("W") && !sA[3].Contains("w"))
+                    {
+                        return false;//No Direction Found
+                    }
+                    lngR = 1;
+                }
+
+                sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
+                sA[1] = Regex.Replace(sA[1], "[^0-9.]", "");
+                sA[2] = Regex.Replace(sA[2], "[^0-9.]", "");
+                sA[3] = Regex.Replace(sA[3], "[^0-9.]", "");
+
+                if (!double.TryParse(sA[0], out latD))
+                { return false; }
+                if (!double.TryParse(sA[1], out latMS))
+                { return false; }
+                if (!double.TryParse(sA[2], out lngD))
+                { return false; }
+                if (!double.TryParse(sA[3], out lngMS))
+                { return false; }
+
+                d = new double[] { latD, latMS, latR, lngD, lngMS, lngR };
+                return true;
+            }
+            return false;
+        }
+        private static bool TryDegreeMinuteSecond(string s, out double[] d)
+        {
+            d = null;
+
+            string[] sA = SpecialSplit(s);
+            if (sA.Count() == 6 || sA.Count() == 8)
+            {
+                double latD;
+                double latM;
+                double latS;
+                double lngD;
+                double lngM;
+                double lngS;
+
+                double latR = 0; //Sets 1 if South
+                double lngR = 0; //Sets 1 if West
+
+                //Contact get in order to combine directional indicator together with string
+                //Should reduce 8 items to 6
+                if (sA.Count() == 8)
+                {
+                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
+                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
+                    else if (char.IsLetter(sA[3][0])) { sA[0] += sA[3]; }
+                    else { return false; }
+
+                    if (char.IsLetter(sA[4][0])) { sA[4] += sA[5]; sA[5] = sA[6]; sA[6] = sA[7]; }
+                    else if (char.IsLetter(sA[5][0])) { sA[4] += sA[5]; sA[5] = sA[6]; sA[6] = sA[7]; }
+                    else if (char.IsLetter(sA[7][0])) { sA[4] += sA[7]; }
+                    else { return false; }
+
+                    //Shift values for below logic
+                    sA[3] = sA[4];
+                    sA[4] = sA[5];
+                    sA[5] = sA[6];
+                }
+
+                //Find Directions
+                if (!sA[0].Contains("N") && !sA[0].Contains("n"))
+                {
+                    if (!sA[0].Contains("S") && !sA[0].Contains("s"))
+                    {
+                        return false;//No Direction Found
+                    }
+                    latR = 1;
+                }
+                if (!sA[3].Contains("E") && !sA[3].Contains("e"))
+                {
+                    if (!sA[3].Contains("W") && !sA[3].Contains("w"))
+                    {
+                        return false;//No Direction Found
+                    }
+                    lngR = 1;
+                }
+
+                sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
+                sA[1] = Regex.Replace(sA[1], "[^0-9.]", "");
+                sA[2] = Regex.Replace(sA[2], "[^0-9.]", "");
+                sA[3] = Regex.Replace(sA[3], "[^0-9.]", "");
+                sA[4] = Regex.Replace(sA[2], "[^0-9.]", "");
+                sA[5] = Regex.Replace(sA[3], "[^0-9.]", "");
+
+                if (!double.TryParse(sA[0], out latD))
+                { return false; }
+                if (!double.TryParse(sA[1], out latM))
+                { return false; }
+                if (!double.TryParse(sA[2], out latS))
+                { return false; }
+                if (!double.TryParse(sA[3], out lngD))
+                { return false; }
+                if (!double.TryParse(sA[4], out lngM))
+                { return false; }
+                if (!double.TryParse(sA[5], out lngS))
+                { return false; }
+
+                d = new double[] { latD, latM, latS, latR, lngD, lngM, lngS, lngR };
+                return true;
+            }
+            return false;
+        }
+        private static bool TryUTM(string s, out string[] utm)
+        {
+            utm = null;
+            string[] sA = SpecialSplit(s);
+            if (sA.Count() == 3 || sA.Count() == 4)
+            {
+                double zone;
+                string zoneL;
+                double easting;
+                double northing;
+
+                if (sA.Count() == 4)
+                {
+
+                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
+                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
+                    else { return false; }
+                }
+                zoneL = new string(sA[0].Where(Char.IsLetter).ToArray());
+                if (zoneL == string.Empty) { return false; }
+                sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
+
+                if (!double.TryParse(sA[0], out zone))
+                { return false; }
+                if (!double.TryParse(sA[1], out easting))
+                { return false; }
+                if (!double.TryParse(sA[2], out northing))
+                { return false; }
+
+                utm = new string[] { zone.ToString(), zoneL, easting.ToString(), northing.ToString() };
+                return true;
+            }
+            return false;
+        }
+        private static bool TryMGRS(string s, out string[] mgrs)
+        {
+            mgrs = null;
+            string[] sA = SpecialSplit(s);
+            if (sA.Count() == 4 || sA.Count() == 5)
+            {
+                double zone;
+                string zoneL;
+                string diagraph;
+                double easting;
+                double northing;
+
+                if (sA.Count() == 5)
+                {
+                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
+                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
+                    else { return false; }
+                }
+                zoneL = new string(sA[0].Where(Char.IsLetter).ToArray());
+                if (zoneL == string.Empty) { return false; }
+                sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
+                diagraph = sA[1];
+                if (!double.TryParse(sA[0], out zone))
+                { return false; }
+                if (!double.TryParse(sA[2], out easting))
+                { return false; }
+                if (!double.TryParse(sA[3], out northing))
+                { return false; }
+
+                mgrs = new string[] { zone.ToString(), zoneL, diagraph, easting.ToString(), northing.ToString() };
+                return true;
+            }
+            return false;
+        }
+        private static bool TryCartesian(string s, out double[] d)
+        {
+            d = null;
+            string[] sA = SpecialSplit(s);
+            if (sA.Count() == 3)
+            {
+                double x;
+                double y;
+                double z;
+                if (!double.TryParse(sA[0], out x))
+                { return false; }
+                if (!double.TryParse(sA[1], out y))
+                { return false; }
+                if (!double.TryParse(sA[2], out z))
+                { return false; }
+                d = new double[] { x, y, z };
+                return true;
+            }
+            return false;
+        }
+
+        private static string[] SpecialSplit(string s)
+        {
+            s = s.Replace("º", " ");
+            s = s.Replace("'", " ");
+            s = s.Replace("\"", " ");
+            s = s.Replace(",", " ");
+            s = s.Replace("mE", " ");
+            s = s.Replace("mN", " ");
+            return s.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
+        }
     }
     /// <summary>
     /// Used for UTM/MGRS Conversions
@@ -351,9 +815,9 @@ namespace CoordinateSharp
         }
   
         /// <summary>
-        /// Eager load celestial information
+        /// Eager load celestial information.
         /// </summary>
-        public bool Celestial { get; set; }
+        public bool Celestial { get; set; }      
         /// <summary>
         /// Eager load UTM and MGRS information
         /// </summary>
