@@ -66,12 +66,11 @@ CoordinateSharp has the ability to try and parse a coordinate from a provided st
 ```C#
 string s = "34X 551586mE 8921410mN";
 Coordinate c;
-if(!Coordinate.TryParse(s, out c))
+if(Coordinate.TryParse(s, out c))
 {
-    //Coordinate parse failed
+    //Coordinate part success
+    Console.WriteLine(c); //N 80º 20' 44.999" E 23º 45' 22.987"
 }
-//Coordinate part success
-Console.WriteLine(c); //N 80º 20' 44.999" E 23º 45' 22.987"
 ```
 
 ### Formatting a Coordinate
