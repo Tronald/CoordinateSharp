@@ -1,4 +1,4 @@
-# CoordinateSharp v1.1.3.2
+# CoordinateSharp v1.1.3.3
 
 A simple library designed to assist with geographic coordinate string formatting in C#. This library is intended to enhance latitudinal/longitudinal displays by converting various input string formats to various output string formats. Most properties in the library implement ```INotifyPropertyChanged``` and may be used with MVVM patterns. This library can convert Lat/Long to UTM/MGRS(NATO UTM) and Cartesian (X, Y, Z). The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
 
@@ -59,6 +59,21 @@ c.Longitude = new CoordinatePart(70, 45, 24.408, CoordinatePosition.W, c);
 c.Latitude.ToDouble(); // Returns 40.57682
 c.Longitude.ToDouble(); //Returns -70.75678
 ```
+### Creating a Coordinate using TryParse()
+
+CoordinateSharp has the ability to try and parse a coordinate from a provided string. The parser will return false if it fails with no error message however. This tool will be expanded constantly so provided suggestions on formats within the scope of this library are greatly appreciated.
+
+```C#
+string s = "34X 551586mE 8921410mN";
+Coordinate c;
+if(!Coordinate.TryParse(s, out c))
+{
+    //Coordinate parse failed
+}
+//Coordinate part success
+Console.WriteLine(c); //N 80º 20' 44.999" E 23º 45' 22.987"
+```
+
 ### Formatting a Coordinate
 
 Coordinate string formats may be changed by passing or editing the ```FormatOptions``` property contained in the ```Coordinate``` object. 
