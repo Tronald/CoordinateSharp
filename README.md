@@ -29,7 +29,7 @@ Console.WriteLine(c.CelestialInfo.SunSet);  // 5-Jun-2018 4:02:00 AM
 Console.WriteLine(c.UTM);                   // 10T 550200mE 5272748mN
 ```
 
-`Coordinate` has its default format output as DMS (ex N 47º 36' 22.32" W 122º 19' 55.56"). This format can be changed quickly by setting the object formatting options.
+`Coordinate` has its default lat/long format output as DMS (ex N 47º 36' 22.32" W 122º 19' 55.56"). This format can be changed quickly by setting the object formatting options.
 
 ```csharp
 Coordinate c = new Coordinate(40.57682, -70.75678);
