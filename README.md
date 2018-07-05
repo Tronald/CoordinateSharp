@@ -45,12 +45,12 @@ c.Longitude.ToString(); // W 070º 45.407'
 
 ### Abilities
  
-* -Lat/Long formatting: Quickly format how a coordinate is output.
-* -Coordinate conversions: Convert Lat/Long to UTM, MGRS, Cartesian or vice versa.
-* -Coordinate parsing: Initialize a `Coordinate` with multiple format types using `TryParse()`.
-* -Coordinate moving/shifting: Shift coordinates using a distance and bearing, or a distance and target coordinate.
-* -Location based celestial information: Quickly determine sun set, moon rise, next solar eclipse or even zodiac signs at the input location.
-* -Property change notification: All properties automatically adjust as the `Coordinate` changes. For example, changing the `GeoDate` will cause all celestial times to recalculate. Adjusting a `Coordinate` latitudinal seconds, will retrigger all coordinate conversions and celestial data so your information is always up to date. 
+* Lat/Long formatting: Quickly format how a coordinate is output.
+* Coordinate conversions: Convert Lat/Long to UTM, MGRS, Cartesian or vice versa.
+* Coordinate parsing: Initialize a `Coordinate` with multiple format types using `TryParse()`.
+* Coordinate moving/shifting: Shift coordinates using a distance and bearing, or a distance and target coordinate.
+* Location based celestial information: Quickly determine sun set, moon rise, next solar eclipse or even zodiac signs at the input location.
+* Property change notification: All properties automatically adjust as the `Coordinate` changes. For example, changing the `GeoDate` will cause all celestial times to recalculate. Adjusting a `Coordinate` latitudinal seconds, will retrigger all coordinate conversions and celestial data so your information is always up to date. 
 
 ### Guides
 
