@@ -4,7 +4,6 @@ namespace CoordinateSharp
 {
     internal class SunCalc
     {     
-
         public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c,double offset = 0)
         {
             if (date.Year == 0001) { return; } //Return if date vaue hasn't been established.
@@ -235,8 +234,7 @@ namespace CoordinateSharp
         private static double dayMS = 1000 * 60 * 60 * 24, j1970 = 2440588, j2000 = 2451545;
         private static double rad = Math.PI / 180;
 
-        private const double mDR = Math.PI / 180;
-        private const double mK1 = 15 * mDR * 1.0027379;
+        private static double mK1 = 15 * rad * 1.0027379;
 
         private static int[] mRiseTimeArr = new int[2] { 0, 0 };
         private static int[] mSetTimeArr = new int[2] { 0, 0 };
@@ -254,20 +252,19 @@ namespace CoordinateSharp
         #endregion
         #region Private Suntime Functions
 
-        
-
         private static double LocalSiderealTimeForTimeZone(double lon, double jd, double z)
         {
             double s = 24110.5 + 8640184.812999999 * jd / 36525 + 86636.6 * z + 86400 * lon;
             s = s / 86400;
             s = s - Math.Truncate(s);
-            double lst = s * 360 * mDR;
+            double lst = s * 360 *rad;
            
             return lst;
         }
         private static double SideRealTime(double d, double lw)
         {
-            return rad * (280.16 + 360.9856235 * d) - lw;
+            double s = rad * (280.16 + 360.9856235 * d) - lw;
+            return s;
         }
         private static double solarTransitJ(double ds, double M, double L)  
         {         
@@ -402,8 +399,7 @@ namespace CoordinateSharp
             //C# version of JavaScript date.valueOf();
             TimeSpan ts = date - new DateTime(1970, 1, 1,0,0,0, DateTimeKind.Utc);
             double dms = (ts.TotalMilliseconds / dayMS -.5 + j1970)-j2000;
-           
-
+            
             double lw = rad * -longi;
             double phi = rad * lat;
             double e = rad * 23.4397;
@@ -411,9 +407,18 @@ namespace CoordinateSharp
             double[] sc = sunCoords(dms);
           
             double H = SideRealTime(dms, lw) - sc[1];
-
+           // Console.WriteLine("Solar1: " + H);
             c.SunAzimuth = Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(sc[0]) * Math.Cos(phi)) * 180 / Math.PI + 180;
-            c.SunAltitude = Math.Asin(Math.Sin(phi) * Math.Sin(sc[0]) + Math.Cos(phi) * Math.Cos(sc[0]) * Math.Cos(H)) * 180 / Math.PI;       
+            c.SunAltitude = Math.Asin(Math.Sin(phi) * Math.Sin(sc[0]) + Math.Cos(phi) * Math.Cos(sc[0]) * Math.Cos(H)) * 180 / Math.PI;
+            //Console.WriteLine(c.SunAltitude + " " + c.SunAzimuth);
+            //double JD = JulianConversions.GetJulian(date);
+            //Console.WriteLine("JD2: " + JD);
+            //H = rad * MeeusFormulas.Get_Sidereal_Time(JD)-lw - sc[1];
+            //Console.WriteLine("Solar2: " + H);
+            //c.SunAzimuth = Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(sc[0]) * Math.Cos(phi)) * 180 / Math.PI + 180;
+            //c.SunAltitude = Math.Asin(Math.Sin(phi) * Math.Sin(sc[0]) + Math.Cos(phi) * Math.Cos(sc[0]) * Math.Cos(H)) * 180 / Math.PI;
+            //Console.WriteLine(c.SunAltitude + " " + c.SunAzimuth);
+
         }
         private static double solarMeanAnomaly(double d) 
         {          
@@ -452,9 +457,9 @@ namespace CoordinateSharp
             ha[1] = (ha[2] + ha[0]) / 2;    // hour angle at half hour
             mDecensionArr[1] = (mDecensionArr[2] + mDecensionArr[0]) / 2;  // declination at half hour
 
-            s = Math.Sin(lat * mDR);
-            c = Math.Cos(lat * mDR);
-            z = Math.Cos(90.833 * mDR);    // refraction + sun semidiameter at horizon
+            s = Math.Sin(lat *rad);
+            c = Math.Cos(lat *rad);
+            z = Math.Cos(90.833 *rad);    // refraction + sun semidiameter at horizon
 
             if (k <= 0)
                 mVHzArr[0] = s * Math.Sin(mDecensionArr[0]) + c * Math.Cos(mDecensionArr[0]) * Math.Cos(ha[0]) - z;
@@ -487,7 +492,7 @@ namespace CoordinateSharp
             hz = ha[0] + e * (ha[2] - ha[0]); // azimuth of the sun at the event
             nz = -Math.Cos(mDecensionArr[1]) * Math.Sin(hz);
             dz = c * Math.Sin(mDecensionArr[1]) - s * Math.Cos(mDecensionArr[1]) * Math.Cos(hz);
-            az = Math.Atan2(nz, dz) / mDR;
+            az = Math.Atan2(nz, dz) /rad;
             if (az < 0) az = az + 360;
           
             if ((mVHzArr[0] < 0) && (mVHzArr[2] > 0))

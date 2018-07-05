@@ -18,7 +18,7 @@ using System.Diagnostics;
 namespace CoordinateSharp
 {   
     /// <summary>
-    /// Observable class for handling Lat/Long coordinates
+    /// Observable class for handling all location based information.
     /// This is the main class for CoordinateSharp.
     /// </summary>
     /// <remarks>
@@ -28,7 +28,7 @@ namespace CoordinateSharp
     public class Coordinate : INotifyPropertyChanged
     {     
         /// <summary>
-        /// Creates an empty Coordinates object
+        /// Creates an empty Coordinate.
         /// </summary>
         /// <remarks>
         /// Values will need to be provided to latitude/longitude CoordinateParts manually
@@ -46,7 +46,7 @@ namespace CoordinateSharp
             EagerLoadSettings = new EagerLoad();
         }
         /// <summary>
-        /// Creates an empty Coordinates object with a custom datum
+        /// Creates an empty Coordinate with custom datum.
         /// </summary>
         /// <remarks>
         /// Values will need to be provided to latitude/longitude CoordinateParts manually
@@ -65,10 +65,10 @@ namespace CoordinateSharp
             EagerLoadSettings = new EagerLoad();
         }
         /// <summary>
-        /// Creates a populated Coordinate object based on decimal formated latitude and longitude
+        /// Creates a populated Coordinate based on decimal (signed degrees) formated latitude and longitude.
         /// </summary>
-        /// <param name="lat">Decimal format latitude</param>
-        /// <param name="longi">Decimal format longitude</param>
+        /// <param name="lat">latitude</param>
+        /// <param name="longi">longitude</param>
         /// <remarks>
         /// Geodate will default to 1/1/1900 GMT until provided
         /// </remarks>
@@ -85,11 +85,11 @@ namespace CoordinateSharp
             EagerLoadSettings = new EagerLoad();
         }
         /// <summary>
-        /// Creates a populated Coordinate object with an assigned GeoDate
+        /// Creates a populated Coordinate object with an assigned GeoDate.
         /// </summary>
-        /// <param name="lat">Decimal format latitude</param>
-        /// <param name="longi">Decimal format longitude</param>
-        /// <param name="date">DateTime you wish to use for celestial calculation</param>
+        /// <param name="lat">latitude</param>
+        /// <param name="longi">longitude</param>
+        /// <param name="date">DateTime (UTC)</param>
         public Coordinate(double lat, double longi, DateTime date)
         {
             this.FormatOptions = new CoordinateFormatOptions();
@@ -104,7 +104,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Creates an empty Coordinates object with specificied eager loading options
+        /// Creates an empty Coordinates object with specificied eager loading options.
         /// </summary>
         /// <remarks>
         /// Values will need to be provided to latitude/longitude manually
@@ -133,13 +133,13 @@ namespace CoordinateSharp
             EagerLoadSettings = eagerLoad;
         }
         /// <summary>
-        /// Creates a populated Coordinate object with specified eager loading options
+        /// Creates a populated Coordinate object with specified eager loading options.
         /// </summary>
         /// <remarks>
         /// Geodate will default to 1/1/1900 GMT until provided
         /// </remarks>
-        /// <param name="lat">Decimal format latitude</param>
-        /// <param name="longi">Decimal format longitude</param>
+        /// <param name="lat">latitude</param>
+        /// <param name="longi">longitude</param>
         /// <param name="eagerLoad">Eager loading options</param>
         public Coordinate(double lat, double longi, EagerLoad eagerLoad)
         {
@@ -314,7 +314,7 @@ namespace CoordinateSharp
             //}
         }
         /// <summary>
-        /// Military Grid Reference System Values
+        /// Military Grid Reference System (NATO UTM)
         /// </summary>
         public MilitaryGridReferenceSystem MGRS
         {
@@ -334,7 +334,7 @@ namespace CoordinateSharp
             //}
         }
         /// <summary>
-        /// Cartesian
+        /// Cartesian (Based on Spherical Earth)
         /// </summary>
         public Cartesian Cartesian
         {
@@ -344,12 +344,13 @@ namespace CoordinateSharp
             }         
         }
         /// <summary>
-        /// Celestial information based on the objects lat/long and geograpic UTC date.
+        /// Celestial information based on the objects location and geographic UTC date.
         /// </summary>
         public Celestial CelestialInfo
         {
             get { return this.celestialInfo; }          
         }
+
         /// <summary>
         /// Initialize celestial information (required if eager loading is turned off).
         /// </summary>
@@ -360,7 +361,6 @@ namespace CoordinateSharp
         /// <summary>
         /// Initialize UTM and MGRS information (required if eager loading is turned off).
         /// </summary>
-
         public void LoadUTM_MGRS_Info()
         {
             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
@@ -373,16 +373,18 @@ namespace CoordinateSharp
         {
             cartesian = new Cartesian(this);
         }
+
         /// <summary>
-        /// Coordinate string formatting options
+        /// Coordinate string formatting options.
         /// </summary>
         public CoordinateFormatOptions FormatOptions { get; set; }
         /// <summary>
-        /// Eager loading settings
+        /// Eager loading settings.
         /// </summary>
         public EagerLoad EagerLoadSettings { get; set; }
+
         /// <summary>
-        /// Formatted coordinate String
+        /// Bindable formatted coordinate string.
         /// </summary>
         /// <remarks>Bind to this property when MVVM patterns used</remarks>
         public string Display
@@ -393,19 +395,18 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Overridden Coordinate ToString() method
+        /// Overridden Coordinate ToString() method.
         /// </summary>
-        /// <returns>Degree Minute Seconds formated coordinate. Seconds round to the 3rd.</returns>
+        /// <returns>string (formatted).</returns>
         public override string ToString()
         {
             string latString = latitude.ToString();
             string longSting = longitude.ToString();
             return latString + " " + longSting;
-        }
-      
+        }     
         /// <summary>
         /// Overridden Coordinate ToString() method that accepts formatting. 
-        /// Refer to documentation for coordinate format options
+        /// Refer to documentation for coordinate format options.
         /// </summary>
         /// <param name="options">CoordinateFormatOptions</param>
         /// <returns>Custom formatted coordinate</returns>
@@ -415,8 +416,9 @@ namespace CoordinateSharp
             string longSting = longitude.ToString(options);
             return latString + " " + longSting;
         }
+
         /// <summary>
-        /// Set a custom datum for UTM and MGRS coordinates
+        /// Set a custom datum for coordinate conversions and distance calculation.
         /// </summary>
         /// <param name="radius">Equatorial Radius</param>
         /// <param name="flat">Inverse Flattening</param>
@@ -456,7 +458,7 @@ namespace CoordinateSharp
             return new Distance(this, c2, shape);
         }
         /// <summary>
-        /// Move coordinate based on provided bearing and distance
+        /// Move coordinate based on provided bearing and distance.
         /// </summary>
         /// <param name="distance">distance in meters</param>
         /// <param name="bearing">bearing</param>
@@ -492,7 +494,7 @@ namespace CoordinateSharp
             }        
         }
         /// <summary>
-        /// Move coordinate based on provided target coordinate and distance
+        /// Move coordinate based on provided target coordinate and distance.
         /// </summary>
         /// <param name="c">Target coordinate</param>
         /// <param name="distance">Distance toward target</param>
@@ -527,6 +529,31 @@ namespace CoordinateSharp
                 Latitude.DecimalDegree = lat2;
                 Longitude.DecimalDegree = lon2;
             }
+        }
+
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate.
+        /// </summary>
+        /// <param name="s">Coordinate string</param>
+        /// <param name="c">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// <code>
+        /// Coordinate c;
+        /// if(Coordinate.TryParse("N 32.891º W 64.872º",out c))
+        /// {
+        ///     Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string s, out Coordinate c)
+        {
+            c = null;
+            if (FormatFinder.TryParse(s, out c))
+            {
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -566,12 +593,13 @@ namespace CoordinateSharp
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
+
     }
     /// <summary>
-    /// Observable class for handling a single coordinate (Lat or Long)
+    /// Observable class for handling latitudinal and longitudinal coordinate parts.
     /// </summary>
     /// <remarks>
-    /// Objects can be passed to Coordinate object Latitude and Longitude properties
+    /// Objects can be passed to Coordinate object Latitude and Longitude properties.
     /// </remarks>
     [Serializable]
     public class CoordinatePart : INotifyPropertyChanged
@@ -593,15 +621,13 @@ namespace CoordinateSharp
         private CoordinatesPosition position;
         private CoordinateType type;    
 
-
-
         /// <summary>
         /// Used to determine and notify the CoordinatePart parent Coordinate object.
         /// </summary>
         public Coordinate Parent { get; set; }
 
         /// <summary>
-        /// Observable decimal format coordinate
+        /// Observable decimal format coordinate.
         /// </summary>
         public double DecimalDegree
         {
@@ -694,7 +720,7 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Observable decimal format minute
+        /// Observable decimal format minute.
         /// </summary>
         public double DecimalMinute
         {
@@ -745,7 +771,7 @@ namespace CoordinateSharp
 
         }
         /// <summary>
-        /// Observable coordinate degree
+        /// Observable coordinate degree.
         /// </summary>
         public int Degrees
         {
@@ -792,7 +818,7 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Observable coordinate minute
+        /// Observable coordinate minute.
         /// </summary>
         public int Minutes
         {
@@ -848,7 +874,7 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Observable coordinate second
+        /// Observable coordinate second.
         /// </summary>
         public double Seconds
         {
@@ -904,7 +930,7 @@ namespace CoordinateSharp
             }
         }       
         /// <summary>
-        /// Formate coordinate part string
+        /// Formate coordinate part string.
         /// </summary>
         public string Display
         {
@@ -921,7 +947,7 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Observable coordinate position
+        /// Observable coordinate position.
         /// </summary>
         public CoordinatesPosition Position
         {
@@ -946,9 +972,9 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Creates an empty Coordinate object
+        /// Creates an empty CoordinatePart.
         /// </summary>
-        /// <param name="t">Parent Coordinate object</param>
+        /// <param name="t">CoordinateType</param>
         /// <param name="c">Parent Coordinate object</param>
         public CoordinatePart(CoordinateType t, Coordinate c)
         {     
@@ -962,7 +988,7 @@ namespace CoordinateSharp
             else { this.position = CoordinatesPosition.E; }
         }
         /// <summary>
-        /// Creates a populated Coordinate object from a decimal format coordinate
+        /// Creates a populated CoordinatePart from a decimal format part.
         /// </summary>
         /// <param name="value">Coordinate decimal value</param>
         /// <param name="t">Coordinate type</param>
@@ -1003,7 +1029,7 @@ namespace CoordinateSharp
             this.seconds = Convert.ToDouble(sec);
         }
         /// <summary>
-        /// Creates a populated Coordinate object from a Degrees Minutes Seconds coordinate
+        /// Creates a populated CoordinatePart object from a Degrees Minutes Seconds part.
         /// </summary>
         /// <param name="deg">Degrees</param>
         /// <param name="min">Minutes</param>
@@ -1050,7 +1076,7 @@ namespace CoordinateSharp
             this.decimalDegree = Convert.ToDouble(dd);
         }
         /// <summary>
-        /// Creates a populated Coordinate object from a Degrees Minutes Seconds coordinate
+        /// Creates a populated CoordinatePart from a Degrees Minutes Seconds part.
         /// </summary>
         /// <param name="deg">Degrees</param>
         /// <param name="minSec">Decimal Minutes</param> 
@@ -1097,9 +1123,9 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Signed degrees (decimal) format coordinate
+        /// Signed degrees (decimal) format coordinate.
         /// </summary>
-        /// <returns>Signed degrees (decimal) format coordinate</returns>
+        /// <returns>double</returns>
         public double ToDouble()
         {
             return this.decimalDegree;
@@ -1108,7 +1134,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Overridden Coordinate ToString() method
         /// </summary>
-        /// <returns>Degree Minute Seconds formated coordinate part. Seconds round to the 3rd</returns>
+        /// <returns>Dstring</returns>
         public override string ToString()
         {
             return FormatString(this.Parent.FormatOptions);
@@ -1118,7 +1144,7 @@ namespace CoordinateSharp
         /// Formatted CoordinatePart string.
         /// </summary>
         /// <param name="options">CoordinateFormatOptions</param>
-        /// <returns>Formatted string</returns>
+        /// <returns>string (formatted)</returns>
         public string ToString(CoordinateFormatOptions options)
         {
             return FormatString(options);
@@ -1364,7 +1390,7 @@ namespace CoordinateSharp
             Decimal_Degree, Degree_Decimal_Minute, Degree_Minute_Second, Decimal
         }
         /// <summary>
-        /// Notify the correct properties and parent properties
+        /// Notify the correct properties and parent properties.
         /// </summary>
         /// <param name="p">Property Type</param>
         private void NotifyProperties(PropertyTypes p)
@@ -1422,7 +1448,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Property changed event
+        /// Property changed event.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         /// <summary>
@@ -1438,12 +1464,13 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Used for notifying the correct properties
+        /// Used for notifying the correct properties.
         /// </summary>
         private enum PropertyTypes
         {
             DecimalDegree, DecimalMinute, Position, Degree, Minute, Second, FormatChange
         }
+
         /// <summary>
         /// Returns CoordinatePart in radians
         /// </summary>
@@ -1452,6 +1479,6 @@ namespace CoordinateSharp
         {
             return decimalDegree * Math.PI / 180;
         }
-        
+       
     }
 }
