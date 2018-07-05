@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Used to pass coordinate formatting values to the Coordinate object
+    /// Coordinate formatting options for a Coordinate object.
     /// </summary>
     [Serializable]
     public class CoordinateFormatOptions
@@ -71,7 +71,7 @@ namespace CoordinateSharp
         public bool Position_First { get; set; }
     }
     /// <summary>
-    /// Coordinate Format Types
+    /// Coordinate Format Types.
     /// </summary>
     [Serializable]
     public enum CoordinateFormatType
@@ -111,7 +111,13 @@ namespace CoordinateSharp
         //WHEN PARSING NO EXCPETIONS FOR OUT OF RANGE ARGS WILL BE THROWN
         public static bool TryParse(string coordString, out Coordinate c)
         {
-            c = new Coordinate();
+            //Turn of eagerload for efficiency
+            EagerLoad eg = new EagerLoad();
+            eg.Cartesian = false;
+            eg.Celestial = false;
+            eg.UTM_MGRS = false;
+
+            c = new Coordinate(eg);
             string s = coordString;
             s = s.Trim(); //Trim all spaces before and after string
             double[] d;
@@ -120,7 +126,7 @@ namespace CoordinateSharp
             {
                 try
                 {
-                    c = new Coordinate(d[0], d[1]);
+                    c = new Coordinate(d[0], d[1], eg);
                     return true;
                 }
                 catch
@@ -132,7 +138,7 @@ namespace CoordinateSharp
             {
                 try
                 {
-                    c = new Coordinate(d[0], d[1]);
+                    c = new Coordinate(d[0], d[1], eg);
                     return true;
                 }
                 catch
@@ -156,7 +162,7 @@ namespace CoordinateSharp
                     if (d[5] != 0) { lngP = CoordinatesPosition.W; }
                     CoordinatePart lat = new CoordinatePart((int)d[0], d[1], latP, c);
                     CoordinatePart lng = new CoordinatePart((int)d[3], d[4], lngP, c);
-                    c = new Coordinate();
+                    c = new Coordinate(eg);
                     c.Latitude = lat;
                     c.Longitude = lng;
                     return true;
@@ -185,7 +191,7 @@ namespace CoordinateSharp
 
                     CoordinatePart lat = new CoordinatePart((int)d[0], (int)d[1], d[2], latP, c);
                     CoordinatePart lng = new CoordinatePart((int)d[4], (int)d[5], d[6], lngP, c);
-                    c = new Coordinate();
+                    c = new Coordinate(eg);
                     c.Latitude = lat;
                     c.Longitude = lng;
                     return true;
@@ -302,7 +308,7 @@ namespace CoordinateSharp
                 }
 
                 sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
-                sA[1] = Regex.Replace(sA[0], "[^0-9.]", "");
+                sA[1] = Regex.Replace(sA[1], "[^0-9.]", "");
 
                 if (!double.TryParse(sA[0], out lat))
                 { return false; }
@@ -441,13 +447,12 @@ namespace CoordinateSharp
                     }
                     lngR = 1;
                 }
-
                 sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
                 sA[1] = Regex.Replace(sA[1], "[^0-9.]", "");
                 sA[2] = Regex.Replace(sA[2], "[^0-9.]", "");
                 sA[3] = Regex.Replace(sA[3], "[^0-9.]", "");
-                sA[4] = Regex.Replace(sA[2], "[^0-9.]", "");
-                sA[5] = Regex.Replace(sA[3], "[^0-9.]", "");
+                sA[4] = Regex.Replace(sA[4], "[^0-9.]", "");
+                sA[5] = Regex.Replace(sA[5], "[^0-9.]", "");
 
                 if (!double.TryParse(sA[0], out latD))
                 { return false; }
@@ -708,7 +713,7 @@ namespace CoordinateSharp
         public string Letter { get; set; }
     }
     /// <summary>
-    /// Used for setting whether a coordinate part is latitudinal or longitudinal
+    /// Used for setting whether a coordinate part is latitudinal or longitudinal.
     /// </summary>
     [Serializable]
     public enum CoordinateType
@@ -723,7 +728,7 @@ namespace CoordinateSharp
         Long
     }
     /// <summary>
-    /// Used to set a coordinate parts position
+    /// Used to set a coordinate part position.
     /// </summary>
     [Serializable]
     public enum CoordinatesPosition
@@ -746,7 +751,7 @@ namespace CoordinateSharp
         W
     }
     /// <summary>
-    /// Used to display a celestial condition for a set day
+    /// Used to display a celestial condition for a specified date.
     /// </summary>
     [Serializable]
     public enum CelestialStatus
@@ -799,7 +804,7 @@ namespace CoordinateSharp
     }
   
     /// <summary>
-    /// Turn on/off eager loading of certain properties
+    /// Turn on/off eager loading of certain properties.
     /// </summary>
     [Serializable]
     public class EagerLoad
@@ -1016,7 +1021,7 @@ namespace CoordinateSharp
         }
     }
     /// <summary>
-    /// Earth Shape for Calculations
+    /// Earth Shape for Calculations.
     /// </summary>
     [Serializable]
     public enum Shape
