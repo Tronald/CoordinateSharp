@@ -13,7 +13,9 @@ Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 .NET 4.0 or greater.
 
 ### Installing
-CoordinateSharp is available as a nuget package from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
+CoordinateSharp is available as a nuget package from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/) (Recommended).
+
+Alternatively, you may download the library directly [on our website](https://www.coordinatesharp.com/Download)
 
 ### Usage Example
 
