@@ -17,6 +17,8 @@ CoordinateSharp is available as a nuget package from [nuget.org](https://www.nug
 
 Alternatively, you may download the library directly [on our website](https://www.coordinatesharp.com/Download)
 
+NOTE: You will receive a compatibility warning for Standard and Core projects if this library is downloaded via Nuget. The library will still work however. These warnings will not appear if the library is downloaded directly.
+
 ### Usage Example
 
 CoordinateSharp is simple to use. In the below example we create a `Coordinate` by passing a lat/long and date. Once the `Coordinate` is created we have access to various formats and celestial data.
