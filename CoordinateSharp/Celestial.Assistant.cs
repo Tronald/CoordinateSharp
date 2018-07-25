@@ -898,23 +898,6 @@ namespace CoordinateSharp
         /// Returns Nautical Dusk Time
         /// </summary>
         public DateTime? NauticalDusk { get; set; }
-        /// <summary>
-        /// Returns Astronomical Dawn Time
-        /// </summary>
-        public DateTime? AstronomicalDawn { get; set; }
-        /// <summary>
-        /// Returns Astronomical Dusk Time
-        /// </summary>
-        public DateTime? AstronomicalDusk { get; set; }
-
-        /// <summary>
-        /// Returns the time when the bottom of the solar disc touches the horizon after sunrise
-        /// </summary>
-        public DateTime? SunriseBottomDisc{ get; set; }
-        /// <summary>
-        /// Returns the time when the bottom of the solar disc touches the horizon before sunset
-        /// </summary>
-        public DateTime? SunsetBottomDisc { get; set; }
 
         internal void Convert_To_Local_Time(double offset)
         {
