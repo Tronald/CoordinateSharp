@@ -1,8 +1,8 @@
 <p align="center"><img src="https://s8.postimg.cc/y7wuenuzp/LOGO_COORDINATE_SHARP.jpg"></p>
 
-<h2 align="center">v1.1.3.3</h2>
+<h2 align="center">v1.1.3.4</h2>
 
-CoordinateSharp is a simple .NET standard library that is designed to assist with geographic coordinate formatting and location based celestial information. This library has the ability to convert various lat long formats, UTM, MGRS(NATO UTM) and Cartesian (X, Y, Z). 
+CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate formatting and location based celestial information. This library has the ability to convert various lat long formats, UTM, MGRS(NATO UTM) and Cartesian (X, Y, Z). 
 The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
 
 CAUTION: v1.1.3.1 and above is considered a breaking change as `MoonDistance` has been converted from a `double?` object to a `Distance` object. Obsolete properties from 1.1.1.5 have also been removed as scheduled.
