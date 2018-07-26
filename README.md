@@ -9,10 +9,6 @@ CAUTION: v1.1.3.1 and above is considered a breaking change as `MoonDistance` ha
 
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 
-### Keep CoordinateSharp Free
-
-<<iframe class='gfm-media-widget' image='0' coinfo='0' width='100%' height='100%' frameborder='0' id='coordinatesharp'></iframe><script src='//funds.gofundme.com/js/5.0/media-widget.js'></script>
-
 ### Prerequisites
 .NET 4.0 or greater.
 
