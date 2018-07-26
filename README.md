@@ -11,7 +11,7 @@ Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 
 ### Keep CoordinateSharp Free
 
-<a href="https://www.gofundme.com/coordinatesharp" target="blank">
+<a href="https://www.gofundme.com/coordinatesharp">
 <img src="https://projectgrimoire.com/wp-content/uploads/2018/03/gofundme-donate-button.png" width="20%"/></a>
 
 ### Prerequisites
