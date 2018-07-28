@@ -7,7 +7,7 @@ namespace CoordinateSharp
         public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c,double offset = 0)
         {
             if (date.Year == 0001) { return; } //Return if date vaue hasn't been established.
-            DateTime actualDate = new DateTime(date.Year,date.Month,date.Day,date.Hour,date.Minute, date.Second, DateTimeKind.Utc);
+            DateTime actualDate = new DateTime(date.Year,date.Month,date.Day,0,0, 0, DateTimeKind.Utc);
 
             ////Sun Time Calculations
          
@@ -72,18 +72,28 @@ namespace CoordinateSharp
 
             //BottomDisc
             evDate = Get_Event_Time(lw, phi, -.2998, actualDate);
-
             c.AdditionalSolarTimes.SunriseBottomDisc = evDate[0];
             c.AdditionalSolarTimes.SunsetBottomDisc = evDate[1];
-
 
             CalculateSolarEclipse(date, lat, longi, c);
 
         }  
+        /// <summary>
+        /// Gets time of event based on specified degree below horizon
+        /// </summary>
+        /// <param name="lw">Observer Longitude in radians</param>
+        /// <param name="phi">Observer Latitude in radians</param>
+        /// <param name="h">Angle in Degrees</param>
+        /// <param name="date">Date of Event</param>
+        /// <returns>DateTime?[]{rise, set}</returns>
         private static DateTime?[] Get_Event_Time(double lw, double phi, double h,DateTime date)
         {
+            //Create arrays. Index 0 = Day -1, 1 = Day, 2 = Day + 1;
+            //These will be used to find exact day event occurs for comparison
             DateTime?[] sets = new DateTime?[] { null, null, null };
             DateTime?[] rises = new DateTime?[] { null, null, null };
+            
+            //Iterate starting with day -1;
             for (int x = 0; x < 3; x++)
             {
                 double d = JulianConversions.GetJulian(date.AddDays(x-1)) - j2000 + .5; //LESS PRECISE JULIAN NEEDED
@@ -111,6 +121,7 @@ namespace CoordinateSharp
 
                 DateTime? rise = JulianConversions.GetDate_FromJulian(Jrise);
                 DateTime? set = JulianConversions.GetDate_FromJulian(Jset);
+
                 rises[x] = rise;
                 sets[x] = set;
             }
@@ -257,8 +268,8 @@ namespace CoordinateSharp
         }
 
         #region Private Suntime Members
-        private static double dayMS = 1000 * 60 * 60 * 24, j1970 = 2440588, j2000 = 2451545;
-        private static double rad = Math.PI / 180;     
+        private static readonly double dayMS = 1000 * 60 * 60 * 24, j1970 = 2440588, j2000 = 2451545;
+        private static readonly double rad = Math.PI / 180;     
 
         private static double LocalSiderealTimeForTimeZone(double lon, double jd, double z)
         {

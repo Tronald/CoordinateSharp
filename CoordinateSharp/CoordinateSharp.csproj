@@ -1,69 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D994BF3D-8907-4812-8FC0-B11229137E93}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CoordinateSharp</RootNamespace>
-    <AssemblyName>CoordinateSharp</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworks>net40; netstandard2.0</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.1.3.5</Version>
+    <Authors>Justin Gielski</Authors>
+    <Company />
+    <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/LICENSE</PackageLicenseUrl>
+    <Copyright>Copyright 2017</Copyright>
+    <Description>A simple library designed to assist with geographic coordinate formatting and location based celestial information.</Description>
+    <PackageReleaseNotes>Addresses .NET Standard and Core compatibility warnings.</PackageReleaseNotes>
+    <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian</PackageTags>
+    <PackageIconUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/ICON.png</PackageIconUrl>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-    <DocumentationFile>bin\Debug\CoordinateSharp.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\CoordinateSharp.XML</DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Celestial.Assistant.cs" />
-    <Compile Include="Celestial.cs" />
-    <Compile Include="Celestial.LunarEclipseCalc.cs" />
-    <Compile Include="Celestial.SolarEclipseCalc.cs" />
-    <Compile Include="Eclipse\LunarData.cs" />
-    <Compile Include="Eclipse\SolarData.cs" />
-    <Compile Include="Celestial.MoonCalculations.cs" />
-    <Compile Include="Celestial.SunCalculations.cs" />
-    <Compile Include="Coordinate.Assistant.cs" />
-    <Compile Include="Coordinate.Cartesian.cs" />
-    <Compile Include="Coordinate.cs" />
-    <Compile Include="Coordinate.MGRS.cs" />
-    <Compile Include="Coordinate.UTM.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

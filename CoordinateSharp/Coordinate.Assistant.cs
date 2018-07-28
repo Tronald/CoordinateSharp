@@ -431,17 +431,17 @@ namespace CoordinateSharp
                 }
 
                 //Find Directions
-                if (!sA[0].Contains("N") && !sA[0].Contains("n"))
+                if (!sA[0].Contains("N") && !sA[0].Contains("n") && !sA[2].Contains("N") && !sA[2].Contains("n"))
                 {
-                    if (!sA[0].Contains("S") && !sA[0].Contains("s"))
+                    if (!sA[0].Contains("S") && !sA[0].Contains("s") && !sA[2].Contains("S") && !sA[2].Contains("s"))
                     {
                         return false;//No Direction Found
                     }
                     latR = 1;
                 }
-                if (!sA[3].Contains("E") && !sA[3].Contains("e"))
+                if (!sA[3].Contains("E") && !sA[3].Contains("e") && !sA[5].Contains("E") && !sA[5].Contains("e"))
                 {
-                    if (!sA[3].Contains("W") && !sA[3].Contains("w"))
+                    if (!sA[3].Contains("W") && !sA[3].Contains("w") && !sA[5].Contains("W") && !sA[5].Contains("w"))
                     {
                         return false;//No Direction Found
                     }
@@ -563,6 +563,7 @@ namespace CoordinateSharp
 
         private static string[] SpecialSplit(string s)
         {
+            s = s.Replace("°", " ");
             s = s.Replace("º", " ");
             s = s.Replace("'", " ");
             s = s.Replace("\"", " ");
