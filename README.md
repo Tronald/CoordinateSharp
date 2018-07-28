@@ -15,7 +15,7 @@ Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 <img src="https://projectgrimoire.com/wp-content/uploads/2018/03/gofundme-donate-button.png" width="20%"/></a>
 
 ### Prerequisites
-.NET 4.0 or greater or .NET Standard 2.0 [Supported Platforms](https://github.com/dotnet/standard/blob/master/docs/versions/netstandard2.0.md)
+.NET 4.0 or greater.
 
 ### Installing
 CoordinateSharp is available as a nuget package from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
