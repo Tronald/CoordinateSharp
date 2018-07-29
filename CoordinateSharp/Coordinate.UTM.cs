@@ -20,10 +20,10 @@ namespace CoordinateSharp
         /// <param name="nrt">Northing</param>
         public UniversalTransverseMercator(string latz, int longz, double est, double nrt)
         {
-            if (longz < 1 || longz > 60) { Trace.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
-            if (!Verify_Lat_Zone(latz)) { Trace.WriteLine("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
-            if (est < 160000 || est > 834000) { Trace.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
-            if (nrt < 0 || nrt > 10000000) { Trace.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
+            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if (!Verify_Lat_Zone(latz)) { Debug.WriteLine("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
+            if (est < 160000 || est > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
+            if (nrt < 0 || nrt > 10000000) { Debug.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
 
             this.latZone = latz;
             this.longZone =longz;
@@ -45,10 +45,10 @@ namespace CoordinateSharp
         /// <param name="flaten">Inverse Flattening</param>
         public UniversalTransverseMercator(string latz, int longz, double est, double nrt, double radius, double flaten)
         {
-            if (longz < 1 || longz > 60) { Trace.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
-            if (!Verify_Lat_Zone(latz)) { Trace.WriteLine("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
-            if (est < 160000 || est > 834000) { Trace.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
-            if (nrt < 0 || nrt > 10000000) { Trace.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
+            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if (!Verify_Lat_Zone(latz)) { Debug.WriteLine("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
+            if (est < 160000 || est > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
+            if (nrt < 0 || nrt > 10000000) { Debug.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
 
             this.latZone = latz;
             this.longZone = longz;
@@ -193,9 +193,9 @@ namespace CoordinateSharp
         internal UniversalTransverseMercator(string latz, int longz, double e, double n, Coordinate c, double rad, double flt)
         {
             //validate utm
-            if (longz < 1 || longz > 60) { Trace.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
             if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
-            if (e < 160000 || e > 834000) { Trace.WriteLine("The Easting value provided is outside the max allowable range. If this is intentional, use with caution."); }
+            if (e < 160000 || e > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. If this is intentional, use with caution."); }
             if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
             this.equatorial_radius = rad;
             this.inverse_flattening = flt;
@@ -542,7 +542,7 @@ namespace CoordinateSharp
 
             if (c.Latitude.ToDouble() > 85 || c.Latitude.ToDouble() < -85)
             {
-                Trace.WriteLine("UTM conversions greater than 85 degrees or less than -85 degree latitude contain major deviations and should be used with caution.");
+                Debug.WriteLine("UTM conversions greater than 85 degrees or less than -85 degree latitude contain major deviations and should be used with caution.");
             }
             return c;
 
