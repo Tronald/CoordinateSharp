@@ -10,7 +10,7 @@ CAUTION: v1.1.3.1 and above is considered a breaking change as `MoonDistance` ha
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 
 ### Prerequisites
-.NET 4.0 or greater or .NET Standard 2.0, 1.4, 1.3 [Supported Platforms](https://github.com/dotnet/standard/blob/master/docs/versions/netstandard2.0.md)
+.NET 4.0 or greater or .NET Standard 2.0, 1.4, 1.3 [Supported Platforms](https://github.com/dotnet/standard/tree/master/docs/versions)
 
 ### Installing
 CoordinateSharp is available as a nuget package from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
