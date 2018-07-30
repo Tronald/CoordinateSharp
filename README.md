@@ -11,8 +11,7 @@ Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 
 ### Like CoordinateSharp? Please consider donating to support research and hosting fees.
 
-<a href="https://www.gofundme.com/coordinatesharp">
-<img src="https://projectgrimoire.com/wp-content/uploads/2018/03/gofundme-donate-button.png" width="20%"/></a>
+[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=S78DZZX5KMVUS)
 
 ### Prerequisites
 .NET 4.0 or greater.
