@@ -9,7 +9,7 @@ CAUTION: v1.1.3.1 and above is considered a breaking change as `MoonDistance` ha
 
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 
-### Keep CoordinateSharp Free
+### Like CoordinateSharp? Please consider donating to support research and hosting fees.
 
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=S78DZZX5KMVUS)
 
