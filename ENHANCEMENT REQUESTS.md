@@ -4,4 +4,4 @@ This following items are requests that are on hold until more time & resources c
 
 * Planetary Calculations
 * Tidal Calculations
-* Package availability for Xamarin.iOS and MonoAndroid
+* ~Package availability for Xamarin.iOS and MonoAndroid~ Complete with 1.1.3.5
