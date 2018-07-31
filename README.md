@@ -14,14 +14,12 @@ Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=S78DZZX5KMVUS)
 
 ### Prerequisites
-.NET 4.0 or greater.
+.NET 4.0 or .NET Standard 2.0, 1.4, 1.3 compatible runtimes.
 
 ### Installing
 CoordinateSharp is available as a nuget package from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
 
 Alternatively, you may download the library directly [on our website](https://www.coordinatesharp.com/Download)
-
-NOTE: You will receive a compatibility warning for Standard and Core projects if this library is downloaded via Nuget. The library will still work however. These warnings will not appear if the library is downloaded directly. The library has been fully ported to .NET standard for the next release (v1.1.3.5) and will resolve this issue.
 
 ### Usage Example
 
