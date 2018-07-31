@@ -23,31 +23,44 @@ Alternatively, you may download the library directly [on our website](https://ww
 
 ### Usage Example
 
-CoordinateSharp is simple to use. In the below example we create a `Coordinate` by passing a lat/long and date. Once the `Coordinate` is created we have access to various formats and celestial data.
+CoordinateSharp is simple to use. In the below example we create a `Coordinate` by passing a lat/long and date.
 
 ```csharp
 //Seattle coordinates on 5 Jun 2018 @ 10:10 AM (UTC)
+//Signed-Decimal Degree    47.6062, -122.3321
+//Degrees Minutes Seconds  N 47º 36' 22.32" W 122º 19' 55.56"
+
+/***********************************************************/
+
+//Initialize with decimal degree (Standard Method)
 Coordinate c = new Coordinate(47.6062, -122.3321, new DateTime(2018,6,5,10,10,0));
 
-Console.WriteLine(c);                       // N 47º 36' 22.32" W 122º 19' 55.56"
-Console.WriteLine(c.Latitude.Seconds);      // 22.32
-Console.WriteLine(c.CelestialInfo.SunSet);  // 5-Jun-2018 4:02:00 AM
-Console.WriteLine(c.UTM);                   // 10T 550200mE 5272748mN
+/***IF OTHER FORMAT IS USED SUCH AS DEGREE MINUTES SECONDS***/
+
+//Initialize with TryParse() Method
+Coordinate.TryParse("N 47º 36' 22.32" W 122º 19' 55.56", new DateTime(2018,6,5,10,10,0), out c);
+
+/****OR****/
+
+//Initialize with Secondary Method
+Coordinate c = new Coordinate();
+c.Latitude = new CoordinatePart(47,36, 22.32, CoordinatePosition.N, c);
+c.Longitude = new CoordinatePart(122, 19, 55.56, CoordinatePosition.W, c);
+c.GeoDate = new DateTime(2018,6,5,10,10,0);
 ```
 
-`Coordinate` has its default lat/long format output as DMS (ex N 47º 36' 22.32" W 122º 19' 55.56"). This format can be changed quickly by setting the object formatting options.
+Once the `Coordinate` is created we have access to various formats and celestial data. Here are just a few examples.
+ 
+ ```C#
+Console.WriteLine(c);                               // N 47º 36' 22.32" W 122º 19' 55.56"
+Console.WriteLine(c.Latitude.Seconds);              // 22.32
+Console.WriteLine(c.UTM);                           // 10T 550200mE 5272748mN
 
-```csharp
-Coordinate c = new Coordinate(40.57682, -70.75678);
-
-c.FormatOptions.CoordinateFormatType = CoordinateFormatType.Degree_Decimal_Minutes;
-c.FormatOptions.Display_Leading_Zeros = true;
-c.FormatOptions.Round = 3;
-
-c.ToString();           // N 40º 34.609' W 070º 045.407'
-c.Latitude.ToString();  // N 40º 34.609'
-c.Longitude.ToString(); // W 070º 45.407'
+Console.WriteLine(c.CelestialInfo.SunSet);          // 5-Jun-2018 4:02:00 AM
+Console.WriteLine(tc.CelestialInfo.MoonAltitude);   // 14.4169966277874
 ```
+
+
 
 ### Abilities
  
