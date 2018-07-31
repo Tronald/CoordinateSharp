@@ -23,7 +23,7 @@ Alternatively, you may download the library directly [on our website](https://ww
 
 ### Usage Example
 
-CoordinateSharp is simple to use. In the below example we create a `Coordinate` by passing a lat/long and date.
+CoordinateSharp is simple to use. In the below example we create a `Coordinate` using one of the methods below.
 
 ```csharp
 //Seattle coordinates on 5 Jun 2018 @ 10:10 AM (UTC)
