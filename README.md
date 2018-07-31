@@ -57,7 +57,7 @@ Console.WriteLine(c.Latitude.Seconds);              // 22.32
 Console.WriteLine(c.UTM);                           // 10T 550200mE 5272748mN
 
 Console.WriteLine(c.CelestialInfo.SunSet);          // 5-Jun-2018 4:02:00 AM
-Console.WriteLine(tc.CelestialInfo.MoonAltitude);   // 14.4169966277874
+Console.WriteLine(c.CelestialInfo.MoonAltitude);   // 14.4169966277874
 ```
 
 
