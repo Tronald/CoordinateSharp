@@ -7,114 +7,153 @@ namespace CoordinateSharp
         public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c,double offset = 0)
         {
             if (date.Year == 0001) { return; } //Return if date vaue hasn't been established.
-            DateTime actualDate = new DateTime(date.Year,date.Month,date.Day,date.Hour,date.Minute, date.Second, DateTimeKind.Utc);
-           
-            //Sun Time Calculations
-            date = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);      
-            double zone = -(int)Math.Round(TimeZone.CurrentTimeZone.GetUtcOffset(date).TotalSeconds / 3600);     
-            double jd = JulianConversions.GetJulian(date) - 2451545;  // Julian day relative to Jan 1.5, 2000
+            DateTime actualDate = new DateTime(date.Year,date.Month,date.Day,0, 0, 0, DateTimeKind.Utc);
 
-            double lon = longi / 360;
-            double tz = -1* offset / 24;
-            double ct = jd / 36525 + 1; // centuries since 1900.0
-            double t0 = LocalSiderealTimeForTimeZone(lon, jd, tz);      // local sidereal time
+            ////Sun Time Calculations
+         
+            //Get Julian     
+            double lw = rad * -longi;
+            double phi = rad * lat;            
 
-            // get sun position at start of day
-            jd += tz;
-            CalculateSunPosition(jd, ct);
-            double ra0 = mSunPositionInSkyArr[0];
-            double dec0 = mSunPositionInSkyArr[1];
+            //Rise Set        
+            DateTime?[] evDate = Get_Event_Time(lw, phi, -.8333, actualDate);
+            c.SunRise = evDate[0];
+            c.SunSet = evDate[1];
 
-            // get sun position at end of day
-            jd += 1;
-            CalculateSunPosition(jd, ct);
-            double ra1 = mSunPositionInSkyArr[0];
-            double dec1 = mSunPositionInSkyArr[1];
-
-            // make continuous 
-            if (ra1 < ra0)
-                ra1 += 2 * Math.PI;
-
-            mIsSunrise = false;
-            mIsSunset = false;
-
-            mRightAscentionArr[0] = ra0;
-            mDecensionArr[0] = dec0;
-
-            // check each hour of this day
-            for (int k = 0; k < 25; k++)
-            {
-                mRightAscentionArr[2] = ra0 + (k + 1) * (ra1 - ra0) / 24;
-                mDecensionArr[2] = dec0 + (k + 1) * (dec1 - dec0) / 24;
-                mVHzArr[2] = TestHour(k, zone, t0, lat);
-                // advance to next hour
-                mRightAscentionArr[0] = mRightAscentionArr[2];
-                mDecensionArr[0] = mDecensionArr[2];
-                mVHzArr[0] = mVHzArr[2];
-            }
-            //Times returned for 00:00 may create an hour value of 24 which will throw a DateTime Exception.
-            //Reset to 0 and keep same day month as this library is designed to return same day event in Z day only.
-            if (mRiseTimeArr[0] >= 24) { mRiseTimeArr[0] -= 24; }
-            if (mSetTimeArr[0] >= 24) { mSetTimeArr[0] -= 24; }
-
-            c.SunRise = new DateTime(date.Year, date.Month, date.Day, mRiseTimeArr[0], mRiseTimeArr[1], 0);
-            c.SunSet = new DateTime(date.Year, date.Month, date.Day, mSetTimeArr[0], mSetTimeArr[1], 0);          
             c.SunCondition = CelestialStatus.RiseAndSet;
-
+            //Azimuth and Altitude
+            CalculateSunAngle(actualDate, longi, lat, c);
             // neither sunrise nor sunset
-            if ((!mIsSunrise) && (!mIsSunset))
+            if ((!c.SunRise.HasValue) && (!c.SunSet.HasValue))
             {
-                if (mVHzArr[2] < 0)
+                if (c.SunAltitude < 0)
                 {
-                    c.SunCondition = CelestialStatus.DownAllDay;
-                    c.SunRise = null;
-                    c.SunSet = null;
-                    // Sun down all day
+                    c.SunCondition = CelestialStatus.DownAllDay;                 
                 }
                 else
                 {
-                    c.SunCondition = CelestialStatus.UpAllDay;
-                    c.SunRise = null;
-                    c.SunSet = null;
-                    // Sun up all day
+                    c.SunCondition = CelestialStatus.UpAllDay;                 
                 }
             }
             // sunrise or sunset
             else
             {
-                if (!mIsSunrise)
+                if (!c.SunRise.HasValue)
                 {
                     // No sunrise this date
                     c.SunCondition = CelestialStatus.NoRise;
-                    c.SunRise = null;
 
                 }
-                else if (!mIsSunset)
+                else if (!c.SunSet.HasValue)
                 {
                     // No sunset this date
                     c.SunCondition = CelestialStatus.NoSet;
-                    c.SunSet = null;
-
                 }
             }
-            
-            //Azimuth and Altitude
-            CalculateSunAngle(actualDate, longi, lat, c);   
-           
-           
-        }
-        public static void CalculateAdditionSolarTimes(DateTime date, double longi, double lat, Celestial c)
-        {   
-            if (c.SunCondition == CelestialStatus.RiseAndSet && date.Year>0001)
-            {          
-                getTimes(date, longi, lat, c);
-            }
-            else
-            {
-                c.AdditionalSolarTimes = new AdditionalSolarTimes();
-            }
+            //Additional Times
+            c.AdditionalSolarTimes = new AdditionalSolarTimes();
+            //Dusk and Dawn
+            //Civil
+            evDate = Get_Event_Time(lw, phi, -6, actualDate);
+            c.AdditionalSolarTimes.CivilDawn = evDate[0];
+            c.AdditionalSolarTimes.CivilDusk = evDate[1];
+
+
+            //Nautical
+            evDate = Get_Event_Time(lw, phi, -12, actualDate);
+            c.AdditionalSolarTimes.NauticalDawn = evDate[0];
+            c.AdditionalSolarTimes.NauticalDusk = evDate[1];
+
+            //Astronomical
+            evDate = Get_Event_Time(lw, phi, -18, actualDate);
+
+            c.AdditionalSolarTimes.AstronomicalDawn = evDate[0];
+            c.AdditionalSolarTimes.AstronomicalDusk = evDate[1];
+
+            //BottomDisc
+            evDate = Get_Event_Time(lw, phi, -.2998, actualDate);
+            c.AdditionalSolarTimes.SunriseBottomDisc = evDate[0];
+            c.AdditionalSolarTimes.SunsetBottomDisc = evDate[1];
+
             CalculateSolarEclipse(date, lat, longi, c);
+
+        }  
+        /// <summary>
+        /// Gets time of event based on specified degree below horizon
+        /// </summary>
+        /// <param name="lw">Observer Longitude in radians</param>
+        /// <param name="phi">Observer Latitude in radians</param>
+        /// <param name="h">Angle in Degrees</param>
+        /// <param name="date">Date of Event</param>
+        /// <returns>DateTime?[]{rise, set}</returns>
+        private static DateTime?[] Get_Event_Time(double lw, double phi, double h,DateTime date)
+        {
+            //Create arrays. Index 0 = Day -1, 1 = Day, 2 = Day + 1;
+            //These will be used to find exact day event occurs for comparison
+            DateTime?[] sets = new DateTime?[] { null, null, null, null, null };
+            DateTime?[] rises = new DateTime?[] { null, null, null,null, null };
+            
+            //Iterate starting with day -1;
+            for (int x = 0; x < 5; x++)
+            {
+                double d = JulianConversions.GetJulian(date.AddDays(x-2)) - j2000 + .5; //LESS PRECISE JULIAN NEEDED
+
+                double n = julianCycle(d, lw);
+                double ds = approxTransit(0, lw, n);
+
+                double M = solarMeanAnomaly(ds);
+                double L = eclipticLongitude(M);
+
+                double dec = declination(L, 0);
+
+                double Jnoon = solarTransitJ(ds, M, L);
+
+                double Jset;
+                double Jrise;
+
+
+                DateTime? solarNoon = JulianConversions.GetDate_FromJulian(Jnoon);
+                DateTime? nadir = JulianConversions.GetDate_FromJulian(Jnoon - 0.5);
+
+                //Rise Set
+                Jset = GetTime(h * rad, lw, phi, dec, n, M, L);
+                Jrise = Jnoon - (Jset - Jnoon);
+
+                DateTime? rise = JulianConversions.GetDate_FromJulian(Jrise);
+                DateTime? set = JulianConversions.GetDate_FromJulian(Jset);
+
+                rises[x] = rise;
+                sets[x] = set;
+            }
+
+            //Compare and send
+            DateTime? tRise = null;
+            for(int x=0;x<5;x++)
+            {
+                if(rises[x].HasValue)
+                {
+                    if(rises[x].Value.Day == date.Day)
+                    {
+                        tRise = rises[x];
+                        break;
+                    }
+                }
+            }
+            DateTime? tSet = null;
+            for (int x = 0; x < 5; x++)
+            {
+                if (sets[x].HasValue)
+                {
+                    if (sets[x].Value.Day == date.Day)
+                    {
+                        tSet = sets[x];
+                        break;
+                    }
+                }
+            }
+            return new DateTime?[] { tRise, tSet };
         }
+
         public static void CalculateZodiacSign(DateTime date, Celestial c)
         {
             //Aquarius (January 20 to February 18)
@@ -231,26 +270,8 @@ namespace CoordinateSharp
         }
 
         #region Private Suntime Members
-        private static double dayMS = 1000 * 60 * 60 * 24, j1970 = 2440588, j2000 = 2451545;
-        private static double rad = Math.PI / 180;
-
-        private static double mK1 = 15 * rad * 1.0027379;
-
-        private static int[] mRiseTimeArr = new int[2] { 0, 0 };
-        private static int[] mSetTimeArr = new int[2] { 0, 0 };
-        private static double mRizeAzimuth = 0.0;
-        private static double mSetAzimuth = 0.0;
-
-        private static double[] mSunPositionInSkyArr = new double[2] { 0.0, 0.0 };
-        private static double[] mRightAscentionArr = new double[3] { 0.0, 0.0, 0.0 };
-        private static double[] mDecensionArr = new double[3] { 0.0, 0.0, 0.0 };
-        private static double[] mVHzArr = new double[3] { 0.0, 0.0, 0.0 };
-
-        private static bool mIsSunrise = false;
-        private static bool mIsSunset = false;
-
-        #endregion
-        #region Private Suntime Functions
+        private static readonly double dayMS = 1000 * 60 * 60 * 24, j1970 = 2440588, j2000 = 2451545;
+        private static readonly double rad = Math.PI / 180;     
 
         private static double LocalSiderealTimeForTimeZone(double lon, double jd, double z)
         {
@@ -270,7 +291,10 @@ namespace CoordinateSharp
         {         
             return j2000 + ds + 0.0053 * Math.Sin(M) - 0.0069 * Math.Sin(2 * L); 
         }
-
+        
+        //CH15 
+        //Formula 15.1
+        //Returns Approximate Time
         private static double hourAngle(double h, double phi, double d) 
         {
             //NUMBER RETURNING > and < 1 NaN;
@@ -284,115 +308,30 @@ namespace CoordinateSharp
         {
             return 0.0009 + (Ht + lw) / (2 * Math.PI) + n;
         }
+       
         private static double julianCycle(double d, double lw) { return Math.Round(d - 0.0009 - lw / (2 * Math.PI)); }
 
         //Returns Time of specified event based on suns angle
         private static double GetTime(double h, double lw, double phi, double dec, double n,double M, double L) 
         {
-            double w = hourAngle(h, phi, dec);      
-            double a = approxTransit(w, lw, n);      
-            return solarTransitJ(a, M, L);
+            double approxTime = hourAngle(h, phi, dec);    //Ch15 Formula 15.1  
+
+            double a = approxTransit(approxTime, lw, n);
+            double st = solarTransitJ(a, M, L);
+          
+            return st;
+            
         }
         private static double declination(double l, double b)    
         {
-            double e = (Math.PI/180) * 23.4397; // obliquity of the Earth
+            double e = (Math.PI/180) * 23.4392911; // obliquity of the Earth
             
             return Math.Asin(Math.Sin(b) * Math.Cos(e) + Math.Cos(b) * Math.Sin(e) * Math.Sin(l)); 
         }
         /// <summary>
         /// Gets times for additional solar times
         /// </summary>
-        private static void getTimes(DateTime date, double lng, double lat, Celestial c)
-        {
-            //Get Julian
-            double d = JulianConversions.GetJulian(date) - j2000 + .5; //LESS PRECISE JULIAN NEEDED
-            
-            double lw = rad * -lng;
-            double phi = rad * lat;
-
-            double n = julianCycle(d, lw);
-            double ds = approxTransit(0, lw, n);
-
-            double M = solarMeanAnomaly(ds);
-
-            double L = eclipticLongitude(M);
-
-            double dec = declination(L, 0);
-
-            double Jnoon = solarTransitJ(ds, M, L);
-
-            double Jset;
-            double Jrise;
-
-            DateTime? solarNoon = JulianConversions.GetDate_FromJulian(Jnoon);
-            DateTime? nadir = JulianConversions.GetDate_FromJulian(Jnoon - 0.5);
-
-            c.AdditionalSolarTimes = new AdditionalSolarTimes();
-
-            //Dusk and Dawn
-            Jset = GetTime(-6 * rad, lw, phi, dec, n, M, L); 
-            Jrise = Jnoon - (Jset - Jnoon);
-           
-            c.AdditionalSolarTimes.CivilDawn = DayMatch(JulianConversions.GetDate_FromJulian(Jrise),date);
-            c.AdditionalSolarTimes.CivilDusk = DayMatch(JulianConversions.GetDate_FromJulian(Jset),date);
-
-            Jset = GetTime(-12 * rad, lw, phi, dec, n, M, L);        
-            Jrise = Jnoon - (Jset - Jnoon);
-        
-            c.AdditionalSolarTimes.NauticalDawn = DayMatch(JulianConversions.GetDate_FromJulian(Jrise),date);
-            c.AdditionalSolarTimes.NauticalDusk = DayMatch(JulianConversions.GetDate_FromJulian(Jset), date);  
-            
-           
-        }
-        //Math days for now. Rework with sidereal for future updates and accuracy
-        private static DateTime? DayMatch(DateTime? d, DateTime day)
-        {
-            if(d.HasValue)
-            {
-                if(d.Value.Day != day.Day)
-                {
-                    DateTime dd = d.Value;
-                    d = new DateTime(day.Year, day.Month, day.Day, dd.Hour, dd.Minute, dd.Second);;
-                }
-            }
-            return d;
-        }
-        private static void CalculateSunPosition(double jd, double ct)
-        {
-            double g, lo, s, u, v, w;
-
-            lo = 0.779072 + 0.00273790931 * jd;
-            lo = lo - Math.Truncate(lo);
-            lo = lo * 2 * Math.PI;
-
-            g = 0.993126 + 0.0027377785 * jd;
-            g = g - Math.Truncate(g);
-            g = g * 2 * Math.PI;
-
-            v = 0.39785 * Math.Sin(lo);
-            v = v - 0.01 * Math.Sin(lo - g);
-            v = v + 0.00333 * Math.Sin(lo + g);
-            v = v - 0.00021 * ct * Math.Sin(lo);
-
-            u = 1 - 0.03349 * Math.Cos(g);
-            u = u - 0.00014 * Math.Cos(2 * lo);
-            u = u + 0.00008 * Math.Cos(lo);
-
-            w = -0.0001 - 0.04129 * Math.Sin(2 * lo);
-            w = w + 0.03211 * Math.Sin(g);
-            w = w + 0.00104 * Math.Sin(2 * lo - g);
-            w = w - 0.00035 * Math.Sin(2 * lo + g);
-            w = w - 0.00008 * ct * Math.Sin(g);
-
-            // compute sun's right ascension
-            s = w / Math.Sqrt(u - v * v);
-            mSunPositionInSkyArr[0] = lo + Math.Atan(s / Math.Sqrt(1 - s * s));
-
-            // ...and declination 
-            s = v / Math.Sqrt(u);
-            mSunPositionInSkyArr[1] = Math.Atan(s / Math.Sqrt(1 - s * s));
-           
-        }
+     
         private static void CalculateSunAngle(DateTime date, double longi, double lat, Celestial c)
         {
            
@@ -420,10 +359,12 @@ namespace CoordinateSharp
             //Console.WriteLine(c.SunAltitude + " " + c.SunAzimuth);
 
         }
+
         private static double solarMeanAnomaly(double d) 
         {          
             return rad * (357.5291 + 0.98560028 * d); 
         }
+
         private static double eclipticLongitude(double m)
         {         
             double c = rad * (1.9148 * Math.Sin(m) + 0.02 * Math.Sin(2 * m) + 0.0003 * Math.Sin(3 * m)); // equation of center
@@ -443,87 +384,7 @@ namespace CoordinateSharp
             sc[1] = Math.Atan2(Math.Sin(l) * Math.Cos(e) - Math.Tan(b) * Math.Sin(e), Math.Cos(l)); //rightAscension     
             return sc;
         }
-        private static double TestHour(int k, double zone, double t0, double lat)
-        {
-            double[] ha = new double[3];
-            double a, b, c, d, e, s, z;
-            double time;
-            int hr, min;
-            double az, dz, hz, nz;
-
-            ha[0] = t0 - mRightAscentionArr[0] + k * mK1;
-            ha[2] = t0 - mRightAscentionArr[2] + k * mK1 + mK1;
-
-            ha[1] = (ha[2] + ha[0]) / 2;    // hour angle at half hour
-            mDecensionArr[1] = (mDecensionArr[2] + mDecensionArr[0]) / 2;  // declination at half hour
-
-            s = Math.Sin(lat *rad);
-            c = Math.Cos(lat *rad);
-            z = Math.Cos(90.833 *rad);    // refraction + sun semidiameter at horizon
-
-            if (k <= 0)
-                mVHzArr[0] = s * Math.Sin(mDecensionArr[0]) + c * Math.Cos(mDecensionArr[0]) * Math.Cos(ha[0]) - z;
-
-            mVHzArr[2] = s * Math.Sin(mDecensionArr[2]) + c * Math.Cos(mDecensionArr[2]) * Math.Cos(ha[2]) - z;
-
-            if (Sign(mVHzArr[0]) == Sign(mVHzArr[2]))
-                return mVHzArr[2];  // no event this hour
-
-            mVHzArr[1] = s * Math.Sin(mDecensionArr[1]) + c * Math.Cos(mDecensionArr[1]) * Math.Cos(ha[1]) - z;
-
-            a = 2 * mVHzArr[0] - 4 * mVHzArr[1] + 2 * mVHzArr[2];
-            b = -3 * mVHzArr[0] + 4 * mVHzArr[1] - mVHzArr[2];
-            d = b * b - 4 * a * mVHzArr[0];
-
-            if (d < 0)
-                return mVHzArr[2];  // no event this hour
-
-            d = Math.Sqrt(d);
-            e = (-b + d) / (2 * a);
-
-            if ((e > 1) || (e < 0))
-                e = (-b - d) / (2 * a);
-
-            time = (double)k + e + (double)1 / (double)120; // time of an event
-
-            hr = (int)Math.Floor(time);
-            min = (int)Math.Floor((time - hr) * 60);
-           
-            hz = ha[0] + e * (ha[2] - ha[0]); // azimuth of the sun at the event
-            nz = -Math.Cos(mDecensionArr[1]) * Math.Sin(hz);
-            dz = c * Math.Sin(mDecensionArr[1]) - s * Math.Cos(mDecensionArr[1]) * Math.Cos(hz);
-            az = Math.Atan2(nz, dz) /rad;
-            if (az < 0) az = az + 360;
-          
-            if ((mVHzArr[0] < 0) && (mVHzArr[2] > 0))
-            {
-                mRiseTimeArr[0] = hr;
-                mRiseTimeArr[1] = min;
-                mRizeAzimuth = az;
-                mIsSunrise = true;
-                
-            }
-
-            if ((mVHzArr[0] > 0) && (mVHzArr[2] < 0))
-            {
-                mSetTimeArr[0] = hr;
-                mSetTimeArr[1] = min;
-                mSetAzimuth = az;
-                mIsSunset = true;
-            }
-
-            return mVHzArr[2];
-        }
-        private static int Sign(double value)
-        {
-            int rv = 0;
-
-            if (value > 0.0) rv = 1;
-            else if (value < 0.0) rv = -1;
-            else rv = 0;
-
-            return rv;
-        }
         #endregion
+      
     }
 }

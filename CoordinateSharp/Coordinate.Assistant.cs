@@ -431,17 +431,17 @@ namespace CoordinateSharp
                 }
 
                 //Find Directions
-                if (!sA[0].Contains("N") && !sA[0].Contains("n"))
+                if (!sA[0].Contains("N") && !sA[0].Contains("n") && !sA[2].Contains("N") && !sA[2].Contains("n"))
                 {
-                    if (!sA[0].Contains("S") && !sA[0].Contains("s"))
+                    if (!sA[0].Contains("S") && !sA[0].Contains("s") && !sA[2].Contains("S") && !sA[2].Contains("s"))
                     {
                         return false;//No Direction Found
                     }
                     latR = 1;
                 }
-                if (!sA[3].Contains("E") && !sA[3].Contains("e"))
+                if (!sA[3].Contains("E") && !sA[3].Contains("e") && !sA[5].Contains("E") && !sA[5].Contains("e"))
                 {
-                    if (!sA[3].Contains("W") && !sA[3].Contains("w"))
+                    if (!sA[3].Contains("W") && !sA[3].Contains("w") && !sA[5].Contains("W") && !sA[5].Contains("w"))
                     {
                         return false;//No Direction Found
                     }
@@ -563,6 +563,7 @@ namespace CoordinateSharp
 
         private static string[] SpecialSplit(string s)
         {
+            s = s.Replace("°", " ");
             s = s.Replace("º", " ");
             s = s.Replace("'", " ");
             s = s.Replace("\"", " ");
@@ -1056,7 +1057,7 @@ namespace CoordinateSharp
             //Determine if near pole
             if ((Math.Abs(Math.Cos(glat1)) < EPS) && !(Math.Abs(Math.Sin(faz)) < EPS))
             {
-                Trace.WriteLine("Warning: Location is at earth's pole. Only N-S courses are meaningful at this location.");
+                Debug.WriteLine("Warning: Location is at earth's pole. Only N-S courses are meaningful at this location.");
             }
 
 
@@ -1129,7 +1130,7 @@ namespace CoordinateSharp
             //Determine if near pole
             if ((Math.Abs(Math.Cos(lat1)) < EPS) && !(Math.Abs(Math.Sin(crs12)) < EPS))
             {
-                Trace.WriteLine("Warning: Location is at earth's pole. Only N-S courses are meaningful at this location.");
+                Debug.WriteLine("Warning: Location is at earth's pole. Only N-S courses are meaningful at this location.");
             }
    
             lat = Math.Asin(Math.Sin(lat1) * Math.Cos(d12) +
@@ -1160,12 +1161,12 @@ namespace CoordinateSharp
             double MAXITER = 100;
             if ((glat1 + glat2 == 0.0) && (Math.Abs(glon1 - glon2) == Math.PI))
             {
-                Trace.WriteLine("Warning: Course and distance between antipodal points is undefined");
+                Debug.WriteLine("Warning: Course and distance between antipodal points is undefined");
                 glat1 = glat1 + 0.00001; // allow algorithm to complete
             }
             if (glat1 == glat2 && (glon1 == glon2 || Math.Abs(Math.Abs(glon1 - glon2) - 2 * Math.PI) < EPS))
             {
-                Trace.WriteLine("Warning: Points 1 and 2 are identical- course undefined");
+                Debug.WriteLine("Warning: Points 1 and 2 are identical- course undefined");
                 //D
                 //crs12
                 //crs21
@@ -1218,7 +1219,7 @@ namespace CoordinateSharp
 
             if (Math.Abs(iter - MAXITER) < EPS)
             {
-                Trace.WriteLine("Warning: Distance algorithm did not converge");
+                Debug.WriteLine("Warning: Distance algorithm did not converge");
             }
 
             return new double[] { s, faz, baz };

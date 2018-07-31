@@ -548,6 +548,33 @@ namespace CoordinateSharp
             c = null;
             if (FormatFinder.TryParse(s, out c))
             {
+                c = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble()); //Reset with EagerLoad back on.
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate with specified DateTime
+        /// </summary>
+        /// <param name="s">Coordinate string</param>
+        /// <param name="geoDate">GeoDate</param>
+        /// <param name="c">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// <code>
+        /// Coordinate c;
+        /// if(Coordinate.TryParse("N 32.891º W 64.872º", new DateTime(2018,7,7), out c))
+        /// {
+        ///     Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string s, DateTime geoDate, out Coordinate c)
+        {
+            c = null;
+            if (FormatFinder.TryParse(s, out c))
+            {
+                c = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble(), geoDate); //Reset with EagerLoad back on.
                 return true;
             }
             return false;

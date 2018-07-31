@@ -327,8 +327,7 @@ namespace CoordinateSharp
 
             MoonCalc.GetMoonIllumination(date, this,lat,longi);
 
-            SunCalc.CalculateAdditionSolarTimes(date, longi, lat, this);
-
+           
             this.Perigee = MoonCalc.GetPerigeeEvents(date);
             this.Apogee = MoonCalc.GetApogeeEvents(date);
 
@@ -352,8 +351,7 @@ namespace CoordinateSharp
             SunCalc.CalculateZodiacSign(date, c);
             MoonCalc.GetMoonSign(date, c);
             MoonCalc.GetMoonIllumination(date, c,lat,longi);
-            SunCalc.CalculateAdditionSolarTimes(date, longi, lat, c);
-
+           
             c.Perigee = MoonCalc.GetPerigeeEvents(date);
             c.Apogee = MoonCalc.GetApogeeEvents(date);
 
@@ -373,9 +371,7 @@ namespace CoordinateSharp
             Celestial c = new Celestial(false);
             SunCalc.CalculateSunTime(lat, longi, date, c);
             SunCalc.CalculateZodiacSign(date, c);
-
-            SunCalc.CalculateAdditionSolarTimes(date, longi, lat, c);
-
+           
             return c;
         }
         /// <summary>
