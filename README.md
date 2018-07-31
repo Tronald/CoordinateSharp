@@ -38,7 +38,7 @@ Coordinate c = new Coordinate(47.6062, -122.3321, new DateTime(2018,6,5,10,10,0)
 /***IF OTHER FORMAT IS USED SUCH AS DEGREE MINUTES SECONDS***/
 
 //Initialize with TryParse() Method
-Coordinate.TryParse("N 47º 36' 22.32" W 122º 19' 55.56", new DateTime(2018,6,5,10,10,0), out c);
+Coordinate.TryParse("N 47º 36' 22.32\" W 122º 19' 55.56\"", new DateTime(2018,6,5,10,10,0), out c);
 
 /****OR****/
 
