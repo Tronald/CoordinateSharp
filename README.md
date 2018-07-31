@@ -78,27 +78,5 @@ Check out the [CoordinateSharp Developer Guide](https://www.coordinatesharp.com/
 
 You may also view the [Documentation](https://www.coordinatesharp.com/Help/index.html) for a more in depth look at CoordinateSharp's structure.
    
-### Acknowledgements
-
-Most celestial calculations are based on "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-
-Portions of SunTime calculations were adapted from NOAA and Zacky Pickholz 2008 "C# Class for Calculating Sunrise and Sunset Times" 
- [NOAA](https://www.esrl.noaa.gov/gmd/grad/solcalc/main.js)
- [The Zacky Pickholz project](https://www.codeproject.com/Articles/29306/C-Class-for-Calculating-Sunrise-and-Sunset-Times)
-
-Portions of MoonTime calculations were adapted from the mourner / suncalc project (c) 2011-2015, Vladimir Agafonkin [suncalc](https://github.com/mourner/suncalc/blob/master/suncalc.js)
-suncalc's moon calculations are based on "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
- & [These Formulas by Dr. Louis Strous](http://aa.quae.nl/en/reken/hemelpositie.html)
-
-Portions of the calculations for illumination parameters of the moon based on [NASA Formulas](http://idlastro.gsfc.nasa.gov/ftp/pro/astro/mphase.pro) and Chapter 48 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-
-UTM & MGRS Conversions were referenced from [Sami Salkosuo's j-coordconvert library](https://www.ibm.com/developerworks/library/j-coordconvert/) & [Steven Dutch, Natural and Applied Sciences,University of Wisconsin - Green Bay](https://www.uwgb.edu/dutchs/UsefulData/ConvertUTMNoOZ.HTM)
-
-Solar and Lunar Eclipse calculations were adapted from NASA's [Eclipse Calculator](https://eclipse.gsfc.nasa.gov/) created by Chris O'Byrne and Fred Espenak.
-
-Aspects of distance calculations referenced worked by [Ed Williams Great Circle Calculator](http://www.edwilliams.org/gccalc.htm)
-
-Graphic and logo design work was donated by [area55](https://github.com/area55git).
-
 <p align="center"><img src="https://s8.postimg.cc/wvf5cfpqt/LOGO_COORDINATE_SHARP_1.jpg"></p>
 
