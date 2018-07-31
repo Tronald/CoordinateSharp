@@ -52,24 +52,22 @@ c.GeoDate = new DateTime(2018,6,5,10,10,0);
 Once the `Coordinate` is created we have access to various formats and celestial data. Here are just a few examples.
  
  ```C#
-Console.WriteLine(c);                               // N 47º 36' 22.32" W 122º 19' 55.56"
-Console.WriteLine(c.Latitude.Seconds);              // 22.32
-Console.WriteLine(c.UTM);                           // 10T 550200mE 5272748mN
+Console.WriteLine(c);                              // N 47º 36' 22.32" W 122º 19' 55.56"
+Console.WriteLine(c.Latitude.Seconds);             // 22.32
+Console.WriteLine(c.UTM);                          // 10T 550200mE 5272748mN
 
-Console.WriteLine(c.CelestialInfo.SunSet);          // 5-Jun-2018 4:02:00 AM
+Console.WriteLine(c.CelestialInfo.SunSet);         // 5-Jun-2018 4:02:00 AM
 Console.WriteLine(c.CelestialInfo.MoonAltitude);   // 14.4169966277874
 ```
 
-
-
 ### Abilities
  
-* Lat/Long formatting: Quickly format how a coordinate is output.
-* Coordinate conversions: Convert Lat/Long to UTM, MGRS, Cartesian or vice versa.
-* Coordinate parsing: Initialize a `Coordinate` with multiple format types using `TryParse()`.
-* Coordinate moving/shifting: Shift coordinates using a distance and bearing, or a distance and target coordinate.
-* Location based celestial information: Quickly determine sun set, moon rise, next solar eclipse or even zodiac signs at the input location.
-* Property change notification: All properties automatically adjust as the `Coordinate` changes. For example, changing the `GeoDate` will cause all celestial times to recalculate. Adjusting a `Coordinate` latitudinal seconds, will retrigger all coordinate conversions and celestial data so your information is always up to date. 
+* **Lat/Long formatting:** Quickly format how a coordinate is output.
+* **Coordinate conversions:** Convert Lat/Long to UTM, MGRS, Cartesian or vice versa.
+* **Coordinate parsing:** Initialize a `Coordinate` with multiple format types using `TryParse()`.
+* **Coordinate moving/shifting:** Shift coordinates using a distance and bearing, or a distance and target coordinate.
+* **Location based celestial information:** Quickly determine sun set, moon rise, next solar eclipse or even zodiac signs at the input location.
+* **Property change notification:** All properties automatically adjust as the `Coordinate` changes. For example, changing the `GeoDate` will cause all celestial times to recalculate. Adjusting a `Coordinate` latitudinal seconds, will retrigger all coordinate conversions and celestial data so your information is always up to date. 
 
 ### Guides
 
