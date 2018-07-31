@@ -74,7 +74,7 @@ Console.WriteLine(c.CelestialInfo.MoonAltitude);   // 14.4169966277874
 
 ### Guides
 
-Check out the [CoordinateSharp Developer Guide](https://www.coordinatesharp.com/DeveloperGuide) for more detailed instructions on using CoordinateSharp.
+Check out the [CoordinateSharp Developer Guide](https://www.coordinatesharp.com/DeveloperGuide) for more detailed instructions on the usage and abilities of CoordinateSharp.
 
 You may also view the [Documentation](https://www.coordinatesharp.com/Help/index.html) for a more in depth look at CoordinateSharp's structure.
    
