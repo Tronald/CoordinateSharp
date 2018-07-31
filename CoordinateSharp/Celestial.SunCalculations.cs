@@ -7,7 +7,7 @@ namespace CoordinateSharp
         public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c,double offset = 0)
         {
             if (date.Year == 0001) { return; } //Return if date vaue hasn't been established.
-            DateTime actualDate = new DateTime(date.Year,date.Month,date.Day,0,0, 0, DateTimeKind.Utc);
+            DateTime actualDate = new DateTime(date.Year,date.Month,date.Day,0, 0, 0, DateTimeKind.Utc);
 
             ////Sun Time Calculations
          
@@ -58,7 +58,7 @@ namespace CoordinateSharp
             c.AdditionalSolarTimes.CivilDawn = evDate[0];
             c.AdditionalSolarTimes.CivilDusk = evDate[1];
 
-          
+
             //Nautical
             evDate = Get_Event_Time(lw, phi, -12, actualDate);
             c.AdditionalSolarTimes.NauticalDawn = evDate[0];
@@ -90,13 +90,13 @@ namespace CoordinateSharp
         {
             //Create arrays. Index 0 = Day -1, 1 = Day, 2 = Day + 1;
             //These will be used to find exact day event occurs for comparison
-            DateTime?[] sets = new DateTime?[] { null, null, null };
-            DateTime?[] rises = new DateTime?[] { null, null, null };
+            DateTime?[] sets = new DateTime?[] { null, null, null, null, null };
+            DateTime?[] rises = new DateTime?[] { null, null, null,null, null };
             
             //Iterate starting with day -1;
-            for (int x = 0; x < 3; x++)
+            for (int x = 0; x < 5; x++)
             {
-                double d = JulianConversions.GetJulian(date.AddDays(x-1)) - j2000 + .5; //LESS PRECISE JULIAN NEEDED
+                double d = JulianConversions.GetJulian(date.AddDays(x-2)) - j2000 + .5; //LESS PRECISE JULIAN NEEDED
 
                 double n = julianCycle(d, lw);
                 double ds = approxTransit(0, lw, n);
@@ -128,24 +128,26 @@ namespace CoordinateSharp
 
             //Compare and send
             DateTime? tRise = null;
-            for(int x=0;x<2;x++)
+            for(int x=0;x<5;x++)
             {
-                if(rises[x] != null)
+                if(rises[x].HasValue)
                 {
                     if(rises[x].Value.Day == date.Day)
                     {
                         tRise = rises[x];
+                        break;
                     }
                 }
             }
             DateTime? tSet = null;
-            for (int x = 0; x < 2; x++)
+            for (int x = 0; x < 5; x++)
             {
-                if (sets[x] != null)
+                if (sets[x].HasValue)
                 {
                     if (sets[x].Value.Day == date.Day)
                     {
                         tSet = sets[x];
+                        break;
                     }
                 }
             }
