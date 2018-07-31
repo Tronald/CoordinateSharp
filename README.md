@@ -23,6 +23,7 @@ Alternatively, you may download the library directly [on our website](https://ww
 
 ### Usage Example
 
+
 CoordinateSharp is simple to use. In the below example we create a `Coordinate` using one of the methods below.
 
 ```csharp
@@ -59,6 +60,8 @@ Console.WriteLine(c.UTM);                          // 10T 550200mE 5272748mN
 Console.WriteLine(c.CelestialInfo.SunSet);         // 5-Jun-2018 4:02:00 AM
 Console.WriteLine(c.CelestialInfo.MoonAltitude);   // 14.4169966277874
 ```
+
+
 
 ### Abilities
  
