@@ -3,16 +3,17 @@
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.1.3.5</Version>
+    <Version>1.1.3.6</Version>
     <Authors>Justin Gielski</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/LICENSE</PackageLicenseUrl>
     <Copyright>Copyright 2017</Copyright>
     <Description>A simple library designed to assist with geographic coordinate formatting and location based celestial information.</Description>
-    <PackageReleaseNotes>Library has been fully ported to .NET Standard to allow for multi-runtime targeting. New celestial properties and parser improvements have been added.</PackageReleaseNotes>
+    <PackageReleaseNotes>Add TryParse() method to CoordinatePart</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/ICON.png</PackageIconUrl>
+    <PackageId>CoordinateSharp</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">

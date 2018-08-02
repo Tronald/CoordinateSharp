@@ -234,6 +234,7 @@ namespace CoordinateSharp
                 {//Parser failed try next method 
                 }
             }
+            //Try Cartesian
             if (TryCartesian(s, out d))
             {
                 try
@@ -246,7 +247,7 @@ namespace CoordinateSharp
                 {//Parser failed try next method 
                 }
             }
-            //Try Cartesian
+            c = null;
             return false;
         }
         private static bool TrySignedDegree(string s, out double[] d)
@@ -573,6 +574,273 @@ namespace CoordinateSharp
             return s.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
         }
     }
+    internal class FormatFinder_CoordPart
+    {
+        //Add main to Coordinate and tunnel to Format class. Add private methods to format.
+        //WHEN PARSING NO EXCPETIONS FOR OUT OF RANGE ARGS WILL BE THROWN
+        public static bool TryParse(string coordString, out CoordinatePart cp)
+        {
+            //Turn of eagerload for efficiency
+            EagerLoad eg = new EagerLoad();
+
+            eg.Cartesian = false;
+            eg.Celestial = false;
+            eg.UTM_MGRS = false;
+            cp = null;
+            Coordinate c = new Coordinate(eg);
+            string s = coordString;
+            s = s.Trim(); //Trim all spaces before and after string
+            double[] d;
+            //Try Signed Degree. This format isn't suggested for parsing, but is included just incase.
+            //One can not truly know if anything below 90 degree is a lat or long in this format.
+            //Default is Lat.
+            if (TrySignedDegree(s, out d))
+            {
+                try
+                {
+                    //Attempt Lat first (default for signed)
+                    cp = new CoordinatePart(d[0], CoordinateType.Lat, c);
+                    return true;
+                }
+                catch
+                {
+                    try
+                    {
+                        //Attempt Lat first (default for signed)
+                        cp = new CoordinatePart(d[0], CoordinateType.Long, c);
+                        return true;
+                    }
+                    catch { }
+                }
+            }
+            //Try Decimal Degree with Direction
+            if (TryDecimalDegree(s, out d))
+            {
+                try
+                {
+                    CoordinateType t;
+                    if(d[0] == 0)
+                    {
+                        t = CoordinateType.Lat;
+                    }
+                    else
+                    {
+                        t = CoordinateType.Long;
+                    }
+                    cp = new CoordinatePart(d[1], t, c);
+                    return true;
+                }
+                catch
+                {//Parser failed try next method 
+                }
+            }
+            //Try DDM
+            if (TryDegreeDecimalMinute(s, out d))
+            {
+                try
+                {
+                    //0  Degree
+                    //1  Minute
+                    //2  Direction (0 = N, 1 = E, 2 = S, 3 = W)                                   
+                    cp = new CoordinatePart((int)d[0], d[1], (CoordinatesPosition)d[2], c);                 
+                    return true;
+                }
+                catch
+                {//Parser failed try next method 
+                }
+            }
+            //Try DMS
+            if (TryDegreeMinuteSecond(s, out d))
+            {
+                try
+                {
+                    //0 Degree
+                    //1 Minute
+                    //2 Second
+                    //3 Direction (0 = N, 1 = E, 2 = S, 3 = W)                                     
+                    cp = new CoordinatePart((int)d[0], (int)d[1], d[2], (CoordinatesPosition)d[3], c);
+                   
+                    return true;
+                }
+                catch
+                {//Parser failed try next method 
+                }
+            }
+            
+            return false;
+        }
+        //NOT RECOMMENDED TO PARSE THIS FORMAT, BUT INCLUDED AS FAILSAFE
+        private static bool TrySignedDegree(string s, out double[] d)
+        {
+            d = null;
+
+            string[] sA = SpecialSplit(s);
+            if (sA.Count() == 1)
+            {
+                double part;
+
+                if (!double.TryParse(sA[0], out part))
+                { return false; }              
+                return true;
+            }
+
+            return false;
+        }
+        private static bool TryDecimalDegree(string s, out double[] d)
+        {
+            d = null;
+            if (Regex.Matches(s, @"[a-zA-Z]").Count != 1) { return false; } //Should only contain 1 letter.
+
+            string[] sA = SpecialSplit(s);
+            if (sA.Count() == 1 || sA.Count() == 2)
+            {
+                double sign = 1;
+                double part = 0; //1 if long
+                double coord;            
+
+                //Find Directions
+                if (!s.Contains("N") && !s.Contains("n"))
+                {
+                    if (!s.Contains("S") && !s.Contains("s"))
+                    {
+                        return false;//No Direction Found
+                    }
+                    sign = -1;
+                }
+                if (!s.Contains("E") && !s.Contains("e"))
+                {
+                    if (!s.Contains("W") && !s.Contains("w"))
+                    {
+                        return false;//No Direction Found
+                    }
+                    part = 1; //Set to long coord type
+                    sign = -1;
+                }
+
+                s = Regex.Replace(s, "[^0-9.]", "");
+                s = s.Trim(); //Trim all spaces before and after string
+                if (!double.TryParse(s, out coord))
+                { return false; }
+
+                coord *= sign;
+                
+                d = new double[] { part,coord };
+                return true;
+            }
+
+            return false;
+        }
+        private static bool TryDegreeDecimalMinute(string s, out double[] d)
+        {
+            d = null;
+            if (Regex.Matches(s, @"[a-zA-Z]").Count != 1) { return false; } //Should only contain 1 letter.
+
+            double deg;
+            double minSec;
+            double pos = -1; //N-0,E-1,S-2,W-3;             
+
+            //Find Directions
+            if (!s.Contains("N") && !s.Contains("n"))
+            {
+                pos = 0;
+            }
+            if (!s.Contains("E") && !s.Contains("e"))
+            {
+                pos = 1;
+            }
+            if (!s.Contains("S") && !s.Contains("s"))
+            {
+                pos = 2;
+            }
+            if (!s.Contains("W") && !s.Contains("w"))
+            {
+                pos = 3;
+            }
+            if (pos == -1)
+            {
+                return false; //no postion found
+            }
+            s = Regex.Replace(s, "[^0-9.]", "");
+            s = s.Trim(); //Trim all spaces before and after string
+            string[] sA = SpecialSplit(s);
+            if (sA.Count() == 2)
+            {
+                if (!double.TryParse(sA[0], out deg))
+                { return false; }
+                if (!double.TryParse(sA[2], out minSec))
+                { return false; }
+
+                d = new double[] { deg,minSec,pos};
+                return true;
+            }
+            return false;
+        }
+        private static bool TryDegreeMinuteSecond(string s, out double[] d)
+        {
+            d = null;
+            if (Regex.Matches(s, @"[a-zA-Z]").Count != 1) { return false; } //Should only contain 1 letter.
+
+
+            double deg;
+            double min;
+            double sec;
+            double pos = -1; //N-0,E-1,S-2,W-3;    
+
+
+            //Find Directions
+            if (!s.Contains("N") && !s.Contains("n"))
+            {
+                pos = 0;
+            }
+            if (!s.Contains("E") && !s.Contains("e"))
+            {
+                pos = 1;
+            }
+            if (!s.Contains("S") && !s.Contains("s"))
+            {
+                pos = 2;
+            }
+            if (!s.Contains("W") && !s.Contains("w"))
+            {
+                pos = 3;
+            }
+            if (pos == -1)
+            {
+                return false; //no postion found
+            }
+
+
+            s = Regex.Replace(s, "[^0-9.]", "");
+            s = s.Trim(); //Trim all spaces before and after string
+            string[] sA = SpecialSplit(s);
+            if (sA.Count() == 3)
+            {
+
+                if (!double.TryParse(sA[0], out deg))
+                { return false; }
+                if (!double.TryParse(sA[1], out min))
+                { return false; }
+                if (!double.TryParse(sA[2], out sec))
+                { return false; }               
+
+                d = new double[] { deg, min, sec, pos };
+                return true;
+            }
+            return false;
+        }
+
+        private static string[] SpecialSplit(string s)
+        {
+            s = s.Replace("°", " ");
+            s = s.Replace("º", " ");
+            s = s.Replace("'", " ");
+            s = s.Replace("\"", " ");
+            s = s.Replace(",", " ");
+            s = s.Replace("mE", " ");
+            s = s.Replace("mN", " ");
+            return s.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
+        }
+    }
     /// <summary>
     /// Used for UTM/MGRS Conversions
     /// </summary>
@@ -732,7 +1000,7 @@ namespace CoordinateSharp
     /// Used to set a coordinate part position.
     /// </summary>
     [Serializable]
-    public enum CoordinatesPosition
+    public enum CoordinatesPosition :int
     {
         /// <summary>
         /// North
@@ -777,31 +1045,6 @@ namespace CoordinateSharp
         /// Celestial body sets, but does not rise on the set day
         /// </summary>
         NoSet
-    }
-    /// <summary>
-    /// Moon Illumination Information
-    /// </summary>
-    [Serializable]
-    public class MoonIllum
-    {
-     
-        /// <summary>
-        /// Moon's fraction
-        /// </summary>
-        public double Fraction { get; set; }
-        /// <summary>
-        /// Moon's Angle
-        /// </summary>
-        public double Angle { get; set; }
-        /// <summary>
-        /// Moon's phase
-        /// </summary>
-        public double Phase { get; set; }
-        /// <summary>
-        /// Moon's phase name for the specified day
-        /// </summary>
-        public string PhaseName { get; set; }
-      
     }
   
     /// <summary>

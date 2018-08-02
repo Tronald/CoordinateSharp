@@ -585,6 +585,31 @@ namespace CoordinateSharp
         Apogee
     }
     /// <summary>
+    /// Moon Illumination Information
+    /// </summary>
+    [Serializable]
+    public class MoonIllum
+    {
+
+        /// <summary>
+        /// Moon's fraction
+        /// </summary>
+        public double Fraction { get; set; }
+        /// <summary>
+        /// Moon's Angle
+        /// </summary>
+        public double Angle { get; set; }
+        /// <summary>
+        /// Moon's phase
+        /// </summary>
+        public double Phase { get; set; }
+        /// <summary>
+        /// Moon's phase name for the specified day
+        /// </summary>
+        public string PhaseName { get; set; }
+
+    }
+    /// <summary>
     /// Stores Perigee or Apogee values
     /// </summary>
     [Serializable]
