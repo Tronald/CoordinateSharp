@@ -7,12 +7,12 @@ If you wish to contribute to the codebase, please follow the below guidelines.
 The codebase is organized into various .cs files. If modifying the codebase, ensure you are familiar with how it is organized so that
 items go into the proper file. 
 
-* Coordinate.cs - Handles the `Coordinate` and `CoordinatePart` model, properties and change notifications.
+* Coordinate.cs - Stores the `Coordinate` and `CoordinatePart` model, properties and change notifications.
 * Coordinate.Assistant.cs - Handles additional logic and additional custom property types for all coordinate type models.
 * Coordinate.UTM.cs - Handles UTM model and property types. Also contains conversion logic.
 * Coordinate.MGRS.cs - Handles MGRS (NATO UTM) model and property types. Also contains conversion logic. MGRS logic relies upon the `UTM` class.
 * Coordinate.Cartesian.cs - Handles Cartesian model and property types. Also contains conversion logic.
-* Celestial.cs - Handles the `Celestial` model and properties.
+* Celestial.cs - Stores the `Celestial` model and properties.
 * Celestial.Assistant.cs - Handles logic and custom property types for the `Celestial` model.
 * Celestial.SunCalculations.cs - Handles all solar calculations (except eclipse).
 * Celestial.MoonCalculation.cs - Handles all lunar calculations (except eclipse).
