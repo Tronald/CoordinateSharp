@@ -4,7 +4,7 @@ If you wish to contribute to the codebase, please follow the below guidelines.
 
 ### Organization
 
-The codebase is currently organized in various .cs files. If modifying the codebase, ensure you are familiar with how it is organized so that
+The codebase is organized into various .cs files. If modifying the codebase, ensure you are familiar with how it is organized so that
 items go into the proper file. 
 
 * Coordinate.cs - Handles the `Coordinate` and `CoordinatePart` model, properties and change notifications.
