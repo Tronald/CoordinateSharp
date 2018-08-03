@@ -273,6 +273,7 @@ namespace CoordinateSharp
         private static bool TryDecimalDegree(string s, out double[] d)
         {
             d = null;
+            if (Regex.Matches(s, @"[a-zA-Z]").Count != 2) { return false; } //Should only contain 1 letter.
 
             string[] sA = SpecialSplit(s);
             if (sA.Count() == 2 || sA.Count() == 4)
@@ -326,6 +327,7 @@ namespace CoordinateSharp
         private static bool TryDegreeDecimalMinute(string s, out double[] d)
         {
             d = null;
+            if (Regex.Matches(s, @"[a-zA-Z]").Count != 2) { return false; } //Should only contain 1 letter.
 
             string[] sA = SpecialSplit(s);
             if (sA.Count() == 4 || sA.Count() == 6)
@@ -397,6 +399,7 @@ namespace CoordinateSharp
         private static bool TryDegreeMinuteSecond(string s, out double[] d)
         {
             d = null;
+            if (Regex.Matches(s, @"[a-zA-Z]").Count != 2) { return false; } //Should only contain 1 letter.
 
             string[] sA = SpecialSplit(s);
             if (sA.Count() == 6 || sA.Count() == 8)
@@ -632,6 +635,7 @@ namespace CoordinateSharp
                 }
                 catch
                 {//Parser failed try next method 
+                   
                 }
             }
             //Try DDM
@@ -646,7 +650,8 @@ namespace CoordinateSharp
                     return true;
                 }
                 catch
-                {//Parser failed try next method 
+                {
+                    //Parser failed try next method 
                 }
             }
             //Try DMS
@@ -680,7 +685,8 @@ namespace CoordinateSharp
                 double part;
 
                 if (!double.TryParse(sA[0], out part))
-                { return false; }              
+                { return false; }
+                d = new double[] { part };
                 return true;
             }
 
@@ -691,40 +697,44 @@ namespace CoordinateSharp
             d = null;
             if (Regex.Matches(s, @"[a-zA-Z]").Count != 1) { return false; } //Should only contain 1 letter.
 
-            string[] sA = SpecialSplit(s);
-            if (sA.Count() == 1 || sA.Count() == 2)
+
+            double sign = 1;
+            double part = -1; //1 if long
+            double coord;
+
+            //Find Directions
+            if (s.Contains("N") || s.Contains("n"))
             {
-                double sign = 1;
-                double part = 0; //1 if long
-                double coord;            
-
-                //Find Directions
-                if (!s.Contains("N") && !s.Contains("n"))
-                {
-                    if (!s.Contains("S") && !s.Contains("s"))
-                    {
-                        return false;//No Direction Found
-                    }
-                    sign = -1;
-                }
-                if (!s.Contains("E") && !s.Contains("e"))
-                {
-                    if (!s.Contains("W") && !s.Contains("w"))
-                    {
-                        return false;//No Direction Found
-                    }
-                    part = 1; //Set to long coord type
-                    sign = -1;
-                }
-
-                s = Regex.Replace(s, "[^0-9.]", "");
-                s = s.Trim(); //Trim all spaces before and after string
+                part = 0;
+            }
+            if (s.Contains("E") || s.Contains("e"))
+            {
+                part = 1;
+            }
+            if (s.Contains("S") || s.Contains("s"))
+            {
+                part = 0;
+                sign = -1;
+            }
+            if (s.Contains("W") || s.Contains("w"))
+            {
+                part = 1;
+                sign = -1;
+            }
+            if (part == -1)
+            {
+                return false; //no postion found
+            }
+            s = Regex.Replace(s, "[^0-9.]", "");
+            s = s.Trim(); //Trim all spaces before and after string
+            string[] sA = SpecialSplit(s);
+            if (sA.Count() == 1)
+            {
                 if (!double.TryParse(s, out coord))
                 { return false; }
 
                 coord *= sign;
-                
-                d = new double[] { part,coord };
+                d = new double[] { part, coord };
                 return true;
             }
 
@@ -740,19 +750,19 @@ namespace CoordinateSharp
             double pos = -1; //N-0,E-1,S-2,W-3;             
 
             //Find Directions
-            if (!s.Contains("N") && !s.Contains("n"))
+            if (s.Contains("N") || s.Contains("n"))
             {
                 pos = 0;
             }
-            if (!s.Contains("E") && !s.Contains("e"))
+            if (s.Contains("E") || s.Contains("e"))
             {
                 pos = 1;
             }
-            if (!s.Contains("S") && !s.Contains("s"))
+            if (s.Contains("S") || s.Contains("s"))
             {
                 pos = 2;
             }
-            if (!s.Contains("W") && !s.Contains("w"))
+            if (s.Contains("W") || s.Contains("w"))
             {
                 pos = 3;
             }
@@ -760,14 +770,14 @@ namespace CoordinateSharp
             {
                 return false; //no postion found
             }
-            s = Regex.Replace(s, "[^0-9.]", "");
+            s = Regex.Replace(s, "[^0-9. ]", "");
             s = s.Trim(); //Trim all spaces before and after string
             string[] sA = SpecialSplit(s);
             if (sA.Count() == 2)
             {
                 if (!double.TryParse(sA[0], out deg))
                 { return false; }
-                if (!double.TryParse(sA[2], out minSec))
+                if (!double.TryParse(sA[1], out minSec))
                 { return false; }
 
                 d = new double[] { deg,minSec,pos};
@@ -788,19 +798,19 @@ namespace CoordinateSharp
 
 
             //Find Directions
-            if (!s.Contains("N") && !s.Contains("n"))
+            if (s.Contains("N") || s.Contains("n"))
             {
                 pos = 0;
             }
-            if (!s.Contains("E") && !s.Contains("e"))
+            if (s.Contains("E") || s.Contains("e"))
             {
                 pos = 1;
             }
-            if (!s.Contains("S") && !s.Contains("s"))
+            if (s.Contains("S") || s.Contains("s"))
             {
                 pos = 2;
             }
-            if (!s.Contains("W") && !s.Contains("w"))
+            if (s.Contains("W") || s.Contains("w"))
             {
                 pos = 3;
             }
@@ -809,8 +819,7 @@ namespace CoordinateSharp
                 return false; //no postion found
             }
 
-
-            s = Regex.Replace(s, "[^0-9.]", "");
+            s = Regex.Replace(s, "[^0-9. ]", "");
             s = s.Trim(); //Trim all spaces before and after string
             string[] sA = SpecialSplit(s);
             if (sA.Count() == 3)

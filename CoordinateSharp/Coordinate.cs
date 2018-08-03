@@ -1503,6 +1503,31 @@ namespace CoordinateSharp
         {
             return decimalDegree * Math.PI / 180;
         }
-       
+        /// <summary>
+        /// Attempts to parse a string into a CoordinatePart.
+        /// </summary>
+        /// <param name="s">CoordinatePart string</param>
+        /// <param name="cp">CoordinatePart</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// <code>
+        /// CoordinatePart cp;
+        /// if(CoordinatePart.TryParse("N 32.891º", out cp))
+        /// {
+        ///     Console.WriteLine(cp); //N 32º 53' 28.212"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string s, out CoordinatePart cp)
+        {
+            cp = null;
+            
+            if (FormatFinder_CoordPart.TryParse(s, out cp))
+            {
+                return true;
+            }
+            return false;
+        }
+
     }
 }
