@@ -1,6 +1,6 @@
 ## Contributing to CoordinateSharp
 Any contribution to this library is greatly appreciated! Developers are encouraged to create issues, ask questions and fork this library. 
-If you wish to contribute to the codebase, please follow the below guidlines. 
+If you wish to contribute to the codebase, please follow the below guidelines. 
 
 ### Organization
 
