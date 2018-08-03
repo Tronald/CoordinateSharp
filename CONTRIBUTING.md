@@ -10,7 +10,7 @@ items go into the proper file.
 * Coordinate.cs - Handles the `Coordinate` and `CoordinatePart` model, properties and change notifications.
 * Coordinate.Assistant.cs - Handles additional logic and additional custom property types for all coordinate type models.
 * Coordinate.UTM.cs - Handles UTM model and property types. Also contains conversion logic.
-* Coordinate.MGRS.cs - Handles MGRS (NATO UTM) model and property types. Also contains conversion logic.
+* Coordinate.MGRS.cs - Handles MGRS (NATO UTM) model and property types. Also contains conversion logic. MGRS logic relies upon the `UTM` class.
 * Coordinate.Cartesian.cs - Handles Cartesian model and property types. Also contains conversion logic.
 * Celestial.cs - Handles the `Celestial` model and properties.
 * Celestial.Assistant.cs - Handles logic and custom property types for the `Celestial` model.
