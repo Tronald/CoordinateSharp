@@ -10,7 +10,7 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/LICENSE</PackageLicenseUrl>
     <Copyright>Copyright 2017</Copyright>
     <Description>A simple library designed to assist with geographic coordinate formatting and location based celestial information.</Description>
-    <PackageReleaseNotes>Add TryParse() method to CoordinatePart</PackageReleaseNotes>
+    <PackageReleaseNotes>Adds TryParse() method to CoordinatePart</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/ICON.png</PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>

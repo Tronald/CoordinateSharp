@@ -1543,7 +1543,7 @@ namespace CoordinateSharp
         /// CoordinatePart cp;
         /// if(CoordinatePart.TryParse("-32.891º", CoordinateType.Long, out cp))
         /// {
-        ///     Console.WriteLine(cp); //E 32º 53' 27.6"
+        ///     Console.WriteLine(cp); //W 32º 53' 27.6"
         /// }
         /// </code>
         /// </example>
