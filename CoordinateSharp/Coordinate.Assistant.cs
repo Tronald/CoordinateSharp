@@ -585,7 +585,7 @@ namespace CoordinateSharp
         {
             //Turn of eagerload for efficiency
             EagerLoad eg = new EagerLoad();
-
+            int type = 0; //0 = unspecifed, 1 = lat, 2 = long;
             eg.Cartesian = false;
             eg.Celestial = false;
             eg.UTM_MGRS = false;
@@ -594,48 +594,83 @@ namespace CoordinateSharp
             string s = coordString;
             s = s.Trim(); //Trim all spaces before and after string
             double[] d;
-            //Try Signed Degree. This format isn't suggested for parsing, but is included just incase.
-            //One can not truly know if anything below 90 degree is a lat or long in this format.
-            //Default is Lat.
-            if (TrySignedDegree(s, out d))
+           
+            if(s[0] == ',')
+            {
+                type = 2;
+                s = s.Replace(",", "");
+                s = s.Trim();
+            }
+            if(s[0]=='*')
+            {
+                type = 1;
+                s = s.Replace("*", "");
+                s = s.Trim();
+            }
+     
+            if (TrySignedDegree(s, type, out d))
             {
                 try
                 {
-                    //Attempt Lat first (default for signed)
-                    cp = new CoordinatePart(d[0], CoordinateType.Lat, c);
-                    return true;
+                    switch (type)
+                    {
+                        case 0:
+                            //Attempt Lat first (default for signed)
+                            try
+                            {
+                                cp = new CoordinatePart(d[0], CoordinateType.Lat, c);
+                                return true;
+                            }
+                            catch
+                            {
+                                cp = new CoordinatePart(d[0], CoordinateType.Long, c);
+                                return true;
+                            }
+                        case 1:
+                            //Attempt Lat
+                            cp = new CoordinatePart(d[0], CoordinateType.Lat, c);
+                            return true;
+                        case 2:
+                            //Attempt long
+                            cp = new CoordinatePart(d[0], CoordinateType.Long, c);
+                            return true;
+                    }
                 }
                 catch
                 {
-                    try
-                    {
-                        //Attempt Lat first (default for signed)
-                        cp = new CoordinatePart(d[0], CoordinateType.Long, c);
-                        return true;
-                    }
-                    catch { }
+                  //silent fail
                 }
             }
+
+            //All other formats should contain 1 letter.
+            if (Regex.Matches(s, @"[a-zA-Z]").Count != 1) { return false; } //Should only contain 1 letter.
+            //Get Coord Direction
+            int direction = Find_Position(s);
+
+            if(direction == -1) { return false; //No direction found
+            }
+            //If Coordinate type int specified, look for mismatch
+            if(type == 1 && (direction == 1 || direction == 3)) { return false; //mismatch
+            }
+            if(type == 2 && (direction == 0 || direction == 2)) { return false; //mismatch
+            }
+            CoordinateType t;
+            if(direction == 0 || direction == 2) { t = CoordinateType.Lat; }
+            else { t = CoordinateType.Long; }
+
+            s = Regex.Replace(s, "[^0-9. ]", ""); //Remove directional character
+            s = s.Trim(); //Trim all spaces before and after string
+
             //Try Decimal Degree with Direction
-            if (TryDecimalDegree(s, out d))
+            if (TryDecimalDegree(s, direction, out d))
             {
                 try
-                {
-                    CoordinateType t;
-                    if(d[0] == 0)
-                    {
-                        t = CoordinateType.Lat;
-                    }
-                    else
-                    {
-                        t = CoordinateType.Long;
-                    }
-                    cp = new CoordinatePart(d[1], t, c);
+                {                   
+                    cp = new CoordinatePart(d[0],t, c);
                     return true;
                 }
                 catch
                 {//Parser failed try next method 
-                   
                 }
             }
             //Try DDM
@@ -645,8 +680,8 @@ namespace CoordinateSharp
                 {
                     //0  Degree
                     //1  Minute
-                    //2  Direction (0 = N, 1 = E, 2 = S, 3 = W)                                   
-                    cp = new CoordinatePart((int)d[0], d[1], (CoordinatesPosition)d[2], c);                 
+                    //2  Direction (0 = N, 1 = E, 2 = S, 3 = W)                          
+                    cp = new CoordinatePart((int)d[0], d[1], (CoordinatesPosition)direction, c);                 
                     return true;
                 }
                 catch
@@ -663,7 +698,7 @@ namespace CoordinateSharp
                     //1 Minute
                     //2 Second
                     //3 Direction (0 = N, 1 = E, 2 = S, 3 = W)                                     
-                    cp = new CoordinatePart((int)d[0], (int)d[1], d[2], (CoordinatesPosition)d[3], c);
+                    cp = new CoordinatePart((int)d[0], (int)d[1], d[2], (CoordinatesPosition)direction, c);
                    
                     return true;
                 }
@@ -674,8 +709,8 @@ namespace CoordinateSharp
             
             return false;
         }
-        //NOT RECOMMENDED TO PARSE THIS FORMAT, BUT INCLUDED AS FAILSAFE
-        private static bool TrySignedDegree(string s, out double[] d)
+
+        private static bool TrySignedDegree(string s, int t, out double[] d)
         {
             d = null;
 
@@ -692,49 +727,26 @@ namespace CoordinateSharp
 
             return false;
         }
-        private static bool TryDecimalDegree(string s, out double[] d)
+        private static bool TryDecimalDegree(string s, int direction, out double[] d)
         {
             d = null;
-            if (Regex.Matches(s, @"[a-zA-Z]").Count != 1) { return false; } //Should only contain 1 letter.
-
-
-            double sign = 1;
-            double part = -1; //1 if long
+            int sign = 1;
+            //S or W
+            if(direction == 3 || direction == 4)
+            {
+                sign = -1;
+            }           
             double coord;
 
-            //Find Directions
-            if (s.Contains("N") || s.Contains("n"))
-            {
-                part = 0;
-            }
-            if (s.Contains("E") || s.Contains("e"))
-            {
-                part = 1;
-            }
-            if (s.Contains("S") || s.Contains("s"))
-            {
-                part = 0;
-                sign = -1;
-            }
-            if (s.Contains("W") || s.Contains("w"))
-            {
-                part = 1;
-                sign = -1;
-            }
-            if (part == -1)
-            {
-                return false; //no postion found
-            }
-            s = Regex.Replace(s, "[^0-9.]", "");
-            s = s.Trim(); //Trim all spaces before and after string
             string[] sA = SpecialSplit(s);
+
             if (sA.Count() == 1)
             {
                 if (!double.TryParse(s, out coord))
                 { return false; }
 
                 coord *= sign;
-                d = new double[] { part, coord };
+                d = new double[] { coord };
                 return true;
             }
 
@@ -743,35 +755,11 @@ namespace CoordinateSharp
         private static bool TryDegreeDecimalMinute(string s, out double[] d)
         {
             d = null;
-            if (Regex.Matches(s, @"[a-zA-Z]").Count != 1) { return false; } //Should only contain 1 letter.
-
+           
             double deg;
             double minSec;
-            double pos = -1; //N-0,E-1,S-2,W-3;             
-
-            //Find Directions
-            if (s.Contains("N") || s.Contains("n"))
-            {
-                pos = 0;
-            }
-            if (s.Contains("E") || s.Contains("e"))
-            {
-                pos = 1;
-            }
-            if (s.Contains("S") || s.Contains("s"))
-            {
-                pos = 2;
-            }
-            if (s.Contains("W") || s.Contains("w"))
-            {
-                pos = 3;
-            }
-            if (pos == -1)
-            {
-                return false; //no postion found
-            }
-            s = Regex.Replace(s, "[^0-9. ]", "");
-            s = s.Trim(); //Trim all spaces before and after string
+           
+            
             string[] sA = SpecialSplit(s);
             if (sA.Count() == 2)
             {
@@ -780,7 +768,7 @@ namespace CoordinateSharp
                 if (!double.TryParse(sA[1], out minSec))
                 { return false; }
 
-                d = new double[] { deg,minSec,pos};
+                d = new double[] { deg,minSec};
                 return true;
             }
             return false;
@@ -788,39 +776,12 @@ namespace CoordinateSharp
         private static bool TryDegreeMinuteSecond(string s, out double[] d)
         {
             d = null;
-            if (Regex.Matches(s, @"[a-zA-Z]").Count != 1) { return false; } //Should only contain 1 letter.
-
+          
 
             double deg;
             double min;
-            double sec;
-            double pos = -1; //N-0,E-1,S-2,W-3;    
+            double sec;    
 
-
-            //Find Directions
-            if (s.Contains("N") || s.Contains("n"))
-            {
-                pos = 0;
-            }
-            if (s.Contains("E") || s.Contains("e"))
-            {
-                pos = 1;
-            }
-            if (s.Contains("S") || s.Contains("s"))
-            {
-                pos = 2;
-            }
-            if (s.Contains("W") || s.Contains("w"))
-            {
-                pos = 3;
-            }
-            if (pos == -1)
-            {
-                return false; //no postion found
-            }
-
-            s = Regex.Replace(s, "[^0-9. ]", "");
-            s = s.Trim(); //Trim all spaces before and after string
             string[] sA = SpecialSplit(s);
             if (sA.Count() == 3)
             {
@@ -832,12 +793,41 @@ namespace CoordinateSharp
                 if (!double.TryParse(sA[2], out sec))
                 { return false; }               
 
-                d = new double[] { deg, min, sec, pos };
+                d = new double[] { deg, min, sec };
                 return true;
             }
             return false;
         }
 
+        private static int Find_Position(string s)
+        {
+            //N=0
+            //E=1
+            //S=2
+            //W=3
+            //NOPOS = -1
+            //Find Directions
+
+            int part = -1;
+            if (s.Contains("N") || s.Contains("n"))
+            {
+                part = 0;
+            }
+            if (s.Contains("E") || s.Contains("e"))
+            {
+                part = 1;
+            }
+            if (s.Contains("S") || s.Contains("s"))
+            {
+                part = 2;
+               
+            }
+            if (s.Contains("W") || s.Contains("w"))
+            {
+                part = 3;
+            }
+            return part;
+        }
         private static string[] SpecialSplit(string s)
         {
             s = s.Replace("°", " ");
