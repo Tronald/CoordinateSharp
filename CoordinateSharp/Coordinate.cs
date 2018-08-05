@@ -214,6 +214,7 @@ namespace CoordinateSharp
                     if (value.Position == CoordinatesPosition.E || value.Position == CoordinatesPosition.W)
                     { throw new ArgumentException("Invalid Position", "Latitudinal positions cannot be set to East or West."); }
                     this.latitude = value;
+                    this.latitude.Parent = this;
                     if (EagerLoadSettings.Celestial)
                     {
                         celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
@@ -231,6 +232,7 @@ namespace CoordinateSharp
                             cartesian = new Cartesian(this);
                         }
                     }
+                    
                 }
             }
         }
@@ -247,6 +249,7 @@ namespace CoordinateSharp
                     if (value.Position == CoordinatesPosition.N || value.Position == CoordinatesPosition.S)
                     { throw new ArgumentException("Invalid Position", "Longitudinal positions cannot be set to North or South."); }
                     this.longitude = value;
+                    this.latitude.Parent = this;
                     if (EagerLoadSettings.Celestial)
                     {                      
                         celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
@@ -1503,6 +1506,60 @@ namespace CoordinateSharp
         {
             return decimalDegree * Math.PI / 180;
         }
-       
+        /// <summary>
+        /// Attempts to parse a string into a CoordinatePart.
+        /// </summary>
+        /// <param name="s">CoordinatePart string</param>
+        /// <param name="cp">CoordinatePart</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// <code>
+        /// CoordinatePart cp;
+        /// if(CoordinatePart.TryParse("N 32.891º", out cp))
+        /// {
+        ///     Console.WriteLine(cp); //N 32º 53' 28.212"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string s, out CoordinatePart cp)
+        {
+            cp = null;
+            
+            if (FormatFinder_CoordPart.TryParse(s, out cp))
+            {
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Attempts to parse a string into a CoordinatePart. 
+        /// </summary>
+        /// <param name="s">CoordinatePart string</param>
+        /// <param name="t">CoordinateType</param>
+        /// <param name="cp">CoordinatePart</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// <code>
+        /// CoordinatePart cp;
+        /// if(CoordinatePart.TryParse("-32.891º", CoordinateType.Long, out cp))
+        /// {
+        ///     Console.WriteLine(cp); //W 32º 53' 27.6"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string s, CoordinateType t, out CoordinatePart cp)
+        {
+            cp = null;
+            //Comma at beginning parses to long
+            //Asterik forces lat
+            if(t== CoordinateType.Long) { s = "," + s; }
+            else { s = "*" + s; }
+            if (FormatFinder_CoordPart.TryParse(s, out cp))
+            {
+                return true;
+            }
+            return false;
+        }
+
     }
 }
