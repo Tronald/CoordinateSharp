@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoordinateSharp", "CoordinateSharp\CoordinateSharp.csproj", "{82B32704-3306-49FD-A7FA-DB48B67B7B64}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{03D6B537-24B6-4FBB-8B43-7289407A7EF6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoordinateSharp", "CoordinateSharp\CoordinateSharp.csproj", "{82B32704-3306-49FD-A7FA-DB48B67B7B64}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +15,6 @@ Global
 		{82B32704-3306-49FD-A7FA-DB48B67B7B64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82B32704-3306-49FD-A7FA-DB48B67B7B64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82B32704-3306-49FD-A7FA-DB48B67B7B64}.Release|Any CPU.Build.0 = Release|Any CPU
-		{03D6B537-24B6-4FBB-8B43-7289407A7EF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{03D6B537-24B6-4FBB-8B43-7289407A7EF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{03D6B537-24B6-4FBB-8B43-7289407A7EF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{03D6B537-24B6-4FBB-8B43-7289407A7EF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
