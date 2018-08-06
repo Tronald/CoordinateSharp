@@ -27,7 +27,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Prepare GeoFence with a list of points
         /// </summary>
-        /// <param name="points"></param>
+        /// <param name="points">List of points</param>
         public GeoFence(List<Point> points)
         {
             _points = points;
@@ -36,7 +36,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Prepare Geofence with a list of coordinates
         /// </summary>
-        /// <param name="coordinates"></param>
+        /// <param name="coordinates">List of coordinates</param>
         public GeoFence(List<Coordinate> coordinates)
         {
             foreach (var c in coordinates)
@@ -73,7 +73,7 @@ namespace CoordinateSharp
         /// false if it is not.  If the point is exactly on the edge of the polygon,
         /// then the function may return true or false.
         /// </summary>
-        /// <param name="point"></param>
+        /// <param name="point">The point to test</param>
         /// <returns></returns>
         public bool IsPointInPolygon(Coordinate point)
         {
@@ -103,8 +103,8 @@ namespace CoordinateSharp
         /// The function will return true if the point x,y is next the given range of 
         /// the polyline, or false if it is not.
         /// </summary>
-        /// <param name="point"></param>
-        /// <param name="range">range is in meters</param>
+        /// <param name="point">The point to test</param>
+        /// <param name="range">The range in meters</param>
         /// <returns></returns>
         public bool IsPointInRangeOfLine(Coordinate point, double range)
         {
@@ -121,9 +121,23 @@ namespace CoordinateSharp
             return false;
         }
 
+        /// <summary>
+        /// The function will return true if the point x,y is next the given range of 
+        /// the polyline, or false if it is not.
+        /// </summary>
+        /// <param name="point">The point to test</param>
+        /// <param name="range">The range is a distance object</param>
+        /// <returns></returns>
+        public bool IsPointInRangeOfLine(Coordinate point, Distance range)
+        {
+            if (point == null || range == null)
+                return false;
+
+            return IsPointInRangeOfLine(point, range.Meters);
+        }
 
         /// <summary>
-        /// This class is a help class to semplify calculus
+        /// This class is a help class to simplify GEoFence calculus
         /// </summary>
         public class Point
         {

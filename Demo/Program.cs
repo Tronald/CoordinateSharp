@@ -77,6 +77,9 @@ namespace Demo
             //Console.WriteLine("P1 in polygon? {0}", gf.IsPointInPolygon(P1));
             Console.WriteLine("P2 in range of line? {0}", gf.IsPointInRangeOfLine(P3, 12));
 
+            CoordinateSharp.Distance d1 = new CoordinateSharp.Distance(0.012);
+            Console.WriteLine("P2 in range of line? {0}", gf.IsPointInRangeOfLine(P3, d1));
+
             Console.ReadKey();
         }
     }
