@@ -22,7 +22,7 @@ namespace CoordinateSharp
 
             c.SunCondition = CelestialStatus.RiseAndSet;
             //Azimuth and Altitude
-            CalculateSunAngle(actualDate, longi, lat, c);
+            CalculateSunAngle(date, longi, lat, c);
             // neither sunrise nor sunset
             if ((!c.SunRise.HasValue) && (!c.SunSet.HasValue))
             {
