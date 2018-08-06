@@ -1,15 +1,4 @@
-﻿/*
- (c) 2017, Justin Gielski
- CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate 
- format conversions and location based celestial calculations.
- https://github.com/Tronald/CoordinateSharp
-
- Many celestial formulas in this library are based on Jean Meeus's 
- Astronomical Algorithms (2nd Edition). Comments that reference only a chapter
- are refering to this work.
-*/
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace CoordinateSharp
@@ -74,7 +63,7 @@ namespace CoordinateSharp
         /// then the function may return true or false.
         /// </summary>
         /// <param name="point">The point to test</param>
-        /// <returns></returns>
+        /// <returns>bool</returns>
         public bool IsPointInPolygon(Coordinate point)
         {
             if (point == null)
@@ -105,7 +94,7 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="point">The point to test</param>
         /// <param name="range">The range in meters</param>
-        /// <returns></returns>
+        /// <returns>bool</returns>
         public bool IsPointInRangeOfLine(Coordinate point, double range)
         {
             if (point == null)
@@ -127,7 +116,7 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="point">The point to test</param>
         /// <param name="range">The range is a distance object</param>
-        /// <returns></returns>
+        /// <returns>bool</returns>
         public bool IsPointInRangeOfLine(Coordinate point, Distance range)
         {
             if (point == null || range == null)
@@ -137,7 +126,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// This class is a help class to simplify GEoFence calculus
+        /// This class is a help class to simplify GeoFence calculus
         /// </summary>
         public class Point
         {
