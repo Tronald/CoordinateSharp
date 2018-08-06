@@ -1875,7 +1875,7 @@
           "lib/netstandard1.0/_._": {}
         }
       },
-      "NETStandard.Library/2.0.1": {
+      "NETStandard.Library/2.0.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.NETCore.Platforms": "1.1.0"
@@ -2049,7 +2049,7 @@
       ]
     },
     "Microsoft.NETCore.Targets/1.1.0": {
-      "sha512": "rSqnAo4/XLQgUqsbFlcwx01DFDd4aRoVycCe9kNMARkTCv83b0oyU9r8SnmUeR9LMjS5Z03bUe3yjHuH2FopDQ==",
+      "sha512": "Uj3lNj2NG9IdnyJHtGBn0gjfOQYXxqdL7PmDlyc/XzMmNIwZw0swHxDIksguNdct7JWjRknNxUv0oBAmQAnV6g==",
       "type": "package",
       "path": "microsoft.netcore.targets/1.1.0",
       "files": [
@@ -2108,14 +2108,13 @@
         "netstandard.library.nuspec"
       ]
     },
-    "NETStandard.Library/2.0.1": {
-      "sha512": "oA6nwv9MhEKYvLpjZ0ggSpb1g4CQViDVQjLUcDWg598jtvJbpfeP2reqwI1GLW2TbxC/Ml7xL6BBR1HmKPXlTg==",
+    "NETStandard.Library/2.0.3": {
+      "sha512": "st47PosZSHrjECdjeIzZQbzivYBJFv6P2nv4cj2ypdI204DO+vZ7l5raGMiX4eXMJ53RfOIg+/s4DHVZ54Nu2A==",
       "type": "package",
-      "path": "netstandard.library/2.0.1",
+      "path": "netstandard.library/2.0.3",
       "files": [
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
-        "build/NETStandard.Library.targets",
         "build/netstandard2.0/NETStandard.Library.targets",
         "build/netstandard2.0/ref/Microsoft.Win32.Primitives.dll",
         "build/netstandard2.0/ref/System.AppContext.dll",
@@ -2232,12 +2231,12 @@
         "build/netstandard2.0/ref/netstandard.dll",
         "build/netstandard2.0/ref/netstandard.xml",
         "lib/netstandard1.0/_._",
-        "netstandard.library.2.0.1.nupkg.sha512",
+        "netstandard.library.2.0.3.nupkg.sha512",
         "netstandard.library.nuspec"
       ]
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
-      "sha512": "N33w/t224Tp0s+lfdwrORhBW0U+e/pjQ5vrLzOCyW6GSS8xwEG3mAk9X4oQ9NEZJqSZBQ+/B+4J+wfIr8T1Mug==",
+      "sha512": "GtfJuws2lvE9p3F/CD2cL/4I7TTCHLcurEjnRpWqhJnhNKJo7z9Kn48FW+VFBTNi1xsrqiFBxMjxa55i8ZtneQ==",
       "type": "package",
       "path": "runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
@@ -2249,7 +2248,7 @@
       ]
     },
     "runtime.fedora.23-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
-      "sha512": "x3Bt8/PZFTUhy1Vr3R4elErtaMu74oaMjWIGZkVKzvna/vZfAopbO/OzNbkkJ1zVlwIIuJ+uVrGcWpATlUtwqQ==",
+      "sha512": "PlkxhXvHB9/q1W0Kqte8rcr0rT4GBFTKGCxnV6bYdyrb0LI3AMHmjWZDK/A28u1sCy9KvXdndHopzlxao4US2Q==",
       "type": "package",
       "path": "runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
@@ -2261,7 +2260,7 @@
       ]
     },
     "runtime.fedora.24-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
-      "sha512": "xEW0SJX+epb2NL8i7yRyguVmQzf0qxcU9xAQfzJYQM+X4SGabxVnIa6kPSyCJfYlo9dOW7baGSJsV6dlB5HL7A==",
+      "sha512": "HMOYtFFiBn08v/TJacIX3pqgN86+KO2myFVCZ+mM7uChPyMA0iWN3KfPaG+11tt1G1gnDvKGpY1260vNxmgHgQ==",
       "type": "package",
       "path": "runtime.fedora.24-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
@@ -2273,7 +2272,7 @@
       ]
     },
     "runtime.native.System/4.3.0": {
-      "sha512": "xN4A213Gdcm34LhaKIHtXKTrOj7vIBPHaQGqN8JMxYLJuJJZmPvy7lAnORguYUb0inIUWKe3ZahGA89VYJe99w==",
+      "sha512": "asYgCezugH4IO+quuvJkXM4ZENXp/i6XgQNfcCtEGOjaWovUP6vfw30/pE9m1Q++JV4Fjl84MXprVBYN1L4s7A==",
       "type": "package",
       "path": "runtime.native.system/4.3.0",
       "files": [
@@ -2285,7 +2284,7 @@
       ]
     },
     "runtime.native.System.IO.Compression/4.3.0": {
-      "sha512": "w5VaA15vGxdqla+Vox+rgXX+rsByIoWORHCB0I50HwaCcU31MdERpheN6UlaYtJSz70MUN6uincVPyoARFZafg==",
+      "sha512": "Ge85x1fGoooV1vGUsTfdRzifXkWYtHH7ObEErjqwCwq25QNkT4s656oRZ8pZe9idUPkxQNzqMTh/IYQ53LnEWQ==",
       "type": "package",
       "path": "runtime.native.system.io.compression/4.3.0",
       "files": [
@@ -2297,7 +2296,7 @@
       ]
     },
     "runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
-      "sha512": "RaTM78Tdd6nhmWpPNN+Rub9xhz0nlerIig9syJzvSdqC4BUn5tDPx+1yW+fyCUU45W8OLhbR1p9hq4hr1gtmKg==",
+      "sha512": "JITA9Mg/4gt60Sukbp/2nGs8Qt6zk0kOnkmYVouveEmMZDq+MFnjLJ/c+/pcwOHeSxZ+BwPK/DLUPynZtBy+8w==",
       "type": "package",
       "path": "runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
@@ -2309,7 +2308,7 @@
       ]
     },
     "runtime.opensuse.13.2-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
-      "sha512": "fVzKOq06naOv1/S549unVoUilieHagPu4SjwTRV1pY2lPYOnhddOqsUPewxFEYd5NIEJHxhxSCS3gdrRIpEOJg==",
+      "sha512": "7fseUWuwfPL8wXQcy9pTa8WDr1r892Acn/hTSvDCX0rq2vaS0wo+rSCJ4xBYTeXhKnBlgvvQxjRQJgarWMSqyw==",
       "type": "package",
       "path": "runtime.opensuse.13.2-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
@@ -2321,7 +2320,7 @@
       ]
     },
     "runtime.opensuse.42.1-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
-      "sha512": "gjNx5qrqXns7IQJOHrr+U6nXpJUGc6d5ACKMGBMfJqygd+wSzVovBUwIERnuaf/ILCGjtzetvLfn1P2tcdmB+w==",
+      "sha512": "SOlrymPhJcibjlgzeS6EBdlMXhU6TbUsFHFUhVBFp0q+3MvxLKmFS2ZDvpQSriKzzgdV9sISTcIDbvLpyHC9TA==",
       "type": "package",
       "path": "runtime.opensuse.42.1-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
@@ -2333,7 +2332,7 @@
       ]
     },
     "runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
-      "sha512": "vqJV5UQbJb8227N5fLrQIUVoClE9BVetb3iuxZqGyx0F9GxQo+bPSb9FXWrBmusa4UjvVXQALBV/GHlz/rJJwg==",
+      "sha512": "oO+Givi5xlxiZNN2m6y77axPrBil1g6Wc+EPucexXZHThbP6WU7TEoELezjt/w14E35ZJNpZToOuV3zwCwencw==",
       "type": "package",
       "path": "runtime.osx.10.10-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
@@ -2345,7 +2344,7 @@
       ]
     },
     "runtime.rhel.7-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
-      "sha512": "XFX9hcscUmFhcOzKOyPpnpqTNFlalPj7Z0VJAlkIqCjOJJ5x4P9QWrrj1oQI419eC8K2+0wQELMkv2e1p+9znQ==",
+      "sha512": "T/9DiUhEgD9BgGyuAdhsZ3T6vWAPGD4Z5rFR58vmn9VCyPmDMd7FvO4nbSphs8J3G72EufSsiWjF1ZnLn0MoPg==",
       "type": "package",
       "path": "runtime.rhel.7-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
@@ -2357,7 +2356,7 @@
       ]
     },
     "runtime.ubuntu.14.04-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
-      "sha512": "JZaGYrLq0UAJqzFlH+YOfds9n2Pv6KTsErwyaOyxqvKHqK8ycMuxyfSkWPsgZeJxGeEvPtjpo2UzWeiQqMkhnQ==",
+      "sha512": "2wlkjVMvzIlXfMzVCO4P+dpTn5q3Y7KQ7plxLPv8QXjpczBx1ZZK/nDC1Jl7XTmlanAIf5SMxM43Yiv87uoxww==",
       "type": "package",
       "path": "runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
@@ -2369,7 +2368,7 @@
       ]
     },
     "runtime.ubuntu.16.04-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
-      "sha512": "RTb7xlvMe1bNr5KhZxK0Gt+3kQUJQ8kD6TDSXmp55//sIC0zolBhtkDAARsn7bYyZ8UmH7zYztTOQkGXJV+kJQ==",
+      "sha512": "v7xPQ4nkmdBhIj06b7fdcuTAL0clxn2qP3V0eKG7GGBROrrqJCk9JIXnC2kLGumjbr9RUKjgK155mS/RkGgABQ==",
       "type": "package",
       "path": "runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
@@ -2381,7 +2380,7 @@
       ]
     },
     "runtime.ubuntu.16.10-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
-      "sha512": "DzDOtoPi1KvTOIuOKl1vSCbybSvpUT8HTHBQgTv11hLRq6Ej50V01Dv8S9nJXN3RxfGRRxd4LA5aCd7eeg056w==",
+      "sha512": "LX6bxByyXEBwNj3HxA90ZZF3vyEf9LUfvTSqsYVitPHrTaOUadI4QKlzYKOt9cmSUFu9TNZgdQYOEOqk/wFIyw==",
       "type": "package",
       "path": "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
@@ -2446,7 +2445,7 @@
       ]
     },
     "System.Buffers/4.3.0": {
-      "sha512": "rly1r1dF2PELiIWalemCFsfHpS4bdO2JgNcwWUI4QYzji5GBpm7zbran8L5NPtcm9IncLYf95Or+0rhWJTvGEA==",
+      "sha512": "kf1wA6iTwGwZxd+c30HVB3W1POu/3PgoYf8AMgsi97GghD8aY04IGyY6KCxz70uwTwhj+T89Adz5lwzHu05Mqg==",
       "type": "package",
       "path": "system.buffers/4.3.0",
       "files": [
@@ -2693,7 +2692,7 @@
       ]
     },
     "System.Diagnostics.DiagnosticSource/4.3.0": {
-      "sha512": "01PiN22EI428srWprcv3+mAoHdDEJSeSaWyRLZOIXFB99eaTSAnJdOpFJy/lt2t0HQbw80vQq3C1RNn2qV3iAQ==",
+      "sha512": "Fri72gVqNG4oQ14CdVGSWjTUifpq0nATE8ix5nLiDRXYLyFbrbUJma8aO9B9M5kfnyJaLaPCHqGpGfe3ZPgarw==",
       "type": "package",
       "path": "system.diagnostics.diagnosticsource/4.3.0",
       "files": [
@@ -4322,7 +4321,7 @@
       ]
     },
     "System.Runtime.Serialization.Formatters/4.3.0": {
-      "sha512": "SpZp8OUgYu+N7eaRvHBNQWaX/SOPdMg9avWoe5lHjxcqczwDbQDKzKJPh2J+A2fPt03p7cxB62rQOdiOnaUq0w==",
+      "sha512": "KT591AkTNFOTbhZlaeMVvfax3RqhH1EJlcwF50Wm7sfnBLuHiOeZRRKrr1ns3NESkM20KPZ5Ol/ueMq5vg4QoQ==",
       "type": "package",
       "path": "system.runtime.serialization.formatters/4.3.0",
       "files": [
@@ -4349,7 +4348,7 @@
       ]
     },
     "System.Runtime.Serialization.Primitives/4.3.0": {
-      "sha512": "eWtWNRkA8ubCBUsna0DeB3FJaZjXqtt9Pyw1PrV3oc1af9z+GKamknrGH9bk1DczN7D+aCbCN8bSmfxaKwybKg==",
+      "sha512": "Wz+0KOukJGAlXjtKr+5Xpuxf8+c8739RI1C+A2BoQZT+wMCCoMDDdO8/4IRHfaVINqL78GO8dW8G2lW/e45Mcw==",
       "type": "package",
       "path": "system.runtime.serialization.primitives/4.3.0",
       "files": [
@@ -4928,7 +4927,7 @@
       ]
     },
     "System.Threading.Tasks.Extensions/4.3.0": {
-      "sha512": "GkXgmvMqh1cGF3yhTfTsM+SZMjFmSmaqOh0hLUZpcfFrO5b3oZpVqDY1NoAw27GCZRhEMAzrYO24tXcYN0IV4g==",
+      "sha512": "FZrn3ETBHL0lJOjfSOCMzeM6BUE0K+qj2JlRuiB2J28t2lBiDQ8ZujQ+ojhCxtBOY2a9uaAkr/7fxlRX445m/Q==",
       "type": "package",
       "path": "system.threading.tasks.extensions/4.3.0",
       "files": [
@@ -5149,31 +5148,31 @@
       "System.Runtime.Serialization.Primitives >= 4.3.0"
     ],
     ".NETStandard,Version=v2.0": [
-      "NETStandard.Library >= 2.0.1",
+      "NETStandard.Library >= 2.0.3",
       "System.Reflection.TypeExtensions >= 4.5.0",
       "System.Runtime.Serialization.Formatters >= 4.3.0",
       "System.Runtime.Serialization.Primitives >= 4.3.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Justin\\.nuget\\packages\\": {},
+    "C:\\Users\\Sviluppo\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.1.3.7",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Justin\\Documents\\Visual Studio 2017\\Projects\\CoordinateSharp\\CoordinateSharp\\CoordinateSharp.csproj",
+      "projectUniqueName": "C:\\Users\\Sviluppo\\Documents\\Visual Studio 2017\\Repos\\CoordinateSharp\\CoordinateSharp\\CoordinateSharp.csproj",
       "projectName": "CoordinateSharp",
-      "projectPath": "C:\\Users\\Justin\\Documents\\Visual Studio 2017\\Projects\\CoordinateSharp\\CoordinateSharp\\CoordinateSharp.csproj",
-      "packagesPath": "C:\\Users\\Justin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Justin\\Documents\\Visual Studio 2017\\Projects\\CoordinateSharp\\CoordinateSharp\\obj\\",
+      "projectPath": "C:\\Users\\Sviluppo\\Documents\\Visual Studio 2017\\Repos\\CoordinateSharp\\CoordinateSharp\\CoordinateSharp.csproj",
+      "packagesPath": "C:\\Users\\Sviluppo\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Sviluppo\\Documents\\Visual Studio 2017\\Repos\\CoordinateSharp\\CoordinateSharp\\obj\\",
       "projectStyle": "PackageReference",
       "crossTargeting": true,
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Justin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Sviluppo\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -5184,7 +5183,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Users\\Justin\\Documents\\Visual Studio 2017\\Projects\\CoordinateSharp\\CoordinateSharp\\bin": {},
         "https://www.nuget.org/api/v2/": {}
       },
       "frameworks": {
@@ -5256,7 +5254,7 @@
           "NETStandard.Library": {
             "suppressParent": "All",
             "target": "Package",
-            "version": "[2.0.1, )",
+            "version": "[2.0.3, )",
             "autoReferenced": true
           },
           "System.Reflection.TypeExtensions": {
