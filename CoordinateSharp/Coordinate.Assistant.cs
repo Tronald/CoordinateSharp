@@ -1127,6 +1127,60 @@ namespace CoordinateSharp
             nauticalMiles = meters * 0.0005399565;
             bearing = 0;//None specified
         }
+        /// <summary>
+        /// Initializaes distance object based on specified distance and measurement type
+        /// </summary>
+        /// <param name="distance">Distance</param>
+        /// <param name="type">Measurement type</param>
+        public Distance(double distance, DistanceType type)
+        {
+            bearing = 0;
+            switch(type)
+            {
+                case DistanceType.Feet:
+                    feet = distance;
+                    meters = feet * 0.3048;
+                    kilometers = meters / 1000;                  
+                    miles = meters * 0.000621371;
+                    nauticalMiles = meters * 0.0005399565;
+                    break;
+                case DistanceType.Kilometers:
+                    kilometers = distance;
+                    meters = kilometers * 1000;
+                    feet = meters * 3.28084;
+                    miles = meters * 0.000621371;
+                    nauticalMiles = meters * 0.0005399565;
+                    break;
+                case DistanceType.Meters:
+                    meters = distance;
+                    kilometers = meters / 1000;                 
+                    feet = meters * 3.28084;
+                    miles = meters * 0.000621371;
+                    nauticalMiles = meters * 0.0005399565;
+                    break;
+                case DistanceType.Miles:
+                    miles = distance;
+                    meters = miles * 1609.344;
+                    feet = meters * 3.28084;                 
+                    kilometers = meters / 1000;
+                    nauticalMiles = meters * 0.0005399565;                 
+                    break;
+                case DistanceType.NauticalMiles:
+                    nauticalMiles = distance;
+                    meters = nauticalMiles * 1852.001;
+                    feet = meters * 3.28084;
+                    kilometers = meters / 1000;
+                    miles = meters * 0.000621371;
+                    break;
+                default:
+                    kilometers = distance;
+                    meters = distance * 1000;
+                    feet = meters * 3.28084;
+                    miles = meters * 0.000621371;
+                    nauticalMiles = meters * 0.0005399565;                
+                    break;
+            }
+        }
         private void Vincenty(Coordinate c1, Coordinate c2)
         {
             double lat1, lat2, lon1, lon2;
@@ -1236,7 +1290,32 @@ namespace CoordinateSharp
             get { return bearing; }
         }
     }
-   
+    /// <summary>
+    /// Distance measurement type
+    /// </summary>
+    public enum DistanceType
+    {
+        /// <summary>
+        /// Distance in Meters
+        /// </summary>
+        Meters,
+        /// <summary>
+        /// Distance in Kilometers
+        /// </summary>
+        Kilometers,
+        /// <summary>
+        /// Distance in Feet
+        /// </summary>
+        Feet,
+        /// <summary>
+        /// Distance in Statute Miles
+        /// </summary>
+        Miles,
+        /// <summary>
+        /// Distance in Nautical Miles
+        /// </summary>
+        NauticalMiles
+    }
     /// <summary>
     /// Used for easy read math functions
     /// </summary>
