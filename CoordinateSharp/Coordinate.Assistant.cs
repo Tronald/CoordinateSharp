@@ -732,7 +732,7 @@ namespace CoordinateSharp
             d = null;
             int sign = 1;
             //S or W
-            if(direction == 3 || direction == 4)
+            if(direction == 2 || direction == 3)
             {
                 sign = -1;
             }           
