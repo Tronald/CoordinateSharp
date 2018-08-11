@@ -333,6 +333,8 @@ namespace CoordinateSharp_TestProj
                     {
                         if(coordinate.ToString() != cc[1])
                         {
+
+                            Debug.WriteLine("...MISMATCH: " + coordinate.ToString() + " - " + cc[1]);
                             pass = false;
                         }
                     }
@@ -342,6 +344,20 @@ namespace CoordinateSharp_TestProj
             {
                 Write_Pass(lastType.Split(',')[0], pass);
             }
+            //Attempt Forces Param
+            pass = true;
+            try
+            {
+
+                if (Coordinate.TryParse("95F, 54", out coordinate)) { pass = false; }//Intentional Fail
+                if (Coordinate.TryParse("E 181 30, 56 76", out coordinate)) { pass = false; } //Intentional Fail
+                if (Coordinate.TryParse("N 95 45, E 45", out coordinate)) { pass = false; } //Intentional Fail
+                if (Coordinate.TryParse("95 87 46 78 D", out coordinate)) { pass = false; } //Intentional Fail
+                if (Coordinate.TryParse("W24 45, W45", out coordinate)) { pass = false; } //Intentional Fail
+            }
+            catch { pass = false; }
+            Console.WriteLine();
+            Write_Pass("\\\\Intentional Fails", pass);
             Console.WriteLine();
             //Parse CoordinatePart Formats
             Console.WriteLine("CoordinatePart Parses...");
@@ -372,6 +388,7 @@ namespace CoordinateSharp_TestProj
                     {
                         if (cp.ToString() != cc[1])
                         {
+                            Debug.WriteLine("...MISMATCH: " + cp.ToString() + " - " + cc[1]);
                             pass = false;
                         }
                     }
@@ -399,7 +416,7 @@ namespace CoordinateSharp_TestProj
         }
         static void Celestial_Tests()
         {
-
+           
         }
 
         #region Distance Tests

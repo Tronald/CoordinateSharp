@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using CoordinateSharp;
 namespace CoordinateSharp_TestProj
 {
     public class CelestialTests
     {
+        public CelestialTests()
+        {
+            //Test will run again N39, W72
+            //Sun Times and Moon Times will range for 1 Mar-2018 to 30-Mar-2018
+            //Sun/Moon Alt, Az, pergiee, apogee eclispes, fraction and distance with be tested against 15-Mar-2018
+        }
+        
         public List<DateTime?> SunRises { get; set; }
         public List<DateTime?> MoonRises { get; set; }
         public List<DateTime?> SunSets { get; set; }
@@ -26,8 +33,7 @@ namespace CoordinateSharp_TestProj
         public List<double> SunAzs { get; set; }
         public List<double> MoonAlts { get; set; }
         public List<double> MoonAzs { get; set; }
-        public List<double> MoonDistances { get; set;}
-
+        public List<double> MoonDistances { get; set; }
         public List<double> MoonFraction{ get; set; }
         public List<DateTime> SolarEclispe { get; set; }
         public List<DateTime> LunarEclispe { get; set; }
