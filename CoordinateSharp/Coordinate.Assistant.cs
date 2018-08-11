@@ -253,22 +253,77 @@ namespace CoordinateSharp
         private static bool TrySignedDegree(string s, out double[] d)
         {
             d = null;
+            if (Regex.Matches(s, @"[a-zA-Z]").Count != 0) { return false; } //Should contain no letters
 
             string[] sA = SpecialSplit(s);
-            if (sA.Count() == 2)
+            double lat;
+            double lng;
+
+            double degLat;
+            double minLat; //Minutes & MinSeconds
+            double secLat;
+
+            int signLat = 1;
+
+            double degLng;
+            double minLng; //Minutes & MinSeconds
+            double secLng;
+
+            int signLng = 1;
+
+            switch (sA.Count())
             {
-                double lat;
-                double lng;
+                case 2:
+                    if (!double.TryParse(sA[0], out lat))
+                    { return false; }
+                    if (!double.TryParse(sA[1], out lng))
+                    { return false; }
+                    d = new double[] { lat, lng };
+                    return true;
+                case 4:
+                    if (!double.TryParse(sA[0], out degLat))
+                    { return false; }
+                    if (!double.TryParse(sA[1], out minLat))
+                    { return false; }
+                    if (!double.TryParse(sA[2], out degLng))
+                    { return false; }
+                    if (!double.TryParse(sA[3], out minLng))
+                    { return false; }
 
-                if (!double.TryParse(sA[0], out lat))
-                { return false; }
-                if (!double.TryParse(sA[1], out lng))
-                { return false; }
-                d = new double[] { lat, lng };
-                return true;
-            }
-
-            return false;
+                    if (degLat < 0) { signLat = -1; }
+                    if (degLng < 0) { signLng = -1; }
+                    if (minLat >= 60 || minLat < 0) { return false; } //Handle in parser as degree will be incorrect.
+                    if (minLng >= 60 || minLng < 0) { return false; } //Handle in parser as degree will be incorrect.
+                    lat = (Math.Abs(degLat) + (minLat / 60.0)) * signLat;
+                    lng = (Math.Abs(degLng) + (minLng / 60.0)) * signLng;
+                    d = new double[] { lat,lng };
+                    return true;
+                case 6:
+                    if (!double.TryParse(sA[0], out degLat))
+                    { return false; }
+                    if (!double.TryParse(sA[1], out minLat))
+                    { return false; }
+                    if (!double.TryParse(sA[2], out secLat))
+                    { return false; }
+                    if (!double.TryParse(sA[3], out degLng))
+                    { return false; }
+                    if (!double.TryParse(sA[4], out minLng))
+                    { return false; }
+                    if (!double.TryParse(sA[5], out secLng))
+                    { return false; }
+                    if (degLat < 0) { signLat = -1; }
+                    if (degLng < 0) { signLng = -1; }
+                    if (minLat >= 60 || minLat < 0) { return false; } //Handle in parser as degree will be incorrect.
+                    if (minLng >= 60 || minLng < 0) { return false; } //Handle in parser as degree will be incorrect.
+                    if (secLat >= 60 || secLat < 0) { return false; } //Handle in parser as degree will be incorrect.
+                    if (secLng >= 60 || secLng < 0) { return false; } //Handle in parser as degree will be incorrect.
+                    lat = (Math.Abs(degLat) + (minLat / 60.0) + (secLat/3600)) * signLat;
+                    lng = (Math.Abs(degLng) + (minLng / 60.0) + (secLng / 3600)) * signLng;
+                    d = new double[] { lat, lng };
+                    return true;
+                default:
+                    return false;
+            }         
         }
         private static bool TryDecimalDegree(string s, out double[] d)
         {
@@ -713,19 +768,47 @@ namespace CoordinateSharp
         private static bool TrySignedDegree(string s, int t, out double[] d)
         {
             d = null;
+            if (Regex.Matches(s, @"[a-zA-Z]").Count != 0) { return false; } //Should contain no letters
 
-            string[] sA = SpecialSplit(s);
-            if (sA.Count() == 1)
+            string[] sA = SpecialSplit(s);         
+            double deg;
+            double min; //Minutes & MinSeconds
+            double sec;
+
+            int sign = 1;
+            switch (sA.Count())
             {
-                double part;
-
-                if (!double.TryParse(sA[0], out part))
-                { return false; }
-                d = new double[] { part };
-                return true;
-            }
-
-            return false;
+                case 1:
+                    if (!double.TryParse(sA[0], out deg))
+                    { return false; }
+                    d = new double[] { deg };
+                    return true;
+                case 2:
+                    if (!double.TryParse(sA[0], out deg))
+                    { return false; }
+                    if (!double.TryParse(sA[1], out min))
+                    { return false; }
+               
+                    if(deg < 0) { sign = -1; }
+                    if(min >= 60 || min < 0) { return false; } //Handle in parser as degree will be incorrect.
+                    d = new double[] { (Math.Abs(deg) + (min / 60.0))*sign};
+                    return true;
+                case 3:
+                    if (!double.TryParse(sA[0], out deg))
+                    { return false; }
+                    if (!double.TryParse(sA[1], out min))
+                    { return false; }
+                    if (!double.TryParse(sA[2], out sec))
+                    { return false; }
+                    if (min >= 60 || min < 0) { return false; } //Handle in parser as degree will be incorrect.
+                    if (sec >= 60 || sec < 0) { return false; } //Handle in parser as degree will be incorrect.
+                   
+                    if (deg < 0) { sign = -1; }
+                    d = new double[] { (Math.Abs(deg) + (min / 60.0) + (sec / 3600.0))*sign };
+                    return true;
+                default:
+                    return false;
+            }         
         }
         private static bool TryDecimalDegree(string s, int direction, out double[] d)
         {
