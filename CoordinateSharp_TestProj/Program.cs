@@ -27,7 +27,8 @@ namespace CoordinateSharp_TestProj
                 Console.WriteLine("4. Celestial");
                 Console.WriteLine("5. Distance Initialization Tests");
                 Console.WriteLine("6. Benchmarks");
-                Console.WriteLine("7. ..Exit");
+                Console.WriteLine("7. GeoFence Tests");
+                Console.WriteLine("8. ..Exit");
                 Console.WriteLine();
                 Console.Write("Select a Test Number: ");
                 string t = Console.ReadLine();
@@ -39,6 +40,7 @@ namespace CoordinateSharp_TestProj
                         Coordinate_Initialization_Tests();
                         break;
                     case "2":
+                        Coordinate_Convsersions_Tests();
                         break;
                     case "3":
                         Coordinate_Parsers_Tests();
@@ -51,11 +53,13 @@ namespace CoordinateSharp_TestProj
                     case "6":
                         Benchmark_Tests();
                         break;
-                    case "7":                
+                    case "7":
+                        break;
+                    case "8":                
                         return;
                     default:
-                        Console.WriteLine();
-                        Console.WriteLine("Test choice invalid.", Color.Red);            
+                        Console.WriteLine();                      
+                        Colorful.Console.WriteLine("Test choice invalid.", Color.Red);            
                         break;
                 }
                 Console.WriteLine();
@@ -297,7 +301,106 @@ namespace CoordinateSharp_TestProj
 
         static void Coordinate_Convsersions_Tests()
         {
+            Console.WriteLine();
+            //GATHER CONVERSIONS
+            //Conversion lists must end in //** to signify end of list
+            List<List<string>> Conversions = new List<List<string>>();
+            string[] coordStrings = File.ReadAllLines("Conversions.txt");
+            List<string> cList = new List<string>();
+            foreach (string c in coordStrings)
+            {
+                if (c == "//**")
+                {
+                    Conversions.Add(cList);
+                    cList = new List<string>(); }
+                else
+                {
+                    cList.Add(c);
+                }
+            }
+            //Conversion coords to test
+            List<double[]> coords = new List<double[]>();
+            coords.Add(new double[] { 39.5768, 72.4859 });
+            coords.Add(new double[] { -15.5768, 100.4859 });
+            coords.Add(new double[] { 65.25, -15.1859 });
+            coords.Add(new double[] { -80.6586, -152.49 });
 
+            for (int x = 0; x<Conversions.Count;x++)
+            {
+                List<string> coordList = Conversions[x];
+                double lat = coords[x][0];
+                double lng = coords[x][1];
+                //0 = Decimal / Signed
+                //1 = Decimal Degree
+                //2 = Degree Decimal Minute
+                //3 = Degree Minutes Seconds
+                //4 = UTM
+                //5 = MGRS
+                //6 = Cartesian
+                Coordinate c = new Coordinate(lat, lng);
+                bool pass = true;
+                Coordinate rc = new Coordinate();
+                for (int y = 0; y<7;y++)
+                {
+                    
+                    switch(y)
+                    {
+                        case 0:
+                            c.FormatOptions.Format = CoordinateFormatType.Decimal;
+                            if (c.ToString() != coordList[y]) { pass = false; }
+                            break;
+                        case 1:
+                            c.FormatOptions.Format = CoordinateFormatType.Decimal_Degree;
+                            if (c.ToString() != coordList[y]) { pass = false; }
+                            break;
+                        case 2:
+                            c.FormatOptions.Format = CoordinateFormatType.Degree_Decimal_Minutes;
+                            if (c.ToString() != coordList[y]) { pass = false; }
+                            rc = new Coordinate();
+                            rc.Latitude = new CoordinatePart(c.Latitude.Degrees, c.Latitude.DecimalMinute, c.Latitude.Position, rc);
+                            rc.Longitude = new CoordinatePart(c.Longitude.Degrees, c.Longitude.DecimalMinute, c.Longitude.Position, rc);
+                            if(rc.Latitude.ToDouble() != c.Latitude.ToDouble()) { pass = false; Debug.WriteLine("...Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
+                            if (rc.Longitude.ToDouble() != c.Longitude.ToDouble()) { pass = false; Debug.WriteLine("...Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
+                            break;
+                        case 3:
+                            c.FormatOptions.Format = CoordinateFormatType.Degree_Minutes_Seconds;
+                            if (c.ToString() != coordList[y]) { pass = false; }
+                            rc = new Coordinate();
+                            rc.Latitude = new CoordinatePart(c.Latitude.Degrees, c.Latitude.Minutes, c.Latitude.Seconds, c.Latitude.Position, rc);
+                            rc.Longitude = new CoordinatePart(c.Longitude.Degrees, c.Longitude.Minutes, c.Longitude.Seconds, c.Longitude.Position, rc);
+                            if (rc.Latitude.ToDouble() != c.Latitude.ToDouble()) { pass = false; Debug.WriteLine("...Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
+                            if (rc.Longitude.ToDouble() != c.Longitude.ToDouble()) { pass = false; Debug.WriteLine("...Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
+                            break;
+                        case 4:
+                            if (c.UTM.ToString() != coordList[y]) { pass = false; }
+                            UniversalTransverseMercator utm = new UniversalTransverseMercator(c.UTM.LatZone, c.UTM.LongZone, c.UTM.Easting, c.UTM.Northing);
+                            rc = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
+                            if (Math.Abs(rc.Latitude.ToDouble() - c.Latitude.ToDouble()) >= .00001) { pass = false; Debug.WriteLine("...UTM Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
+                            if (Math.Abs(rc.Longitude.ToDouble() - c.Longitude.ToDouble()) >=.00001) { pass = false; Debug.WriteLine("...UTM Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
+                            break;
+                        case 5:
+                            if (c.MGRS.ToString() != coordList[y]) { pass = false; }
+                            MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem(c.MGRS.LatZone, c.MGRS.LongZone, c.MGRS.Digraph, c.MGRS.Easting, c.MGRS.Northing);
+                            rc = MilitaryGridReferenceSystem.MGRStoLatLong(mgrs);
+                            if (Math.Abs(rc.Latitude.ToDouble() - c.Latitude.ToDouble()) >= .0001) { pass = false; Debug.WriteLine("...MGRS Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
+                            if (Math.Abs(rc.Longitude.ToDouble() - c.Longitude.ToDouble()) >= .0001) { pass = false; Debug.WriteLine("...MGRS Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
+
+                            break;
+                        case 6:
+                            if (c.Cartesian.ToString() != coordList[y]) { pass = false; }
+                            Cartesian cart = new Cartesian(c.Cartesian.X, c.Cartesian.Y, c.Cartesian.Z);
+                            rc = Cartesian.CartesianToLatLong(cart);
+                            if (Math.Abs(rc.Latitude.ToDouble() - c.Latitude.ToDouble()) >= .00001) { pass = false; Debug.WriteLine("...Cartesian Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
+                            if (Math.Abs(rc.Longitude.ToDouble() - c.Longitude.ToDouble()) >= .00001) { pass = false; Debug.WriteLine("...Cartesian Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                Write_Pass("Conversion Pass " + ((int)(x+1)).ToString() + ": ", pass);
+                
+            }
         }
         static void Coordinate_Parsers_Tests()
         {

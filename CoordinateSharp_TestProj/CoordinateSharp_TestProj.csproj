@@ -58,6 +58,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CelestialData\SunRise.txt" />
+    <Content Include="CelestialData\MoonSet.txt" />
+    <Content Include="CelestialData\MoonRise.txt" />
+    <Content Include="CelestialData\SunSet.txt" />
+    <Content Include="Conversions.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="CoordinateParts.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
