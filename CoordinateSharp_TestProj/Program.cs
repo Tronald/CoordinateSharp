@@ -46,6 +46,7 @@ namespace CoordinateSharp_TestProj
                         Coordinate_Parsers_Tests();
                         break;
                     case "4":
+                        Celestial_Tests();
                         break;
                     case "5":
                         Distance_Initialization_Tests();
@@ -519,7 +520,8 @@ namespace CoordinateSharp_TestProj
         }
         static void Celestial_Tests()
         {
-           
+            CelestialTests ct = new CelestialTests();
+            ct.Populate_CelestialTests();
         }
 
         #region Distance Tests
