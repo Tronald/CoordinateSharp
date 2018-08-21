@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using CoordinateSharp;
 namespace CoordinateSharp_TestProj
 {
@@ -26,15 +24,16 @@ namespace CoordinateSharp_TestProj
 
             for (int x = 0; x < 144; x++)
             {
-                c.GeoDate = c.GeoDate.AddMinutes(x);
+                if (x != 0)
+                {
+                    c.GeoDate = c.GeoDate.AddMinutes(10);
+                }
                 SunAlts.Add(c.CelestialInfo.SunAltitude);
                 SunAzs.Add(c.CelestialInfo.SunAzimuth);
                 MoonAlts.Add(c.CelestialInfo.MoonAltitude);
                 MoonAzs.Add(c.CelestialInfo.MoonAzimuth);
-                MoonDistances.Add(c.CelestialInfo.MoonDistance.Kilometers);
                 MoonFraction.Add(c.CelestialInfo.MoonIllum.Fraction);
-                MoonPhase.Add(c.CelestialInfo.MoonIllum.Phase);
-                MoonPhaseName.Add(c.CelestialInfo.MoonIllum.PhaseName);
+               
             }
 
             c.GeoDate = new DateTime(2018, 3, 1);
@@ -55,12 +54,16 @@ namespace CoordinateSharp_TestProj
            
             for (int x = 0; x < 31; x++)
             {
-                c.GeoDate = c.GeoDate.AddDays(x);
+                if (x != 0)
+                {
+                    c.GeoDate = c.GeoDate.AddDays(1);
+                }
                 SunRises.Add(c.CelestialInfo.SunRise);
                 SunSets.Add(c.CelestialInfo.SunSet);
                 MoonRises.Add(c.CelestialInfo.MoonRise);
                 MoonSets.Add(c.CelestialInfo.MoonSet);
 
+                MoonDistances.Add(c.CelestialInfo.MoonDistance.Kilometers);
                 CivilDawn.Add(c.CelestialInfo.AdditionalSolarTimes.CivilDawn);
                 CivilDusk.Add(c.CelestialInfo.AdditionalSolarTimes.CivilDusk);
                 NauticalDawn.Add(c.CelestialInfo.AdditionalSolarTimes.NauticalDawn);
@@ -69,18 +72,65 @@ namespace CoordinateSharp_TestProj
                 AstroDusk.Add(c.CelestialInfo.AdditionalSolarTimes.AstronomicalDusk);
                 BottomSolarDiscRise.Add(c.CelestialInfo.AdditionalSolarTimes.SunriseBottomDisc);
                 BottomSolarDiscSet.Add(c.CelestialInfo.AdditionalSolarTimes.SunsetBottomDisc);
+
+                MoonPhase.Add(c.CelestialInfo.MoonIllum.Phase);
+                MoonPhaseName.Add(c.CelestialInfo.MoonIllum.PhaseName);
             }
 
+            //Set Dates and Finish
             this.SolarEclispe = new List<DateTime>();
             this.LunarEclispe = new List<DateTime>();
             this.Perigee = new List<DateTime>();
             this.Apogee = new List<DateTime>();
 
         }
-        
-        public void Load_Comparison_Values()
+
+        public bool Check_Values(object prop, string file)
         {
-            
+            string[] lines = File.ReadAllLines(file);
+
+            if (prop.GetType() == typeof(List<DateTime?>))
+            {
+                List<DateTime?> d = (List<DateTime?>)prop;
+                for (int x = 0; x < lines.Length; x++)
+                {
+                    DateTime date;
+                    if(lines[x] != "*")
+                    {
+                        if (DateTime.TryParse(lines[x], out date))
+                        {
+                            TimeSpan span = date - d[x].Value;
+                            if(Math.Abs(span.TotalMinutes)> 1)
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }                 
+                    }
+                    else
+                    {
+                        if (!d[x].HasValue) { return false; }
+                    }
+                }
+            }
+            if (prop.GetType() == typeof(List<double>))
+            {
+                List<double?> d = (List<double?>)prop;
+                for (int x = 0; x < lines.Length; x++)
+                {
+                }
+            }
+            if (prop.GetType() == typeof(List<string>))
+            {
+                List<DateTime?> d = (List<DateTime?>)prop;
+                for (int x = 0; x < lines.Length; x++)
+                {
+                }
+            }
+            return true;
         }
         public List<DateTime?> SunRises { get; set; }
         public List<DateTime?> MoonRises { get; set; }

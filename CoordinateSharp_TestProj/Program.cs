@@ -520,8 +520,12 @@ namespace CoordinateSharp_TestProj
         }
         static void Celestial_Tests()
         {
+            Console.WriteLine("Loading Celestial Values...");
+            Console.WriteLine();
             CelestialTests ct = new CelestialTests();
             ct.Populate_CelestialTests();
+            Write_Pass("Sunset: ", ct.Check_Values(ct.SunSets, "CelestialData\\SunSet.txt"));
+            Write_Pass("Sunrise: ", ct.Check_Values(ct.SunRises, "CelestialData\\SunRise.txt"));
         }
 
         #region Distance Tests
