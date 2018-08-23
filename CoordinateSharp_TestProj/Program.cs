@@ -713,11 +713,16 @@ namespace CoordinateSharp_TestProj
             Write_Pass("Inside Polygon: ", pass);
            
             pass = true;
+            Distance d = new Distance(1000, DistanceType.Meters);
             if (!gf.IsPointInRangeOfLine(c1, 1000)) { pass = false; }
+            if (!gf.IsPointInRangeOfLine(c1, d)) { pass = false; }
             Write_Pass("In Range of Polyline: ", pass);
 
             pass = true;
+            d = new Distance(900, DistanceType.Meters);
             if (gf.IsPointInRangeOfLine(c1, 900)) { pass = false; }
+            if (gf.IsPointInRangeOfLine(c1, d)) { pass = false; }
+
             Write_Pass("Out of Range of Polyline: ", pass);
 
         }
