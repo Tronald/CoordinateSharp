@@ -55,6 +55,7 @@ namespace CoordinateSharp_TestProj
                         Benchmark_Tests();
                         break;
                     case "7":
+                        GeoFence_Tests();
                         break;
                     case "8":                
                         return;
@@ -526,6 +527,30 @@ namespace CoordinateSharp_TestProj
             ct.Populate_CelestialTests();
             Write_Pass("Sunset: ", ct.Check_Values(ct.SunSets, "CelestialData\\SunSet.txt"));
             Write_Pass("Sunrise: ", ct.Check_Values(ct.SunRises, "CelestialData\\SunRise.txt"));
+            Write_Pass("AstroDawn: ", ct.Check_Values(ct.AstroDawn, "CelestialData\\AstroDawn.txt"));
+            Write_Pass("AstroDusk: ", ct.Check_Values(ct.AstroDusk, "CelestialData\\AstroDusk.txt"));
+            Write_Pass("CivilDawn: ", ct.Check_Values(ct.CivilDawn, "CelestialData\\CivilDawn.txt"));
+            Write_Pass("CivilDusk: ", ct.Check_Values(ct.CivilDusk, "CelestialData\\CivilDusk.txt"));
+            Write_Pass("NauticalDawn: ", ct.Check_Values(ct.NauticalDawn, "CelestialData\\NauticalDawn.txt"));
+            Write_Pass("NauticalDusk: ", ct.Check_Values(ct.NauticalDusk, "CelestialData\\NauticalDusk.txt"));
+            Write_Pass("BottomSolarDiscRise: ", ct.Check_Values(ct.BottomSolarDiscRise, "CelestialData\\BottomDiscRise.txt"));
+            Write_Pass("BottomSolarDiscSet: ", ct.Check_Values(ct.BottomSolarDiscSet, "CelestialData\\BottomDiscSet.txt"));
+            Write_Pass("Moon Set: ", ct.Check_Values(ct.MoonSets, "CelestialData\\MoonSet.txt"));
+            Write_Pass("Moon Rise: ", ct.Check_Values(ct.MoonRises, "CelestialData\\MoonRise.txt"));
+            Console.WriteLine();
+            Write_Pass("Sun Altitude: ", ct.Check_Values(ct.SunAlts, "CelestialData\\SunAlts.txt"));
+            Write_Pass("Sun Azimuth: ", ct.Check_Values(ct.SunAzs, "CelestialData\\SunAzs.txt"));
+            Write_Pass("Moon Altitude: ", ct.Check_Values(ct.MoonAlts, "CelestialData\\MoonAlts.txt"));
+            Write_Pass("Moon Azimuth: ", ct.Check_Values(ct.MoonAzs, "CelestialData\\MoonAzs.txt"));
+            Write_Pass("Moon Distance: ", ct.Check_Values(ct.MoonDistances, "CelestialData\\MoonDistance.txt"));
+            Write_Pass("Moon Fraction: ", ct.Check_Values(ct.MoonFraction, "CelestialData\\MoonFraction.txt"));
+            Write_Pass("Moon Phase ", ct.Check_Values(ct.MoonPhase, "CelestialData\\MoonPhase.txt"));
+            Write_Pass("Moon Phase Name: ", ct.Check_Values(ct.MoonPhaseName, "CelestialData\\MoonPhaseName.txt"));
+            Console.WriteLine();
+            Write_Pass("Solar Eclipse: ", ct.Check_Solar_Eclipse());
+            Write_Pass("Lunar Eclipse: ", ct.Check_Lunar_Eclipse());
+            Write_Pass("Perigee: ", ct.Check_Perigee());
+            Write_Pass("Apogee: ", ct.Check_Apogee());
         }
 
         #region Distance Tests
@@ -648,7 +673,54 @@ namespace CoordinateSharp_TestProj
             Colorful.Console.Write((sw.ElapsedMilliseconds / iterations).ToString() + " ms", Color.Lime);
             Console.WriteLine();
         }
+        static void GeoFence_Tests()
+        {
+            // CHANGE LATS e LONS
+            Coordinate c1 = new Coordinate(31.66, -106.52);
+            Coordinate c2 = new Coordinate(31.64, -106.53);
+            Coordinate c3 = new Coordinate(42.02, -106.52);
+            Coordinate c4 = new Coordinate(42.03, -106.53);
 
+            List<GeoFence.Point> points = new List<GeoFence.Point>();
+
+            points.Add(new GeoFence.Point(31.65, -106.52));
+            points.Add(new GeoFence.Point(31.65, -84.02));
+            points.Add(new GeoFence.Point(42.03, -84.02));
+            points.Add(new GeoFence.Point(42.03, -106.52));
+            points.Add(new GeoFence.Point(31.65, -106.52));
+
+            GeoFence gf = new GeoFence(points);
+
+            bool pass = true;
+            if (gf.IsPointInPolygon(c1)) { pass = false; }
+            if (gf.IsPointInPolygon(c2)) { pass = false; }
+            if (gf.IsPointInPolygon(c3)) { pass = false; }
+            if (gf.IsPointInPolygon(c4)) { pass = false; }
+
+            Write_Pass("Outside Polygon: ", pass);
+
+            c1 = new Coordinate(31.67, -106.51);
+            c2 = new Coordinate(31.67, -84.03);
+            c3 = new Coordinate(42.01, -106.51);
+            c4 = new Coordinate(42.01, -84.03);
+
+            pass = true;
+            if (!gf.IsPointInPolygon(c1)) { pass = false; }
+            if (!gf.IsPointInPolygon(c2)) { pass = false; }
+            if (!gf.IsPointInPolygon(c3)) { pass = false; }
+            if (!gf.IsPointInPolygon(c4)) { pass = false; }
+
+            Write_Pass("Inside Polygon: ", pass);
+           
+            pass = true;
+            if (!gf.IsPointInRangeOfLine(c1, 1000)) { pass = false; }
+            Write_Pass("In Range of Polyline: ", pass);
+
+            pass = true;
+            if (gf.IsPointInRangeOfLine(c1, 900)) { pass = false; }
+            Write_Pass("Out of Range of Polyline: ", pass);
+
+        }
         static void Write_Pass(string method, bool pass)
         {
             Console.Write(method + ": ");
