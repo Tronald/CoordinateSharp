@@ -186,22 +186,20 @@ namespace CoordinateSharp
            
             var eidx = digraphLettersE.IndexOf(eltr);
             var nidx = digraphLettersN.IndexOf(nltr);
-
             if (mgrs.LongZone / 2.0 == Math.Floor(mgrs.LongZone / 2.0))
             {
                 nidx -= 5;  // correction for even numbered zones
             }
 
             var ebase = 100000 * (1 + eidx - 8 * Math.Floor(Convert.ToDouble(eidx) / 8));
-
             var latBand = digraphLettersE.IndexOf(latz);
             var latBandLow = 8 * latBand - 96;
             var latBandHigh = 8 * latBand - 88;
-
+   
             if (latBand < 2)
-            {
+            {        
                 latBandLow = -90;
-                latBandHigh = -80;
+                latBandHigh = -80;               
             }
             else if (latBand == 21)
             {
@@ -216,6 +214,7 @@ namespace CoordinateSharp
 
             var lowLetter = Math.Floor(100 + 1.11 * latBandLow);
             var highLetter = Math.Round(100 + 1.11 * latBandHigh);
+  
             string latBandLetters = null;
             int l = Convert.ToInt32(lowLetter);
             int h = Convert.ToInt32(highLetter);
@@ -225,10 +224,10 @@ namespace CoordinateSharp
             }
             else
             {
-                latBandLetters = digraphLettersAll.Substring(l, h).ToString();
+                latBandLetters = digraphLettersAll.Substring(l, h).ToString();         
             }
             var nbase = 100000 * (lowLetter + latBandLetters.IndexOf(nltr));
-
+            //latBandLetters.IndexOf(nltr) value causing incorrect Northing below -80
             var x = ebase + mgrs.Easting;
             var y = nbase + mgrs.Northing;
             if (y > 10000000)
@@ -241,14 +240,12 @@ namespace CoordinateSharp
             }
 
             var southern = nbase < 10000000;
-            
             UniversalTransverseMercator utm = new UniversalTransverseMercator(mgrs.LatZone, mgrs.LongZone, x, y);
             utm.equatorial_radius = mgrs.equatorialRadius;
             utm.inverse_flattening = mgrs.inverseFlattening;
             Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
            
             c.Set_Datum(mgrs.equatorialRadius, mgrs.inverseFlattening);
-           // Coordinate nc = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble()); 
           
             return c;
         }

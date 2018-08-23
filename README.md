@@ -1,6 +1,6 @@
 <p align="center"><img src="https://s8.postimg.cc/y7wuenuzp/LOGO_COORDINATE_SHARP.jpg"></p>
 
-<h2 align="center">v1.1.3.7</h2>
+<h2 align="center">v1.1.3.8</h2>
 
 CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate formatting and location based celestial information. This library has the ability to convert various lat long formats, UTM, MGRS(NATO UTM) and Cartesian (X, Y, Z). 
 The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
@@ -71,6 +71,7 @@ Console.WriteLine(c.CelestialInfo.MoonAltitude);   // 14.4169966277874
 * **Coordinate moving/shifting:** Shift coordinates using a distance and bearing, or a distance and target coordinate.
 * **Location based celestial information:** Quickly determine sun set, moon rise, next solar eclipse or even zodiac signs at the input location.
 * **Property change notification:** All properties automatically adjust as the `Coordinate` changes. For example, changing the `GeoDate` will cause all celestial times to recalculate. Adjusting a `Coordinate` latitudinal seconds, will retrigger all coordinate conversions and celestial data so your information is always up to date. 
+* **Geo-Fencing:** Define a perimeter and determine if your coordinate is within or near polylines.
 
 ### Guides
 
