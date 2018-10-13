@@ -33,7 +33,7 @@ CoordinateSharp is simple to use. In the below example we create a `Coordinate` 
 
 /***********************************************************/
 
-//Initialize with signed degree (Standard Method)
+//Initialize with signed degree (standard method)
 Coordinate c = new Coordinate(47.6062, -122.3321, new DateTime(2018,6,5,10,10,0));
 
 /***IF OTHER FORMAT IS USED SUCH AS DEGREE MINUTES SECONDS***/
