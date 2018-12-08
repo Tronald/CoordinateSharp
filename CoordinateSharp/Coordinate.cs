@@ -198,6 +198,7 @@ namespace CoordinateSharp
         private UniversalTransverseMercator utm;
         private MilitaryGridReferenceSystem mgrs;
         private Cartesian cartesian;
+        private ECEF ecef;
         private DateTime geoDate;
         private Celestial celestialInfo;
        
@@ -344,6 +345,17 @@ namespace CoordinateSharp
             }         
         }
         /// <summary>
+        /// ECEF
+        /// </summary>
+        public ECEF ECEF
+        {
+            get
+            {
+                return ecef;
+            }
+        }
+
+        /// <summary>
         /// Celestial information based on the objects location and geographic UTC date.
         /// </summary>
         public Celestial CelestialInfo
@@ -372,6 +384,13 @@ namespace CoordinateSharp
         public void LoadCartesianInfo()
         {
             cartesian = new Cartesian(this);
+        }
+        /// <summary>
+        /// Initialize ECEF information (required if eager loading is turned off).
+        /// </summary>
+        public void LoadECEFInfo()
+        {
+            ecef = new ECEF(this);
         }
 
         /// <summary>
@@ -611,6 +630,9 @@ namespace CoordinateSharp
                     break;
                 case "Cartesian":
                     Cartesian.ToCartesian(this);
+                    break;
+                case "ECEF":
+                    ECEF.ToECEF(this);
                     break;
                 default:
                     break;
@@ -1471,6 +1493,7 @@ namespace CoordinateSharp
             this.Parent.NotifyPropertyChanged("UTM");
             this.Parent.NotifyPropertyChanged("MGRS");
             this.Parent.NotifyPropertyChanged("Cartesian");
+            this.Parent.NotifyPropertyChanged("ECEF");
 
         }
 
