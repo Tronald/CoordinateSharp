@@ -201,6 +201,7 @@ namespace CoordinateSharp
         private ECEF ecef;
         private DateTime geoDate;
         private Celestial celestialInfo;
+        private double height;
        
         /// <summary>
         /// Latitudinal Coordinate Part
@@ -352,6 +353,21 @@ namespace CoordinateSharp
             get
             {
                 return ecef;
+            }
+        }
+        /// <summary>
+        /// Height (used during ECEF calculations only)
+        /// </summary>
+        public double Height
+        {
+            get { return this.height; }
+            set
+            {
+                if (this.height != value)
+                {
+                    this.height = value;
+                    this.NotifyPropertyChanged("Height");
+                }
             }
         }
 
