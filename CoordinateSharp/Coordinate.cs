@@ -373,13 +373,14 @@ namespace CoordinateSharp
         /// </summary>
         public double Height
         {
-            get { return this.height; }
+            get { return height; }
             set
             {
-                if (this.height != value)
+                if (height != value)
                 {
-                    this.height = value;
-                    this.NotifyPropertyChanged("Height");
+                    height = value;
+                    NotifyPropertyChanged("Height");
+                    NotifyPropertyChanged("ECEF");
                 }
             }
         } 
