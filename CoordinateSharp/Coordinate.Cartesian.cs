@@ -11,7 +11,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Create a Cartesian Object
         /// </summary>
-        /// <param name="c"></param>
+        /// <param name="c">Coordinate</param>
         public Cartesian(Coordinate c)
         {
             //formulas:
@@ -91,13 +91,14 @@ namespace CoordinateSharp
                 }
             }
         }
+
         /// <summary>
         /// Returns a Lat Long Coordinate object based on the provided Cartesian Coordinate
         /// </summary>
         /// <param name="x">X</param>
         /// <param name="y">Y</param>
         /// <param name="z">Z</param>
-        /// <returns></returns>
+        /// <returns>Coordinate</returns>
         public static Coordinate CartesianToLatLong(double x, double y, double z)
         {
             double lon = Math.Atan2(y, x);
@@ -112,7 +113,7 @@ namespace CoordinateSharp
         /// Returns a Lat Long Coordinate object based on the provided Cartesian Coordinate
         /// </summary>
         /// <param name="cart">Cartesian Coordinate</param>
-        /// <returns></returns>
+        /// <returns>Coordinate</returns>
         public static Coordinate CartesianToLatLong(Cartesian cart)
         {
             double x = cart.X;

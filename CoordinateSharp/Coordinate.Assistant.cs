@@ -1143,8 +1143,31 @@ namespace CoordinateSharp
             Celestial = true;
             UTM_MGRS = true;
             Cartesian = true;
+            ECEF = true;
         }
-  
+        /// <summary>
+        /// Create an EagerLoad object that is / is not enabled.
+        /// </summary>
+        /// <param name="isEnabled">Is Eagerloading Enabled</param>
+        public EagerLoad(bool isEnabled)
+        {
+            Celestial = isEnabled;
+            UTM_MGRS = isEnabled;
+            Cartesian = isEnabled;
+            ECEF = isEnabled;
+        }
+
+        /// <summary>
+        /// Create a new populated EagarLoad object.
+        /// </summary>
+        /// <param name="isEnabled">Is Eagerloading Enabled</param>
+        /// <returns>EagerLoad</returns>
+        public static EagerLoad Create(bool isEnabled)
+        {
+            EagerLoad el = new EagerLoad(isEnabled);
+            return el;
+        }
+
         /// <summary>
         /// Eager load celestial information.
         /// </summary>
@@ -1157,6 +1180,10 @@ namespace CoordinateSharp
         /// Eager load Cartesian information
         /// </summary>
         public bool Cartesian { get; set; }
+        /// <summary>
+        /// Eager load ECEF information
+        /// </summary>
+        public bool ECEF { get; set; }
     }
     /// <summary>
     /// Contains distance values between two coordinates.

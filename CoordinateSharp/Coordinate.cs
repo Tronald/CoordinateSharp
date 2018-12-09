@@ -40,6 +40,7 @@ namespace CoordinateSharp
             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
             mgrs = new MilitaryGridReferenceSystem(this.utm);
             cartesian = new Cartesian(this);
+            ecef = new ECEF(this);
             EagerLoadSettings = new EagerLoad();
         }
         /// <summary>
@@ -58,6 +59,7 @@ namespace CoordinateSharp
             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, equatorialRadius,inverseFlattening);     
             mgrs = new MilitaryGridReferenceSystem(this.utm);
             cartesian = new Cartesian(this);
+            ecef = new ECEF(this);
             //Set_Datum(equatorialRadius, inverseFlattening);
             EagerLoadSettings = new EagerLoad();
         }
@@ -79,6 +81,7 @@ namespace CoordinateSharp
             utm = new UniversalTransverseMercator(lat, longi, this);
             mgrs = new MilitaryGridReferenceSystem(this.utm);
             cartesian = new Cartesian(this);
+            ecef = new ECEF(this);
             EagerLoadSettings = new EagerLoad();
         }
         /// <summary>
@@ -97,6 +100,7 @@ namespace CoordinateSharp
             utm = new UniversalTransverseMercator(lat, longi, this);
             mgrs = new MilitaryGridReferenceSystem(this.utm);
             cartesian = new Cartesian(this);
+            ecef = new ECEF(this);
             EagerLoadSettings = new EagerLoad();
         }
 
@@ -126,7 +130,10 @@ namespace CoordinateSharp
                 utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
                 mgrs = new MilitaryGridReferenceSystem(this.utm);
             }
-           
+            if (eagerLoad.ECEF)
+            {
+                ecef = new ECEF(this);
+            }
             EagerLoadSettings = eagerLoad;
         }
         /// <summary>
@@ -158,7 +165,10 @@ namespace CoordinateSharp
             {
                 cartesian = new Cartesian(this);
             }
-
+            if (eagerLoad.ECEF)
+            {
+                ecef = new ECEF(this);
+            }
             EagerLoadSettings = eagerLoad;
         }
         /// <summary>
@@ -189,7 +199,10 @@ namespace CoordinateSharp
             {
                 cartesian = new Cartesian(this);
             }
-
+            if (eagerLoad.ECEF)
+            {
+                ecef = new ECEF(this);
+            }
             EagerLoadSettings = eagerLoad;
         }
        
@@ -201,7 +214,7 @@ namespace CoordinateSharp
         private ECEF ecef;
         private DateTime geoDate;
         private Celestial celestialInfo;
-        private double height;
+        private double height=0;
        
         /// <summary>
         /// Latitudinal Coordinate Part
@@ -369,7 +382,7 @@ namespace CoordinateSharp
                     this.NotifyPropertyChanged("Height");
                 }
             }
-        }
+        } 
 
         /// <summary>
         /// Celestial information based on the objects location and geographic UTC date.
@@ -631,9 +644,11 @@ namespace CoordinateSharp
             switch (propName)
             {
                 case "CelestialInfo":
+                    if (!EagerLoadSettings.Celestial) { return; }
                     this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);
                     break;
                 case "UTM":
+                    if (!EagerLoadSettings.UTM_MGRS) { return; }
                     this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
                     break;
                 case "utm":
@@ -642,12 +657,15 @@ namespace CoordinateSharp
                     propName = "UTM";
                     break;
                 case "MGRS":
+                    if (!EagerLoadSettings.UTM_MGRS) { return; }
                     this.MGRS.ToMGRS(this.utm);
                     break;
                 case "Cartesian":
+                    if (!EagerLoadSettings.Cartesian) { return; }
                     Cartesian.ToCartesian(this);
                     break;
                 case "ECEF":
+                    if (!EagerLoadSettings.ECEF) { return; }
                     ECEF.ToECEF(this);
                     break;
                 default:
