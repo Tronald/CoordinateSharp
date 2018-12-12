@@ -1,4 +1,4 @@
-﻿/*
+/*
  (c) 2017, Justin Gielski
  CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate 
  format conversions and location based celestial calculations.
@@ -596,10 +596,17 @@ namespace CoordinateSharp
             switch (propName)
             {
                 case "CelestialInfo":
-                    this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);
+                    if (this.celestialInfo != null)
+                    {
+                        this.celestialInfo?.CalculateCelestialTime(
+                            this.latitude.DecimalDegree,
+                            this.longitude.DecimalDegree,
+                            this.geoDate);
+                    }
                     break;
                 case "UTM":
-                    this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
+                    if (this.utm != null)
+                        this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
                     break;
                 case "utm":
                     //Adjust case and notify of change. 
@@ -607,10 +614,12 @@ namespace CoordinateSharp
                     propName = "UTM";
                     break;
                 case "MGRS":
-                    this.MGRS.ToMGRS(this.utm);
+                    if (this.MGRS != null)
+                        this.MGRS.ToMGRS(this.utm);
                     break;
                 case "Cartesian":
-                    Cartesian.ToCartesian(this);
+                    if (this.Cartesian != null)
+                        Cartesian.ToCartesian(this);
                     break;
                 default:
                     break;
