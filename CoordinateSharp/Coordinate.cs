@@ -1,4 +1,4 @@
-﻿/*
+/*
  (c) 2017, Justin Gielski
  CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate 
  format conversions and location based celestial calculations.
@@ -645,12 +645,12 @@ namespace CoordinateSharp
             switch (propName)
             {
                 case "CelestialInfo":
-                    if (!EagerLoadSettings.Celestial) { return; }
-                    this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);
+                    if (celestialInfo == null || !EagerLoadSettings.Celestial) { return; }
+                    celestialInfo.CalculateCelestialTime(latitude.DecimalDegree, longitude.DecimalDegree, geoDate);
                     break;
                 case "UTM":
-                    if (!EagerLoadSettings.UTM_MGRS) { return; }
-                    this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
+                    if (utm == null || !EagerLoadSettings.UTM_MGRS) { return; }
+                    utm.ToUTM(latitude.ToDouble(), longitude.ToDouble(), utm);
                     break;
                 case "utm":
                     //Adjust case and notify of change. 
@@ -658,23 +658,23 @@ namespace CoordinateSharp
                     propName = "UTM";
                     break;
                 case "MGRS":
-                    if (!EagerLoadSettings.UTM_MGRS) { return; }
-                    this.MGRS.ToMGRS(this.utm);
+                    if (MGRS == null || !EagerLoadSettings.UTM_MGRS) { return; }
+                    MGRS.ToMGRS(utm);
                     break;
                 case "Cartesian":
-                    if (!EagerLoadSettings.Cartesian) { return; }
+                    if (Cartesian == null || !EagerLoadSettings.Cartesian) { return; }
                     Cartesian.ToCartesian(this);
                     break;
                 case "ECEF":
-                    if (!EagerLoadSettings.ECEF) { return; }
+                    if (ECEF == null || !EagerLoadSettings.ECEF) { return; }
                     ECEF.ToECEF(this);
                     break;
                 default:
                     break;
             }
-            if (this.PropertyChanged != null)
+            if (PropertyChanged != null)
             {                         
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
 
