@@ -1144,7 +1144,18 @@ namespace CoordinateSharp
             UTM_MGRS = true;
             Cartesian = true;
         }
-  
+
+        /// <summary>
+        /// Create an EagerLoad object will all options on or off
+        /// </summary>
+        /// <param name="isOn">Turns EagerLoad on or off</param>
+        public EagerLoad(bool isOn)
+        {
+            Celestial = isOn;
+            UTM_MGRS = isOn;
+            Cartesian = isOn;
+        }
+
         /// <summary>
         /// Eager load celestial information.
         /// </summary>
