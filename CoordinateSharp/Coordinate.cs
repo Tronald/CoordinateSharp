@@ -596,10 +596,12 @@ namespace CoordinateSharp
             switch (propName)
             {
                 case "CelestialInfo":
-                    this.celestialInfo.CalculateCelestialTime(this.latitude.DecimalDegree, this.longitude.DecimalDegree, this.geoDate);
+                    if(!EagerLoadSettings.Celestial || celestialInfo == null) { return; } //Prevent Null Exceptions and calls while eagerloading is off
+                    celestialInfo.CalculateCelestialTime(latitude.DecimalDegree, longitude.DecimalDegree, geoDate);
                     break;
                 case "UTM":
-                    this.utm.ToUTM(this.latitude.ToDouble(), this.longitude.ToDouble(), this.utm);
+                    if (!EagerLoadSettings.UTM_MGRS || UTM == null) { return; } 
+                    utm.ToUTM(latitude.ToDouble(), longitude.ToDouble(), utm);
                     break;
                 case "utm":
                     //Adjust case and notify of change. 
@@ -607,17 +609,19 @@ namespace CoordinateSharp
                     propName = "UTM";
                     break;
                 case "MGRS":
-                    this.MGRS.ToMGRS(this.utm);
+                    if (!EagerLoadSettings.UTM_MGRS || MGRS == null) { return; }
+                    MGRS.ToMGRS(utm);
                     break;
                 case "Cartesian":
+                    if (!EagerLoadSettings.Cartesian || Cartesian == null) { return; }
                     Cartesian.ToCartesian(this);
                     break;
                 default:
                     break;
             }
-            if (this.PropertyChanged != null)
+            if (PropertyChanged != null)
             {                         
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
 
@@ -1425,52 +1429,52 @@ namespace CoordinateSharp
             switch (p)
             {
                 case PropertyTypes.DecimalDegree:
-                    this.NotifyPropertyChanged("DecimalDegree");
-                    this.NotifyPropertyChanged("DecimalMinute");
-                    this.NotifyPropertyChanged("Degrees");
-                    this.NotifyPropertyChanged("Minutes");
-                    this.NotifyPropertyChanged("Seconds");
-                    this.NotifyPropertyChanged("Position");
+                    NotifyPropertyChanged("DecimalDegree");
+                    NotifyPropertyChanged("DecimalMinute");
+                    NotifyPropertyChanged("Degrees");
+                    NotifyPropertyChanged("Minutes");
+                    NotifyPropertyChanged("Seconds");
+                    NotifyPropertyChanged("Position");
                     break;
                 case PropertyTypes.DecimalMinute:
-                    this.NotifyPropertyChanged("DecimalDegree");
-                    this.NotifyPropertyChanged("DecimalMinute");
-                    this.NotifyPropertyChanged("Minutes");
-                    this.NotifyPropertyChanged("Seconds");
+                    NotifyPropertyChanged("DecimalDegree");
+                    NotifyPropertyChanged("DecimalMinute");
+                    NotifyPropertyChanged("Minutes");
+                    NotifyPropertyChanged("Seconds");
                     break;
                 case PropertyTypes.Degree:
-                    this.NotifyPropertyChanged("DecimalDegree");
-                    this.NotifyPropertyChanged("Degree");
+                    NotifyPropertyChanged("DecimalDegree");
+                    NotifyPropertyChanged("Degree");
                     break;
                 case PropertyTypes.Minute:
-                    this.NotifyPropertyChanged("DecimalDegree");
-                    this.NotifyPropertyChanged("DecimalMinute");
-                    this.NotifyPropertyChanged("Minutes");
+                    NotifyPropertyChanged("DecimalDegree");
+                    NotifyPropertyChanged("DecimalMinute");
+                    NotifyPropertyChanged("Minutes");
                     break;
                 case PropertyTypes.Position:
-                    this.NotifyPropertyChanged("DecimalDegree");
-                    this.NotifyPropertyChanged("Position");
+                    NotifyPropertyChanged("DecimalDegree");
+                    NotifyPropertyChanged("Position");
                     break;
                 case PropertyTypes.Second:
-                    this.NotifyPropertyChanged("DecimalDegree");
-                    this.NotifyPropertyChanged("DecimalMinute");
-                    this.NotifyPropertyChanged("Seconds");
+                    NotifyPropertyChanged("DecimalDegree");
+                    NotifyPropertyChanged("DecimalMinute");
+                    NotifyPropertyChanged("Seconds");
                     break;
                 default:
-                    this.NotifyPropertyChanged("DecimalDegree");
-                    this.NotifyPropertyChanged("DecimalMinute");
-                    this.NotifyPropertyChanged("Degrees");
-                    this.NotifyPropertyChanged("Minutes");
-                    this.NotifyPropertyChanged("Seconds");
-                    this.NotifyPropertyChanged("Position");
+                    NotifyPropertyChanged("DecimalDegree");
+                    NotifyPropertyChanged("DecimalMinute");
+                    NotifyPropertyChanged("Degrees");
+                    NotifyPropertyChanged("Minutes");
+                    NotifyPropertyChanged("Seconds");
+                    NotifyPropertyChanged("Position");
                     break;
             }
-            this.NotifyPropertyChanged("Display");
-            this.Parent.NotifyPropertyChanged("Display");
-            this.Parent.NotifyPropertyChanged("CelestialInfo");
-            this.Parent.NotifyPropertyChanged("UTM");
-            this.Parent.NotifyPropertyChanged("MGRS");
-            this.Parent.NotifyPropertyChanged("Cartesian");
+            NotifyPropertyChanged("Display");
+            Parent.NotifyPropertyChanged("Display");
+            Parent.NotifyPropertyChanged("CelestialInfo");
+            Parent.NotifyPropertyChanged("UTM");
+            Parent.NotifyPropertyChanged("MGRS");
+            Parent.NotifyPropertyChanged("Cartesian");
 
         }
 
