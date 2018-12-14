@@ -10,6 +10,7 @@ using System.IO;
 using CoordinateSharp;
 using System.Drawing;
 using System.Diagnostics;
+using System.Reflection;
 namespace CoordinateSharp_TestProj
 {
     class Program
@@ -28,36 +29,41 @@ namespace CoordinateSharp_TestProj
                 Console.WriteLine("5. Distance Initialization Tests");
                 Console.WriteLine("6. Benchmarks");
                 Console.WriteLine("7. GeoFence Tests");
-                Console.WriteLine("8. ..Exit");
+                Console.WriteLine("8. EagerLoading Tests");
+                Console.WriteLine("9. ..Exit");
                 Console.WriteLine();
                 Console.Write("Select a Test Number: ");
-                string t = Console.ReadLine();
+                ConsoleKeyInfo t = Console.ReadKey();
+                Console.WriteLine();
                 Console.WriteLine("*********************");
                 Console.WriteLine();
-                switch(t)
+                switch(t.Key)
                 {
-                    case "1":
-                        Coordinate_Initialization_Tests();
+                    case ConsoleKey.D1:                     
+                        Coordinate_Initialization_Tests();                       
                         break;
-                    case "2":
+                    case ConsoleKey.D2:
                         Coordinate_Convsersions_Tests();
                         break;
-                    case "3":
+                    case ConsoleKey.D3:
                         Coordinate_Parsers_Tests();
                         break;
-                    case "4":
+                    case ConsoleKey.D4:
                         Celestial_Tests();
                         break;
-                    case "5":
+                    case ConsoleKey.D5:
                         Distance_Initialization_Tests();
                         break;
-                    case "6":
+                    case ConsoleKey.D6:
                         Benchmark_Tests();
                         break;
-                    case "7":
+                    case ConsoleKey.D7:
                         GeoFence_Tests();
                         break;
-                    case "8":                
+                    case ConsoleKey.D8:
+                        EagerLoading_Tests();
+                        break;
+                    case ConsoleKey.D9:
                         return;
                     default:
                         Console.WriteLine();                      
@@ -725,6 +731,99 @@ namespace CoordinateSharp_TestProj
 
             Write_Pass("Out of Range of Polyline: ", pass);
 
+        }
+        static void EagerLoading_Tests()
+        {
+            EagerLoad e = new EagerLoad(false);
+            Coordinate c = new Coordinate(45, 75, new DateTime(2008,1,2),e);
+            //Check to make sure items don't initialize
+            bool pass = true;
+            if (c.CelestialInfo != null) { pass = false; }
+            if (c.UTM != null) { pass = false; }
+            if (c.MGRS != null) { pass = false; }
+            if (c.Cartesian != null) { pass = false; }
+            Write_Pass("Null Properties (Celestial, UTM, MGRS, Cartesian)", pass);
+
+            //Check Load_Calls
+            pass = true;
+            c.LoadCelestialInfo();
+            if (c.CelestialInfo == null) { pass = false; }
+            c.LoadUTM_MGRS_Info();
+            if (c.UTM == null) { pass = false; }
+            if (c.MGRS == null) { pass = false; }
+            c.LoadCartesianInfo();
+            if (c.Cartesian == null) { pass = false; }
+            Write_Pass("Load Calls (Celestial, UTM, MGRS, Cartesian)", pass);
+
+            if (pass)
+            {
+                Celestial cel = c.CelestialInfo;
+                MilitaryGridReferenceSystem mgrs = c.MGRS;
+                UniversalTransverseMercator utm = c.UTM;
+                Cartesian cart = c.Cartesian;
+
+                c.Latitude.DecimalDegree = -45;
+                c.Longitude.DecimalDegree = -75;
+
+                //Properties should not change.
+                if(!ReflectiveEquals(c.CelestialInfo, cel)){ pass = false; }
+                if (!ReflectiveEquals(c.MGRS, mgrs)){ pass = false; }
+                if (!ReflectiveEquals(c.UTM, utm)){ pass = false; }
+                if (!ReflectiveEquals(c.Cartesian, cart)){ pass = false; }
+                //Properties should remain equal as no load calls were made
+                Write_Pass("Property State Hold (Celestial, UTM, MGRS, Cartesian)", pass);
+
+                //Properties should change
+                pass = true;
+                c.LoadCelestialInfo();
+                c.LoadCartesianInfo();
+                c.LoadUTM_MGRS_Info();
+                if (ReflectiveEquals(c.CelestialInfo, cel)) { pass = false; }
+                if (ReflectiveEquals(c.MGRS, mgrs)) { pass = false; }
+                if (ReflectiveEquals(c.UTM, utm)) { pass = false; }
+                if (ReflectiveEquals(c.Cartesian, cart)) { pass = false; }
+                //Properties should not be equal as chages have been made
+                Write_Pass("Property State Change (Celestial, UTM, MGRS, Cartesian)", pass);
+
+            }
+            else
+            {
+                //Passes auto fail has properties didn't load when called.
+
+                Write_Pass("Property State Hold (Celestial, UTM, MGRS, Cartesian)", false);
+                Write_Pass("Property State Change (Celestial, UTM, MGRS, Cartesian)", false);
+
+            }
+        }
+        public static bool ReflectiveEquals(object first, object second)
+        {
+            if (first == null && second == null)
+            {
+                return true;
+            }
+            if (first == null || second == null)
+            {
+                return false;
+            }
+            Type firstType = first.GetType();
+            if (second.GetType() != firstType)
+            {
+                return false; // Or throw an exception
+            }
+            // This will only use public properties. Is that enough?
+            foreach (PropertyInfo propertyInfo in firstType.GetProperties())
+            {
+                if (propertyInfo.CanRead)
+                {
+                    object firstValue = propertyInfo.GetValue(first, null);
+                    object secondValue = propertyInfo.GetValue(second, null);
+                    if (!object.Equals(firstValue, secondValue))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
         static void Write_Pass(string method, bool pass)
         {
