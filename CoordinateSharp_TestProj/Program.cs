@@ -794,6 +794,14 @@ namespace CoordinateSharp_TestProj
                 Write_Pass("Property State Change (Celestial, UTM, MGRS, Cartesian)", false);
 
             }
+
+            //EagerLoaded Flags Test
+            EagerLoadType et = EagerLoadType.Cartesian | EagerLoadType.Celestial | EagerLoadType.Cartesian;
+            EagerLoad eg = new EagerLoad(et);
+            pass = true;
+            if(eg.Cartesian==false || eg.Celestial==false || eg.UTM_MGRS == false) { pass = false; }
+            if (EagerLoad.Create(et).Cartesian == false || EagerLoad.Create(et).Celestial == false || EagerLoad.Create(et).UTM_MGRS == false) { pass = false; }
+            Write_Pass("Flags Test", pass);
         }
         public static bool ReflectiveEquals(object first, object second)
         {
