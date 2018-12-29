@@ -30,14 +30,15 @@ namespace CoordinateSharp
             if (d.Count() < 2 || d.Count() > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             if (digraphLettersE.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             if (digraphLettersN.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[1].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
-            this.latZone = latz;
-            this.longZone = longz;
-            this.digraph = d;
-            this.easting = e;
-            this.northing = n;
+            latZone = latz;
+            longZone = longz;
+            digraph = d;
+            easting = e;
+            northing = n;
             //WGS84
-            this.equatorialRadius = 6378137.0;
-            this.inverseFlattening = 298.257223563;
+            equatorialRadius = 6378137.0;
+            inverseFlattening = 298.257223563;
+          
         }
         /// <summary>
         /// Create an MGRS object with custom datum
@@ -59,14 +60,14 @@ namespace CoordinateSharp
             if (d.Count() < 2 || d.Count() > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             if (digraphLettersE.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             if (digraphLettersN.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[1].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
-            this.latZone = latz;
-            this.longZone = longz;
-            this.digraph = d;
-            this.easting = e;
-            this.northing = n;
+            latZone = latz;
+            longZone = longz;
+            digraph = d;
+            easting = e;
+            northing = n;
           
-            this.equatorialRadius = rad;
-            this.inverseFlattening = flt;
+            equatorialRadius = rad;
+            inverseFlattening = flt;
         }
 
         private double equatorialRadius;
@@ -76,6 +77,8 @@ namespace CoordinateSharp
         private double easting;
         private double northing;
         private string digraph;
+
+        private bool withinCoordinateSystemBounds=true;
 
         private bool Verify_Lat_Zone(string l)
         {
@@ -92,7 +95,7 @@ namespace CoordinateSharp
         /// </summary>
         public string LatZone
         {
-            get { return this.latZone; }
+            get { return latZone; }
             
         }
         /// <summary>
@@ -100,7 +103,7 @@ namespace CoordinateSharp
         /// </summary>
         public int LongZone
         {
-            get { return this.longZone; }
+            get { return longZone; }
            
         }
         /// <summary>
@@ -108,7 +111,7 @@ namespace CoordinateSharp
         /// </summary>
         public double Easting
         {
-            get { return this.easting; }
+            get { return easting; }
           
         }
         /// <summary>
@@ -116,7 +119,7 @@ namespace CoordinateSharp
         /// </summary>
         public double Northing
         {
-            get { return this.northing; }
+            get { return northing; }
            
         }
         /// <summary>
@@ -124,8 +127,17 @@ namespace CoordinateSharp
         /// </summary>
         public string Digraph
         {
-            get { return this.digraph; }
+            get { return digraph; }
         }
+       
+        /// <summary>
+        /// Is the MGRS conversion within the coordinate system's accurate boundaries.
+        /// </summary>
+        public bool WithinCoordinateSystemBounds
+        {
+            get { return withinCoordinateSystemBounds; }
+        }
+    
 
         internal MilitaryGridReferenceSystem(UniversalTransverseMercator utm)
         {
@@ -138,9 +150,9 @@ namespace CoordinateSharp
             string digraph1 = digraphs.getDigraph1(utm.LongZone, utm.Easting);
             string digraph2 = digraphs.getDigraph2(utm.LongZone, utm.Northing);
 
-            this.digraph = digraph1 + digraph2;
-            this.latZone = utm.LatZone;
-            this.longZone = utm.LongZone;
+            digraph = digraph1 + digraph2;
+            latZone = utm.LatZone;
+            longZone = utm.LongZone;
 
             //String easting = String.valueOf((int)_easting);
             string e =  ((int)utm.Easting).ToString();
@@ -150,7 +162,7 @@ namespace CoordinateSharp
             }
             e = e.Substring(e.Length - 5);
            
-            this.easting = Convert.ToInt32(e);
+            easting = Convert.ToInt32(e);
             
             string n =  ((int)utm.Northing).ToString();
             if (n.Length < 5)
@@ -159,10 +171,12 @@ namespace CoordinateSharp
             }
             n = n.Substring(n.Length - 5);
            
-            this.northing = Convert.ToInt32(n);
-            this.equatorialRadius = utm.equatorial_radius;
-            this.inverseFlattening = utm.inverse_flattening;
+            northing = Convert.ToInt32(n);
+            equatorialRadius = utm.equatorial_radius;
+            inverseFlattening = utm.inverse_flattening;
+            withinCoordinateSystemBounds = utm.WithinCoordinateSystemBounds;
         }
+       
         /// <summary>
         /// Creates a Coordinate object from an MGRS/NATO UTM Coordinate
         /// </summary>
@@ -249,13 +263,15 @@ namespace CoordinateSharp
           
             return c;
         }
+       
         /// <summary>
         /// MGRS Default String Format
         /// </summary>
         /// <returns>MGRS Formatted Coordinate String</returns>
         public override string ToString()
         {
-            return this.longZone.ToString() + this.LatZone + " " + this.digraph + " " + ((int)this.easting).ToString("00000") + " " + ((int)this.northing).ToString("00000");
+            if (!withinCoordinateSystemBounds) { return ""; }//MGRS Coordinate is outside its reliable boundaries. Return empty.
+            return longZone.ToString() + LatZone + " " + digraph + " " + ((int)easting).ToString("00000") + " " + ((int)northing).ToString("00000");
         }
         /// <summary>
         /// Property changed event
@@ -267,7 +283,7 @@ namespace CoordinateSharp
         /// <param name="propName">Property name</param>
         public void NotifyPropertyChanged(string propName)
         {
-            if (this.PropertyChanged != null)
+            if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }

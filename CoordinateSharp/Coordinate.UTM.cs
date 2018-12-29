@@ -70,6 +70,8 @@ namespace CoordinateSharp
         private double easting;
         private double northing;
 
+        private bool withinCoordinateSystemBounds = true;
+
         /// <summary>
         /// UTM Zone Letter
         /// </summary>
@@ -141,7 +143,15 @@ namespace CoordinateSharp
         {
             get { return this.inverse_flattening; }
         }
-      
+
+        /// <summary>
+        /// Is the MGRS conversion within the coordinate system's accurate boundaries.
+        /// </summary>
+        public bool WithinCoordinateSystemBounds
+        {
+            get { return withinCoordinateSystemBounds; }
+        }
+
         /// <summary>
         /// Constructs a UTM object based off DD Lat/Long
         /// </summary>
@@ -205,7 +215,8 @@ namespace CoordinateSharp
             easting = e;
             northing = n;
 
-            coordinate = c;        
+            coordinate = c;
+            if (c.Latitude.DecimalDegree <= -80 || c.Latitude.DecimalDegree >= 84) { withinCoordinateSystemBounds = false; }
         }
 
         /// <summary>
@@ -333,6 +344,8 @@ namespace CoordinateSharp
             utm.longZone = zone;
             utm.easting = easting;
             utm.northing = northing;
+
+            if(lat<=-80 || lat >= 84) { withinCoordinateSystemBounds = false; }
         }
        
         /// <summary>
@@ -341,6 +354,7 @@ namespace CoordinateSharp
         /// <returns>UTM Formatted Coordinate String</returns>
         public override string ToString()
         {
+            if (!withinCoordinateSystemBounds) { return ""; }//MGRS Coordinate is outside its reliable boundaries. Return empty.
             return this.longZone.ToString() + this.LatZone + " " + (int)this.easting + "mE " + (int)this.northing + "mN";
         }
        
