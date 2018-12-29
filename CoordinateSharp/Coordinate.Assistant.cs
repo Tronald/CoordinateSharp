@@ -1146,7 +1146,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Create an EagerLoad object will all options on or off
+        /// Create an EagerLoad object with all options on or off
         /// </summary>
         /// <param name="isOn">Turns EagerLoad on or off</param>
         public EagerLoad(bool isOn)
@@ -1156,6 +1156,40 @@ namespace CoordinateSharp
             Cartesian = isOn;
         }
 
+        /// <summary>
+        /// Create an EagerLoad object with only the specified flag options turned on.
+        /// </summary>
+        /// <param name="et">EagerLoadType</param>
+        public EagerLoad(EagerLoadType et)
+        {
+            Cartesian = false;
+            Celestial = false;
+            UTM_MGRS = false;
+            if (et.HasFlag(EagerLoadType.Cartesian))
+            {
+                Cartesian = true;
+            }
+            if(et.HasFlag(EagerLoadType.Celestial))
+            {
+                Celestial = true;
+            }
+            if(et.HasFlag(EagerLoadType.Celestial))
+            {
+                UTM_MGRS = true;
+            }
+        }
+
+        /// <summary>
+        /// Creates an EagerLoad object. Only the specified flags will be set to EagerLoad.
+        /// </summary>
+        /// <param name="et">EagerLoadType</param>
+        /// <returns>EagerLoad</returns>
+        public static EagerLoad Create(EagerLoadType et)
+        {
+            EagerLoad el = new EagerLoad(et);
+            return el;
+        }
+        
         /// <summary>
         /// Eager load celestial information.
         /// </summary>
@@ -1169,6 +1203,27 @@ namespace CoordinateSharp
         /// </summary>
         public bool Cartesian { get; set; }
     }
+    /// <summary>
+    /// EagerLoad Enumerator
+    /// </summary>
+    [Serializable]
+    [Flags]
+    public enum EagerLoadType
+    {
+        /// <summary>
+        /// UTM and MGRS
+        /// </summary>
+        UTM_MGRS,
+        /// <summary>
+        /// Celestial
+        /// </summary>
+        Celestial,
+        /// <summary>
+        /// Cartesian
+        /// </summary>
+        Cartesian
+    }
+
     /// <summary>
     /// Contains distance values between two coordinates.
     /// </summary>
