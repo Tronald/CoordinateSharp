@@ -3,14 +3,16 @@
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.1.3.10</Version>
+    <Version>1.1.4.1</Version>
     <Authors>Justin Gielski</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/LICENSE</PackageLicenseUrl>
     <Copyright>Copyright 2017</Copyright>
     <Description>A simple library designed to assist with geographic coordinate formatting and location based celestial information.</Description>
-    <PackageReleaseNotes>Fixes FormatException that was occurring during Solar Eclipse calculations on servers under heavy workload.</PackageReleaseNotes>
+    <PackageReleaseNotes>-Fixes the elusive FormatException that was occurring during Solar Eclipse calculations on servers under heavy workload. 
+-Adds ability to determine if UTM/MGRS conversion from Geodetic was outside the systems intended boundaries.
+-Add ability to create an EagerLoading object by passing flag enums to it's constructor.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/ICON.png</PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>

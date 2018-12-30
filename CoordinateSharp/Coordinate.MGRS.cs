@@ -131,7 +131,7 @@ namespace CoordinateSharp
         }
        
         /// <summary>
-        /// Is the MGRS conversion within the coordinate system's accurate boundaries.
+        /// Is MGRS conversion within the coordinate system's accurate boundaries after conversion from Lat/Long.
         /// </summary>
         public bool WithinCoordinateSystemBounds
         {
@@ -174,6 +174,7 @@ namespace CoordinateSharp
             northing = Convert.ToInt32(n);
             equatorialRadius = utm.equatorial_radius;
             inverseFlattening = utm.inverse_flattening;
+
             withinCoordinateSystemBounds = utm.WithinCoordinateSystemBounds;
         }
        

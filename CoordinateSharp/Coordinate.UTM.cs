@@ -145,7 +145,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Is the MGRS conversion within the coordinate system's accurate boundaries.
+        /// Is the UTM conversion within the coordinate system's accurate boundaries after conversion from Lat/Long.
         /// </summary>
         public bool WithinCoordinateSystemBounds
         {
@@ -217,6 +217,7 @@ namespace CoordinateSharp
 
             coordinate = c;
             if (c.Latitude.DecimalDegree <= -80 || c.Latitude.DecimalDegree >= 84) { withinCoordinateSystemBounds = false; }
+            else { withinCoordinateSystemBounds = true; }
         }
 
         /// <summary>
@@ -344,8 +345,9 @@ namespace CoordinateSharp
             utm.longZone = zone;
             utm.easting = easting;
             utm.northing = northing;
-
+            
             if(lat<=-80 || lat >= 84) { withinCoordinateSystemBounds = false; }
+            else { withinCoordinateSystemBounds = true; }
         }
        
         /// <summary>
