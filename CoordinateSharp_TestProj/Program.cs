@@ -414,11 +414,11 @@ namespace CoordinateSharp_TestProj
             bool p = true;
             Coordinate cr = new Coordinate(-79.99, 0);
             if(!cr.UTM.WithinCoordinateSystemBounds || !cr.MGRS.WithinCoordinateSystemBounds) { p = false; }
-            cr = new Coordinate(-80, 0);
+            cr.Latitude.DecimalDegree = -80;
             if (cr.UTM.WithinCoordinateSystemBounds || cr.MGRS.WithinCoordinateSystemBounds) { p = false; }
-            cr = new Coordinate(83.99, 0);
+            cr.Latitude.DecimalDegree = 83.99;
             if (!cr.UTM.WithinCoordinateSystemBounds || !cr.MGRS.WithinCoordinateSystemBounds) { p = false; }
-            cr = new Coordinate(84, 0);
+            cr.Latitude.DecimalDegree = 84;
             if (cr.UTM.WithinCoordinateSystemBounds || cr.MGRS.WithinCoordinateSystemBounds) { p = false; }
             Write_Pass("UTM MGRS BOUNDARY CHECK", p);
         }
