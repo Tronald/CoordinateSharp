@@ -27,8 +27,6 @@ Please make code readable and easy to understand. Comment on any obscure object 
 
 Developers are encouraged to write and share tests for changes made. Please use the automated testing project provided with the solution to verify changes. Forks will be tested both manually and automated prior to merging.
 
-NOTE: Conversion Test PASS # 4 is currently failing. This is due to an incorrect MGRS conversion in a circumpolar region. An issue has been raised, and you may ignore that PASS at this time.
-
 ### Pull Requests
 
 It is asked that you are clear in specifying **WHAT** you changed and **WHY**. With that said there is no formal template for pull requests.
