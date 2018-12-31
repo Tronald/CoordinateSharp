@@ -26,7 +26,7 @@ namespace CoordinateSharp
         private static  double[] c2 = new double[41];
         private static  double[] c3 = new double[41];
         private static  double[] c4 = new double[41];
-        private static  List<string> values = new List<string>(); //Used to store values that would otherwise be printer. Covert to class later.
+       // private static  List<string> values = new List<string>(); //Used to store values that would otherwise be printer. Covert to class later.
        
         public static List<List<string>> CalculateSolarEclipse(DateTime d, double latRad, double longRad)
         {
@@ -70,10 +70,8 @@ namespace CoordinateSharp
                 // Is there an event...
                 if (mid[39] > 0)
                 {
-                    values = new List<string>();
-                    
+                    List<string> values = new List<string>();             
                     values.Add(GetDate(el, mid));
-
                     if (mid[39] == 1)
                     {
                         values.Add("P");
@@ -156,6 +154,7 @@ namespace CoordinateSharp
                     {
                         values.Add("-");
                     }
+                   
                     events.Add(values);
                 }
             }
