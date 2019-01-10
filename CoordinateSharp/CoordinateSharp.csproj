@@ -3,34 +3,31 @@
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.1.4.1</Version>
+    <Version>1.1.4.2</Version>
     <Authors>Justin Gielski</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/LICENSE</PackageLicenseUrl>
     <Copyright>Copyright 2017</Copyright>
-    <Description>A simple library designed to assist with geographic coordinate formatting and location based celestial information.</Description>
-    <PackageReleaseNotes>-Fixes the elusive FormatException that was occurring during Solar Eclipse calculations on servers under heavy workload. 
--Adds ability to determine if UTM/MGRS conversion from Geodetic was outside the systems intended boundaries.
--Add ability to create an EagerLoading object by passing flag enums to it's constructor.</PackageReleaseNotes>
+    <Description></Description>
+    <PackageReleaseNotes>Fixes DebugType overflow buffer bug occurring in certain environments.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/ICON.png</PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
+    <AssemblyVersion>1.1.4.2</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
     <DocumentationFile>bin\Release\net40\CoordinateSharp.xml</DocumentationFile>
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard1.3\CoordinateSharp.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard1.3\CoordinateSharp.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.4|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard1.4\CoordinateSharp.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard1.4\CoordinateSharp.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\CoordinateSharp.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.0\CoordinateSharp.xml</DocumentationFile>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net40|AnyCPU'">
