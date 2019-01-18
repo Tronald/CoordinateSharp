@@ -12,7 +12,7 @@ Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 ### Like CoordinateSharp? Tell us about it or please consider donating.
 
 This library was built to help other developers. Please make the time and effort worth while by [telling us what you are using it for](https://github.com/Tronald/CoordinateSharp/issues/79). If you are unable to share your experience and use case, please consider donating.
-
+</br></br>
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=S78DZZX5KMVUS)
 </br></br>
 ### Prerequisites
