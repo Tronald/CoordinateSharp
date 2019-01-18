@@ -8,7 +8,7 @@ The ability to calculate various pieces of celestial information (sunset, moon i
 CAUTION: v1.1.4.1 makes slight changes to the UTM and MGRS `ToString()` behavior. If a conversion from Lat/Long to UTM/MGRS is made, and the conversion is outside the limitations of the UTM and MGRS systems (below 80 S or above 84 N), `ToString()` will return an empty `string`. Access to the UTM/MGRS individual properties is still available if needed, but these systems should not be used if conversion is outside the system's limitations.
 
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
-</br></br>
+
 ### Like CoordinateSharp? Tell us about it or please consider donating.
 
 This library was built to help other developers. Please make the time and effort worth while by [telling us what you are using it for](https://github.com/Tronald/CoordinateSharp/issues/79). If you are unable to share your experience and use case, please consider donating.
