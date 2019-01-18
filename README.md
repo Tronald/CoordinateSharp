@@ -9,7 +9,9 @@ CAUTION: v1.1.4.1 makes slight changes to the UTM and MGRS `ToString()` behavior
 
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 
-### Like CoordinateSharp? Please consider donating.
+### Like CoordinateSharp? Tell us about it or please consider donating.
+
+This library was built to help other developers. Please make the time and effort worth while by telling us what you are using it for. If you are unable to share your experience and use case, please consider donating.
 
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=S78DZZX5KMVUS)
 
