@@ -1165,6 +1165,7 @@ namespace CoordinateSharp
             Cartesian = false;
             Celestial = false;
             UTM_MGRS = false;
+
             if (et.HasFlag(EagerLoadType.Cartesian))
             {
                 Cartesian = true;
@@ -1213,15 +1214,15 @@ namespace CoordinateSharp
         /// <summary>
         /// UTM and MGRS
         /// </summary>
-        UTM_MGRS,
+        UTM_MGRS=1,
         /// <summary>
         /// Celestial
         /// </summary>
-        Celestial,
+        Celestial=2,
         /// <summary>
         /// Cartesian
         /// </summary>
-        Cartesian
+        Cartesian=4
     }
 
     /// <summary>

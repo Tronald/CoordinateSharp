@@ -808,11 +808,22 @@ namespace CoordinateSharp_TestProj
             }
 
             //EagerLoaded Flags Test
-            EagerLoadType et = EagerLoadType.Cartesian | EagerLoadType.Celestial | EagerLoadType.Cartesian;
-            EagerLoad eg = new EagerLoad(et);
+          
+            EagerLoad eg = new EagerLoad(EagerLoadType.Cartesian | EagerLoadType.Celestial | EagerLoadType.UTM_MGRS);
             pass = true;
             if(eg.Cartesian==false || eg.Celestial==false || eg.UTM_MGRS == false) { pass = false; }
-            if (EagerLoad.Create(et).Cartesian == false || EagerLoad.Create(et).Celestial == false || EagerLoad.Create(et).UTM_MGRS == false) { pass = false; }
+            eg = new EagerLoad(EagerLoadType.Celestial);
+            if (eg.Cartesian==true || eg.Celestial==false || eg.UTM_MGRS == true) { pass = false; }
+            eg = new EagerLoad(EagerLoadType.Cartesian);
+            if (eg.Cartesian == false|| eg.Celestial == true || eg.UTM_MGRS == true) { pass = false; }
+            eg = new EagerLoad(EagerLoadType.UTM_MGRS);
+            if (eg.Cartesian == true|| eg.Celestial == true || eg.UTM_MGRS == false) { pass = false; }
+            eg = new EagerLoad(EagerLoadType.UTM_MGRS | EagerLoadType.Celestial);
+            if (eg.Cartesian == true || eg.Celestial == false|| eg.UTM_MGRS == false) { pass = false; }
+            eg = new EagerLoad(EagerLoadType.Cartesian | EagerLoadType.Celestial);
+            if (eg.Cartesian == false || eg.Celestial == false || eg.UTM_MGRS == true) { pass = false; }
+            eg = new EagerLoad(EagerLoadType.UTM_MGRS | EagerLoadType.Cartesian);
+            if (eg.Cartesian == false|| eg.Celestial == true|| eg.UTM_MGRS == false) { pass = false; }
             Write_Pass("Flags Test", pass);
         }
         public static bool ReflectiveEquals(object first, object second)
