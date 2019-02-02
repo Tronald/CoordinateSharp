@@ -1173,7 +1173,7 @@ namespace CoordinateSharp
             {
                 Celestial = true;
             }
-            if(et.HasFlag(EagerLoadType.Celestial))
+            if(et.HasFlag(EagerLoadType.UTM_MGRS))
             {
                 UTM_MGRS = true;
             }
