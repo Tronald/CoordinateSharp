@@ -277,19 +277,19 @@ namespace CoordinateSharp
         /// </remarks>
         public DateTime GeoDate
         {
-            get { return this.geoDate; }
+            get { return geoDate; }
             set
             {
-                if (this.geoDate != value)
+                if (geoDate != value)
                 {
-                    this.geoDate = value;
+                    geoDate = value;
                     if (EagerLoadSettings.Celestial)
                     {
-                        celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
-                        this.NotifyPropertyChanged("CelestialInfo");
+                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate);
+                        NotifyPropertyChanged("CelestialInfo");
                     }
                    
-                    this.NotifyPropertyChanged("GeoDate");                                    
+                    NotifyPropertyChanged("GeoDate");                                    
                 }
             }
         }

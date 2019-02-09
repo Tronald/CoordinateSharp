@@ -10,7 +10,7 @@ namespace CoordinateSharp
     /// This class can calculate various pieces of solar and lunar data, based on location and date
     /// </remarks>
     [Serializable]
-    public class Celestial : INotifyPropertyChanged
+    public class Celestial
     {
 
         //When as rise or a set does not occur, the DateTime will return null
@@ -117,7 +117,11 @@ namespace CoordinateSharp
             {
                 celPre.SunCondition, cel.SunCondition, celPost.SunCondition
             };
-            cel.SunCondition = Celestial.GetStatus(cel.SunRise, cel.SunSet, cels);            
+            cel.SunCondition = Celestial.GetStatus(cel.SunRise, cel.SunSet, cels);
+
+            //Load IsUp values based on local time with populated Celestial
+            Celestial.Calculate_Celestial_IsUp_Booleans(d, cel);
+
             return cel;
         }
 
@@ -144,8 +148,8 @@ namespace CoordinateSharp
         private void Local_Convert(Coordinate c, double offset)
         {
             //Find new lunar set rise times
-            if (this.MoonSet.HasValue) { this.MoonSet = this.MoonSet.Value.AddHours(offset); }
-            if (this.MoonRise.HasValue) { this.MoonRise = this.MoonRise.Value.AddHours(offset); }
+            if (MoonSet.HasValue) { MoonSet = MoonSet.Value.AddHours(offset); }
+            if (MoonRise.HasValue) { MoonRise = MoonRise.Value.AddHours(offset); }
             //Perigee
             this.Perigee.ConvertTo_Local_Time(offset);
             //Apogee
@@ -154,8 +158,8 @@ namespace CoordinateSharp
             this.LunarEclipse.ConvertTo_LocalTime(offset);
 
             ////Solar
-            if (this.SunSet.HasValue) { this.SunSet = this.SunSet.Value.AddHours(offset); }
-            if (this.SunRise.HasValue) { this.SunRise = this.SunRise.Value.AddHours(offset); }
+            if (SunSet.HasValue) { SunSet = SunSet.Value.AddHours(offset); }
+            if (SunRise.HasValue) { SunRise = SunRise.Value.AddHours(offset); }
             this.AdditionalSolarTimes.Convert_To_Local_Time(offset);
 
             //Eclipse
@@ -269,7 +273,18 @@ namespace CoordinateSharp
         /// Moon's condition based on the provided date.
         /// </summary>
         public CelestialStatus MoonCondition { get; set; }
-        
+
+       
+        /// <summary>
+        /// Determine if the sun is currently up, based on sunset and sunrise time at the provided location and date.
+        /// </summary>
+        public bool IsSunUp{ get; set; }
+
+        /// <summary>
+        /// Determine if the moon is currently up, based on moonset and moonrise time at the provided location and date.
+        /// </summary>
+        public bool IsMoonUp { get; set; }
+
 
         /// <summary>
         /// Moon ilumination details based on the provided date.
@@ -331,6 +346,8 @@ namespace CoordinateSharp
             this.Perigee = MoonCalc.GetPerigeeEvents(date);
             this.Apogee = MoonCalc.GetApogeeEvents(date);
 
+            Celestial.Calculate_Celestial_IsUp_Booleans(date, this);
+
         }
         /// <summary>
         /// Calculate celestial data based on lat/long and date.
@@ -355,8 +372,11 @@ namespace CoordinateSharp
             c.Perigee = MoonCalc.GetPerigeeEvents(date);
             c.Apogee = MoonCalc.GetApogeeEvents(date);
 
+            Celestial.Calculate_Celestial_IsUp_Booleans(date, c);
+
             return c;
         }
+
         /// <summary>
         /// Calculate sun data based on lat/long and date.
         /// </summary>
@@ -397,6 +417,7 @@ namespace CoordinateSharp
 
             return c;
         }
+
         /// <summary>
         /// Returns a List containing solar eclipse data for the century.
         /// Century return is based on the date passed.
@@ -433,7 +454,120 @@ namespace CoordinateSharp
             //Return list of solar data.
             return LunarEclipseCalc.CalculateLunarEclipse(date, latR, longR, events);
         }
-       
+        
+        /// <summary>
+        /// Set bool SunIsUp and MoonIsUp values
+        /// </summary>
+        /// <param name="date">Coordinate GeoDate</param>
+        /// <param name="cel">Celestial Object</param>
+        private static void Calculate_Celestial_IsUp_Booleans(DateTime date, Celestial cel)
+        {
+            //SUN
+            switch (cel.SunCondition)
+            {
+                case CelestialStatus.DownAllDay:
+                    cel.IsSunUp = false;
+                    break;
+                case CelestialStatus.UpAllDay:
+                    cel.IsSunUp = true;
+                    break;
+                case CelestialStatus.NoRise:
+                    if(date<cel.SunSet)
+                    {
+                        cel.IsSunUp = true;
+                    }
+                    else { cel.IsSunUp = false; }
+                    break;
+                case CelestialStatus.NoSet:
+                    if (date > cel.SunRise)
+                    {
+                        cel.IsSunUp = true;
+                    }
+                    else { cel.IsSunUp = false; }
+                    break;
+                case CelestialStatus.RiseAndSet:
+                    if (cel.SunRise < cel.SunSet)
+                    {
+                        if (date > cel.SunRise && date < cel.SunSet)
+                        {
+                            cel.IsSunUp = true;
+                        }
+                        else
+                        {
+                            cel.IsSunUp = false;
+                        }
+                    }
+                    else
+                    {
+                        if (date > cel.SunRise || date < cel.SunSet)
+                        {
+                            cel.IsSunUp = true;
+                        }
+                        else
+                        {
+                            cel.IsSunUp = false;
+                        }
+                    }
+                    break;
+                default:
+                    //Should never be reached. If reached, previous calculations failed somewhere.
+                    break;
+            }
+
+            //MOON
+            switch (cel.MoonCondition)
+            {
+                case CelestialStatus.DownAllDay:
+                    cel.IsMoonUp = false;
+                    break;
+                case CelestialStatus.UpAllDay:
+                    cel.IsMoonUp = true;
+                    break;
+                case CelestialStatus.NoRise:
+                    if (date < cel.MoonSet)
+                    {
+                        cel.IsMoonUp = true;
+                    }
+                    else { cel.IsMoonUp = false; }
+                    break;
+                case CelestialStatus.NoSet:
+                    if (date > cel.MoonRise)
+                    {
+                        cel.IsMoonUp = true;
+                    }
+                    else { cel.IsMoonUp = false; }
+                    break;
+                case CelestialStatus.RiseAndSet:
+                    if (cel.MoonRise < cel.MoonSet)
+                    {
+                        if (date > cel.MoonRise && date < cel.MoonSet)
+                        {
+                            cel.IsMoonUp = true;
+                        }
+                        else
+                        {
+                            cel.IsMoonUp = false;
+                        }
+                    }
+                    else
+                    {
+                        if (date > cel.MoonRise || date < cel.MoonSet)
+                        {
+                            cel.IsMoonUp = true;
+                        }
+                        else
+                        {
+                            cel.IsMoonUp = false;
+                        }
+                    }
+                    break;
+                default:
+                    //Should never be reached. If reached, previous calculations failed somewhere.
+                    break;
+            }
+        }
+        
+
         /// <summary>
         /// Returns Apogee object containing last and next apogee based on the specified date.
         /// </summary>
@@ -452,22 +586,7 @@ namespace CoordinateSharp
         {
             return MoonCalc.GetPerigeeEvents(d);
         }
-        /// <summary>
-        /// Property changed event.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Notify property changed.
-        /// </summary>
-        /// <param name="propName">Property name</param>
-        public void NotifyPropertyChanged(string propName)
-        {
-            if (this.PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propName));
-            }
-        }
+      
     }
 
 }
