@@ -18,19 +18,10 @@ namespace CoordinateSharp
 
     //CURRENT RANGE 1601-2600.
     internal class SolarEclipseCalc
-    {
-        private static  double[] obsvconst = new double[7];
-        private static  double[] mid = new double[41];//Check index to see if array needs to be this size
-        private static  string[] month = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };//Month string array
-        private static  double[] c1 = new double[41];
-        private static  double[] c2 = new double[41];
-        private static  double[] c3 = new double[41];
-        private static  double[] c4 = new double[41];
-       // private static  List<string> values = new List<string>(); //Used to store values that would otherwise be printer. Covert to class later.
-       
+    {                             
         public static List<List<string>> CalculateSolarEclipse(DateTime d, double latRad, double longRad)
         {
-            return Calculate(d, latRad, longRad);
+            return Calculate(d, latRad, longRad, null);
         }
         public static List<SolarEclipseDetails> CalculateSolarEclipse(DateTime d, double latRad, double longRad, double[] events)
         {
@@ -45,12 +36,20 @@ namespace CoordinateSharp
         }
         public static List<List<string>> CalculateSolarEclipse(DateTime d, Coordinate coord)
         {
-            return Calculate(d, coord.Latitude.ToRadians(), coord.Longitude.ToRadians());
+            return Calculate(d, coord.Latitude.ToRadians(), coord.Longitude.ToRadians(), null);
         }
 
-        private static List<List<string>> Calculate(DateTime d, double latRad, double longRad, double[] ev = null)
+        private static List<List<string>> Calculate(DateTime d, double latRad, double longRad, double[] ev)
         {
-            List<List<string>> events = new List<List<string>>();
+            //Declare storage arrays
+            double[] obsvconst = new double[7];
+            double[] mid = new double[41];//Check index to see if array needs to be this size
+            double[] c1 = new double[41];
+            double[] c2 = new double[41];
+            double[] c3 = new double[41];
+            double[] c4 = new double[41];
+
+        List<List<string>> events = new List<List<string>>();
             double[] el;
             if (ev == null)
             {
@@ -62,16 +61,16 @@ namespace CoordinateSharp
             }
            
             events = new List<List<string>>();
-            ReadData(latRad, longRad);
+            ReadData(latRad, longRad, obsvconst);
             for (int i = 0; i < el.Length; i += 28)
             {
                 obsvconst[6] = i;
-                GetAll(el);
+                GetAll(el, obsvconst, mid,c1,c2,c3,c4);
                 // Is there an event...
                 if (mid[39] > 0)
                 {
                     List<string> values = new List<string>();             
-                    values.Add(GetDate(el, mid));
+                    values.Add(GetDate(el, mid, obsvconst));
                     if (mid[39] == 1)
                     {
                         values.Add("P");
@@ -94,13 +93,13 @@ namespace CoordinateSharp
                     else
                     {
                         // Partial eclipse start time
-                        values.Add(GetTime(el, c1));
+                        values.Add(GetTime(el, c1, obsvconst));
                         values.Add(GetAlt(c1));
                     }
                     // Central eclipse time                
                     if ((mid[39] > 1) && (c2[40] != 4))
                     {
-                        values.Add(GetTime(el, c2));
+                        values.Add(GetTime(el, c2, obsvconst));
                     }
                     else
                     {
@@ -108,7 +107,7 @@ namespace CoordinateSharp
                     }
 
                     //Mid Time
-                    values.Add(GetTime(el, mid));
+                    values.Add(GetTime(el, mid, obsvconst));
 
                     // Maximum eclipse alt                  
                     values.Add(GetAlt(mid));
@@ -118,7 +117,7 @@ namespace CoordinateSharp
                     // Central eclipse ends
                     if ((mid[39] > 1) && (c3[40] != 4))
                     {
-                        values.Add(GetTime(el, c3));
+                        values.Add(GetTime(el, c3, obsvconst));
                     }
                     else
                     {
@@ -133,22 +132,22 @@ namespace CoordinateSharp
                     else
                     {
                         // Partial eclipse ends
-                        values.Add(GetTime(el, c4));
+                        values.Add(GetTime(el, c4, obsvconst));
 
                         // ... sun alt
                         values.Add(GetAlt(c4));
                     }
                     // Eclipse magnitude
-                    values.Add(GetMagnitude());
+                    values.Add(GetMagnitude(mid));
 
 
                     // Coverage                
-                    values.Add(GetCoverage());
+                    values.Add(GetCoverage(mid));
 
                     // Central duration                   
                     if (mid[39] > 1)
                     {
-                        values.Add(GetDuration());
+                        values.Add(GetDuration(mid,c2,c3));
                     }
                     else
                     {
@@ -161,7 +160,7 @@ namespace CoordinateSharp
             return events;
         }
         //Populates the obsvcont array
-        private static  void ReadData(double latRad, double longRad)
+        private static  void ReadData(double latRad, double longRad, double[] obsvconst)
         {
             // Get the latitude
             obsvconst[0] = latRad;
@@ -182,16 +181,16 @@ namespace CoordinateSharp
           
         }
         // Populate the c1, c2, mid, c3 and c4 arrays
-        private static  void GetAll(double[] elements)
+        private static  void GetAll(double[] elements, double[] obsvconst, double[] mid, double[] c1, double[] c2,double[] c3, double[] c4)
         {
-            GetMid(elements);
-            MidObservational();
+            GetMid(elements, obsvconst, mid);
+            MidObservational(obsvconst, mid);
             if (mid[37] > 0.0)
             {
-                Getc1c4(elements);
+                Getc1c4(elements, obsvconst, mid,c1,c2,c3,c4);
                 if ((mid[36] < mid[29]) || (mid[36] < -mid[29]))
                 {
-                    Getc2c3(elements);
+                    Getc2c3(elements, obsvconst, mid,c2,c3);
                     if (mid[29] < 0.0)
                     {
                         mid[39] = 3; // Total eclipse
@@ -200,10 +199,10 @@ namespace CoordinateSharp
                     {
                         mid[39] = 2; // Annular eclipse
                     }
-                    Observational(c1);
-                    Observational(c2);
-                    Observational(c3);
-                    Observational(c4);
+                    Observational(c1, obsvconst, mid);
+                    Observational(c2, obsvconst, mid);
+                    Observational(c3, obsvconst, mid);
+                    Observational(c4, obsvconst, mid);
                     c2[36] = 999.9;
                     c3[36] = 999.9;
                     // Calculate how much of the eclipse is above the horizon
@@ -216,59 +215,59 @@ namespace CoordinateSharp
                     // Now, time to make sure that all my Observational[39] and Observational[40] are OK
                     if (pattern == 11110)
                     {
-                        GetSunset(elements, c4);
-                        Observational(c4);
+                        GetSunset(elements, c4, obsvconst);
+                        Observational(c4, obsvconst, mid);
                         c4[40] = 3;
                     }
                     else if (pattern == 11100)
                     {
-                        GetSunset(elements, c3);
-                        Observational(c3);
+                        GetSunset(elements, c3, obsvconst);
+                        Observational(c3, obsvconst, mid);
                         c3[40] = 3;
                         CopyCircumstances(c3, c4);
                     }
                     else if (pattern == 11000)
                     {
                         c3[40] = 4;
-                        GetSunset(elements, mid);
-                        MidObservational();
+                        GetSunset(elements, mid, obsvconst);
+                        MidObservational(obsvconst, mid);
                         mid[40] = 3;
                         CopyCircumstances(mid, c4);
                     }
                     else if (pattern == 10000)
                     {
                         mid[39] = 1;
-                        GetSunset(elements, mid);
-                        MidObservational();
+                        GetSunset(elements, mid, obsvconst);
+                        MidObservational(obsvconst, mid);
                         mid[40] = 3;
                         CopyCircumstances(mid, c4);
                     }
                     else if (pattern == 1111)
                     {
-                        GetSunrise(elements, c1);
-                        Observational(c1);
+                        GetSunrise(elements, c1, obsvconst);
+                        Observational(c1, obsvconst, mid);
                         c1[40] = 2;
                     }
                     else if (pattern == 111)
                     {
-                        GetSunrise(elements, c2);
-                        Observational(c2);
+                        GetSunrise(elements, c2, obsvconst);
+                        Observational(c2, obsvconst, mid);
                         c2[40] = 2;
                         CopyCircumstances(c2, c1);
                     }
                     else if (pattern == 11)
                     {
                         c2[40] = 4;
-                        GetSunrise(elements, mid);
-                        MidObservational();
+                        GetSunrise(elements, mid, obsvconst);
+                        MidObservational(obsvconst, mid);
                         mid[40] = 2;
                         CopyCircumstances(mid, c1);
                     }
                     else if (pattern == 1)
                     {
                         mid[39] = 1;
-                        GetSunrise(elements, mid);
-                        MidObservational();
+                        GetSunrise(elements, mid, obsvconst);
+                        MidObservational(obsvconst, mid);
                         mid[40] = 2;
                         CopyCircumstances(mid, c1);
                     }
@@ -282,34 +281,34 @@ namespace CoordinateSharp
                 {
                     mid[39] = 1; // Partial eclipse
                     double pattern = 0;
-                    Observational(c1);
-                    Observational(c4);
+                    Observational(c1, obsvconst, mid);
+                    Observational(c4, obsvconst, mid);
                     if (c1[40] == 0) { pattern += 100; }
                     if (mid[40] == 0) { pattern += 10; }
                     if (c4[40] == 0) { pattern += 1; }
                     if (pattern == 110)
                     {
-                        GetSunset(elements, c4);
-                        Observational(c4);
+                        GetSunset(elements, c4, obsvconst);
+                        Observational(c4, obsvconst, mid);
                         c4[40] = 3;
                     }
                     else if (pattern == 100)
                     {
-                        GetSunset(elements, mid);
-                        MidObservational();
+                        GetSunset(elements, mid, obsvconst);
+                        MidObservational(obsvconst, mid);
                         mid[40] = 3;
                         CopyCircumstances(mid, c4);
                     }
                     else if (pattern == 11)
                     {
-                        GetSunrise(elements, c1);
-                        Observational(c1);
+                        GetSunrise(elements, c1, obsvconst);
+                        Observational(c1, obsvconst, mid);
                         c1[40] = 2;
                     }
                     else if (pattern == 1)
                     {
-                        GetSunrise(elements, mid);
-                        MidObservational();
+                        GetSunrise(elements, mid, obsvconst);
+                        MidObservational(obsvconst, mid);
                         mid[40] = 2;
                         CopyCircumstances(mid, c1);
                     }
@@ -331,7 +330,7 @@ namespace CoordinateSharp
             }
         }
         // Calculate mid eclipse
-        private static  void GetMid(double[] elements)
+        private static  void GetMid(double[] elements, double[] obsvconst, double[] mid)
         {
             double iter, tmp;
 
@@ -339,21 +338,21 @@ namespace CoordinateSharp
             mid[1] = 0.0;
             iter = 0;
             tmp = 1.0;
-            TimeLocDependent(elements, mid);
+            TimeLocDependent(elements, mid, obsvconst);
             while (((tmp > 0.000001) || (tmp < -0.000001)) && (iter < 50))
             {
                 tmp = (mid[24] * mid[26] + mid[25] * mid[27]) / mid[30];
                 mid[1] = mid[1] - tmp;
                 iter++;
-                TimeLocDependent(elements, mid);
+                TimeLocDependent(elements, mid, obsvconst);
             }
         }
         // Populate the circumstances array with the time and location dependent circumstances
-        private static  double[] TimeLocDependent(double[] elements, double[] circumstances)
+        private static  double[] TimeLocDependent(double[] elements, double[] circumstances, double[] obsvconst)
         {
             double index, type;
 
-            TimeDependent(elements, circumstances);
+            TimeDependent(elements, circumstances, obsvconst);
             index = obsvconst[6];
             // Calculate h, sin h, cos h
             circumstances[16] = circumstances[7] - obsvconst[1] - (elements[(int)index + 5] / 13713.44);
@@ -393,7 +392,7 @@ namespace CoordinateSharp
             return circumstances;
         }
         // Populate the circumstances array with the time-only dependent circumstances (x, y, d, m, ...)
-        private static  double[] TimeDependent(double[] elements, double[] circumstances)
+        private static  double[] TimeDependent(double[] elements, double[] circumstances, double[] obsvconst)
         {
             double type, t, ans;
 
@@ -462,16 +461,16 @@ namespace CoordinateSharp
             return circumstances;
         }
         // Get the observational circumstances for mid eclipse
-        private static  void MidObservational()
+        private static  void MidObservational(double[] obsvconst, double[] mid)
         {
-            Observational(mid);
+            Observational(mid, obsvconst, mid);
             // Calculate m, magnitude and moon/sun
             mid[36] = Math.Sqrt(mid[24] * mid[24] + mid[25] * mid[25]);
             mid[37] = (mid[28] - mid[36]) / (mid[28] + mid[29]);
             mid[38] = (mid[28] - mid[29]) / (mid[28] + mid[29]);
         }
         // Get the observational circumstances
-        private static  void Observational(double[] circumstances)
+        private static  void Observational(double[] circumstances, double[] obsvconst, double[] mid)
         {
             double contacttype, coslat, sinlat;
 
@@ -523,7 +522,7 @@ namespace CoordinateSharp
         //   Entry conditions -
         //   1. The mid array must be populated
         //   2. The magnitude at mid eclipse must be > 0.0
-        private static  void Getc1c4(double[] elements)
+        private static  void Getc1c4(double[] elements, double[] obsvconst, double[] mid, double[] c1, double[] c2, double[] c3, double[] c4)
         {
             double tmp, n;
 
@@ -535,15 +534,15 @@ namespace CoordinateSharp
             c4[0] = 2;
             c1[1] = mid[1] - tmp;
             c4[1] = mid[1] + tmp;
-            c1c4iterate(elements, c1);
-            c1c4iterate(elements, c4);
+            c1c4iterate(elements, c1, obsvconst);
+            c1c4iterate(elements, c4, obsvconst);
         }
         // Iterate on C1 or C4
-        private static  double[] c1c4iterate(double[] elements, double[] circumstances)
+        private static  double[] c1c4iterate(double[] elements, double[] circumstances, double[] obsvconst)
         {
             double sign, iter, tmp, n;
 
-            TimeLocDependent(elements, circumstances);
+            TimeLocDependent(elements, circumstances, obsvconst);
             if (circumstances[0] < 0)
             {
                 sign = -1.0;
@@ -562,7 +561,7 @@ namespace CoordinateSharp
                 tmp = sign * Math.Sqrt(1.0 - tmp * tmp) * circumstances[28] / n;
                 tmp = (circumstances[24] * circumstances[26] + circumstances[25] * circumstances[27]) / circumstances[30] - tmp;
                 circumstances[1] = circumstances[1] - tmp;
-                TimeLocDependent(elements, circumstances);
+                TimeLocDependent(elements, circumstances, obsvconst);
                 iter++;
             }
             return circumstances;
@@ -571,7 +570,7 @@ namespace CoordinateSharp
         //   Entry conditions -
         //   1. The mid array must be populated
         //   2. There must be either a total or annular eclipse at the location!
-        private static  void Getc2c3(double[] elements)
+        private static void Getc2c3(double[] elements, double[] obsvconst, double[] mid, double[] c2, double[] c3)
         {
             double tmp, n;
 
@@ -591,15 +590,15 @@ namespace CoordinateSharp
                 c2[1] = mid[1] - tmp;
                 c3[1] = mid[1] + tmp;
             }
-            c2c3iterate(elements, c2);
-            c2c3iterate(elements, c3);
+            c2c3iterate(elements, c2, obsvconst, mid);
+            c2c3iterate(elements, c3, obsvconst, mid);
         }
         // Iterate on C2 or C3
-        private static  double[] c2c3iterate(double[] elements, double[] circumstances)
+        private static  double[] c2c3iterate(double[] elements, double[] circumstances, double[] obsvconst, double[] mid)
         {
             double sign, iter, tmp, n;
 
-            TimeLocDependent(elements, circumstances);
+            TimeLocDependent(elements, circumstances, obsvconst);
             if (circumstances[0] < 0)
             {
                 sign = -1.0;
@@ -622,14 +621,15 @@ namespace CoordinateSharp
                 tmp = sign * Math.Sqrt(1.0 - tmp * tmp) * circumstances[29] / n;
                 tmp = (circumstances[24] * circumstances[26] + circumstances[25] * circumstances[27]) / circumstances[30] - tmp;
                 circumstances[1] = circumstances[1] - tmp;
-                TimeLocDependent(elements, circumstances);
+                TimeLocDependent(elements, circumstances, obsvconst);
                 iter++;
             }
             return circumstances;
         }
         // Get the date of an event
-        private static string GetDate(double[] elements, double[] circumstances)
-        {           
+        private static string GetDate(double[] elements, double[] circumstances, double[] obsvconst)
+        {
+            string[] month = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
             double t, jd, a, b, c, d, e, index;
             string ans = "";
             index = obsvconst[6];
@@ -695,17 +695,17 @@ namespace CoordinateSharp
             return ans;
         }
         // Calculate the time of sunset
-        private static  void GetSunset(double[] elements, double[] circumstances)
+        private static  void GetSunset(double[] elements, double[] circumstances, double[] obsvconst)
         {
-            GetSunriset(elements, circumstances, 1.0);
+            GetSunriset(elements, circumstances, 1.0, obsvconst);
         }
         // Calculate the time of sunrise
-        private static  void GetSunrise(double[] elements, double[] circumstances)
+        private static  void GetSunrise(double[] elements, double[] circumstances, double[] obsvconst)
         {
-            GetSunriset(elements, circumstances, -1.0);
+            GetSunriset(elements, circumstances, -1.0, obsvconst);
         }
         // Calculate the time of sunrise or sunset
-        private static  void GetSunriset(double[] elements, double[] circumstances, double riset)
+        private static  void GetSunriset(double[] elements, double[] circumstances, double riset, double[] obsvconst)
         {
             double h0, diff, iter;
 
@@ -720,7 +720,7 @@ namespace CoordinateSharp
                 while (diff >= 12.0) { diff -= 24.0; }
                 while (diff <= -12.0) { diff += 24.0; }
                 circumstances[1] += diff;
-                TimeLocDependent(elements, circumstances);
+                TimeLocDependent(elements, circumstances, obsvconst);
             }
         }
         // Copy a set of circumstances
@@ -732,7 +732,7 @@ namespace CoordinateSharp
             }
         }
         // Get the local time of an event
-        private static  string GetTime(double[] elements, double[] circumstances)
+        private static  string GetTime(double[] elements, double[] circumstances, double[] obsvconst)
         {
             string ans = "";
             int index = (int)obsvconst[6];
@@ -868,7 +868,7 @@ namespace CoordinateSharp
             }
         }
         // Get the magnitude
-        private static  string GetMagnitude()
+        private static  string GetMagnitude(double[] mid)
         {
             double a = Math.Floor(1000.0 * mid[37] + 0.5) / 1000.0;
             string ans = a.ToString();
@@ -887,7 +887,7 @@ namespace CoordinateSharp
             return ans;
         }
         // Get the coverage
-        private static  string GetCoverage()
+        private static  string GetCoverage(double[] mid)
         {
             double a=0, b, c;
             string ans = "";
@@ -932,7 +932,7 @@ namespace CoordinateSharp
         }
         // Get the duration in mm:ss.s format
         // Adapted from code written by Stephen McCann - 27/04/2001
-        private static  string GetDuration()
+        private static  string GetDuration(double[] mid, double[] c2, double[] c3)
         {
             double tmp;
             string ans;

@@ -16,20 +16,7 @@ namespace CoordinateSharp
 
     //CURRENT RANGE 1601-2600.
     internal class LunarEclipseCalc
-    {
-        private static double[] obsvconst = new double[6];
-        private static double[] mid = new double[41];//Check index to see if array needs to be this size
-        private static string[] month = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };//Month string array
-
-        //CHECK ARRARY SIZES AS THEY MAY BE TOO LARGE.
-        private static double[] p1 = new double[41];
-        private static double[] u1 = new double[41];
-        private static double[] u2 = new double[41];
-
-        private static double[] u3 = new double[41];
-        private static double[] u4 = new double[41];
-        private static double[] p4 = new double[41];
-
+    {              
         public static List<List<string>> CalculateLunarEclipse(DateTime d, double latRad, double longRad)
         {
             return Calculate(d, latRad, longRad);
@@ -54,6 +41,16 @@ namespace CoordinateSharp
         // CALCULATE!
         private static List<List<string>> Calculate(DateTime d, double latRad, double longRad, double[] ev = null)
         {
+            //DECLARE ARRAYS
+            double[] obsvconst = new double[6];
+            double[] mid = new double[41];
+            double[] p1 = new double[41];
+            double[] u1 = new double[41];
+            double[] u2 = new double[41];
+            double[] u3 = new double[41];
+            double[] u4 = new double[41];
+            double[] p4 = new double[41];
+
             List<List<string>> events = new List<List<string>>();
 
             double[] el;
@@ -67,7 +64,7 @@ namespace CoordinateSharp
             }
 
             events = new List<List<string>>();
-            ReadData(latRad, longRad);
+            ReadData(latRad, longRad, obsvconst);
             
             for (int i = 0; i < el.Length; i += 22)
             {
@@ -75,12 +72,12 @@ namespace CoordinateSharp
                 {
                     List<string> values = new List<string>();
                     obsvconst[4] = i;
-                    GetAll(el);
+                    GetAll(el, obsvconst, mid, p1, u1, u2,u3,u4,p4);
                     // Is there an event...
                     if (mid[5] != 1)
                     {
 
-                        values.Add(GetDate(el, p1));
+                        values.Add(GetDate(el, p1, obsvconst));
                    
                         if (el[5 + i] == 1)
                         {
@@ -102,7 +99,7 @@ namespace CoordinateSharp
                         values.Add(el[4 + i].ToString());
 
                         // P1
-                        values.Add(GetTime(el, p1));
+                        values.Add(GetTime(el, p1, obsvconst));
 
                         // P1 alt
                         values.Add(GetAlt(p1));
@@ -115,7 +112,7 @@ namespace CoordinateSharp
                         else
                         {
                             // U1
-                            values.Add(GetTime(el, u1));
+                            values.Add(GetTime(el, u1, obsvconst));
 
                             // U1 alt
                             values.Add(GetAlt(u1));
@@ -128,14 +125,14 @@ namespace CoordinateSharp
                         else
                         {
                             // U2
-                            values.Add(GetTime(el, u2));
+                            values.Add(GetTime(el, u2, obsvconst));
 
                             // U2 alt
                             values.Add(GetAlt(u2));
                         }
                         // mid
 
-                        values.Add(GetTime(el, mid));
+                        values.Add(GetTime(el, mid, obsvconst));
 
                         // mid alt
 
@@ -149,7 +146,7 @@ namespace CoordinateSharp
                         else
                         {
                             // u3
-                            values.Add(GetTime(el, u3));
+                            values.Add(GetTime(el, u3, obsvconst));
 
                             // u3 alt
                             values.Add(GetAlt(u3));
@@ -162,14 +159,14 @@ namespace CoordinateSharp
                         else
                         {
                             // u4
-                            values.Add(GetTime(el, u4));
+                            values.Add(GetTime(el, u4, obsvconst));
 
                             // u4 alt
                             values.Add(GetAlt(u4));
 
                         }
                         // P4
-                        values.Add(GetTime(el, p4));
+                        values.Add(GetTime(el, p4, obsvconst));
 
                         // P4 alt
                         values.Add(GetAlt(p4));
@@ -180,7 +177,7 @@ namespace CoordinateSharp
             return events;
         }
         // Read the data that's in the form, and populate the obsvconst array
-        private static void ReadData(double latRad, double longRad)
+        private static void ReadData(double latRad, double longRad, double[] obsvconst)
         {
 
             // Get the latitude
@@ -202,27 +199,27 @@ namespace CoordinateSharp
 
         }
         // Populate the p1, u1, u2, mid, u3, u4 and p4 arrays
-        private static void GetAll(double[] elements)
+        private static void GetAll(double[] elements, double[] obsvconst, double[] mid, double[] p1, double[] u1, double[] u2, double[] u3, double[] u4, double[] p4)
         {
             int index = (int)obsvconst[4];
             p1[1] = elements[index + 9];
-            PopulateCircumstances(elements, p1);
+            PopulateCircumstances(elements, p1, obsvconst);
             mid[1] = elements[index + 12];
-            PopulateCircumstances(elements, mid);
+            PopulateCircumstances(elements, mid, obsvconst);
             p4[1] = elements[index + 15];
-            PopulateCircumstances(elements, p4);
+            PopulateCircumstances(elements, p4, obsvconst);
             if (elements[index + 5] < 3)
             {
                 u1[1] = elements[index + 10];
-                PopulateCircumstances(elements, u1);
+                PopulateCircumstances(elements, u1, obsvconst);
                 u4[1] = elements[index + 14];
-                PopulateCircumstances(elements, u4);
+                PopulateCircumstances(elements, u4, obsvconst);
                 if (elements[index + 5] < 2)
                 {
                     u2[1] = elements[index + 11];
                     u3[1] = elements[index + 13];
-                    PopulateCircumstances(elements, u2);
-                    PopulateCircumstances(elements, u3);
+                    PopulateCircumstances(elements, u2, obsvconst);
+                    PopulateCircumstances(elements, u3, obsvconst);
                 }
                 else
                 {
@@ -244,7 +241,7 @@ namespace CoordinateSharp
         }
         // Populate the circumstances array
         // entry condition - circumstances[1] must contain the correct value
-        private static void PopulateCircumstances(double[] elements, double[] circumstances)
+        private static void PopulateCircumstances(double[] elements, double[] circumstances, double[] obsvconst)
         {
             double t, ra, dec, h;
 
@@ -276,8 +273,9 @@ namespace CoordinateSharp
             }
         }
         // Get the date of an event
-        private static string GetDate(double[] elements, double[] circumstances)
+        private static string GetDate(double[] elements, double[] circumstances, double[] obsvconst)
         {
+            string[] month = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };//Month string array
             double t, jd, a, b, c, d, e;
             string ans = "";
             int index = (int)obsvconst[4];
@@ -343,7 +341,7 @@ namespace CoordinateSharp
             return ans;
         }
         // Get the time of an event
-        private static string GetTime(double[] elements, double[] circumstances)
+        private static string GetTime(double[] elements, double[] circumstances, double[] obsvconst)
         {
             double t;
             string ans = "";

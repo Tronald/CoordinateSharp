@@ -24,7 +24,7 @@ namespace CoordinateSharp_TestProj
             MoonDistances = new List<double>();
             MoonFraction = new List<double>();
             MoonPhase = new List<double>();
-            MoonPhaseName = new List<string>();
+            MoonPhaseName = new List<string>();       
 
             for (int x = 0; x < 144; x++)
             {
@@ -82,10 +82,10 @@ namespace CoordinateSharp_TestProj
             }
 
             //Set Dates and Finish
-            this.SolarEclispe = c.CelestialInfo.SolarEclipse;
-            this.LunarEclispe = c.CelestialInfo.LunarEclipse;
-            this.Perigee = c.CelestialInfo.Perigee;
-            this.Apogee = c.CelestialInfo.Apogee;          
+            SolarEclispe = c.CelestialInfo.SolarEclipse;
+            LunarEclispe = c.CelestialInfo.LunarEclipse;
+            Perigee = c.CelestialInfo.Perigee;
+            Apogee = c.CelestialInfo.Apogee;          
         }
 
         public bool Check_Values(object prop, string file)
@@ -152,6 +152,7 @@ namespace CoordinateSharp_TestProj
             }
             return true;
         }
+
         public bool Check_Solar_Eclipse()
         {
             IFormatter formatter = new BinaryFormatter();
@@ -310,6 +311,147 @@ namespace CoordinateSharp_TestProj
             }
             return true;
         }
+
+        public bool Check_IsSunUp()
+        {
+           
+            string[] lines = File.ReadAllLines("CelestialData\\IsSunUp.txt");
+            foreach(string line in lines)
+            {
+                string[] split = line.Split(',');
+                double lat = double.Parse(split[0]);
+                double longi = double.Parse(split[1]);
+                DateTime geoDate = DateTime.Parse(split[2]).Date;
+                string sR = split[3];
+                string SS = split[4];
+                string condition = split[5];
+
+                Coordinate c = new Coordinate(lat, longi, geoDate);
+                //Iterate each minute in the day
+                for(int x=0;x<1440;x++)
+                {
+                    int i = 1;
+                    if (x == 0) { i = 0; }
+                    switch(condition)
+                    {
+                        case "DownAllDay":
+                            c.GeoDate = c.GeoDate.AddMinutes(i);
+                            if(c.CelestialInfo.IsSunUp == true) { return false; }
+                            break;
+                        case "UpAllDay":
+                            c.GeoDate = c.GeoDate.AddMinutes(i);
+                            if (c.CelestialInfo.IsSunUp == false) { return false; }
+                            break;
+                        case "NoRise":
+                            c.GeoDate = c.GeoDate.AddMinutes(i);
+                            if (c.CelestialInfo.SunSet > c.GeoDate && c.CelestialInfo.IsSunUp==false) { return false; }
+                            if (c.CelestialInfo.SunSet <= c.GeoDate && c.CelestialInfo.IsSunUp == true) { return false; }
+                            break;
+                        case "NoSet":
+                            c.GeoDate = c.GeoDate.AddMinutes(i);
+                            if (c.CelestialInfo.SunRise >= c.GeoDate && c.CelestialInfo.IsSunUp == true) { return false; }
+                            if (c.CelestialInfo.SunRise < c.GeoDate && c.CelestialInfo.IsSunUp == false) { return false; }
+                            break;
+                        case "RiseAndSet":
+                            c.GeoDate = c.GeoDate.AddMinutes(i);
+                            //When working in Z time we have to account for rise occuring after set
+                            if(c.CelestialInfo.SunSet>c.CelestialInfo.SunRise)
+                            {
+                                //SUN SHOULD BE UP
+                                if(c.GeoDate > c.CelestialInfo.SunRise && c.GeoDate < c.CelestialInfo.SunSet && c.CelestialInfo.IsSunUp == false) { return false; }
+                                //SUN SHOULD BE DOWN
+                                if ((c.GeoDate <= c.CelestialInfo.SunRise || c.GeoDate >= c.CelestialInfo.SunSet) && c.CelestialInfo.IsSunUp == true) { return false; }
+                            }
+                            else
+                            {
+                                //AFTER RISE SUN SHOULD BE UP
+                                if(c.GeoDate>c.CelestialInfo.SunRise && c.CelestialInfo.IsSunUp == false) { return false; }
+                                //BETWEEN SET AND RISE SUN SHOULD BE DOWN
+                                if (c.GeoDate <= c.CelestialInfo.SunRise && c.GeoDate >= c.CelestialInfo.SunSet && c.CelestialInfo.IsSunUp == true) { return false; }
+                                //BEFORE SET SUN SHOULD BE UP
+                                if(c.GeoDate < c.CelestialInfo.SunSet && c.CelestialInfo.IsSunUp == false) { return false; }
+                            }
+                            
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                
+            }
+            return true;
+        }
+
+        public bool Check_IsMoonUp()
+        {
+
+            string[] lines = File.ReadAllLines("CelestialData\\IsMoonUp.txt");
+            foreach (string line in lines)
+            {
+                string[] split = line.Split(',');
+                double lat = double.Parse(split[0]);
+                double longi = double.Parse(split[1]);
+                DateTime geoDate = DateTime.Parse(split[2]).Date;
+                string sR = split[3];
+                string SS = split[4];
+                string condition = split[5];
+
+                Coordinate c = new Coordinate(lat, longi, geoDate);
+                //Iterate each minute in the day
+                for (int x = 0; x < 1440; x++)
+                {
+                    int i = 1;
+                    if (x == 0) { i = 0; }
+                    switch (condition)
+                    {
+                        case "DownAllDay":
+                            c.GeoDate = c.GeoDate.AddMinutes(i);
+                            if (c.CelestialInfo.IsMoonUp == true) { return false; }
+                            break;
+                        case "UpAllDay":
+                            c.GeoDate = c.GeoDate.AddMinutes(i);
+                            if (c.CelestialInfo.IsMoonUp == false) { return false; }
+                            break;
+                        case "NoRise":
+                            c.GeoDate = c.GeoDate.AddMinutes(i);
+                            if (c.CelestialInfo.MoonSet > c.GeoDate && c.CelestialInfo.IsMoonUp == false) { return false; }
+                            if (c.CelestialInfo.MoonSet <= c.GeoDate && c.CelestialInfo.IsMoonUp == true) { return false; }
+                            break;
+                        case "NoSet":
+                            c.GeoDate = c.GeoDate.AddMinutes(i);
+                            if (c.CelestialInfo.MoonRise >= c.GeoDate && c.CelestialInfo.IsMoonUp == true) { return false; }
+                            if (c.CelestialInfo.MoonRise < c.GeoDate && c.CelestialInfo.IsMoonUp == false) { return false; }
+                            break;
+                        case "RiseAndSet":
+                            c.GeoDate = c.GeoDate.AddMinutes(i);
+                            //When working in Z time we have to account for rise occuring after set
+                            if (c.CelestialInfo.MoonSet > c.CelestialInfo.MoonRise)
+                            {
+                                //Moon SHOULD BE UP
+                                if (c.GeoDate > c.CelestialInfo.MoonRise && c.GeoDate < c.CelestialInfo.MoonSet && c.CelestialInfo.IsMoonUp == false) { return false; }
+                                //Moon SHOULD BE DOWN
+                                if ((c.GeoDate <= c.CelestialInfo.MoonRise || c.GeoDate >= c.CelestialInfo.MoonSet) && c.CelestialInfo.IsMoonUp == true) { return false; }
+                            }
+                            else
+                            {
+                                //AFTER RISE Moon SHOULD BE UP
+                                if (c.GeoDate > c.CelestialInfo.MoonRise && c.CelestialInfo.IsMoonUp == false) { return false; }
+                                //BETWEEN SET AND RISE Moon SHOULD BE DOWN
+                                if (c.GeoDate <= c.CelestialInfo.MoonRise && c.GeoDate >= c.CelestialInfo.MoonSet && c.CelestialInfo.IsMoonUp == true) { return false; }
+                                //BEFORE SET Moon SHOULD BE UP
+                                if (c.GeoDate < c.CelestialInfo.MoonSet && c.CelestialInfo.IsMoonUp == false) { return false; }
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+            }
+            return true;
+        }
+
         public List<DateTime?> SunRises { get; set; }
         public List<DateTime?> MoonRises { get; set; }
         public List<DateTime?> SunSets { get; set; }
@@ -337,5 +479,8 @@ namespace CoordinateSharp_TestProj
         public LunarEclipse LunarEclispe { get; set; }
         public Perigee Perigee { get; set; }
         public Apogee Apogee { get; set; }
+
+        public List<bool> IsSunUp { get; set; }
+        public List<bool> IsMoonUp { get; set; }
     }
 }

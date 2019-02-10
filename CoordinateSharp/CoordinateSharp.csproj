@@ -3,18 +3,19 @@
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.1.4.4</Version>
+    <Version>1.1.4.5</Version>
     <Authors>Justin Gielski</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2017</Copyright>
-    <Description></Description>
+    <Description>A simple .NET standard library that is designed to assist with geographic coordinate formatting and location based celestial information.</Description>
     <PackageReleaseNotes>Fixes issue with UTM_MGRS EagerLoad flag setting not assigning int value.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/ICON.png</PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
-    <AssemblyVersion>1.1.4.4</AssemblyVersion>
+    <AssemblyVersion>1.1.4.5</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
