@@ -81,7 +81,8 @@ namespace CoordinateSharp
                 catch
                 {//Parser failed try next method 
                 }
-            }
+            }          
+
             //Try Decimal Degree
             if (TryDecimalDegree(s, out d))
             {
@@ -227,7 +228,7 @@ namespace CoordinateSharp
             d = null;
             if (Regex.Matches(s, @"[a-zA-Z]").Count != 0) { return false; } //Should contain no letters
 
-            string[] sA = SpecialSplit(s);
+            string[] sA = SpecialSplit(s,false);
             double lat;
             double lng;
 
@@ -302,7 +303,7 @@ namespace CoordinateSharp
             d = null;
             if (Regex.Matches(s, @"[a-zA-Z]").Count != 2) { return false; } //Should only contain 1 letter.
 
-            string[] sA = SpecialSplit(s);
+            string[] sA = SpecialSplit(s,true);
             if (sA.Count() == 2 || sA.Count() == 4)
             {
                 double lat;
@@ -356,7 +357,7 @@ namespace CoordinateSharp
             d = null;
             if (Regex.Matches(s, @"[a-zA-Z]").Count != 2) { return false; } //Should only contain 1 letter.
 
-            string[] sA = SpecialSplit(s);
+            string[] sA = SpecialSplit(s,true);
             if (sA.Count() == 4 || sA.Count() == 6)
             {
                 double latD;
@@ -428,7 +429,7 @@ namespace CoordinateSharp
             d = null;
             if (Regex.Matches(s, @"[a-zA-Z]").Count != 2) { return false; } //Should only contain 1 letter.
 
-            string[] sA = SpecialSplit(s);
+            string[] sA = SpecialSplit(s,true);
             if (sA.Count() == 6 || sA.Count() == 8)
             {
                 double latD;
@@ -506,7 +507,7 @@ namespace CoordinateSharp
         private static bool TryUTM(string s, out string[] utm)
         {
             utm = null;
-            string[] sA = SpecialSplit(s);
+            string[] sA = SpecialSplit(s,false);
             if (sA.Count() == 3 || sA.Count() == 4)
             {
                 double zone;
@@ -540,7 +541,7 @@ namespace CoordinateSharp
         private static bool TryMGRS(string s, out string[] mgrs)
         {
             mgrs = null;
-            string[] sA = SpecialSplit(s);
+            string[] sA = SpecialSplit(s,false);
             if (sA.Count() == 4 || sA.Count() == 5)
             {
                 double zone;
@@ -574,7 +575,7 @@ namespace CoordinateSharp
         private static bool TryCartesian(string s, out double[] d)
         {
             d = null;
-            string[] sA = SpecialSplit(s);
+            string[] sA = SpecialSplit(s,false);
 
             if (sA.Count() == 3)
             {
@@ -593,9 +594,8 @@ namespace CoordinateSharp
             return false;
         }
 
-
-
-        private static string[] SpecialSplit(string s)
+        //KEEP DASHES FOR SIGNED AND CARTESIAN AS THEY ARE USED FOR NEGATVE VALUES
+        private static string[] SpecialSplit(string s, bool removeDashes)
         {
             s = s.Replace("°", " ");
             s = s.Replace("º", " ");
@@ -604,6 +604,10 @@ namespace CoordinateSharp
             s = s.Replace(",", " ");
             s = s.Replace("mE", " ");
             s = s.Replace("mN", " ");
+            if (removeDashes)
+            {
+                s = s.Replace("-", " ");
+            }
             return s.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
         }
     }
@@ -675,6 +679,8 @@ namespace CoordinateSharp
                     //silent fail
                 }
             }
+            //SIGNED DEGREE FAILED, REMOVE DASHES FOR OTHER FORMATS
+            s = s.Replace("-", " ");
 
             //All other formats should contain 1 letter.
             if (Regex.Matches(s, @"[a-zA-Z]").Count != 1) { return false; } //Should only contain 1 letter.
@@ -757,7 +763,7 @@ namespace CoordinateSharp
             d = null;
             if (Regex.Matches(s, @"[a-zA-Z]").Count != 0) { return false; } //Should contain no letters
 
-            string[] sA = SpecialSplit(s);
+            string[] sA = SpecialSplit(s, false);
             double deg;
             double min; //Minutes & MinSeconds
             double sec;
@@ -808,7 +814,7 @@ namespace CoordinateSharp
             }
             double coord;
 
-            string[] sA = SpecialSplit(s);
+            string[] sA = SpecialSplit(s, true);
 
             if (sA.Count() == 1)
             {
@@ -830,7 +836,7 @@ namespace CoordinateSharp
             double minSec;
 
 
-            string[] sA = SpecialSplit(s);
+            string[] sA = SpecialSplit(s,true);
             if (sA.Count() == 2)
             {
                 if (!double.TryParse(sA[0], out deg))
@@ -852,7 +858,7 @@ namespace CoordinateSharp
             double min;
             double sec;
 
-            string[] sA = SpecialSplit(s);
+            string[] sA = SpecialSplit(s,true);
             if (sA.Count() == 3)
             {
 
@@ -898,7 +904,9 @@ namespace CoordinateSharp
             }
             return part;
         }
-        private static string[] SpecialSplit(string s)
+
+        //KEEP DASHES FOR SIGNED AND CARTESIAN AS THEY ARE USED FOR NEGATVE VALUES
+        private static string[] SpecialSplit(string s, bool removeDashes)
         {
             s = s.Replace("°", " ");
             s = s.Replace("º", " ");
@@ -907,6 +915,10 @@ namespace CoordinateSharp
             s = s.Replace(",", " ");
             s = s.Replace("mE", " ");
             s = s.Replace("mN", " ");
+            if(removeDashes)
+            {
+                s = s.Replace("-", " ");
+            }
             return s.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
         }
     }
