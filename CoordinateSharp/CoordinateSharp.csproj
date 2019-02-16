@@ -10,7 +10,7 @@
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2017</Copyright>
     <Description>A simple .NET standard library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations.</Description>
-    <PackageReleaseNotes>Adds ECEF conversions, various new properties and features. Parser improvements. Fixes issue with move operations occuring under certain conditions.</PackageReleaseNotes>
+    <PackageReleaseNotes>Adds ECEF conversions, various new properties and features. Parser improvements. Fixes issue with move operations occurring under certain conditions.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian ECEF</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/ICON.png</PackageIconUrl>
