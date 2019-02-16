@@ -2,8 +2,7 @@
 
 <h2 align="center">v1.1.4.6</h2>
 
-CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate formatting and location based celestial information. This library has the ability to convert various lat long formats, UTM, MGRS(NATO UTM) and Cartesian (X, Y, Z). 
-The ability to calculate various pieces of celestial information (sunset, moon illum..) also exist.
+CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversion, formatting and location based celestial calculations. This library has the ability to convert various lat long formats, UTM, MGRS(NATO UTM) and Cartesian (Spherical and ECEF X, Y, Z). 
 
 CAUTION: v1.1.4.1 makes slight changes to the UTM and MGRS `ToString()` behavior. If a conversion from Lat/Long to UTM/MGRS is made, and the conversion is outside the limitations of the UTM and MGRS systems (below 80 S or above 84 N), `ToString()` will return an empty `string`. Access to the UTM/MGRS individual properties is still available if needed, but these systems should not be used if conversion is outside the system's limitations.
 
@@ -68,7 +67,7 @@ Console.WriteLine(c.CelestialInfo.MoonAltitude);   // 14.4169966277874
 ### Abilities
  
 * **Lat/Long formatting:** Quickly format how a coordinate is output.
-* **Coordinate conversions:** Convert Lat/Long to UTM, MGRS, Cartesian or vice versa.
+* **Coordinate conversions:** Convert Lat/Long to UTM, MGRS, Cartesian (Spherical and ECEF) or vice versa.
 * **Coordinate parsing:** Initialize a `Coordinate` with multiple format types using `TryParse()`.
 * **Coordinate moving/shifting:** Shift coordinates using a distance and bearing, or a distance and target coordinate.
 * **Location based celestial information:** Quickly determine sun set, moon rise, next solar eclipse or even zodiac signs at the input location.
