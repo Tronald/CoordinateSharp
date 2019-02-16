@@ -26,7 +26,7 @@ namespace CoordinateSharp_TestProj
                 Console.WriteLine("2. Coordinate Conversions");
                 Console.WriteLine("3. Coordinate Parsers");
                 Console.WriteLine("4. Celestial");
-                Console.WriteLine("5. Distance Initialization Tests");
+                Console.WriteLine("5. Distance Initialization / Move Tests");
                 Console.WriteLine("6. Benchmarks");
                 Console.WriteLine("7. GeoFence Tests");
                 Console.WriteLine("8. EagerLoading Tests");
@@ -144,6 +144,15 @@ namespace CoordinateSharp_TestProj
             }
             catch { pass = false; }
             Write_Pass("Cartesian Initialization Error Checks", pass);
+            try
+            {
+                pass = true;
+                Coordinate c = new Coordinate();
+                ECEF ecef = new ECEF(c);
+                ecef = new ECEF(3194.469, 3194.469, 4487.419);
+            }
+            catch { pass = false; }
+            Write_Pass("ECEF Initialization Error Checks", pass);
             Console.WriteLine();
 
             //Init Range Checks
@@ -333,7 +342,7 @@ namespace CoordinateSharp_TestProj
             coords.Add(new double[] { 65.25, -15.1859 });
             coords.Add(new double[] { -80.6586, -152.49 });
 
-            for (int x = 0; x<Conversions.Count;x++)
+            for (int x = 0; x < Conversions.Count; x++)
             {
                 List<string> coordList = Conversions[x];
                 double lat = coords[x][0];
@@ -345,13 +354,14 @@ namespace CoordinateSharp_TestProj
                 //4 = UTM
                 //5 = MGRS
                 //6 = Cartesian
+                //7 = ECEF
                 Coordinate c = new Coordinate(lat, lng);
                 bool pass = true;
                 Coordinate rc = new Coordinate();
-                for (int y = 0; y<7;y++)
+                for (int y = 0; y < 8; y++)
                 {
-                    
-                    switch(y)
+
+                    switch (y)
                     {
                         case 0:
                             c.FormatOptions.Format = CoordinateFormatType.Decimal;
@@ -367,7 +377,7 @@ namespace CoordinateSharp_TestProj
                             rc = new Coordinate();
                             rc.Latitude = new CoordinatePart(c.Latitude.Degrees, c.Latitude.DecimalMinute, c.Latitude.Position, rc);
                             rc.Longitude = new CoordinatePart(c.Longitude.Degrees, c.Longitude.DecimalMinute, c.Longitude.Position, rc);
-                            if(rc.Latitude.ToDouble() != c.Latitude.ToDouble()) { pass = false; Debug.WriteLine("...Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
+                            if (rc.Latitude.ToDouble() != c.Latitude.ToDouble()) { pass = false; Debug.WriteLine("...Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
                             if (rc.Longitude.ToDouble() != c.Longitude.ToDouble()) { pass = false; Debug.WriteLine("...Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
                             break;
                         case 3:
@@ -384,7 +394,7 @@ namespace CoordinateSharp_TestProj
                             UniversalTransverseMercator utm = new UniversalTransverseMercator(c.UTM.LatZone, c.UTM.LongZone, c.UTM.Easting, c.UTM.Northing);
                             rc = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
                             if (Math.Abs(rc.Latitude.ToDouble() - c.Latitude.ToDouble()) >= .00001 && c.UTM.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...UTM Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
-                            if (Math.Abs(rc.Longitude.ToDouble() - c.Longitude.ToDouble()) >=.00001 && c.UTM.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...UTM Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
+                            if (Math.Abs(rc.Longitude.ToDouble() - c.Longitude.ToDouble()) >= .00001 && c.UTM.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...UTM Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
                             break;
                         case 5:
                             if (c.MGRS.ToString() != coordList[y] && c.MGRS.WithinCoordinateSystemBounds) { pass = false; }
@@ -401,14 +411,47 @@ namespace CoordinateSharp_TestProj
                             if (Math.Abs(rc.Latitude.ToDouble() - c.Latitude.ToDouble()) >= .00001) { pass = false; Debug.WriteLine("...Cartesian Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
                             if (Math.Abs(rc.Longitude.ToDouble() - c.Longitude.ToDouble()) >= .00001) { pass = false; Debug.WriteLine("...Cartesian Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
                             break;
+                        case 7:
+                            string ec = c.ECEF.ToString().Replace(" km", "").Replace(",", "");
+                            if (ec != coordList[y]) { pass = false; }
+                            ECEF ecef = new ECEF(c.ECEF.X, c.ECEF.Y, c.ECEF.Z);
+                            rc = ECEF.ECEFToLatLong(ecef);
+                            if (Math.Abs(rc.Latitude.ToDouble() - c.Latitude.ToDouble()) >= .00001) { pass = false; Debug.WriteLine("...ECEF Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
+                            if (Math.Abs(rc.Longitude.ToDouble() - c.Longitude.ToDouble()) >= .00001) { pass = false; Debug.WriteLine("...ECEF Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
+                            if (Math.Abs(rc.ECEF.GeoDetic_Height.Meters - c.ECEF.GeoDetic_Height.Meters) >= .00001) { pass = false; Debug.WriteLine("...ECEF Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
+                            break;
                         default:
                             break;
                     }
                 }
-
-                Write_Pass("Conversion Pass " + ((int)(x+1)).ToString() + ": ", pass);
-                
+                Write_Pass("Conversion Pass " + ((int)(x + 1)).ToString() + ": ", pass);
             }
+            //ECEF WITH HEIGHT CHECK
+            Console.WriteLine();
+            bool passE = true;
+            double latE = -80.6586;
+            double longE = -152.49;            
+            Distance h = new Distance(1500, DistanceType.Meters);
+            Coordinate cE = new Coordinate(latE, longE);
+            cE.ECEF.Set_GeoDetic_Height(cE, h);
+            if (Math.Abs(cE.ECEF.X - -921.443) >= .001) { passE = false; Debug.WriteLine("...Setting GeoDetic Height Conversions Outside Limits"); }
+            if (Math.Abs(cE.ECEF.Y - -479.878) >= .001) { passE = false; Debug.WriteLine("...Setting GeoDetic Height Conversions Outside Limits"); }
+            if (Math.Abs(cE.ECEF.Z - -6273.377) >= .001) { passE = false; Debug.WriteLine("...Setting GeoDetic Height Conversions Outside Limits"); }
+
+            ECEF ecefE = new ECEF(cE.ECEF.X, cE.ECEF.Y, cE.ECEF.Z);
+            Coordinate rcE = ECEF.ECEFToLatLong(ecefE);           
+            if (Math.Abs(rcE.Latitude.ToDouble() - cE.Latitude.ToDouble()) >= .00001) { passE = false; Debug.WriteLine("...ECEF Conversion Outside Limits: " + rcE.Latitude.ToDouble() + " - " + cE.Latitude.ToDouble()); }
+            if (Math.Abs(rcE.Longitude.ToDouble() - cE.Longitude.ToDouble()) >= .00001) { passE = false; Debug.WriteLine("...ECEF Conversion Outside Limits: " + rcE.Longitude.ToDouble() + " - " + cE.Longitude.ToDouble()); }
+            if (Math.Abs(rcE.ECEF.GeoDetic_Height.Meters - cE.ECEF.GeoDetic_Height.Meters) >= .00001) { passE = false; Debug.WriteLine("...ECEF Conversion Outside Limits: " + rcE.Longitude.ToDouble() + " - " + cE.Longitude.ToDouble()); }
+
+            ecefE = new ECEF(cE,cE.ECEF.GeoDetic_Height);
+            
+            rcE = ECEF.ECEFToLatLong(ecefE);
+            if (Math.Abs(rcE.Latitude.ToDouble() - cE.Latitude.ToDouble()) >= .00001) { passE = false; Debug.WriteLine("...ECEF Conversion Outside Limits: " + rcE.Latitude.ToDouble() + " - " + cE.Latitude.ToDouble()); }
+            if (Math.Abs(rcE.Longitude.ToDouble() - cE.Longitude.ToDouble()) >= .00001) { passE = false; Debug.WriteLine("...ECEF Conversion Outside Limits: " + rcE.Longitude.ToDouble() + " - " + cE.Longitude.ToDouble()); }
+            if (Math.Abs(rcE.ECEF.GeoDetic_Height.Meters - cE.ECEF.GeoDetic_Height.Meters) >= .00001) { passE = false; Debug.WriteLine("...ECEF Conversion Outside Limits: " + rcE.ECEF.GeoDetic_Height.Meters + " - " + cE.ECEF.GeoDetic_Height.Meters); }
+
+            Write_Pass("ECEF WITH HEIGHT CHECK", passE);
 
             //UTM MGRS BOUNDARY CHECK
             bool p = true;
@@ -438,8 +481,7 @@ namespace CoordinateSharp_TestProj
                 {
                     if (lastType!="")
                     {
-                        Write_Pass(lastType.Split('#')[0], pass);
-                       
+                        Write_Pass(lastType.Split('#')[0], pass);                      
                     }
                     lastType = "";
                     pass = true;
@@ -535,14 +577,52 @@ namespace CoordinateSharp_TestProj
             catch { pass = false; }
             Console.WriteLine();
             Write_Pass("\\\\Intentional Fails", pass);
-           
+
+            pass = true;
+            Coordinate.TryParse("5242.118   km 2444.44  km 2679.085   km", CartesianType.ECEF, out coordinate);
+            if (Math.Abs(coordinate.Latitude.DecimalDegree - 25) > .001) { pass = false; }
+            if (Math.Abs(coordinate.Longitude.DecimalDegree - 25) > .001) { pass = false; }          
+            if (Math.Abs(coordinate.ECEF.GeoDetic_Height.Meters - 25) > 1) { pass = false; }
+      
+            Coordinate.TryParse("-96.867, -1107.196 , 6261.02   km", new DateTime(2019,1,1), CartesianType.ECEF, out coordinate);
+            if (Math.Abs(coordinate.Latitude.DecimalDegree - 80) > .001) { pass = false; }
+            if (Math.Abs(coordinate.Longitude.DecimalDegree - -95) > .001) { pass = false; }
+            if (Math.Abs(coordinate.ECEF.GeoDetic_Height.Meters - 1500) > 1) { pass = false; }
+            Console.WriteLine();
+            Write_Pass("ECEF PARSE OPTION", pass);
+
+            //PARSE TYPE ENUM TEST
+            pass = true;
+            coordinate = new Coordinate(25, 25);
+            if (coordinate.Parse_Format != Parse_Format_Type.None) { pass = false; }
+            Coordinate.TryParse("25,25", out coordinate);
+            if(coordinate.Parse_Format != Parse_Format_Type.Signed_Degree) { pass = false; }
+            Coordinate.TryParse("N 25º E 25º", out coordinate);
+            if (coordinate.Parse_Format != Parse_Format_Type.Decimal_Degree) { pass = false; }
+            Coordinate.TryParse("N 25º 0' E 25º 0'", out coordinate);
+            if (coordinate.Parse_Format != Parse_Format_Type.Degree_Decimal_Minute) { pass = false; }
+            Coordinate.TryParse("N 25º 0' 0\" E 25º 0' 0\"", out coordinate);
+            if (coordinate.Parse_Format != Parse_Format_Type.Degree_Minute_Second) { pass = false; }
+            Coordinate.TryParse("35R 298154mE 2766437mN", out coordinate);
+            if (coordinate.Parse_Format != Parse_Format_Type.UTM) { pass = false; }
+            Coordinate.TryParse("35R KH 98154 66437", out coordinate);
+            if (coordinate.Parse_Format != Parse_Format_Type.MGRS) { pass = false; }
+            Coordinate.TryParse("0.8213938 0.38302222 0.42261826", CartesianType.Cartesian, out coordinate);
+            if (coordinate.Parse_Format != Parse_Format_Type.Cartesian_Spherical) { pass = false; }
+            Coordinate.TryParse("5242.097 km, 2444.43 km, 2679.074 km", CartesianType.ECEF, out coordinate);
+            if (coordinate.Parse_Format != Parse_Format_Type.Cartesian_ECEF) { pass = false; }
+
+            Console.WriteLine();
+            Write_Pass("PARSE FORMAT ENUM", pass);
         }
         static void Celestial_Tests()
         {
             Console.WriteLine("Loading Celestial Values...");
             Console.WriteLine();
             CelestialTests ct = new CelestialTests();
+
             ct.Populate_CelestialTests();
+
             Write_Pass("Sunset: ", ct.Check_Values(ct.SunSets, "CelestialData\\SunSet.txt"));
             Write_Pass("Sunrise: ", ct.Check_Values(ct.SunRises, "CelestialData\\SunRise.txt"));
             Write_Pass("AstroDawn: ", ct.Check_Values(ct.AstroDawn, "CelestialData\\AstroDawn.txt"));
@@ -569,6 +649,15 @@ namespace CoordinateSharp_TestProj
             Write_Pass("Lunar Eclipse: ", ct.Check_Lunar_Eclipse());
             Write_Pass("Perigee: ", ct.Check_Perigee());
             Write_Pass("Apogee: ", ct.Check_Apogee());
+            Console.WriteLine();
+            Console.WriteLine("***Running IsSunUp Test (This will take a minute)****");
+            Console.WriteLine();
+            Write_Pass("IsSunUp", ct.Check_IsSunUp());
+            Console.WriteLine();
+            Console.WriteLine("***Running IsMoonUp Test (This will take a minute)****");
+            Console.WriteLine();
+            Write_Pass("IsMoonUp", ct.Check_IsMoonUp());
+            Console.WriteLine();
         }
 
         #region Distance Tests
@@ -623,6 +712,66 @@ namespace CoordinateSharp_TestProj
                 Debug.WriteLine("...Mismatch: " + d.Kilometers + " - " + kmWGS84);
             }
             else { Write_Pass("Distance(Coordinate c1, Coordinate c2, Shape.Ellipsoid)", true); }
+            //TURN OFF EAGERLOAD TO ENSURE COORD STILL MOVES
+
+            Coordinate c;
+            c2 = new Coordinate(25, 25);
+            Console.WriteLine();
+
+            try
+            {
+                bool pass = true;
+
+                double lat = 0.993933103786722;
+                double longi = 0.993337111127846;
+              
+                c = new Coordinate(1, 1, new EagerLoad(false));
+                c.Move(c2, 1000, Shape.Ellipsoid);
+                if (Math.Abs(lat - c.Latitude.DecimalDegree) > .000001 || Math.Abs(longi - c.Longitude.DecimalDegree) > .000001)
+                {
+                    pass = false;
+                }
+
+                lat = 1.00667823028963;
+                longi = 0.993966812478288;
+
+                c = new Coordinate(1, 1, new EagerLoad(false));              
+                c.Move(c2, 1000, Shape.Sphere);
+                if (Math.Abs(lat - c.Latitude.DecimalDegree) > .000001 || Math.Abs(longi - c.Longitude.DecimalDegree) > .000001)
+                {
+                    pass = false;
+                }
+
+                c = new Coordinate(1,1,new EagerLoad(false));               
+                c.Move(1000, 25, Shape.Sphere);
+                lat = 1.00815611080085;
+                longi = 0.996196153222444;
+                        
+                if (Math.Abs(lat-c.Latitude.DecimalDegree) > .000001 || Math.Abs(longi - c.Longitude.DecimalDegree) > .000001)
+                {
+                    pass = false;
+                }
+
+                c = new Coordinate(1,1,new EagerLoad(false));               
+                c.Move(1000, 25, Shape.Ellipsoid);
+                lat = 1.00819634348146;
+                longi = 0.996202971693992;
+
+                if (Math.Abs(lat - c.Latitude.DecimalDegree) > .000001 || Math.Abs(longi - c.Longitude.DecimalDegree) > .000001)
+                {
+                    pass = false;
+                }
+
+                Write_Pass("Coordinate Move Tests", pass);
+            }
+            catch(Exception ex)
+            {
+                Write_Pass("Coordinate Move Tests", false);
+                Console.WriteLine();
+                Console.WriteLine(ex.ToString());
+                Console.WriteLine();
+            }
+
         }     
         static bool Check_Distance(Distance d, double[] distances)
         {
@@ -633,14 +782,15 @@ namespace CoordinateSharp_TestProj
             double ft = d.Feet;
             double sm = d.Miles;
             double nm = d.NauticalMiles;
-            if (System.Math.Abs(m - distances[0]) > .0001) { Debug.WriteLine("...METERS MISMATCH: " + d.Meters + " - " + distances[0]); return false; }
-            if (System.Math.Abs(km - distances[1]) > .0001) { Debug.WriteLine("...KILOMETERS MISMATCH: " + d.Kilometers + " - " + distances[1]); return false; }
-            if (System.Math.Abs(ft - distances[2]) > .0001) { Debug.WriteLine("...FEET MISMATCH: " + d.Feet + " - " + distances[2]); return false; }
-            if (System.Math.Abs(nm - distances[3]) > .0001) { Debug.WriteLine("...NAUTICAL MILES MISMATCH: " + d.NauticalMiles + " - " + distances[3]); return false; }
-            if (System.Math.Abs(sm - distances[4]) > .001) { Debug.WriteLine("...STATUTE MILE MISMATCH: " + d.Miles + " - " + distances[4]); return false; }
+            if (Math.Abs(m - distances[0]) > .0001) { Debug.WriteLine("...METERS MISMATCH: " + d.Meters + " - " + distances[0]); return false; }
+            if (Math.Abs(km - distances[1]) > .0001) { Debug.WriteLine("...KILOMETERS MISMATCH: " + d.Kilometers + " - " + distances[1]); return false; }
+            if (Math.Abs(ft - distances[2]) > .0001) { Debug.WriteLine("...FEET MISMATCH: " + d.Feet + " - " + distances[2]); return false; }
+            if (Math.Abs(nm - distances[3]) > .0001) { Debug.WriteLine("...NAUTICAL MILES MISMATCH: " + d.NauticalMiles + " - " + distances[3]); return false; }
+            if (Math.Abs(sm - distances[4]) > .001) { Debug.WriteLine("...STATUTE MILE MISMATCH: " + d.Miles + " - " + distances[4]); return false; }
             return pass;
            
         }
+       
         #endregion
         static void Benchmark_Tests()
         {
@@ -754,7 +904,8 @@ namespace CoordinateSharp_TestProj
             if (c.UTM != null) { pass = false; }
             if (c.MGRS != null) { pass = false; }
             if (c.Cartesian != null) { pass = false; }
-            Write_Pass("Null Properties (Celestial, UTM, MGRS, Cartesian)", pass);
+            if (c.ECEF != null) { pass = false; }
+            Write_Pass("Null Properties (Celestial, UTM, MGRS, Cartesian, ECEF)", pass);
 
             //Check Load_Calls
             pass = true;
@@ -765,7 +916,9 @@ namespace CoordinateSharp_TestProj
             if (c.MGRS == null) { pass = false; }
             c.LoadCartesianInfo();
             if (c.Cartesian == null) { pass = false; }
-            Write_Pass("Load Calls (Celestial, UTM, MGRS, Cartesian)", pass);
+            c.LoadECEFInfo();
+            if(c.ECEF == null) { pass = false; }
+            Write_Pass("Load Calls (Celestial, UTM, MGRS, Cartesian, ECEF)", pass);
 
             if (pass)
             {
@@ -773,6 +926,7 @@ namespace CoordinateSharp_TestProj
                 MilitaryGridReferenceSystem mgrs = c.MGRS;
                 UniversalTransverseMercator utm = c.UTM;
                 Cartesian cart = c.Cartesian;
+                ECEF ecef = c.ECEF;
 
                 c.Latitude.DecimalDegree = -45;
                 c.Longitude.DecimalDegree = -75;
@@ -782,48 +936,61 @@ namespace CoordinateSharp_TestProj
                 if (!ReflectiveEquals(c.MGRS, mgrs)){ pass = false; }
                 if (!ReflectiveEquals(c.UTM, utm)){ pass = false; }
                 if (!ReflectiveEquals(c.Cartesian, cart)){ pass = false; }
+                if (!ReflectiveEquals(c.ECEF, ecef)) { pass = false; }
                 //Properties should remain equal as no load calls were made
-                Write_Pass("Property State Hold (Celestial, UTM, MGRS, Cartesian)", pass);
+                Write_Pass("Property State Hold (Celestial, UTM, MGRS, Cartesian, ECEF)", pass);
 
                 //Properties should change
                 pass = true;
                 c.LoadCelestialInfo();
                 c.LoadCartesianInfo();
                 c.LoadUTM_MGRS_Info();
+                c.LoadECEFInfo();
                 if (ReflectiveEquals(c.CelestialInfo, cel)) { pass = false; }
                 if (ReflectiveEquals(c.MGRS, mgrs)) { pass = false; }
                 if (ReflectiveEquals(c.UTM, utm)) { pass = false; }
                 if (ReflectiveEquals(c.Cartesian, cart)) { pass = false; }
+                if (ReflectiveEquals(c.ECEF, ecef)) { pass = false; }
                 //Properties should not be equal as chages have been made
-                Write_Pass("Property State Change (Celestial, UTM, MGRS, Cartesian)", pass);
+                Write_Pass("Property State Change (Celestial, UTM, MGRS, Cartesian, ECEF)", pass);
 
             }
             else
             {
                 //Passes auto fail has properties didn't load when called.
 
-                Write_Pass("Property State Hold (Celestial, UTM, MGRS, Cartesian)", false);
-                Write_Pass("Property State Change (Celestial, UTM, MGRS, Cartesian)", false);
+                Write_Pass("Property State Hold (Celestial, UTM, MGRS, Cartesian, ECEF)", false);
+                Write_Pass("Property State Change (Celestial, UTM, MGRS, Cartesian, ECEF)", false);
 
             }
 
             //EagerLoaded Flags Test
           
-            EagerLoad eg = new EagerLoad(EagerLoadType.Cartesian | EagerLoadType.Celestial | EagerLoadType.UTM_MGRS);
+            EagerLoad eg = new EagerLoad(EagerLoadType.Cartesian | EagerLoadType.Celestial | EagerLoadType.UTM_MGRS | EagerLoadType.ECEF);
             pass = true;
-            if(eg.Cartesian==false || eg.Celestial==false || eg.UTM_MGRS == false) { pass = false; }
+            if(eg.Cartesian==false || eg.Celestial==false || eg.UTM_MGRS == false || eg.ECEF == false) { pass = false; }
             eg = new EagerLoad(EagerLoadType.Celestial);
-            if (eg.Cartesian==true || eg.Celestial==false || eg.UTM_MGRS == true) { pass = false; }
+            if (eg.Cartesian == true || eg.Celestial == false || eg.UTM_MGRS == true || eg.ECEF == true) { pass = false; }
             eg = new EagerLoad(EagerLoadType.Cartesian);
-            if (eg.Cartesian == false|| eg.Celestial == true || eg.UTM_MGRS == true) { pass = false; }
+            if (eg.Cartesian == false|| eg.Celestial == true || eg.UTM_MGRS == true || eg.ECEF == true) { pass = false; }
             eg = new EagerLoad(EagerLoadType.UTM_MGRS);
-            if (eg.Cartesian == true|| eg.Celestial == true || eg.UTM_MGRS == false) { pass = false; }
+            if (eg.Cartesian == true|| eg.Celestial == true || eg.UTM_MGRS == false || eg.ECEF == true) { pass = false; }
+            eg = new EagerLoad(EagerLoadType.ECEF);
+            if (eg.Cartesian == true || eg.Celestial == true || eg.UTM_MGRS == true || eg.ECEF == false) { pass = false; }
+
             eg = new EagerLoad(EagerLoadType.UTM_MGRS | EagerLoadType.Celestial);
-            if (eg.Cartesian == true || eg.Celestial == false|| eg.UTM_MGRS == false) { pass = false; }
+            if (eg.Cartesian == true || eg.Celestial == false|| eg.UTM_MGRS == false || eg.ECEF==true) { pass = false; }
             eg = new EagerLoad(EagerLoadType.Cartesian | EagerLoadType.Celestial);
-            if (eg.Cartesian == false || eg.Celestial == false || eg.UTM_MGRS == true) { pass = false; }
+            if (eg.Cartesian == false || eg.Celestial == false || eg.UTM_MGRS == true || eg.ECEF == true) { pass = false; }
             eg = new EagerLoad(EagerLoadType.UTM_MGRS | EagerLoadType.Cartesian);
-            if (eg.Cartesian == false|| eg.Celestial == true|| eg.UTM_MGRS == false) { pass = false; }
+            if (eg.Cartesian == false|| eg.Celestial == true|| eg.UTM_MGRS == false || eg.ECEF == true) { pass = false; }
+            eg = new EagerLoad(EagerLoadType.ECEF | EagerLoadType.Celestial);
+            if (eg.Cartesian == true || eg.Celestial == false || eg.UTM_MGRS == true || eg.ECEF == false) { pass = false; }
+            eg = new EagerLoad(EagerLoadType.ECEF | EagerLoadType.Cartesian);
+            if (eg.Cartesian == false || eg.Celestial == true || eg.UTM_MGRS == true || eg.ECEF == false) { pass = false; }
+            eg = new EagerLoad(EagerLoadType.ECEF | EagerLoadType.Cartesian| EagerLoadType.UTM_MGRS);
+            if (eg.Cartesian == false|| eg.Celestial == true || eg.UTM_MGRS == false || eg.ECEF == false) { pass = false; }
+
             Write_Pass("Flags Test", pass);
         }
         public static bool ReflectiveEquals(object first, object second)

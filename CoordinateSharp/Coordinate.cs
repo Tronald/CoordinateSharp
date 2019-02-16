@@ -1,19 +1,42 @@
 ﻿/*
- (c) 2017, Justin Gielski
- CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate 
- format conversions and location based celestial calculations.
- https://github.com/Tronald/CoordinateSharp
+CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate 
+format conversions and location based celestial calculations.
+https://github.com/Tronald/CoordinateSharp
 
- Many celestial formulas in this library are based on Jean Meeus's 
- Astronomical Algorithms (2nd Edition). Comments that reference only a chapter
- are refering to this work.
+Many celestial formulas in this library are based on Jean Meeus's 
+Astronomical Algorithms (2nd Edition). Comments that reference only a chapter
+are refering to this work.
+
+MIT License
+
+(c) 2017, Justin Gielski
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE. 
 */
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace CoordinateSharp
-{   
+{
     /// <summary>
     /// Observable class for handling all location based information.
     /// This is the main class for CoordinateSharp.
@@ -23,7 +46,7 @@ namespace CoordinateSharp
     /// </remarks>
     [Serializable]
     public class Coordinate : INotifyPropertyChanged
-    {     
+    {
         /// <summary>
         /// Creates an empty Coordinate.
         /// </summary>
@@ -32,15 +55,20 @@ namespace CoordinateSharp
         /// </remarks>
         public Coordinate()
         {
-            this.FormatOptions = new CoordinateFormatOptions();
-            this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            FormatOptions = new CoordinateFormatOptions();
+            geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(CoordinateType.Lat, this);
             longitude = new CoordinatePart(CoordinateType.Long, this);
             celestialInfo = new Celestial();
             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
-            mgrs = new MilitaryGridReferenceSystem(this.utm);
+            mgrs = new MilitaryGridReferenceSystem(utm);
             cartesian = new Cartesian(this);
+            ecef = new ECEF(this);
+
             EagerLoadSettings = new EagerLoad();
+
+            equatorial_radius = 6378137.0;
+            inverse_flattening = 298.257223563;
         }
         /// <summary>
         /// Creates an empty Coordinate with custom datum.
@@ -50,16 +78,18 @@ namespace CoordinateSharp
         /// </remarks>
         internal Coordinate(double equatorialRadius, double inverseFlattening, bool t)
         {
-            this.FormatOptions = new CoordinateFormatOptions();
-            this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            FormatOptions = new CoordinateFormatOptions();
+            geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(CoordinateType.Lat, this);
             longitude = new CoordinatePart(CoordinateType.Long, this);
             celestialInfo = new Celestial();
-            utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, equatorialRadius,inverseFlattening);     
-            mgrs = new MilitaryGridReferenceSystem(this.utm);
+            utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, equatorialRadius, inverseFlattening);
+            mgrs = new MilitaryGridReferenceSystem(utm);
             cartesian = new Cartesian(this);
-            //Set_Datum(equatorialRadius, inverseFlattening);
+            ecef = new ECEF(this);
+
             EagerLoadSettings = new EagerLoad();
+            Set_Datum(equatorialRadius, inverseFlattening);
         }
         /// <summary>
         /// Creates a populated Coordinate based on decimal (signed degrees) formated latitude and longitude.
@@ -70,16 +100,20 @@ namespace CoordinateSharp
         /// Geodate will default to 1/1/1900 GMT until provided
         /// </remarks>
         public Coordinate(double lat, double longi)
-        {         
-            this.FormatOptions = new CoordinateFormatOptions();
-            this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        {
+            FormatOptions = new CoordinateFormatOptions();
+            geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
-            celestialInfo = new Celestial(lat,longi,this.geoDate);
+            celestialInfo = new Celestial(lat, longi, geoDate);
             utm = new UniversalTransverseMercator(lat, longi, this);
-            mgrs = new MilitaryGridReferenceSystem(this.utm);
+            mgrs = new MilitaryGridReferenceSystem(utm);
             cartesian = new Cartesian(this);
+            ecef = new ECEF(this);
             EagerLoadSettings = new EagerLoad();
+
+            equatorial_radius = 6378137.0;
+            inverse_flattening = 298.257223563;
         }
         /// <summary>
         /// Creates a populated Coordinate object with an assigned GeoDate.
@@ -89,15 +123,19 @@ namespace CoordinateSharp
         /// <param name="date">DateTime (UTC)</param>
         public Coordinate(double lat, double longi, DateTime date)
         {
-            this.FormatOptions = new CoordinateFormatOptions();
+            FormatOptions = new CoordinateFormatOptions();
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
-            celestialInfo = new Celestial(lat, longi, date);            
-            this.geoDate = date;
+            celestialInfo = new Celestial(lat, longi, date);
+            geoDate = date;
             utm = new UniversalTransverseMercator(lat, longi, this);
-            mgrs = new MilitaryGridReferenceSystem(this.utm);
+            mgrs = new MilitaryGridReferenceSystem(utm);
             cartesian = new Cartesian(this);
+            ecef = new ECEF(this);
             EagerLoadSettings = new EagerLoad();
+
+            equatorial_radius = 6378137.0;
+            inverse_flattening = 298.257223563;
         }
 
         /// <summary>
@@ -109,10 +147,11 @@ namespace CoordinateSharp
         /// <param name="eagerLoad">Eager loading options</param>
         public Coordinate(EagerLoad eagerLoad)
         {
-            this.FormatOptions = new CoordinateFormatOptions();
-            this.geoDate = this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            FormatOptions = new CoordinateFormatOptions();
+            geoDate = geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(CoordinateType.Lat, this);
             longitude = new CoordinatePart(CoordinateType.Long, this);
+
             if (eagerLoad.Cartesian)
             {
                 cartesian = new Cartesian(this);
@@ -124,10 +163,16 @@ namespace CoordinateSharp
             if (eagerLoad.UTM_MGRS)
             {
                 utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
-                mgrs = new MilitaryGridReferenceSystem(this.utm);
+                mgrs = new MilitaryGridReferenceSystem(utm);
             }
-           
+            if (eagerLoad.ECEF)
+            {
+                ecef = new ECEF(this);
+            }
             EagerLoadSettings = eagerLoad;
+
+            equatorial_radius = 6378137.0;
+            inverse_flattening = 298.257223563;
         }
         /// <summary>
         /// Creates a populated Coordinate object with specified eager loading options.
@@ -140,26 +185,33 @@ namespace CoordinateSharp
         /// <param name="eagerLoad">Eager loading options</param>
         public Coordinate(double lat, double longi, EagerLoad eagerLoad)
         {
-            this.FormatOptions = new CoordinateFormatOptions();
-            this.geoDate = this.geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            FormatOptions = new CoordinateFormatOptions();
+            geoDate = geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
 
             if (eagerLoad.Celestial)
             {
-                celestialInfo = new Celestial(lat, longi, this.geoDate);
+                celestialInfo = new Celestial(lat, longi, geoDate);
             }
             if (eagerLoad.UTM_MGRS)
             {
                 utm = new UniversalTransverseMercator(lat, longi, this);
-                mgrs = new MilitaryGridReferenceSystem(this.utm);
+                mgrs = new MilitaryGridReferenceSystem(utm);
             }
             if (eagerLoad.Cartesian)
             {
                 cartesian = new Cartesian(this);
             }
+            if (eagerLoad.ECEF)
+            {
+                ecef = new ECEF(this);
+            }
 
             EagerLoadSettings = eagerLoad;
+
+            equatorial_radius = 6378137.0;
+            inverse_flattening = 298.257223563;
         }
         /// <summary>
         /// Creates a populated Coordinate object with specified eager load options and an assigned GeoDate.
@@ -170,11 +222,10 @@ namespace CoordinateSharp
         /// <param name="eagerLoad">Eager loading options</param>
         public Coordinate(double lat, double longi, DateTime date, EagerLoad eagerLoad)
         {
-            this.FormatOptions = new CoordinateFormatOptions();
+            FormatOptions = new CoordinateFormatOptions();
             latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
             longitude = new CoordinatePart(longi, CoordinateType.Long, this);
-            this.geoDate = date;
-
+            geoDate = date;
             if (eagerLoad.Celestial)
             {
                 celestialInfo = new Celestial(lat, longi, date);
@@ -183,41 +234,50 @@ namespace CoordinateSharp
             if (eagerLoad.UTM_MGRS)
             {
                 utm = new UniversalTransverseMercator(lat, longi, this);
-                mgrs = new MilitaryGridReferenceSystem(this.utm);
+                mgrs = new MilitaryGridReferenceSystem(utm);
             }
             if (eagerLoad.Cartesian)
             {
                 cartesian = new Cartesian(this);
             }
-
+            if (eagerLoad.ECEF)
+            {
+                ecef = new ECEF(this);
+            }
             EagerLoadSettings = eagerLoad;
+
+            equatorial_radius = 6378137.0;
+            inverse_flattening = 298.257223563;
         }
-       
+
         private CoordinatePart latitude;
         private CoordinatePart longitude;
         private UniversalTransverseMercator utm;
         private MilitaryGridReferenceSystem mgrs;
         private Cartesian cartesian;
+        private ECEF ecef;
         private DateTime geoDate;
         private Celestial celestialInfo;
-       
+        internal double equatorial_radius;
+        internal double inverse_flattening;
+
         /// <summary>
         /// Latitudinal Coordinate Part
         /// </summary>
         public CoordinatePart Latitude
         {
-            get { return this.latitude; }
+            get { return latitude; }
             set
             {
-                if (this.latitude != value)
+                if (latitude != value)
                 {
                     if (value.Position == CoordinatesPosition.E || value.Position == CoordinatesPosition.W)
                     { throw new ArgumentException("Invalid Position", "Latitudinal positions cannot be set to East or West."); }
-                    this.latitude = value;
-                    this.latitude.Parent = this;
+                    latitude = value;
+                    latitude.Parent = this;
                     if (EagerLoadSettings.Celestial)
                     {
-                        celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
+                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate);
                     }
                     if (longitude != null)
                     {
@@ -225,41 +285,41 @@ namespace CoordinateSharp
                         if (EagerLoadSettings.UTM_MGRS)
                         {
                             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, utm.equatorial_radius, utm.inverse_flattening);
-                            mgrs = new MilitaryGridReferenceSystem(this.utm);
+                            mgrs = new MilitaryGridReferenceSystem(utm);
                         }
                         if (EagerLoadSettings.Cartesian)
                         {
                             cartesian = new Cartesian(this);
                         }
                     }
-                    
+
                 }
             }
         }
         /// <summary>
         /// Longitudinal Coordinate Part
         /// </summary>
-        public CoordinatePart Longitude 
+        public CoordinatePart Longitude
         {
-            get { return this.longitude; }
+            get { return longitude; }
             set
             {
-                if (this.longitude != value)
+                if (longitude != value)
                 {
                     if (value.Position == CoordinatesPosition.N || value.Position == CoordinatesPosition.S)
                     { throw new ArgumentException("Invalid Position", "Longitudinal positions cannot be set to North or South."); }
-                    this.longitude = value;
-                    this.latitude.Parent = this;
+                    longitude = value;
+                    latitude.Parent = this;
                     if (EagerLoadSettings.Celestial)
-                    {                      
-                        celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
+                    {
+                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate);
                     }
                     if (latitude != null)
                     {
                         if (EagerLoadSettings.UTM_MGRS)
                         {
                             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, utm.equatorial_radius, utm.inverse_flattening);
-                            mgrs = new MilitaryGridReferenceSystem(this.utm);
+                            mgrs = new MilitaryGridReferenceSystem(utm);
                         }
                         if (EagerLoadSettings.Cartesian)
                         {
@@ -268,7 +328,7 @@ namespace CoordinateSharp
                     }
                 }
             }
-        }     
+        }
         /// <summary>
         /// Date used to calculate celestial information
         /// </summary>
@@ -288,8 +348,8 @@ namespace CoordinateSharp
                         celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate);
                         NotifyPropertyChanged("CelestialInfo");
                     }
-                   
-                    NotifyPropertyChanged("GeoDate");                                    
+
+                    NotifyPropertyChanged("GeoDate");
                 }
             }
         }
@@ -300,18 +360,8 @@ namespace CoordinateSharp
         {
             get
             {
-                return this.utm;
-            }
-            //set
-            //{
-            //    if (this.utm != value)
-            //    {
-            //        this.utm = value;
-            //        this.NotifyPropertyChanged("UTM");
-            //        celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
-            //        this.NotifyPropertyChanged("CelestialInfo");
-            //    }
-            //}
+                return utm;
+            }           
         }
         /// <summary>
         /// Military Grid Reference System (NATO UTM)
@@ -320,18 +370,8 @@ namespace CoordinateSharp
         {
             get
             {
-                return this.mgrs;
-            }
-            //set
-            //{
-            //    if (this.utm != value)
-            //    {
-            //        this.utm = value;
-            //        this.NotifyPropertyChanged("UTM");
-            //        celestialInfo.CalculateCelestialTime(this.Latitude.DecimalDegree, this.Longitude.DecimalDegree, this.geoDate);
-            //        this.NotifyPropertyChanged("CelestialInfo");
-            //    }
-            //}
+                return mgrs;
+            }           
         }
         /// <summary>
         /// Cartesian (Based on Spherical Earth)
@@ -341,14 +381,57 @@ namespace CoordinateSharp
             get
             {
                 return cartesian;
-            }         
+            }
         }
+        /// <summary>
+        /// Earth Centered Earth Fixed Coordinate. 
+        /// Uses Ellipsoidal height with no geoid model included.
+        /// 0 = Mean Sea Level based on the provided Datum.
+        /// </summary>
+        public ECEF ECEF
+        {
+            get
+            {
+                return ecef;
+            }
+            internal set
+            {
+                if (ecef != value)
+                {
+                    ecef = value;
+                    NotifyPropertyChanged("ECEF");
+                }
+            }
+        }
+
+        //PARSER INDICATOR
+        private Parse_Format_Type parse_Format = Parse_Format_Type.None;
+        /// <summary>
+        /// Used to determine what format the coordinate was parsed from.
+        /// Will equal "None" if Coordinate was not initialzed via a TryParse() method.
+        /// </summary>
+        public Parse_Format_Type Parse_Format
+        {
+            get
+            {
+                return parse_Format;
+            }
+            internal set
+            {
+                if(parse_Format!=value)
+                {
+                    parse_Format = value;
+                    NotifyPropertyChanged("Parse_Format");
+                }
+            }              
+        }
+
         /// <summary>
         /// Celestial information based on the objects location and geographic UTC date.
         /// </summary>
         public Celestial CelestialInfo
         {
-            get { return this.celestialInfo; }          
+            get { return celestialInfo; }          
         }
 
         /// <summary>
@@ -356,7 +439,7 @@ namespace CoordinateSharp
         /// </summary>
         public void LoadCelestialInfo()
         {
-            this.celestialInfo = Celestial.LoadCelestial(this);
+            celestialInfo = Celestial.LoadCelestial(this);
         }
         /// <summary>
         /// Initialize UTM and MGRS information (required if eager loading is turned off).
@@ -364,7 +447,7 @@ namespace CoordinateSharp
         public void LoadUTM_MGRS_Info()
         {
             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
-            mgrs = new MilitaryGridReferenceSystem(this.utm);
+            mgrs = new MilitaryGridReferenceSystem(utm);
         }
         /// <summary>
         /// Initialize cartesian information (required if eager loading is turned off).
@@ -372,6 +455,13 @@ namespace CoordinateSharp
         public void LoadCartesianInfo()
         {
             cartesian = new Cartesian(this);
+        }
+        /// <summary>
+        /// Initialize ECEF information (required if eager loading is turned off).
+        /// </summary>
+        public void LoadECEFInfo()
+        {
+            ecef = new ECEF(this);
         }
 
         /// <summary>
@@ -391,7 +481,7 @@ namespace CoordinateSharp
         {
             get
             {
-                return this.Latitude.Display + " " + this.Longitude.Display;
+                return Latitude.Display + " " + Longitude.Display;
             }
         }
         /// <summary>
@@ -419,6 +509,8 @@ namespace CoordinateSharp
 
         /// <summary>
         /// Set a custom datum for coordinate conversions and distance calculation.
+        /// Objects must be loaded prior to setting if EagerLoading is turned off or else the items Datum won't be set.
+        /// Use overload if EagerLoading options are used.
         /// </summary>
         /// <param name="radius">Equatorial Radius</param>
         /// <param name="flat">Inverse Flattening</param>
@@ -427,17 +519,65 @@ namespace CoordinateSharp
             //WGS84
             //RADIUS 6378137.0;
             //FLATTENING 298.257223563;
-            if(utm == null)
+            if(utm != null)
             {
-                throw new NullReferenceException("UTM and MGRS objects have not been loaded. If Eagerloading, ensure they are loaded prior to setting a datum.");
+                utm.inverse_flattening = flat;
+                utm.ToUTM(Latitude.ToDouble(), Longitude.ToDouble(), utm);
+                mgrs = new MilitaryGridReferenceSystem(utm);
+                NotifyPropertyChanged("UTM");
+                NotifyPropertyChanged("MGRS");              
             }
-            this.utm.equatorial_radius = radius;
-            this.utm.inverse_flattening = flat;
-            this.utm.ToUTM(this.Latitude.ToDouble(), this.Longitude.ToDouble(), this.utm);
-            mgrs = new MilitaryGridReferenceSystem(this.utm);
-            NotifyPropertyChanged("UTM");
-            NotifyPropertyChanged("MGRS");
+            if(ecef != null)
+            {
+                ecef.equatorial_radius = radius;
+                ecef.inverse_flattening = flat;
+                ecef.ToECEF(this);
+                NotifyPropertyChanged("ECEF");              
+            }
+            equatorial_radius = radius;
+            inverse_flattening = flat;
         }
+
+        /// <summary>
+        /// Set a custom datum for coordinate conversions and distance calculation for specified coordinate formats only.
+        /// Objects must be loaded prior to setting if EagerLoading is turned off.
+        /// </summary>
+        /// <param name="radius">Equatorial Radius</param>
+        /// <param name="flat">Inverse Flattening</param>
+        /// <param name="cd">Coordinate_Datum</param>
+        public void Set_Datum(double radius, double flat, Coordinate_Datum cd)
+        {
+            //WGS84
+            //RADIUS 6378137.0;
+            //FLATTENING 298.257223563;
+         
+            if (cd.HasFlag(Coordinate_Datum.UTM_MGRS))
+            {
+                if(utm==null || mgrs == null) { throw new NullReferenceException("UTM/MGRS objects must be loaded prior to changing the datum."); }
+                utm.inverse_flattening = flat;
+                utm.ToUTM(Latitude.ToDouble(), Longitude.ToDouble(), utm);
+                mgrs = new MilitaryGridReferenceSystem(utm);
+                NotifyPropertyChanged("UTM");
+                NotifyPropertyChanged("MGRS");
+            
+            }
+            if (cd.HasFlag(Coordinate_Datum.ECEF))
+            {
+                if (ECEF==null) { throw new NullReferenceException("ECEF objects must be loaded prior to changing the datum."); }
+                ecef.equatorial_radius = radius;
+                ecef.inverse_flattening = flat;
+                ecef.ToECEF(this);
+                NotifyPropertyChanged("ECEF");
+            
+            }
+            if (cd.HasFlag(Coordinate_Datum.LAT_LONG))
+            {
+                equatorial_radius = radius;
+                inverse_flattening = flat;
+            }
+        }
+
+
         /// <summary>
         /// Returns a Distance object based on the current and specified coordinate (Haversine / Spherical Earth).
         /// </summary>
@@ -457,20 +597,21 @@ namespace CoordinateSharp
         {
             return new Distance(this, c2, shape);
         }
+      
         /// <summary>
-        /// Move coordinate based on provided bearing and distance.
+        /// Move coordinate based on provided bearing and distance (in meters).
         /// </summary>
         /// <param name="distance">distance in meters</param>
         /// <param name="bearing">bearing</param>
         /// <param name="shape">shape of earth</param>
-        public void Move(Double distance, double bearing, Shape shape)
+        public void Move(double distance, double bearing, Shape shape)
         {
             //Convert to Radians for formula
             double lat1 = latitude.ToRadians();
             double lon1 = longitude.ToRadians();
             double crs12 = bearing * Math.PI / 180; //Convert bearing to radians
 
-            double[] ellipse = new double[] { this.utm.Equatorial_Radius, this.UTM.Inverse_Flattening };
+            double[] ellipse = new double[] { equatorial_radius, inverse_flattening };
 
             if (shape == Shape.Sphere)
             {
@@ -493,11 +634,12 @@ namespace CoordinateSharp
                 Longitude.DecimalDegree = lon2;
             }        
         }
+       
         /// <summary>
-        /// Move coordinate based on provided target coordinate and distance.
+        /// Move coordinate based on provided target coordinate and distance (in meters).
         /// </summary>
         /// <param name="c">Target coordinate</param>
-        /// <param name="distance">Distance toward target</param>
+        /// <param name="distance">Distance toward target in meters</param>
         /// <param name="shape">Shape of earth</param>
         public void Move(Coordinate c, double distance, Shape shape)
         {
@@ -507,7 +649,7 @@ namespace CoordinateSharp
             double lon1 = longitude.ToRadians();
             double crs12 = d.Bearing * Math.PI / 180; //Convert bearing to radians
 
-            double[] ellipse = new double[] { this.utm.Equatorial_Radius, this.UTM.Inverse_Flattening };
+            double[] ellipse = new double[] { equatorial_radius, inverse_flattening };
 
             if (shape == Shape.Sphere)
             {
@@ -549,9 +691,12 @@ namespace CoordinateSharp
         public static bool TryParse(string s, out Coordinate c)
         {
             c = null;
-            if (FormatFinder.TryParse(s, out c))
+            if (FormatFinder.TryParse(s, CartesianType.Cartesian, out c))
             {
+                Parse_Format_Type pft = c.Parse_Format;
                 c = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble()); //Reset with EagerLoad back on.
+                c.parse_Format = pft;
+               
                 return true;
             }
             return false;
@@ -575,9 +720,89 @@ namespace CoordinateSharp
         public static bool TryParse(string s, DateTime geoDate, out Coordinate c)
         {
             c = null;
-            if (FormatFinder.TryParse(s, out c))
+            if (FormatFinder.TryParse(s, CartesianType.Cartesian, out c))
             {
+                Parse_Format_Type pft = c.Parse_Format;
                 c = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble(), geoDate); //Reset with EagerLoad back on.
+                c.parse_Format = pft;
+              
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate.
+        /// </summary>
+        /// <param name="s">Coordinate string</param>
+        /// <param name="c">Coordinate</param>
+        /// <param name="ct">Cartesian Type</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// <code>
+        /// Coordinate c;
+        /// if(Coordinate.TryParse("N 32.891º W 64.872º", CartesianType.Cartesian, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string s, CartesianType ct, out Coordinate c)
+        {
+            c = null;
+            if (FormatFinder.TryParse(s, ct, out c))
+            {
+                Parse_Format_Type pft = c.Parse_Format;
+                if (ct == CartesianType.ECEF)
+                {
+                    Distance h = c.ecef.GeoDetic_Height;
+                    c = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble()); //Reset with EagerLoad back on.
+                    c.ecef.Set_GeoDetic_Height(c, h);
+                }
+                else
+                {
+                    c = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble()); //Reset with EagerLoad back on.
+                }
+                c.parse_Format = pft;
+               
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate with specified DateTime
+        /// </summary>
+        /// <param name="s">Coordinate string</param>
+        /// <param name="geoDate">GeoDate</param>
+        /// <param name="c">Coordinate</param>
+        /// <param name="ct">Cartesian Type</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// <code>
+        /// Coordinate c;
+        /// if(Coordinate.TryParse("N 32.891º W 64.872º", new DateTime(2018,7,7), CartesianType.Cartesian, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string s, DateTime geoDate, CartesianType ct, out Coordinate c)
+        {
+            c = null;
+            if (FormatFinder.TryParse(s, ct, out c))
+            {
+                Parse_Format_Type pft = c.Parse_Format;
+                if (ct == CartesianType.ECEF)
+                {
+                    Distance h = c.ecef.GeoDetic_Height;
+                    c = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble(), geoDate); //Reset with EagerLoad back on.
+                    c.ecef.Set_GeoDetic_Height(c, h);
+                }            
+                else
+                {
+                    c = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble(), geoDate); //Reset with EagerLoad back on.
+                }
+                c.parse_Format = pft;
+             
                 return true;
             }
             return false;
@@ -616,6 +841,10 @@ namespace CoordinateSharp
                     if (!EagerLoadSettings.Cartesian || Cartesian == null) { return; }
                     Cartesian.ToCartesian(this);
                     break;
+                case "ECEF":
+                    if (!EagerLoadSettings.ECEF) { return; }
+                    ECEF.ToECEF(this);
+                    break;            
                 default:
                     break;
             }
@@ -624,7 +853,6 @@ namespace CoordinateSharp
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
-
     }
     /// <summary>
     /// Observable class for handling latitudinal and longitudinal coordinate parts.
@@ -662,11 +890,11 @@ namespace CoordinateSharp
         /// </summary>
         public double DecimalDegree
         {
-            get { return this.decimalDegree; }
+            get { return decimalDegree; }
             set
             {
                 //If changing, notify the needed property changes
-                if (this.decimalDegree != value)
+                if (decimalDegree != value)
                 {
                     //Validate the value
                     if (type == CoordinateType.Lat)
@@ -693,23 +921,23 @@ namespace CoordinateSharp
                         }
 
                     }
-                    this.decimalDegree = value;
+                    decimalDegree = value;
                    
                     //Update Position
-                    if ((this.position == CoordinatesPosition.N || this.position == CoordinatesPosition.E) && this.decimalDegree < 0)
+                    if ((position == CoordinatesPosition.N || position == CoordinatesPosition.E) && decimalDegree < 0)
                     {
-                        if (this.type == CoordinateType.Lat) { this.position = CoordinatesPosition.S; }
-                        else { this.position = CoordinatesPosition.W; }
+                        if (type == CoordinateType.Lat) { position = CoordinatesPosition.S; }
+                        else { position = CoordinatesPosition.W; }
                        
                     }
-                    if ((this.position == CoordinatesPosition.W || this.position == CoordinatesPosition.S) && this.decimalDegree >= 0)
+                    if ((position == CoordinatesPosition.W || position == CoordinatesPosition.S) && decimalDegree >= 0)
                     {
-                        if (this.type == CoordinateType.Lat) { this.position = CoordinatesPosition.N; }
-                        else { this.position = CoordinatesPosition.E; }
+                        if (type == CoordinateType.Lat) { position = CoordinatesPosition.N; }
+                        else { position = CoordinatesPosition.E; }
                       
                     }
                     //Update the Degree & Decimal Minute
-                    double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive for calculations
+                    double degABS = Math.Abs(decimalDegree); //Make decimalDegree positive for calculations
                     double degFloor = Math.Truncate(degABS); //Truncate the number leftto extract the degree
                     decimal f = Convert.ToDecimal(degFloor); //Convert to degree to decimal to keep precision during calculations
                     decimal ddm = Convert.ToDecimal(degABS) - f; //Extract decimalMinute value from decimalDegree
@@ -718,14 +946,14 @@ namespace CoordinateSharp
                     double dm = Convert.ToDouble(ddm); //Convert decimalMinutes back to double for storage
                     int df = Convert.ToInt32(degFloor); //Convert degrees to int for storage
 
-                    if (this.degrees != df)
+                    if (degrees != df)
                     {
-                        this.degrees = df;
+                        degrees = df;
                       
                     }
-                    if (this.decimalMinute != dm)
+                    if (decimalMinute != dm)
                     {
-                        this.decimalMinute = dm;
+                        decimalMinute = dm;
                    
                     }
                     //Update Minutes Seconds              
@@ -737,14 +965,14 @@ namespace CoordinateSharp
                     s *= 60; //Multiply by 60 to get readable seconds
                     double secs = Convert.ToDouble(s); //Convert back to double for storage
 
-                    if (this.minutes != mF)
+                    if (minutes != mF)
                     {
-                        this.minutes = mF;
+                        minutes = mF;
                       
                     }
-                    if (this.seconds != secs)
+                    if (seconds != secs)
                     {
-                        this.seconds = secs;                    
+                        seconds = secs;                    
                     }
                     NotifyProperties(PropertyTypes.DecimalDegree);
                 }
@@ -755,30 +983,30 @@ namespace CoordinateSharp
         /// </summary>
         public double DecimalMinute
         {
-            get { return this.decimalMinute; }
+            get { return decimalMinute; }
             set
             {
-                if (this.decimalMinute != value)
+                if (decimalMinute != value)
                 {
                     if (value < 0) { value *= -1; }//Adjust accidental negative input
                     //Validate values     
                    
                     decimal dm = Math.Abs(Convert.ToDecimal(value)) / 60;
                     double decMin = Convert.ToDouble(dm);
-                    if (this.type == CoordinateType.Lat)
+                    if (type == CoordinateType.Lat)
                     {
 
-                        if (this.degrees + decMin > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal degrees cannot be greater than 90"); }
+                        if (degrees + decMin > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal degrees cannot be greater than 90"); }
                     }
                     else
                     {
-                        if (this.degrees + decMin > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal degrees cannot be greater than 180"); }
+                        if (degrees + decMin > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal degrees cannot be greater than 180"); }
                     }
                     if (value >= 60) { throw new ArgumentOutOfRangeException("Minutes out of range", "Coordinate Minutes cannot be greater than or equal to 60"); }
                     if (value < 0) { throw new ArgumentOutOfRangeException("Minutes out of range", "Coordinate Minutes cannot be less than 0"); }
 
 
-                    this.decimalMinute = value;
+                    decimalMinute = value;
                    
 
                     decimal decValue = Convert.ToDecimal(value); //Convert value to decimal for precision during calculation
@@ -787,15 +1015,15 @@ namespace CoordinateSharp
                     secs *= 60; //Convert seconds to human readable format
 
                     decimal newDM = decValue / 60; //divide decimalMinute by 60 to get storage value
-                    decimal newDD = this.degrees + newDM;//Add new decimal value to the floor degree value to get new decimalDegree;
-                    if (this.decimalDegree < 0) { newDD = newDD * -1; } //Restore negative if needed
+                    decimal newDD = degrees + newDM;//Add new decimal value to the floor degree value to get new decimalDegree;
+                    if (decimalDegree < 0) { newDD = newDD * -1; } //Restore negative if needed
 
-                    this.decimalDegree = Convert.ToDouble(newDD);  //Convert back to double for storage                      
+                    decimalDegree = Convert.ToDouble(newDD);  //Convert back to double for storage                      
                    
 
-                    this.minutes = Convert.ToInt32(dmFloor); //Convert minutes to int for storage
+                    minutes = Convert.ToInt32(dmFloor); //Convert minutes to int for storage
                    
-                    this.seconds = Convert.ToDouble(secs); //Convert seconds to double for storage 
+                    seconds = Convert.ToDouble(secs); //Convert seconds to double for storage 
                     NotifyProperties(PropertyTypes.DecimalMinute);              
                 }
             }
@@ -806,44 +1034,44 @@ namespace CoordinateSharp
         /// </summary>
         public int Degrees
         {
-            get { return this.degrees; }
+            get { return degrees; }
             set
             {              
                 //Validate Value
-                if (this.degrees != value)
+                if (degrees != value)
                 {
                    
                     if (value < 0) { value *= -1; }//Adjust accidental negative input
                     
                     if (type == CoordinateType.Lat)
                     {
-                        if (value + this.decimalMinute /100.0 > 90)
+                        if (value + decimalMinute /100.0 > 90)
                         {
                             throw new ArgumentOutOfRangeException("Degrees", "Latitude degrees cannot be greater than 90");
                         }
                     }
                     if (type == CoordinateType.Long)
                     {                    
-                        if (value + this.decimalMinute /100.0 > 180)
+                        if (value + decimalMinute /100.0 > 180)
                         {
                             throw new ArgumentOutOfRangeException("Degrees", "Longitude degrees cannot be greater than 180");
                         }
 
                     }
 
-                    decimal f = Convert.ToDecimal(this.degrees);
+                    decimal f = Convert.ToDecimal(degrees);
 
-                    this.degrees = value;
+                    degrees = value;
 
-                    double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive for calculations
+                    double degABS = Math.Abs(decimalDegree); //Make decimalDegree positive for calculations
                     decimal dDec = Convert.ToDecimal(degABS); //Convert to Decimal for precision during calculations              
                                                               //Convert degrees to decimal to keep precision        
                     decimal dm = dDec - f; //Extract minutes                                      
-                    decimal newDD = this.degrees + dm; //Add minutes to new degree for decimalDegree
+                    decimal newDD = degrees + dm; //Add minutes to new degree for decimalDegree
                  
-                    if (this.decimalDegree < 0) { newDD *= -1; } //Set negative as required
+                    if (decimalDegree < 0) { newDD *= -1; } //Set negative as required
                    
-                    this.decimalDegree = Convert.ToDouble(newDD); // Convert decimalDegree to double for storage
+                    decimalDegree = Convert.ToDouble(newDD); // Convert decimalDegree to double for storage
                     NotifyProperties(PropertyTypes.Degree);
                 }
             }
@@ -853,21 +1081,21 @@ namespace CoordinateSharp
         /// </summary>
         public int Minutes
         {
-            get { return this.minutes; }
+            get { return minutes; }
             set
             {
-                if (this.minutes != value)
+                if (minutes != value)
                 {
                     if (value < 0) { value *= -1; }//Adjust accidental negative input
                     //Validate the minutes
                     decimal vMin = Convert.ToDecimal(value);
                     if (type == CoordinateType.Lat)
                     {
-                        if (this.degrees + (vMin / 60) > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal degrees cannot be greater than 90"); }
+                        if (degrees + (vMin / 60) > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal degrees cannot be greater than 90"); }
                     }
                     else
                     {
-                        if (this.degrees + (vMin / 60) > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal degrees cannot be greater than 180"); }
+                        if (degrees + (vMin / 60) > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal degrees cannot be greater than 180"); }
                     }
                     if (value >= 60)
                     {
@@ -877,13 +1105,13 @@ namespace CoordinateSharp
                     {
                         throw new ArgumentOutOfRangeException("Minutes out of range", "Minutes cannot be less than 0");
                     }
-                    decimal minFloor = Convert.ToDecimal(this.minutes);//Convert decimal to minutes for calculation
-                    decimal f = Convert.ToDecimal(this.degrees); //Convert to degree to keep precision during calculation 
+                    decimal minFloor = Convert.ToDecimal(minutes);//Convert decimal to minutes for calculation
+                    decimal f = Convert.ToDecimal(degrees); //Convert to degree to keep precision during calculation 
 
-                    this.minutes = value;
+                    minutes = value;
                    
 
-                    double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive
+                    double degABS = Math.Abs(decimalDegree); //Make decimalDegree positive
                     decimal dDec = Convert.ToDecimal(degABS); //Convert to decimalDegree for precision during calucation                        
 
                     decimal dm = dDec - f; //Extract minutes
@@ -891,15 +1119,15 @@ namespace CoordinateSharp
 
                     decimal secs = dm - minFloor;//Extract Seconds
 
-                    decimal newDM = this.minutes + secs;//Add seconds to minutes for decimalMinute
+                    decimal newDM = minutes + secs;//Add seconds to minutes for decimalMinute
                     double decMin = Convert.ToDouble(newDM); //Convert decimalMinute to double for storage
-                    this.decimalMinute = decMin; //Round to correct precision
+                    decimalMinute = decMin; //Round to correct precision
                    
 
                     newDM /= 60; //Convert decimalMinute to storage format
                     decimal newDeg = f + newDM; //Add value to degree for decimalDegree
-                    if (this.decimalDegree < 0) { newDeg *= -1; }// Set to negative as required.
-                    this.decimalDegree = Convert.ToDouble(newDeg);//Convert to double and roun to correct precision for storage
+                    if (decimalDegree < 0) { newDeg *= -1; }// Set to negative as required.
+                    decimalDegree = Convert.ToDouble(newDeg);//Convert to double and roun to correct precision for storage
                     NotifyProperties(PropertyTypes.Minute);
                 }
             }
@@ -909,27 +1137,27 @@ namespace CoordinateSharp
         /// </summary>
         public double Seconds
         {
-            get { return this.seconds; }
+            get { return seconds; }
             set
             {
                 if (value < 0) { value *= -1; }//Adjust accidental negative input
-                if (this.seconds != value)
+                if (seconds != value)
                 {
                     //Validate Seconds
                     decimal vSec = Convert.ToDecimal(value);
                     vSec /= 60;
 
-                    decimal vMin = Convert.ToDecimal(this.minutes);
+                    decimal vMin = Convert.ToDecimal(minutes);
                     vMin += vSec;
                     vMin /= 60;
 
                     if (type == CoordinateType.Lat)
                     {
-                        if (this.degrees + vMin > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal degrees cannot be greater than 90"); }
+                        if (degrees + vMin > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal degrees cannot be greater than 90"); }
                     }
                     else
                     {
-                        if (this.degrees + vMin > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal degrees cannot be greater than 180"); }
+                        if (degrees + vMin > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal degrees cannot be greater than 180"); }
                     }
                     if (value >= 60)
                     {
@@ -939,23 +1167,23 @@ namespace CoordinateSharp
                     {
                         throw new ArgumentOutOfRangeException("Seconds out of range", "Seconds cannot be less than 0");
                     }
-                    this.seconds = value;
+                    seconds = value;
                  
 
-                    double degABS = Math.Abs(this.decimalDegree); //Make decimalDegree positive
+                    double degABS = Math.Abs(decimalDegree); //Make decimalDegree positive
                     double degFloor = Math.Truncate(degABS); //Truncate the number left of the decimal
                     decimal f = Convert.ToDecimal(degFloor); //Convert to decimal to keep precision
 
-                    decimal secs = Convert.ToDecimal(this.seconds); //Convert seconds to decimal for calculations
+                    decimal secs = Convert.ToDecimal(seconds); //Convert seconds to decimal for calculations
                     secs /= 60; //Convert to storage format
-                    decimal dm = this.minutes + secs;//Add seconds to minutes for decimalMinute
+                    decimal dm = minutes + secs;//Add seconds to minutes for decimalMinute
                     double minFD = Convert.ToDouble(dm); //Convert decimalMinute for storage
-                    this.decimalMinute = minFD;//Round to proper precision
+                    decimalMinute = minFD;//Round to proper precision
                   
-                    decimal nm = Convert.ToDecimal(this.decimalMinute) / 60;//Convert decimalMinute to decimal and divide by 60 to get storage format decimalMinute
-                    double newDeg = this.degrees + Convert.ToDouble(nm);//Convert to double and add to degree for storage decimalDegree
-                    if (this.decimalDegree < 0) { newDeg *= -1; }//Make negative as needed
-                    this.decimalDegree = newDeg;//Update decimalDegree and round to proper precision    
+                    decimal nm = Convert.ToDecimal(decimalMinute) / 60;//Convert decimalMinute to decimal and divide by 60 to get storage format decimalMinute
+                    double newDeg = degrees + Convert.ToDouble(nm);//Convert to double and add to degree for storage decimalDegree
+                    if (decimalDegree < 0) { newDeg *= -1; }//Make negative as needed
+                    decimalDegree = newDeg;//Update decimalDegree and round to proper precision    
                     NotifyProperties(PropertyTypes.Second);
                 }
             }
@@ -967,7 +1195,7 @@ namespace CoordinateSharp
         {
             get 
             {
-                if (this.Parent != null)
+                if (Parent != null)
                 {
                     return ToString(Parent.FormatOptions);
                 }
@@ -982,10 +1210,10 @@ namespace CoordinateSharp
         /// </summary>
         public CoordinatesPosition Position
         {
-            get { return this.position; }
+            get { return position; }
             set
             {
-                if (this.position != value)
+                if (position != value)
                 {
                     if (type == CoordinateType.Long && (value == CoordinatesPosition.N || value == CoordinatesPosition.S))
                     {
@@ -995,8 +1223,8 @@ namespace CoordinateSharp
                     {
                         throw new InvalidOperationException("You cannot change a Latitudinal type coordinate into a Longitudinal");
                     }
-                    this.decimalDegree *= -1; // Change the position
-                    this.position = value;
+                    decimalDegree *= -1; // Change the position
+                    position = value;
                     NotifyProperties(PropertyTypes.Position);
                 }
             }
@@ -1009,14 +1237,14 @@ namespace CoordinateSharp
         /// <param name="c">Parent Coordinate object</param>
         public CoordinatePart(CoordinateType t, Coordinate c)
         {     
-            this.Parent = c;
-            this.type = t;
-            this.decimalDegree = 0;
-            this.degrees = 0;
-            this.minutes = 0;
-            this.seconds = 0;
-            if (this.type == CoordinateType.Lat) { this.position = CoordinatesPosition.N; }
-            else { this.position = CoordinatesPosition.E; }
+            Parent = c;
+            type = t;
+            decimalDegree = 0;
+            degrees = 0;
+            minutes = 0;
+            seconds = 0;
+            if (type == CoordinateType.Lat) { position = CoordinatesPosition.N; }
+            else { position = CoordinatesPosition.E; }
         }
         /// <summary>
         /// Creates a populated CoordinatePart from a decimal format part.
@@ -1026,22 +1254,22 @@ namespace CoordinateSharp
         /// <param name="c">Parent Coordinate object</param>
         public CoordinatePart(double value, CoordinateType t, Coordinate c)
         {
-            this.Parent = c;
-            this.type = t;
+            Parent = c;
+            type = t;
 
             if (type == CoordinateType.Long)
             {
                 if (value > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be greater than 180."); }
                 if (value < -180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be less than 180."); }
-                if (value < 0) { this.position = CoordinatesPosition.W; }
-                else { this.position = CoordinatesPosition.E; }
+                if (value < 0) { position = CoordinatesPosition.W; }
+                else { position = CoordinatesPosition.E; }
             }
             else
             {
                 if (value > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be greater than 90."); }
                 if (value < -90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be less than 90."); }
-                if (value < 0) { this.position = CoordinatesPosition.S; }
-                else { this.position = CoordinatesPosition.N; }
+                if (value < 0) { position = CoordinatesPosition.S; }
+                else { position = CoordinatesPosition.N; }
             }
             decimal dd = Convert.ToDecimal(value);
             dd = Math.Abs(dd);
@@ -1053,11 +1281,11 @@ namespace CoordinateSharp
             sec *= 60;//SECONDS
 
 
-            this.decimalDegree = value;
-            this.degrees = Convert.ToInt32(ddFloor);
-            this.minutes = Convert.ToInt32(dmFloor);
-            this.decimalMinute = Convert.ToDouble(dm);
-            this.seconds = Convert.ToDouble(sec);
+            decimalDegree = value;
+            degrees = Convert.ToInt32(ddFloor);
+            minutes = Convert.ToInt32(dmFloor);
+            decimalMinute = Convert.ToDouble(dm);
+            seconds = Convert.ToDouble(sec);
         }
         /// <summary>
         /// Creates a populated CoordinatePart object from a Degrees Minutes Seconds part.
@@ -1069,19 +1297,19 @@ namespace CoordinateSharp
         /// <param name="c">Parent Coordinate</param>
         public CoordinatePart(int deg, int min, double sec, CoordinatesPosition pos, Coordinate c)
         {
-            this.Parent = c;
-            if (pos == CoordinatesPosition.N || pos == CoordinatesPosition.S) { this.type = CoordinateType.Lat; }
-            else { this.type = CoordinateType.Long; }
+            Parent = c;
+            if (pos == CoordinatesPosition.N || pos == CoordinatesPosition.S) { type = CoordinateType.Lat; }
+            else { type = CoordinateType.Long; }
 
             if (deg < 0) { throw new ArgumentOutOfRangeException("Degrees out of range", "Degrees cannot be less than 0."); }
             if (min < 0) { throw new ArgumentOutOfRangeException("Minutes out of range", "Minutes cannot be less than 0."); }
             if (sec < 0) { throw new ArgumentOutOfRangeException("Seconds out of range", "Seconds cannot be less than 0."); }
             if (min >= 60) { throw new ArgumentOutOfRangeException("Minutes out of range", "Minutes cannot be greater than or equal to 60."); }
             if (sec >= 60) { throw new ArgumentOutOfRangeException("Seconds out of range", "Seconds cannot be greater than or equal to 60."); }
-            this.degrees = deg;
-            this.minutes = min;
-            this.seconds = sec;
-            this.position = pos;
+            degrees = deg;
+            minutes = min;
+            seconds = sec;
+            position = pos;
 
             decimal secD = Convert.ToDecimal(sec);
             secD /= 60; //Decimal Seconds
@@ -1096,7 +1324,7 @@ namespace CoordinateSharp
             {
                 if (deg + (minD / 60) > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal Degrees cannot be greater than 90."); }
             }
-            this.decimalMinute = Convert.ToDouble(minD);
+            decimalMinute = Convert.ToDouble(minD);
             decimal dd = Convert.ToDecimal(deg) + (minD / 60);
 
 
@@ -1104,7 +1332,7 @@ namespace CoordinateSharp
             {
                 dd *= -1;
             }
-            this.decimalDegree = Convert.ToDouble(dd);
+            decimalDegree = Convert.ToDouble(dd);
         }
         /// <summary>
         /// Creates a populated CoordinatePart from a Degrees Minutes Seconds part.
@@ -1115,17 +1343,17 @@ namespace CoordinateSharp
         /// <param name="c">Parent Coordinate object</param>
         public CoordinatePart(int deg, double minSec, CoordinatesPosition pos, Coordinate c)
         {
-            this.Parent = c;
+            Parent = c;
          
-            if (pos == CoordinatesPosition.N || pos == CoordinatesPosition.S) { this.type = CoordinateType.Lat; }
-            else { this.type = CoordinateType.Long; }
+            if (pos == CoordinatesPosition.N || pos == CoordinatesPosition.S) { type = CoordinateType.Lat; }
+            else { type = CoordinateType.Long; }
 
             if (deg < 0) { throw new ArgumentOutOfRangeException("Degree out of range", "Degree cannot be less than 0."); }
             if (minSec < 0) { throw new ArgumentOutOfRangeException("Minutes out of range", "Minutes cannot be less than 0."); }
 
             if (minSec >= 60) { throw new ArgumentOutOfRangeException("Minutes out of range", "Minutes cannot be greater than or equal to 60."); }
 
-            if (this.type == CoordinateType.Lat)
+            if (type == CoordinateType.Lat)
             {
                 if (deg + (minSec / 60) > 90) { throw new ArgumentOutOfRangeException("Degree out of range", "Latitudinal degrees cannot be greater than 90."); }
             }
@@ -1133,24 +1361,24 @@ namespace CoordinateSharp
             {
                 if (deg + (minSec / 60) > 180) { throw new ArgumentOutOfRangeException("Degree out of range", "Longitudinal degrees cannot be greater than 180."); }
             }
-            this.degrees = deg;
-            this.decimalMinute = minSec;
-            this.position = pos;
+            degrees = deg;
+            decimalMinute = minSec;
+            position = pos;
 
             decimal minD = Convert.ToDecimal(minSec);
             decimal minFloor = Math.Floor(minD);
-            this.minutes = Convert.ToInt32(minFloor);
+            minutes = Convert.ToInt32(minFloor);
             decimal sec = minD - minFloor;
             sec *= 60;
             decimal secD = Convert.ToDecimal(sec);
-            this.seconds = Convert.ToDouble(secD);
+            seconds = Convert.ToDouble(secD);
             decimal dd = deg + (minD / 60);
 
             if (pos == CoordinatesPosition.S || pos == CoordinatesPosition.W)
             {
                 dd *= -1;
             }
-            this.decimalDegree = Convert.ToDouble(dd);
+            decimalDegree = Convert.ToDouble(dd);
         }
 
         /// <summary>
@@ -1159,7 +1387,7 @@ namespace CoordinateSharp
         /// <returns>double</returns>
         public double ToDouble()
         {
-            return this.decimalDegree;
+            return decimalDegree;
         }
 
         /// <summary>
@@ -1168,7 +1396,7 @@ namespace CoordinateSharp
         /// <returns>Dstring</returns>
         public override string ToString()
         {
-            return FormatString(this.Parent.FormatOptions);
+            return FormatString(Parent.FormatOptions);
         }
        
         /// <summary>
@@ -1241,7 +1469,7 @@ namespace CoordinateSharp
                     return ToDegreeMinuteSecondString(rounding.Value, lead, trail, symbols, degreeSymbol, minuteSymbol, secondsSymbol, hyphen, positionFirst);
                 case ToStringType.Decimal:
                     if (rounding == null) { rounding = 9; }
-                    double dub = this.ToDouble();
+                    double dub = ToDouble();
                     dub = Math.Round(dub, rounding.Value);
                     string lt = Leading_Trailing_Format(lead, trail, rounding.Value, Position);
                     return string.Format(lt, dub);
@@ -1475,6 +1703,7 @@ namespace CoordinateSharp
             Parent.NotifyPropertyChanged("UTM");
             Parent.NotifyPropertyChanged("MGRS");
             Parent.NotifyPropertyChanged("Cartesian");
+            Parent.NotifyPropertyChanged("ECEF");
 
         }
 
@@ -1488,7 +1717,7 @@ namespace CoordinateSharp
         /// <param name="propName">Property name</param>
         public void NotifyPropertyChanged(string propName)
         {
-            if (this.PropertyChanged != null)
+            if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }

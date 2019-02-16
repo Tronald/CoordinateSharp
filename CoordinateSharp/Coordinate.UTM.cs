@@ -25,14 +25,13 @@ namespace CoordinateSharp
             if (est < 160000 || est > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
             if (nrt < 0 || nrt > 10000000) { Debug.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
 
-            this.latZone = latz;
-            this.longZone =longz;
-            this.easting = est;
-            this.northing = nrt;
+            latZone = latz;
+            longZone =longz;
+            easting = est;
+            northing = nrt;
 
-            this.equatorial_radius = 6378137.0;
-            this.inverse_flattening = 298.257223563;
-
+            equatorial_radius = 6378137.0;
+            inverse_flattening = 298.257223563;
         }
         /// <summary>
         /// Creates a UniversalTransverMercator object with a custom Datum.
@@ -50,14 +49,13 @@ namespace CoordinateSharp
             if (est < 160000 || est > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
             if (nrt < 0 || nrt > 10000000) { Debug.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
 
-            this.latZone = latz;
-            this.longZone = longz;
-            this.easting = est;
-            this.northing = nrt;
+            latZone = latz;
+            longZone = longz;
+            easting = est;
+            northing = nrt;
 
-            this.equatorial_radius = radius;
-            this.inverse_flattening = flaten;
-
+            equatorial_radius = radius;
+            inverse_flattening = flaten;
         }
 
         private Coordinate coordinate;

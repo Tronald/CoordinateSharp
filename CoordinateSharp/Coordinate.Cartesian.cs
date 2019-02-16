@@ -49,7 +49,7 @@ namespace CoordinateSharp
         /// <summary>
         /// X Coordinate
         /// </summary>
-        public Double X
+        public double X
         {
             get { return x; }
             set
@@ -64,7 +64,7 @@ namespace CoordinateSharp
         /// <summary>
         /// y Coordinate
         /// </summary>
-        public Double Y
+        public double Y
         {
             get { return y; }
             set
@@ -79,7 +79,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Z Coordinate
         /// </summary>
-        public Double Z
+        public double Z
         {
             get { return z; }
             set
