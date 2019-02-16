@@ -2,7 +2,7 @@
 
 <h2 align="center">v1.1.4.6</h2>
 
-CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversion, formatting and location based celestial calculations. This library has the ability to convert various lat long formats, UTM, MGRS(NATO UTM) and Cartesian (Spherical and ECEF X, Y, Z). 
+CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations. This library has the ability to convert various lat long formats, UTM, MGRS(NATO UTM) and Cartesian (Spherical and ECEF X, Y, Z). 
 
 CAUTION: v1.1.4.1 makes slight changes to the UTM and MGRS `ToString()` behavior. If a conversion from Lat/Long to UTM/MGRS is made, and the conversion is outside the limitations of the UTM and MGRS systems (below 80 S or above 84 N), `ToString()` will return an empty `string`. Access to the UTM/MGRS individual properties is still available if needed, but these systems should not be used if conversion is outside the system's limitations.
 
