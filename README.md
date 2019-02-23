@@ -6,7 +6,7 @@ CoordinateSharp is a simple .NET library that is designed to assist with geograp
 
 <b>CAUTION:</b> v1.1.5.1 begins the depracation of certain methods in preparation of CoordinateSharp v2.1.1.1. Many user mutable items, have also been made user immutable in v1.1.5.1. This only effects properties that do not need to be set by users (i.e. Celestial properties). You should see no negative effects from this conversion if the library has been used in accordance with the [CoordinateSharp Developer Guide](https://coordinatesharp.com/DeveloperGuide).
 
-<b>ANNOUNCEMENT:</b> v2.1.1.1 development has begun. This version is going to focus on simplifying constructors, better management of circular references and better property change notification. It is also going to focus on proper assignment of user mutable vs user immutable properties. Lastly, code examples are going to be provided in the library documentation in order to give developers a more standard documentation experience outside of the Developer Guide. This version should give the user an even simpler experience when using CoordinateSharp. 
+<b>ANNOUNCEMENT:</b> v2.1.1.1 development has begun. This version is going to focus on simplifying constructors, better management of circular references and property change notification. It is also going to focus on proper assignment of user mutable vs user immutable properties. Tests will be expanded. Lastly, code examples are going to be provided in the library documentation in order to give developers a more standard documentation experience outside of the Developer Guide. This version should give the user an even simpler experience when using CoordinateSharp. 
 
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 
