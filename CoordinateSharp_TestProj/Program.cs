@@ -654,7 +654,8 @@ namespace CoordinateSharp_TestProj
             CelestialTests ct = new CelestialTests();
 
             ct.Populate_CelestialTests();
-
+            Coordinate c = new Coordinate();
+            
             Write_Pass("Sunset: ", ct.Check_Values(ct.SunSets, "CelestialData\\SunSet.txt"));
             Write_Pass("Sunrise: ", ct.Check_Values(ct.SunRises, "CelestialData\\SunRise.txt"));
             Write_Pass("AstroDawn: ", ct.Check_Values(ct.AstroDawn, "CelestialData\\AstroDawn.txt"));
@@ -854,7 +855,7 @@ namespace CoordinateSharp_TestProj
             }, 100, "EagerLoad Off Initialization");
             tc = new Coordinate(39.891219, -74.872435, new DateTime(2018, 7, 26, 15, 49, 0));
 
-            //Benchmack property change
+            //Benchmark property change
             Random r = new Random();
             Benchmark(() => { tc.Latitude.DecimalDegree = r.Next(-90, 90); }, 100, "Property Change");
 

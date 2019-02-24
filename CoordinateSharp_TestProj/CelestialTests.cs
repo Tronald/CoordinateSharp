@@ -14,7 +14,7 @@ namespace CoordinateSharp_TestProj
         {
             //Test will run against N39, W72
             //Sun Times and Moon Times will range for 1 Mar-2018 to 30-Mar-2018
-            //Sun/Moon Alt, Az, pergiee, apogee eclispes, fraction and distance with be tested against 15-Mar-2018 UTC
+            //Sun/Moon Alt, Az, Perigee, Apogee, Eclipses, fraction and distance with be tested against 15-Mar-2018 UTC
             Coordinate c = new Coordinate(39, -72, new DateTime(2018, 03, 15));
             SunAlts = new List<double>();
             SunAzs = new List<double>();
@@ -82,6 +82,9 @@ namespace CoordinateSharp_TestProj
             }
 
             //Set Dates and Finish
+            //THESE OBJECT ARE TESTED AGAINST SERIALIZED OBJECTS.
+            //IF CHANGING THE MODEL YOU WILL HAVE TO CHANGE THE OBJECTS THEY ARE TESTED AGAINST AS WELL
+
             SolarEclispe = c.CelestialInfo.SolarEclipse;
             LunarEclispe = c.CelestialInfo.LunarEclipse;
             Perigee = c.CelestialInfo.Perigee;
@@ -150,6 +153,7 @@ namespace CoordinateSharp_TestProj
                     }
                 }
             }
+
             return true;
         }
 
@@ -164,8 +168,8 @@ namespace CoordinateSharp_TestProj
 
                 SolarEclipseDetails lE1 = ev.LastEclipse;
                 SolarEclipseDetails nE1 = ev.NextEclipse;
-                SolarEclipseDetails lE2 = this.SolarEclispe.LastEclipse;
-                SolarEclipseDetails nE2 = this.SolarEclispe.NextEclipse;
+                SolarEclipseDetails lE2 = SolarEclispe.LastEclipse;
+                SolarEclipseDetails nE2 = SolarEclispe.NextEclipse;
                 
                 PropertyInfo[] properties = typeof(SolarEclipseDetails).GetProperties();
                 foreach (PropertyInfo property in properties)
@@ -194,8 +198,8 @@ namespace CoordinateSharp_TestProj
 
                 LunarEclipseDetails lE1 = ev.LastEclipse;
                 LunarEclipseDetails nE1 = ev.NextEclipse;
-                LunarEclipseDetails lE2 = this.LunarEclispe.LastEclipse;
-                LunarEclipseDetails nE2 = this.LunarEclispe.NextEclipse;
+                LunarEclipseDetails lE2 = LunarEclispe.LastEclipse;
+                LunarEclipseDetails nE2 = LunarEclispe.NextEclipse;
                 
                 PropertyInfo[] properties = typeof(LunarEclipseDetails).GetProperties();
                 foreach (PropertyInfo property in properties)
