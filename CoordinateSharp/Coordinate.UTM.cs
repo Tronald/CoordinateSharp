@@ -75,12 +75,12 @@ namespace CoordinateSharp
         /// </summary>
         public string LatZone
         {
-            get { return this.latZone; }
+            get { return latZone; }
             set
             {
-                if (this.latZone != value)
+                if (latZone != value)
                 {
-                    this.latZone = value;                                
+                    latZone = value;                                
                 }
             }
         }
@@ -89,12 +89,12 @@ namespace CoordinateSharp
         /// </summary>
         public int LongZone
         {
-            get { return this.longZone; }
+            get { return longZone; }
             set
             {
-                if (this.longZone != value)
+                if (longZone != value)
                 {
-                    this.longZone = value;                 
+                    longZone = value;                 
                 }
             }
         }
@@ -103,12 +103,12 @@ namespace CoordinateSharp
         /// </summary>
         public double Easting
         {
-            get { return this.easting; }
+            get { return easting; }
             set
             {
-                if (this.easting != value)
+                if (easting != value)
                 {
-                    this.easting = value;
+                    easting = value;
                 }
             }
         }
@@ -117,12 +117,12 @@ namespace CoordinateSharp
         /// </summary>
         public double Northing
         {
-            get { return this.northing; }
+            get { return northing; }
             set
             {
-                if (this.northing != value)
+                if (northing != value)
                 {
-                    this.northing = value;
+                    northing = value;
                 }
             }
         }
@@ -132,14 +132,14 @@ namespace CoordinateSharp
         /// </summary>
         public double Equatorial_Radius
         {
-            get { return this.equatorial_radius; }
+            get { return equatorial_radius; }
         }
         /// <summary>
         /// Datum Flattening
         /// </summary>
         public double Inverse_Flattening
         {
-            get { return this.inverse_flattening; }
+            get { return inverse_flattening; }
         }
 
         /// <summary>
@@ -165,8 +165,8 @@ namespace CoordinateSharp
 
             //if (longi > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be greater than 90."); }
             //if (longi < -90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be less than 90."); }
-            this.equatorial_radius = 6378137.0;
-            this.inverse_flattening = 298.257223563;
+            equatorial_radius = 6378137.0;
+            inverse_flattening = 298.257223563;
             ToUTM(lat, longi, this);
 
             coordinate = c;
@@ -181,8 +181,8 @@ namespace CoordinateSharp
         /// <param name="flt">Flattening</param>
         internal UniversalTransverseMercator(double lat, double longi, Coordinate c,double rad,double flt)
         {
-            this.equatorial_radius = rad;
-            this.inverse_flattening = flt;
+            equatorial_radius = rad;
+            inverse_flattening = flt;
             ToUTM(lat, longi, this);
 
             coordinate = c;
@@ -205,8 +205,8 @@ namespace CoordinateSharp
             if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
             if (e < 160000 || e > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. If this is intentional, use with caution."); }
             if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
-            this.equatorial_radius = rad;
-            this.inverse_flattening = flt;
+            equatorial_radius = rad;
+            inverse_flattening = flt;
             latZone = latz;
             longZone = longz;
 
@@ -355,7 +355,7 @@ namespace CoordinateSharp
         public override string ToString()
         {
             if (!withinCoordinateSystemBounds) { return ""; }//MGRS Coordinate is outside its reliable boundaries. Return empty.
-            return this.longZone.ToString() + this.LatZone + " " + (int)this.easting + "mE " + (int)this.northing + "mN";
+            return longZone.ToString() + LatZone + " " + (int)easting + "mE " + (int)northing + "mN";
         }
        
         private static Coordinate UTMtoLatLong(double x, double y, double zone, double equatorialRadius, double flattening)
@@ -456,8 +456,8 @@ namespace CoordinateSharp
             if (dLong < -180) { dLong = -180; }
 
             Coordinate c = new Coordinate(equatorialRadius,flattening, true);
-            CoordinatePart cLat = new CoordinatePart(dLat, CoordinateType.Lat, c);
-            CoordinatePart cLng = new CoordinatePart(dLong, CoordinateType.Long, c);
+            CoordinatePart cLat = new CoordinatePart(dLat, CoordinateType.Lat);
+            CoordinatePart cLng = new CoordinatePart(dLong, CoordinateType.Long);
 
             c.Latitude = cLat;
             c.Longitude = cLng;

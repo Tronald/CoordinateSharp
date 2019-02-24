@@ -57,8 +57,10 @@ namespace CoordinateSharp
         {
             FormatOptions = new CoordinateFormatOptions();
             geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            latitude = new CoordinatePart(CoordinateType.Lat, this);
-            longitude = new CoordinatePart(CoordinateType.Long, this);
+            latitude = new CoordinatePart(CoordinateType.Lat);            
+            longitude = new CoordinatePart(CoordinateType.Long);
+            latitude.parent = this;
+            longitude.parent = this;
             celestialInfo = new Celestial();
             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
             mgrs = new MilitaryGridReferenceSystem(utm);
@@ -80,8 +82,10 @@ namespace CoordinateSharp
         {
             FormatOptions = new CoordinateFormatOptions();
             geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            latitude = new CoordinatePart(CoordinateType.Lat, this);
-            longitude = new CoordinatePart(CoordinateType.Long, this);
+            latitude = new CoordinatePart(CoordinateType.Lat);
+            longitude = new CoordinatePart(CoordinateType.Long);
+            latitude.parent = this;
+            longitude.parent = this;
             celestialInfo = new Celestial();
             utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, equatorialRadius, inverseFlattening);
             mgrs = new MilitaryGridReferenceSystem(utm);
@@ -103,8 +107,10 @@ namespace CoordinateSharp
         {
             FormatOptions = new CoordinateFormatOptions();
             geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
-            longitude = new CoordinatePart(longi, CoordinateType.Long, this);
+            latitude = new CoordinatePart(lat, CoordinateType.Lat);
+            longitude = new CoordinatePart(longi, CoordinateType.Long);
+            latitude.parent = this;
+            longitude.parent = this;
             celestialInfo = new Celestial(lat, longi, geoDate);
             utm = new UniversalTransverseMercator(lat, longi, this);
             mgrs = new MilitaryGridReferenceSystem(utm);
@@ -124,8 +130,10 @@ namespace CoordinateSharp
         public Coordinate(double lat, double longi, DateTime date)
         {
             FormatOptions = new CoordinateFormatOptions();
-            latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
-            longitude = new CoordinatePart(longi, CoordinateType.Long, this);
+            latitude = new CoordinatePart(lat, CoordinateType.Lat);
+            longitude = new CoordinatePart(longi, CoordinateType.Long);
+            latitude.parent = this;
+            longitude.parent = this;
             celestialInfo = new Celestial(lat, longi, date);
             geoDate = date;
             utm = new UniversalTransverseMercator(lat, longi, this);
@@ -149,8 +157,10 @@ namespace CoordinateSharp
         {
             FormatOptions = new CoordinateFormatOptions();
             geoDate = geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            latitude = new CoordinatePart(CoordinateType.Lat, this);
-            longitude = new CoordinatePart(CoordinateType.Long, this);
+            latitude = new CoordinatePart(CoordinateType.Lat);
+            longitude = new CoordinatePart(CoordinateType.Long);
+            latitude.parent = this;
+            longitude.parent = this;
 
             if (eagerLoad.Cartesian)
             {
@@ -187,8 +197,10 @@ namespace CoordinateSharp
         {
             FormatOptions = new CoordinateFormatOptions();
             geoDate = geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
-            longitude = new CoordinatePart(longi, CoordinateType.Long, this);
+            latitude = new CoordinatePart(lat, CoordinateType.Lat);
+            longitude = new CoordinatePart(longi, CoordinateType.Long);
+            latitude.parent = this;
+            longitude.parent = this;
 
             if (eagerLoad.Celestial)
             {
@@ -223,8 +235,10 @@ namespace CoordinateSharp
         public Coordinate(double lat, double longi, DateTime date, EagerLoad eagerLoad)
         {
             FormatOptions = new CoordinateFormatOptions();
-            latitude = new CoordinatePart(lat, CoordinateType.Lat, this);
-            longitude = new CoordinatePart(longi, CoordinateType.Long, this);
+            latitude = new CoordinatePart(lat, CoordinateType.Lat);
+            longitude = new CoordinatePart(longi, CoordinateType.Long);
+            latitude.parent = this;
+            longitude.parent = this;
             geoDate = date;
             if (eagerLoad.Celestial)
             {
@@ -274,7 +288,7 @@ namespace CoordinateSharp
                     if (value.Position == CoordinatesPosition.E || value.Position == CoordinatesPosition.W)
                     { throw new ArgumentException("Invalid Position", "Latitudinal positions cannot be set to East or West."); }
                     latitude = value;
-                    latitude.Parent = this;
+                    latitude.parent = this;
                     if (EagerLoadSettings.Celestial)
                     {
                         celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate);
@@ -290,6 +304,10 @@ namespace CoordinateSharp
                         if (EagerLoadSettings.Cartesian)
                         {
                             cartesian = new Cartesian(this);
+                        }
+                        if(EagerLoadSettings.ECEF)
+                        {
+                            ecef = new ECEF(this);
                         }
                     }
 
@@ -309,7 +327,7 @@ namespace CoordinateSharp
                     if (value.Position == CoordinatesPosition.N || value.Position == CoordinatesPosition.S)
                     { throw new ArgumentException("Invalid Position", "Longitudinal positions cannot be set to North or South."); }
                     longitude = value;
-                    latitude.Parent = this;
+                    longitude.parent = this;
                     if (EagerLoadSettings.Celestial)
                     {
                         celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate);
@@ -325,7 +343,12 @@ namespace CoordinateSharp
                         {
                             cartesian = new Cartesian(this);
                         }
+                        if (EagerLoadSettings.ECEF)
+                        {
+                            ecef = new ECEF(this);
+                        }
                     }
+
                 }
             }
         }
@@ -394,6 +417,8 @@ namespace CoordinateSharp
             {
                 return ecef;
             }
+
+            //Required due to GeoDetic Height
             internal set
             {
                 if (ecef != value)
@@ -494,6 +519,7 @@ namespace CoordinateSharp
             string longSting = longitude.ToString();
             return latString + " " + longSting;
         }     
+
         /// <summary>
         /// Overridden Coordinate ToString() method that accepts formatting. 
         /// Refer to documentation for coordinate format options.
@@ -878,12 +904,13 @@ namespace CoordinateSharp
         private int minutes;
         private double seconds;
         private CoordinatesPosition position;
-        private CoordinateType type;    
+        private CoordinateType type;
 
+        internal Coordinate parent;
         /// <summary>
         /// Used to determine and notify the CoordinatePart parent Coordinate object.
         /// </summary>
-        public Coordinate Parent { get; set; }
+        public Coordinate Parent { get { return parent; } }
 
         /// <summary>
         /// Observable decimal format coordinate.
@@ -1195,9 +1222,9 @@ namespace CoordinateSharp
         {
             get 
             {
-                if (Parent != null)
+                if (parent != null)
                 {
-                    return ToString(Parent.FormatOptions);
+                    return ToString(parent.FormatOptions);
                 }
                 else
                 {
@@ -1235,9 +1262,10 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="t">CoordinateType</param>
         /// <param name="c">Parent Coordinate object</param>
+        [Obsolete("Method is deprecated. You no longer need to pass a Coordinate object through the constructor.")]
         public CoordinatePart(CoordinateType t, Coordinate c)
         {     
-            Parent = c;
+            parent = c;
             type = t;
             decimalDegree = 0;
             degrees = 0;
@@ -1252,9 +1280,10 @@ namespace CoordinateSharp
         /// <param name="value">Coordinate decimal value</param>
         /// <param name="t">Coordinate type</param>
         /// <param name="c">Parent Coordinate object</param>
+        [Obsolete("Method is deprecated. You no longer need to pass a Coordinate object through the constructor.")]
         public CoordinatePart(double value, CoordinateType t, Coordinate c)
         {
-            Parent = c;
+            parent = c;
             type = t;
 
             if (type == CoordinateType.Long)
@@ -1295,9 +1324,10 @@ namespace CoordinateSharp
         /// <param name="sec">Seconds</param>
         /// <param name="pos">Coordinate Part Position</param>
         /// <param name="c">Parent Coordinate</param>
+        [Obsolete("Method is deprecated. You no longer need to pass a Coordinate object through the constructor.")]
         public CoordinatePart(int deg, int min, double sec, CoordinatesPosition pos, Coordinate c)
         {
-            Parent = c;
+            parent = c;
             if (pos == CoordinatesPosition.N || pos == CoordinatesPosition.S) { type = CoordinateType.Lat; }
             else { type = CoordinateType.Long; }
 
@@ -1341,10 +1371,153 @@ namespace CoordinateSharp
         /// <param name="minSec">Decimal Minutes</param> 
         /// <param name="pos">Coordinate Part Position</param>
         /// <param name="c">Parent Coordinate object</param>
+        [Obsolete("Method is deprecated. You no longer need to pass a Coordinate object through the constructor.")]
         public CoordinatePart(int deg, double minSec, CoordinatesPosition pos, Coordinate c)
         {
-            Parent = c;
+            parent = c;
          
+            if (pos == CoordinatesPosition.N || pos == CoordinatesPosition.S) { type = CoordinateType.Lat; }
+            else { type = CoordinateType.Long; }
+
+            if (deg < 0) { throw new ArgumentOutOfRangeException("Degree out of range", "Degree cannot be less than 0."); }
+            if (minSec < 0) { throw new ArgumentOutOfRangeException("Minutes out of range", "Minutes cannot be less than 0."); }
+
+            if (minSec >= 60) { throw new ArgumentOutOfRangeException("Minutes out of range", "Minutes cannot be greater than or equal to 60."); }
+
+            if (type == CoordinateType.Lat)
+            {
+                if (deg + (minSec / 60) > 90) { throw new ArgumentOutOfRangeException("Degree out of range", "Latitudinal degrees cannot be greater than 90."); }
+            }
+            else
+            {
+                if (deg + (minSec / 60) > 180) { throw new ArgumentOutOfRangeException("Degree out of range", "Longitudinal degrees cannot be greater than 180."); }
+            }
+            degrees = deg;
+            decimalMinute = minSec;
+            position = pos;
+
+            decimal minD = Convert.ToDecimal(minSec);
+            decimal minFloor = Math.Floor(minD);
+            minutes = Convert.ToInt32(minFloor);
+            decimal sec = minD - minFloor;
+            sec *= 60;
+            decimal secD = Convert.ToDecimal(sec);
+            seconds = Convert.ToDouble(secD);
+            decimal dd = deg + (minD / 60);
+
+            if (pos == CoordinatesPosition.S || pos == CoordinatesPosition.W)
+            {
+                dd *= -1;
+            }
+            decimalDegree = Convert.ToDouble(dd);
+        }
+
+        /// <summary>
+        /// Creates an empty CoordinatePart.
+        /// </summary>
+        /// <param name="t">CoordinateType</param>
+        public CoordinatePart(CoordinateType t)
+        {           
+            type = t;
+            decimalDegree = 0;
+            degrees = 0;
+            minutes = 0;
+            seconds = 0;
+            if (type == CoordinateType.Lat) { position = CoordinatesPosition.N; }
+            else { position = CoordinatesPosition.E; }
+        }
+        /// <summary>
+        /// Creates a populated CoordinatePart from a decimal format part.
+        /// </summary>
+        /// <param name="value">Coordinate decimal value</param>
+        /// <param name="t">Coordinate type</param>
+        public CoordinatePart(double value, CoordinateType t)
+        {
+            type = t;
+
+            if (type == CoordinateType.Long)
+            {
+                if (value > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be greater than 180."); }
+                if (value < -180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be less than 180."); }
+                if (value < 0) { position = CoordinatesPosition.W; }
+                else { position = CoordinatesPosition.E; }
+            }
+            else
+            {
+                if (value > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be greater than 90."); }
+                if (value < -90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be less than 90."); }
+                if (value < 0) { position = CoordinatesPosition.S; }
+                else { position = CoordinatesPosition.N; }
+            }
+            decimal dd = Convert.ToDecimal(value);
+            dd = Math.Abs(dd);
+            decimal ddFloor = Math.Floor(dd);//DEGREE
+            decimal dm = dd - ddFloor;
+            dm *= 60; //DECIMAL MINUTE
+            decimal dmFloor = Math.Floor(dm); //MINUTES
+            decimal sec = dm - dmFloor;
+            sec *= 60;//SECONDS
+
+
+            decimalDegree = value;
+            degrees = Convert.ToInt32(ddFloor);
+            minutes = Convert.ToInt32(dmFloor);
+            decimalMinute = Convert.ToDouble(dm);
+            seconds = Convert.ToDouble(sec);
+        }
+        /// <summary>
+        /// Creates a populated CoordinatePart object from a Degrees Minutes Seconds part.
+        /// </summary>
+        /// <param name="deg">Degrees</param>
+        /// <param name="min">Minutes</param>
+        /// <param name="sec">Seconds</param>
+        /// <param name="pos">Coordinate Part Position</param>
+        public CoordinatePart(int deg, int min, double sec, CoordinatesPosition pos)
+        {
+            if (pos == CoordinatesPosition.N || pos == CoordinatesPosition.S) { type = CoordinateType.Lat; }
+            else { type = CoordinateType.Long; }
+
+            if (deg < 0) { throw new ArgumentOutOfRangeException("Degrees out of range", "Degrees cannot be less than 0."); }
+            if (min < 0) { throw new ArgumentOutOfRangeException("Minutes out of range", "Minutes cannot be less than 0."); }
+            if (sec < 0) { throw new ArgumentOutOfRangeException("Seconds out of range", "Seconds cannot be less than 0."); }
+            if (min >= 60) { throw new ArgumentOutOfRangeException("Minutes out of range", "Minutes cannot be greater than or equal to 60."); }
+            if (sec >= 60) { throw new ArgumentOutOfRangeException("Seconds out of range", "Seconds cannot be greater than or equal to 60."); }
+            degrees = deg;
+            minutes = min;
+            seconds = sec;
+            position = pos;
+
+            decimal secD = Convert.ToDecimal(sec);
+            secD /= 60; //Decimal Seconds
+            decimal minD = Convert.ToDecimal(min);
+            minD += secD; //Decimal Minutes
+
+            if (type == CoordinateType.Long)
+            {
+                if (deg + (minD / 60) > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal Degrees cannot be greater than 180."); }
+            }
+            else
+            {
+                if (deg + (minD / 60) > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal Degrees cannot be greater than 90."); }
+            }
+            decimalMinute = Convert.ToDouble(minD);
+            decimal dd = Convert.ToDecimal(deg) + (minD / 60);
+
+
+            if (pos == CoordinatesPosition.S || pos == CoordinatesPosition.W)
+            {
+                dd *= -1;
+            }
+            decimalDegree = Convert.ToDouble(dd);
+        }
+        /// <summary>
+        /// Creates a populated CoordinatePart from a Degrees Minutes Seconds part.
+        /// </summary>
+        /// <param name="deg">Degrees</param>
+        /// <param name="minSec">Decimal Minutes</param> 
+        /// <param name="pos">Coordinate Part Position</param>
+        public CoordinatePart(int deg, double minSec, CoordinatesPosition pos)
+        {            
             if (pos == CoordinatesPosition.N || pos == CoordinatesPosition.S) { type = CoordinateType.Lat; }
             else { type = CoordinateType.Long; }
 
@@ -1396,9 +1569,13 @@ namespace CoordinateSharp
         /// <returns>Dstring</returns>
         public override string ToString()
         {
+            if(parent==null)
+            {
+                return FormatString(new CoordinateFormatOptions());
+            }
             return FormatString(Parent.FormatOptions);
         }
-       
+
         /// <summary>
         /// Formatted CoordinatePart string.
         /// </summary>
@@ -1698,12 +1875,16 @@ namespace CoordinateSharp
                     break;
             }
             NotifyPropertyChanged("Display");
-            Parent.NotifyPropertyChanged("Display");
-            Parent.NotifyPropertyChanged("CelestialInfo");
-            Parent.NotifyPropertyChanged("UTM");
-            Parent.NotifyPropertyChanged("MGRS");
-            Parent.NotifyPropertyChanged("Cartesian");
-            Parent.NotifyPropertyChanged("ECEF");
+
+            if (Parent != null)
+            {
+                Parent.NotifyPropertyChanged("Display");
+                Parent.NotifyPropertyChanged("CelestialInfo");
+                Parent.NotifyPropertyChanged("UTM");
+                Parent.NotifyPropertyChanged("MGRS");
+                Parent.NotifyPropertyChanged("Cartesian");
+                Parent.NotifyPropertyChanged("ECEF");
+           }
 
         }
 

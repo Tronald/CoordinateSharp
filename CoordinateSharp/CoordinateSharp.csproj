@@ -3,20 +3,20 @@
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.1.4.6</Version>
+    <Version>1.1.5.1</Version>
     <Authors>Justin Gielski</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2017</Copyright>
     <Description>A simple .NET standard library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations.</Description>
-    <PackageReleaseNotes>Adds ECEF conversions, various new properties and features. Parser improvements. Fixes issue with move operations occurring under certain conditions.</PackageReleaseNotes>
+    <PackageReleaseNotes>Begins deprecation of legacy constructors and properties. Makes unneeded user mutable properties immutable.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian ECEF</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/ICON.png</PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
-    <AssemblyVersion>1.1.4.6</AssemblyVersion>
+    <AssemblyVersion>1.1.5.1</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">

@@ -21,8 +21,8 @@ namespace CoordinateSharp
             //Get current Moon Position to populate passed Alt / Azi for user specified date
             MoonPosition mp = GetMoonPosition(date, lat, lng, c);
             double altRad = mp.Altitude / Math.PI*180; //Convert alt to degrees
-            c.MoonAltitude = (altRad - mp.ParallaxCorection); //Set altitude with adjusted parallax                
-            c.MoonAzimuth = mp.Azimuth / Math.PI*180 + 180;  //Azimuth in degrees + 180 for E by N.
+            c.moonAltitude = (altRad - mp.ParallaxCorection); //Set altitude with adjusted parallax                
+            c.moonAzimuth = mp.Azimuth / Math.PI*180 + 180;  //Azimuth in degrees + 180 for E by N.
    
             ////New Iterations for Moon set / rise
             bool moonRise = false;
@@ -102,18 +102,18 @@ namespace CoordinateSharp
                 if(moonRise && moonSet) { break; }
             }
 
-            c.MoonSet = setTime;
-            c.MoonRise = riseTime;
-            if (moonRise && moonSet) { c.MoonCondition = CelestialStatus.RiseAndSet; }
+            c.moonSet = setTime;
+            c.moonRise = riseTime;
+            if (moonRise && moonSet) { c.moonCondition = CelestialStatus.RiseAndSet; }
             else
             {
                 if (!moonRise && !moonSet)
                 {
-                    if (alt1 >= 0) { c.MoonCondition = CelestialStatus.UpAllDay; }
-                    else { c.MoonCondition = CelestialStatus.DownAllDay; }
+                    if (alt1 >= 0) { c.moonCondition = CelestialStatus.UpAllDay; }
+                    else { c.moonCondition = CelestialStatus.DownAllDay; }
                 }
-                if (!moonRise && moonSet) { c.MoonCondition = CelestialStatus.NoRise; }
-                if (moonRise && !moonSet) { c.MoonCondition = CelestialStatus.NoSet; }
+                if (!moonRise && moonSet) { c.moonCondition = CelestialStatus.NoRise; }
+                if (moonRise && !moonSet) { c.moonCondition = CelestialStatus.NoSet; }
             }          
         }
 
@@ -220,7 +220,7 @@ namespace CoordinateSharp
             mi.Angle = angle;
 
            
-            c.MoonIllum = mi;
+            c.moonIllum = mi;
             
              string moonName = "";
              int moonDate = 0;
@@ -392,7 +392,7 @@ namespace CoordinateSharp
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
            
-            c.MoonDistance = GetMoonDistance(date);      //Updating distance formula    
+            c.moonDistance = GetMoonDistance(date);      //Updating distance formula    
         }
         //Moon Time Functions
         private static CelCoords GetSunCoords(double d)
@@ -866,40 +866,7 @@ namespace CoordinateSharp
             double T = 16; //Average temp of earth
             double alt = h / Math.PI * 180;
             double Ref = P * (.1594 + .0196 * alt + .00002 * Math.Pow(alt, 2)) / ((273 + T) * (1 + .505 * alt + .0845 * Math.Pow(alt, 2)));
-            return Ref / 60;
-
-            //Below code contains other Meeus Formulas. The above seems to give most
-            //accurate result in comparison to US NAVY tables.
-            //Deviations from navy table up to .1 degree or .002 arc minutes.
-            //Legacy formulas will remain in code as "uncreachable" for now for future research.
-
-            //1.1.3 Ch 16 Formula 16.4
-            //h = h / Math.PI / 180;
-            double a = 1.02 * rad / 60;
-            double b = 10.3 * rad / 60;
-            double c = 5.11 * rad;
-            //double cor = 0;
-            //if(h<0)
-            //{
-            //    //cor = 0;
-            //    cor = .0019279;
-            //}      
-            double R = a / Math.Tan(h + b / (h + c));
-
-            //R *= rad;
-            return R;
-
-            //LEGACY SUNCALC. REMOVE ONCE NEEDED
-            // the following formula works for positive altitudes only.
-            //if (h < .00593)
-            //{
-            //    h = .00593; // if h = -0.08901179 a div/0 would occur.
-            //}
-
-            // formula 16.4 of "Astronomical Algorithms" 2nd edition by Jean Meeus (Willmann-Bell, Richmond) 1998.
-            // 1.02 / tan(h + 10.26 / (h + 5.10)) h in degrees, result in arc minutes -> converted to rad:
-
-            return (a * rad / 60) / Math.Tan(h + (b * rad / 60) / (h + (c * rad)));
+            return Ref / 60;         
         }
     }
 }

@@ -411,19 +411,19 @@ namespace CoordinateSharp
         /// <summary>
         /// Moon's fraction
         /// </summary>
-        public double Fraction { get; set; }
+        public double Fraction { get; internal set; }
         /// <summary>
         /// Moon's Angle
         /// </summary>
-        public double Angle { get; set; }
+        public double Angle { get; internal set; }
         /// <summary>
         /// Moon's phase
         /// </summary>
-        public double Phase { get; set; }
+        public double Phase { get; internal set; }
         /// <summary>
         /// Moon's phase name for the specified day
         /// </summary>
-        public string PhaseName { get; set; }
+        public string PhaseName { get; internal set; }
 
     }
     /// <summary>
@@ -696,15 +696,15 @@ namespace CoordinateSharp
         /// <summary>
         /// Astrological Zodiac Sign
         /// </summary>
-        public string MoonName { get; set; }
+        public string MoonName { get; internal set; }
         /// <summary>
         /// Astrological Moon Sign
         /// </summary>
-        public string MoonSign { get; set; }
+        public string MoonSign { get; internal set; }
         /// <summary>
         /// Astrological Zodiac Sign
         /// </summary>
-        public string ZodiacSign { get; set; }
+        public string ZodiacSign { get; internal set; }
     }
     /// <summary>
     /// Additional Solar Time Information
@@ -727,36 +727,36 @@ namespace CoordinateSharp
         /// <summary>
         /// Returns Civil Dawn Time
         /// </summary>
-        public DateTime? CivilDawn { get; set; }
+        public DateTime? CivilDawn { get; internal set; }
         /// <summary>
         /// Returns Civil Dusk Time
         /// </summary>
-        public DateTime? CivilDusk { get; set; }
+        public DateTime? CivilDusk { get; internal set; }
         /// <summary>
         /// Returns Nautical Dawn Time
         /// </summary>
-        public DateTime? NauticalDawn { get; set; }
+        public DateTime? NauticalDawn { get; internal set; }
         /// <summary>
         /// Returns Nautical Dusk Time
         /// </summary>
-        public DateTime? NauticalDusk { get; set; }
+        public DateTime? NauticalDusk { get; internal set; }
         /// <summary>
         /// Returns Astronomical Dawn Time
         /// </summary>
-        public DateTime? AstronomicalDawn { get; set; }
+        public DateTime? AstronomicalDawn { get; internal set; }
         /// <summary>
         /// Returns Astronomical Dusk Time
         /// </summary>
-        public DateTime? AstronomicalDusk { get; set; }
+        public DateTime? AstronomicalDusk { get; internal set; }
 
         /// <summary>
         /// Returns the time when the bottom of the solar disc touches the horizon after sunrise
         /// </summary>
-        public DateTime? SunriseBottomDisc{ get; set; }
+        public DateTime? SunriseBottomDisc{ get; internal set; }
         /// <summary>
         /// Returns the time when the bottom of the solar disc touches the horizon before sunset
         /// </summary>
-        public DateTime? SunsetBottomDisc { get; set; }
+        public DateTime? SunsetBottomDisc { get; internal set; }
 
         internal void Convert_To_Local_Time(double offset)
         {
@@ -795,11 +795,11 @@ namespace CoordinateSharp
         /// <summary>
         /// Details about the previous solar eclipse
         /// </summary>
-        public SolarEclipseDetails LastEclipse { get; set; }
+        public SolarEclipseDetails LastEclipse { get; internal set; }
         /// <summary>
         /// Details about the next solar eclipse
         /// </summary>
-        public SolarEclipseDetails NextEclipse { get; set; }
+        public SolarEclipseDetails NextEclipse { get; internal set; }
 
         internal void ConvertTo_LocalTime(double offset)
         {
@@ -824,11 +824,11 @@ namespace CoordinateSharp
         /// <summary>
         /// Details about the previous lunar eclipse
         /// </summary>
-        public LunarEclipseDetails LastEclipse { get; set; }
+        public LunarEclipseDetails LastEclipse { get; internal set; }
         /// <summary>
         /// Details about the next lunar eclipse
         /// </summary>
-        public LunarEclipseDetails NextEclipse { get; set; }
+        public LunarEclipseDetails NextEclipse { get; internal set; }
 
         internal void ConvertTo_LocalTime(double offset)
         {
@@ -1257,23 +1257,23 @@ namespace CoordinateSharp
     }
     internal class MoonTimes
     {
-        public DateTime set { get; set; }
-        public DateTime rise { get; set; }
-        public CelestialStatus status { get; set; }
+        public DateTime set { get; internal set; }
+        public DateTime rise { get; internal set; }
+        public CelestialStatus status { get; internal set; }
     }
     internal class MoonPosition
     {
-        public double Azimuth { get; set; }
-        public double Altitude { get; set; }
-        public Distance Distance { get; set; }
-        public double ParallacticAngle { get; set; }
-        public double ParallaxCorection { get; set; }
+        public double Azimuth { get; internal set; }
+        public double Altitude { get; internal set; }
+        public Distance Distance { get; internal set; }
+        public double ParallacticAngle { get; internal set; }
+        public double ParallaxCorection { get; internal set; }
     }
     internal class CelCoords
     {
-        public double ra { get; set; }
-        public double dec { get; set; }
-        public double dist { get; set; }
+        public double ra { get; internal set; }
+        public double dec { get; internal set; }
+        public double dist { get; internal set; }
     }
 
     /// <summary>
