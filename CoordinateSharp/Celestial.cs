@@ -13,25 +13,28 @@ namespace CoordinateSharp
     public class Celestial
     {
 
-        //When as rise or a set does not occur, the DateTime will return null
+        //When a rise or a set does not occur, the DateTime will return null
+
         /// <summary>
         /// Creates an empty Celestial.
         /// </summary>
         public Celestial()
         {
-            AstrologicalSigns = new AstrologicalSigns();
-            LunarEclipse = new LunarEclipse();
-            SolarEclipse = new SolarEclipse();
+            astrologicalSigns = new AstrologicalSigns();
+            lunarEclipse = new LunarEclipse();
+            solarEclipse = new SolarEclipse();
             CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc));                     
         }
+
         private Celestial(bool hasCalcs)
         {
 
-            AstrologicalSigns = new AstrologicalSigns();
-            LunarEclipse = new LunarEclipse();
-            SolarEclipse = new SolarEclipse();
+            astrologicalSigns = new AstrologicalSigns();
+            lunarEclipse = new LunarEclipse();
+            solarEclipse = new SolarEclipse();
             if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)); }
         }
+
         /// <summary>
         /// Creates a Celestial based on a location and specified date
         /// </summary>
@@ -41,11 +44,12 @@ namespace CoordinateSharp
         public Celestial(double lat, double longi, DateTime geoDate)
         {
             DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
-            AstrologicalSigns = new AstrologicalSigns();
-            LunarEclipse = new LunarEclipse();
-            SolarEclipse = new SolarEclipse();
+            astrologicalSigns = new AstrologicalSigns();
+            lunarEclipse = new LunarEclipse();
+            solarEclipse = new SolarEclipse();
             CalculateCelestialTime(lat, longi, d);
         }
+
         /// <summary>
         /// Creates a Celestial based on a location and date in the provided Coordinate.
         /// </summary>
@@ -86,14 +90,14 @@ namespace CoordinateSharp
 
             //Get SunSet
             int i = Determine_Slipped_Event_Index(cel.SunSet, celPre.SunSet, celPost.SunSet, d);
-            cel.SunSet = Get_Correct_Slipped_Date(cel.SunSet, celPre.SunSet, celPost.SunSet, i);
+            cel.sunSet = Get_Correct_Slipped_Date(cel.SunSet, celPre.SunSet, celPost.SunSet, i);
             cel.AdditionalSolarTimes.CivilDusk = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.CivilDusk, 
                 celPre.AdditionalSolarTimes.CivilDusk, celPost.AdditionalSolarTimes.CivilDusk, i);
             cel.AdditionalSolarTimes.NauticalDusk = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.NauticalDusk,
                celPre.AdditionalSolarTimes.NauticalDusk, celPost.AdditionalSolarTimes.NauticalDusk, i);
             //Get SunRise
             i = Determine_Slipped_Event_Index(cel.SunRise, celPre.SunRise, celPost.SunRise, d);
-            cel.SunRise = Get_Correct_Slipped_Date(cel.SunRise, celPre.SunRise, celPost.SunRise, i);
+            cel.sunRise = Get_Correct_Slipped_Date(cel.SunRise, celPre.SunRise, celPost.SunRise, i);
             cel.AdditionalSolarTimes.CivilDawn = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.CivilDawn,
                 celPre.AdditionalSolarTimes.CivilDawn, celPost.AdditionalSolarTimes.CivilDawn, i);
             cel.AdditionalSolarTimes.NauticalDawn = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.NauticalDawn,
@@ -101,23 +105,23 @@ namespace CoordinateSharp
 
             //MoonRise
             i = Determine_Slipped_Event_Index(cel.MoonRise, celPre.MoonRise, celPost.MoonRise, d);
-            cel.MoonRise = Get_Correct_Slipped_Date(cel.MoonRise, celPre.MoonRise, celPost.MoonRise, i);
+            cel.moonRise = Get_Correct_Slipped_Date(cel.MoonRise, celPre.MoonRise, celPost.MoonRise, i);
         
             //MoonSet
             i = Determine_Slipped_Event_Index(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, d);
-            cel.MoonSet = Get_Correct_Slipped_Date(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, i);
+            cel.moonSet = Get_Correct_Slipped_Date(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, i);
 
             //Local Conditions
             CelestialStatus[] cels = new CelestialStatus[]
             {
                 celPre.MoonCondition,cel.MoonCondition,celPost.MoonCondition
             };
-            cel.MoonCondition = Celestial.GetStatus(cel.MoonRise, cel.MoonSet, cels);
+            cel.moonCondition = Celestial.GetStatus(cel.MoonRise, cel.MoonSet, cels);
             cels = new CelestialStatus[]
             {
                 celPre.SunCondition, cel.SunCondition, celPost.SunCondition
             };
-            cel.SunCondition = Celestial.GetStatus(cel.SunRise, cel.SunSet, cels);
+            cel.sunCondition = Celestial.GetStatus(cel.SunRise, cel.SunSet, cels);
 
             //Load IsUp values based on local time with populated Celestial
             Celestial.Calculate_Celestial_IsUp_Booleans(d, cel);
@@ -148,22 +152,22 @@ namespace CoordinateSharp
         private void Local_Convert(Coordinate c, double offset)
         {
             //Find new lunar set rise times
-            if (MoonSet.HasValue) { MoonSet = MoonSet.Value.AddHours(offset); }
-            if (MoonRise.HasValue) { MoonRise = MoonRise.Value.AddHours(offset); }
+            if (MoonSet.HasValue) { moonSet = moonSet.Value.AddHours(offset); }
+            if (MoonRise.HasValue) { moonRise = moonRise.Value.AddHours(offset); }
             //Perigee
-            this.Perigee.ConvertTo_Local_Time(offset);
+            Perigee.ConvertTo_Local_Time(offset);
             //Apogee
-            this.Apogee.ConvertTo_Local_Time(offset);
+            Apogee.ConvertTo_Local_Time(offset);
             //Eclipse
-            this.LunarEclipse.ConvertTo_LocalTime(offset);
+            LunarEclipse.ConvertTo_LocalTime(offset);
 
             ////Solar
-            if (SunSet.HasValue) { SunSet = SunSet.Value.AddHours(offset); }
-            if (SunRise.HasValue) { SunRise = SunRise.Value.AddHours(offset); }
-            this.AdditionalSolarTimes.Convert_To_Local_Time(offset);
+            if (sunSet.HasValue) { sunSet = sunSet.Value.AddHours(offset); }
+            if (SunRise.HasValue) { sunRise = SunRise.Value.AddHours(offset); }
+            AdditionalSolarTimes.Convert_To_Local_Time(offset);
 
             //Eclipse
-            this.SolarEclipse.ConvertTo_LocalTime(offset);
+            SolarEclipse.ConvertTo_LocalTime(offset);
             SunCalc.CalculateZodiacSign(c.GeoDate.AddHours(offset), this);
             MoonCalc.GetMoonSign(c.GeoDate.AddHours(offset), this);
             
@@ -229,62 +233,88 @@ namespace CoordinateSharp
             return 1;
         }
 
+        internal DateTime? sunSet;
+        internal DateTime? sunRise;
+        internal DateTime? moonSet;
+        internal DateTime? moonRise;
+
+        internal double sunAltitude;
+        internal double sunAzimuth;
+        internal double moonAltitude;
+        internal double moonAzimuth;
+
+        internal Distance moonDistance;
+
+        internal CelestialStatus sunCondition;
+        internal CelestialStatus moonCondition;
+
+        internal bool isSunUp;
+        internal bool isMoonUp;
+
+        internal MoonIllum moonIllum;
+        internal Perigee perigee;
+        internal Apogee apogee;
+        internal AdditionalSolarTimes additionalSolarTimes;
+        internal AstrologicalSigns astrologicalSigns;
+        internal SolarEclipse solarEclipse;
+        internal LunarEclipse lunarEclipse;
+
         /// <summary>
         /// Sunset time.
         /// </summary>
-        public DateTime? SunSet { get; set; }
+        public DateTime? SunSet { get { return sunSet; }  }
         /// <summary>
         /// Sunrise time.
         /// </summary>
-        public DateTime? SunRise { get; set; }
+        public DateTime? SunRise { get { return sunRise; } }
         /// <summary>
         /// Moonset time.
         /// </summary>
-        public DateTime? MoonSet { get; set; }
+        public DateTime? MoonSet { get { return moonSet; } }
         /// <summary>
         /// Moonrise time.
         /// </summary>
-        public DateTime? MoonRise { get; set; }
-        /// <summary>
-        /// Sun azimuth in degrees (E of N).
-        /// </summary>
-        public double SunAzimuth { get; set; }
-        /// <summary>
-        /// Moon altitude in degrees (corrected for parallax and refraction).
-        /// </summary>
-        public double MoonAltitude { get; set; }
-        /// <summary>
-        /// Moon azimuth in degrees (E of N).
-        /// </summary>
-        public double MoonAzimuth { get; set; }
+        public DateTime? MoonRise { get { return moonRise; } }
+
         /// <summary>
         /// Sun altitude in degrees (E of N).
         /// </summary>
-        public double SunAltitude { get; set; }
+        public double SunAltitude { get { return sunAltitude; } }
+        /// <summary>
+        /// Sun azimuth in degrees (E of N).
+        /// </summary>
+        public double SunAzimuth { get { return sunAzimuth; } }
+        /// <summary>
+        /// Moon altitude in degrees (corrected for parallax and refraction).
+        /// </summary>
+        public double MoonAltitude { get { return moonAltitude; } }
+        /// <summary>
+        /// Moon azimuth in degrees (E of N).
+        /// </summary>
+        public double MoonAzimuth { get { return moonAzimuth; } }
+       
         /// <summary>
         /// Estimated moon distance from the earth.
         /// </summary>
-        public Distance MoonDistance { get; set; }
+        public Distance MoonDistance { get { return moonDistance; } }
         /// <summary>
         /// Sun's Condition based on the provided date.
         /// </summary>
-        public CelestialStatus SunCondition { get; set; }
+        public CelestialStatus SunCondition { get { return sunCondition; } }
         /// <summary>
         /// Moon's condition based on the provided date.
         /// </summary>
-        public CelestialStatus MoonCondition { get; set; }
-
+        public CelestialStatus MoonCondition { get { return moonCondition; } }
        
         /// <summary>
         /// Determine if the sun is currently up, based on sunset and sunrise time at the provided location and date.
         /// </summary>
-        public bool IsSunUp{ get; set; }
+        public bool IsSunUp{ get { return isSunUp; } }
 
         /// <summary>
         /// Determine if the moon is currently up, based on moonset and moonrise time at the provided location and date.
         /// </summary>
-        public bool IsMoonUp { get; set; }
-
+        public bool IsMoonUp { get { return isMoonUp; } }
 
         /// <summary>
         /// Moon ilumination details based on the provided date.
@@ -292,37 +322,37 @@ namespace CoordinateSharp
         /// <remarks>
         /// Contains phase, phase name, fraction and angle
         /// </remarks>
-        public MoonIllum MoonIllum { get; set; }
+        public MoonIllum MoonIllum { get { return moonIllum; } }
         /// <summary>
         /// Moons perigee details based on the provided date.
         /// </summary>
-        public Perigee Perigee { get; set; }
+        public Perigee Perigee { get { return perigee; } }
         /// <summary>
         /// Moons apogee details based on the provided date.
         /// </summary>
-        public Apogee Apogee { get; set; }
+        public Apogee Apogee { get { return apogee; } }
 
         /// <summary>
         /// Additional solar event times based on the provided date and location.
         /// </summary>
         /// <remarks>Contains civil and nautical dawn and dusk times.</remarks>
-        public AdditionalSolarTimes AdditionalSolarTimes { get; set; }
+        public AdditionalSolarTimes AdditionalSolarTimes { get { return additionalSolarTimes; } }
         /// <summary>
         /// Astrological signs based on the provided date.
         /// </summary>
         /// <remarks>
         /// Contains zodiac, moon sign and moon name during full moon events
         /// </remarks>
-        public AstrologicalSigns AstrologicalSigns { get; set; }
+        public AstrologicalSigns AstrologicalSigns { get { return astrologicalSigns; } }
 
         /// <summary>
         /// Returns a SolarEclipse.
         /// </summary>
-        public SolarEclipse SolarEclipse { get; set; }
+        public SolarEclipse SolarEclipse { get { return solarEclipse; } }
         /// <summary>
         /// Returns a LunarEclipse.
         /// </summary>
-        public LunarEclipse LunarEclipse { get; set; }
+        public LunarEclipse LunarEclipse { get { return lunarEclipse; } }
 
         /// <summary>
         /// Calculates all celestial data. Coordinates will notify as changes occur
@@ -343,10 +373,10 @@ namespace CoordinateSharp
             MoonCalc.GetMoonIllumination(date, this,lat,longi);
 
            
-            this.Perigee = MoonCalc.GetPerigeeEvents(date);
-            this.Apogee = MoonCalc.GetApogeeEvents(date);
+            perigee = MoonCalc.GetPerigeeEvents(date);
+            apogee = MoonCalc.GetApogeeEvents(date);
 
-            Celestial.Calculate_Celestial_IsUp_Booleans(date, this);
+            Calculate_Celestial_IsUp_Booleans(date, this);
 
         }
         /// <summary>
@@ -369,10 +399,10 @@ namespace CoordinateSharp
             MoonCalc.GetMoonSign(date, c);
             MoonCalc.GetMoonIllumination(date, c,lat,longi);
            
-            c.Perigee = MoonCalc.GetPerigeeEvents(date);
-            c.Apogee = MoonCalc.GetApogeeEvents(date);
+            c.perigee = MoonCalc.GetPerigeeEvents(date);
+            c.apogee = MoonCalc.GetApogeeEvents(date);
 
-            Celestial.Calculate_Celestial_IsUp_Booleans(date, c);
+            Calculate_Celestial_IsUp_Booleans(date, c);
 
             return c;
         }
@@ -412,8 +442,8 @@ namespace CoordinateSharp
             MoonCalc.GetMoonSign(date, c);
             MoonCalc.GetMoonIllumination(date, c,lat,longi);
 
-            c.Perigee = MoonCalc.GetPerigeeEvents(date);
-            c.Apogee = MoonCalc.GetApogeeEvents(date);
+            c.perigee = MoonCalc.GetPerigeeEvents(date);
+            c.apogee = MoonCalc.GetApogeeEvents(date);
 
             return c;
         }
@@ -466,46 +496,46 @@ namespace CoordinateSharp
             switch (cel.SunCondition)
             {
                 case CelestialStatus.DownAllDay:
-                    cel.IsSunUp = false;
+                    cel.isSunUp = false;
                     break;
                 case CelestialStatus.UpAllDay:
-                    cel.IsSunUp = true;
+                    cel.isSunUp = true;
                     break;
                 case CelestialStatus.NoRise:
                     if(date<cel.SunSet)
                     {
-                        cel.IsSunUp = true;
+                        cel.isSunUp = true;
                     }
-                    else { cel.IsSunUp = false; }
+                    else { cel.isSunUp = false; }
                     break;
                 case CelestialStatus.NoSet:
                     if (date > cel.SunRise)
                     {
-                        cel.IsSunUp = true;
+                        cel.isSunUp = true;
                     }
-                    else { cel.IsSunUp = false; }
+                    else { cel.isSunUp = false; }
                     break;
                 case CelestialStatus.RiseAndSet:
                     if (cel.SunRise < cel.SunSet)
                     {
                         if (date > cel.SunRise && date < cel.SunSet)
                         {
-                            cel.IsSunUp = true;
+                            cel.isSunUp = true;
                         }
                         else
                         {
-                            cel.IsSunUp = false;
+                            cel.isSunUp = false;
                         }
                     }
                     else
                     {
                         if (date > cel.SunRise || date < cel.SunSet)
                         {
-                            cel.IsSunUp = true;
+                            cel.isSunUp = true;
                         }
                         else
                         {
-                            cel.IsSunUp = false;
+                            cel.isSunUp = false;
                         }
                     }
                     break;
@@ -518,46 +548,46 @@ namespace CoordinateSharp
             switch (cel.MoonCondition)
             {
                 case CelestialStatus.DownAllDay:
-                    cel.IsMoonUp = false;
+                    cel.isMoonUp = false;
                     break;
                 case CelestialStatus.UpAllDay:
-                    cel.IsMoonUp = true;
+                    cel.isMoonUp = true;
                     break;
                 case CelestialStatus.NoRise:
                     if (date < cel.MoonSet)
                     {
-                        cel.IsMoonUp = true;
+                        cel.isMoonUp = true;
                     }
-                    else { cel.IsMoonUp = false; }
+                    else { cel.isMoonUp = false; }
                     break;
                 case CelestialStatus.NoSet:
                     if (date > cel.MoonRise)
                     {
-                        cel.IsMoonUp = true;
+                        cel.isMoonUp = true;
                     }
-                    else { cel.IsMoonUp = false; }
+                    else { cel.isMoonUp = false; }
                     break;
                 case CelestialStatus.RiseAndSet:
                     if (cel.MoonRise < cel.MoonSet)
                     {
                         if (date > cel.MoonRise && date < cel.MoonSet)
                         {
-                            cel.IsMoonUp = true;
+                            cel.isMoonUp = true;
                         }
                         else
                         {
-                            cel.IsMoonUp = false;
+                            cel.isMoonUp = false;
                         }
                     }
                     else
                     {
                         if (date > cel.MoonRise || date < cel.MoonSet)
                         {
-                            cel.IsMoonUp = true;
+                            cel.isMoonUp = true;
                         }
                         else
                         {
-                            cel.IsMoonUp = false;
+                            cel.isMoonUp = false;
                         }
                     }
                     break;
@@ -567,7 +597,6 @@ namespace CoordinateSharp
             }
         }
         
-
         /// <summary>
         /// Returns Apogee object containing last and next apogee based on the specified date.
         /// </summary>
@@ -585,8 +614,7 @@ namespace CoordinateSharp
         public static Perigee GetPerigees(DateTime d)
         {
             return MoonCalc.GetPerigeeEvents(d);
-        }
-      
+        }    
     }
 
 }

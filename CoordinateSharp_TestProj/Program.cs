@@ -3,9 +3,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using CoordinateSharp;
 using System.Drawing;
@@ -103,18 +100,18 @@ namespace CoordinateSharp_TestProj
             {
                 pass = true;
                 Coordinate c = new Coordinate();
-                CoordinatePart cp = new CoordinatePart(CoordinateType.Lat, c);
-                cp = new CoordinatePart(CoordinateType.Long, c);
-                cp = new CoordinatePart(25, CoordinateType.Lat, c);
-                cp = new CoordinatePart(25, CoordinateType.Long, c);
-                cp = new CoordinatePart(25, 25, CoordinatesPosition.N, c);
-                cp = new CoordinatePart(25, 25, CoordinatesPosition.E, c);
-                cp = new CoordinatePart(25, 25, CoordinatesPosition.S, c);
-                cp = new CoordinatePart(25, 25, CoordinatesPosition.W, c);
-                cp = new CoordinatePart(25, 25, 25, CoordinatesPosition.N, c);
-                cp = new CoordinatePart(25, 25, 25, CoordinatesPosition.E, c);
-                cp = new CoordinatePart(25, 25, 25, CoordinatesPosition.S, c);
-                cp = new CoordinatePart(25, 25, 25, CoordinatesPosition.W, c);
+                CoordinatePart cp = new CoordinatePart(CoordinateType.Lat);
+                cp = new CoordinatePart(CoordinateType.Long);
+                cp = new CoordinatePart(25, CoordinateType.Lat);
+                cp = new CoordinatePart(25, CoordinateType.Long);
+                cp = new CoordinatePart(25, 25, CoordinatesPosition.N);
+                cp = new CoordinatePart(25, 25, CoordinatesPosition.E);
+                cp = new CoordinatePart(25, 25, CoordinatesPosition.S);
+                cp = new CoordinatePart(25, 25, CoordinatesPosition.W);
+                cp = new CoordinatePart(25, 25, 25, CoordinatesPosition.N);
+                cp = new CoordinatePart(25, 25, 25, CoordinatesPosition.E);
+                cp = new CoordinatePart(25, 25, 25, CoordinatesPosition.S);
+                cp = new CoordinatePart(25, 25, 25, CoordinatesPosition.W);
             }
             catch { pass = false; }
             Write_Pass("CoordinatePart Initialization Error Checks", pass);
@@ -210,109 +207,144 @@ namespace CoordinateSharp_TestProj
                 catch { }
             }
             catch { pass = false; }
-            Write_Pass("Cordinate Initialization Range Checks", pass);
+            Write_Pass("Coordinate Initialization Range Checks", pass);
 
             pass = true;
             try
             {
                 Coordinate c = new Coordinate();
-                CoordinatePart cp = new CoordinatePart(90, CoordinateType.Lat, c);
-                cp = new CoordinatePart(-90, CoordinateType.Lat, c);
-                cp = new CoordinatePart(89, 59,  CoordinatesPosition.N, c);
-                cp = new CoordinatePart(89, 59, CoordinatesPosition.S, c);
-                cp = new CoordinatePart(89, 59, 59, CoordinatesPosition.N, c);
-                cp = new CoordinatePart(89, 59, 59, CoordinatesPosition.S, c);
-                cp = new CoordinatePart(180, CoordinateType.Long, c);
-                cp = new CoordinatePart(-180, CoordinateType.Long, c);
-                cp = new CoordinatePart(179, 59, CoordinatesPosition.E, c);
-                cp = new CoordinatePart(179, 59, CoordinatesPosition.W, c);
-                cp = new CoordinatePart(179, 59, 59, CoordinatesPosition.E, c);
-                cp = new CoordinatePart(179, 59, 59, CoordinatesPosition.W, c);
+                CoordinatePart cp = new CoordinatePart(90, CoordinateType.Lat);
+                cp = new CoordinatePart(-90, CoordinateType.Lat);
+                cp = new CoordinatePart(89, 59,  CoordinatesPosition.N);
+                cp = new CoordinatePart(89, 59, CoordinatesPosition.S);
+                cp = new CoordinatePart(89, 59, 59, CoordinatesPosition.N);
+                cp = new CoordinatePart(89, 59, 59, CoordinatesPosition.S);
+                cp = new CoordinatePart(180, CoordinateType.Long);
+                cp = new CoordinatePart(-180, CoordinateType.Long);
+                cp = new CoordinatePart(179, 59, CoordinatesPosition.E);
+                cp = new CoordinatePart(179, 59, CoordinatesPosition.W);
+                cp = new CoordinatePart(179, 59, 59, CoordinatesPosition.E);
+                cp = new CoordinatePart(179, 59, 59, CoordinatesPosition.W);
 
                 //Should fail
-                try { cp = new CoordinatePart(91, CoordinateType.Lat, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(-91, CoordinateType.Lat, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(181, CoordinateType.Long, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(-181, CoordinateType.Long, c); pass = false; } catch { }
+                try { cp = new CoordinatePart(91, CoordinateType.Lat); pass = false; } catch { }
+                try { cp = new CoordinatePart(-91, CoordinateType.Lat); pass = false; } catch { }
+                try { cp = new CoordinatePart(181, CoordinateType.Long); pass = false; } catch { }
+                try { cp = new CoordinatePart(-181, CoordinateType.Long); pass = false; } catch { }
 
-                try { cp = new CoordinatePart(91, 0, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(90, 1, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, 60, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(91, 0, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(90, 1, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, 60, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(-90, 1, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, -1, CoordinatesPosition.N, c); pass = false; } catch { }
+                try { cp = new CoordinatePart(91, 0, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(90, 1, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, 60, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(91, 0, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(90, 1, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, 60, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(-90, 1, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, -1, CoordinatesPosition.N); pass = false; } catch { }
 
-                try { cp = new CoordinatePart(91, 0, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(90, 1, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, 60, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(91, 0, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(90, 1, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, 60, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(-90, 1, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, -1, CoordinatesPosition.S, c); pass = false; } catch { }
+                try { cp = new CoordinatePart(91, 0, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(90, 1, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, 60, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(91, 0, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(90, 1, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, 60, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(-90, 1, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, -1, CoordinatesPosition.S); pass = false; } catch { }
 
-                try { cp = new CoordinatePart(91, 0, 0, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(90, 0, 1, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, 59, 60, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(90, 0, 1, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, 59, 60, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(-90, 0, 0, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, -1, 0, CoordinatesPosition.N, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, 1, -1, CoordinatesPosition.N, c); pass = false; } catch { }
+                try { cp = new CoordinatePart(91, 0, 0, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(90, 0, 1, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, 59, 60, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(90, 0, 1, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, 59, 60, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(-90, 0, 0, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, -1, 0, CoordinatesPosition.N); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, 1, -1, CoordinatesPosition.N); pass = false; } catch { }
 
-                try { cp = new CoordinatePart(91, 0, 0, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(90, 0, 1, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, 59, 60, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(90, 0, 1, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, 59, 60, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(-90, 0, 0, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, -1, 0, CoordinatesPosition.S, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(89, 1, -1, CoordinatesPosition.S, c); pass = false; } catch { }
+                try { cp = new CoordinatePart(91, 0, 0, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(90, 0, 1, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, 59, 60, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(90, 0, 1, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, 59, 60, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(-90, 0, 0, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, -1, 0, CoordinatesPosition.S); pass = false; } catch { }
+                try { cp = new CoordinatePart(89, 1, -1, CoordinatesPosition.S); pass = false; } catch { }
 
 
-                try { cp = new CoordinatePart(181, 0, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(180, 1, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, 60, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(181, 0, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(180, 1, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, 60, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(-180, 1, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, -1, CoordinatesPosition.E, c); pass = false; } catch { }
+                try { cp = new CoordinatePart(181, 0, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(180, 1, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, 60, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(181, 0, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(180, 1, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, 60, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(-180, 1, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, -1, CoordinatesPosition.E); pass = false; } catch { }
 
-                try { cp = new CoordinatePart(181, 0, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(180, 1, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, 60, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(181, 0, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(180, 1, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, 60, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(-180, 1, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, -1, CoordinatesPosition.W, c); pass = false; } catch { }
+                try { cp = new CoordinatePart(181, 0, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(180, 1, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, 60, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(181, 0, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(180, 1, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, 60, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(-180, 1, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, -1, CoordinatesPosition.W); pass = false; } catch { }
 
-                try { cp = new CoordinatePart(181, 0, 0, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(180, 0, 1, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, 59, 60, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(180, 0, 1, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, 59, 60, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(-180, 0, 0, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, -1, 0, CoordinatesPosition.E, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, 1, -1, CoordinatesPosition.E, c); pass = false; } catch { }
+                try { cp = new CoordinatePart(181, 0, 0, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(180, 0, 1, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, 59, 60, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(180, 0, 1, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, 59, 60, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(-180, 0, 0, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, -1, 0, CoordinatesPosition.E); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, 1, -1, CoordinatesPosition.E); pass = false; } catch { }
 
-                try { cp = new CoordinatePart(181, 0, 0, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(180, 0, 1, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, 59, 60, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(180, 0, 1, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, 59, 60, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(-180, 0, 0, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, -1, 0, CoordinatesPosition.W, c); pass = false; } catch { }
-                try { cp = new CoordinatePart(179, 1, -1, CoordinatesPosition.W, c); pass = false; } catch { }
+                try { cp = new CoordinatePart(181, 0, 0, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(180, 0, 1, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, 59, 60, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(180, 0, 1, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, 59, 60, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(-180, 0, 0, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, -1, 0, CoordinatesPosition.W); pass = false; } catch { }
+                try { cp = new CoordinatePart(179, 1, -1, CoordinatesPosition.W); pass = false; } catch { }
             }
             catch
             {
                 pass = false;
             }
-            Write_Pass("CordinatePart Initialization Range Checks", pass);
+            Write_Pass("CoordinatePart Initialization Range Checks", pass);
+
+            //TEST NEW/DEPRACTED COORDPART CONTRUCTORS
+            pass = true;
+            try
+            {
+               
+                Coordinate coord = new Coordinate();
+
+                double lat = coord.Latitude.DecimalDegree;
+                double lng = coord.Longitude.DecimalDegree;
+                string MGRS = coord.MGRS.ToString();
+                string UTM = coord.UTM.ToString();
+                string ECEF = coord.ECEF.ToString();
+                string Cartesian = coord.Cartesian.ToString();
+
+                CoordinatePart cpLat = new CoordinatePart(25, CoordinateType.Lat);
+                CoordinatePart cpLng = new CoordinatePart(25, CoordinateType.Long);
+
+                //PROP CHANGE ERROR CHECK
+              
+                cpLat.DecimalDegree = 27;
+                cpLng.Seconds = 24;           
+
+                coord.Latitude = cpLat;
+                if (coord.Latitude.ToDouble() == lat) { pass = false; }
+                coord.Longitude = cpLng;
+                if (coord.Longitude.ToDouble() == lng) { pass = false; }
+                if (MGRS == coord.MGRS.ToString()) { pass = false; }
+                if (UTM == coord.UTM.ToString()) { pass = false; }
+                if (ECEF == coord.ECEF.ToString()) { pass = false; }
+                if (Cartesian == coord.Cartesian.ToString()) { pass = false; }
+            }
+            catch{ pass = false; }
+
+            Write_Pass("CoordinatePart Constructor Property Change Test: ", pass);         
         }
         #endregion
 
@@ -375,8 +407,8 @@ namespace CoordinateSharp_TestProj
                             c.FormatOptions.Format = CoordinateFormatType.Degree_Decimal_Minutes;
                             if (c.ToString() != coordList[y]) { pass = false; }
                             rc = new Coordinate();
-                            rc.Latitude = new CoordinatePart(c.Latitude.Degrees, c.Latitude.DecimalMinute, c.Latitude.Position, rc);
-                            rc.Longitude = new CoordinatePart(c.Longitude.Degrees, c.Longitude.DecimalMinute, c.Longitude.Position, rc);
+                            rc.Latitude = new CoordinatePart(c.Latitude.Degrees, c.Latitude.DecimalMinute, c.Latitude.Position);
+                            rc.Longitude = new CoordinatePart(c.Longitude.Degrees, c.Longitude.DecimalMinute, c.Longitude.Position);
                             if (rc.Latitude.ToDouble() != c.Latitude.ToDouble()) { pass = false; Debug.WriteLine("...Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
                             if (rc.Longitude.ToDouble() != c.Longitude.ToDouble()) { pass = false; Debug.WriteLine("...Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
                             break;
@@ -384,8 +416,8 @@ namespace CoordinateSharp_TestProj
                             c.FormatOptions.Format = CoordinateFormatType.Degree_Minutes_Seconds;
                             if (c.ToString() != coordList[y]) { pass = false; }
                             rc = new Coordinate();
-                            rc.Latitude = new CoordinatePart(c.Latitude.Degrees, c.Latitude.Minutes, c.Latitude.Seconds, c.Latitude.Position, rc);
-                            rc.Longitude = new CoordinatePart(c.Longitude.Degrees, c.Longitude.Minutes, c.Longitude.Seconds, c.Longitude.Position, rc);
+                            rc.Latitude = new CoordinatePart(c.Latitude.Degrees, c.Latitude.Minutes, c.Latitude.Seconds, c.Latitude.Position);
+                            rc.Longitude = new CoordinatePart(c.Longitude.Degrees, c.Longitude.Minutes, c.Longitude.Seconds, c.Longitude.Position);
                             if (rc.Latitude.ToDouble() != c.Latitude.ToDouble()) { pass = false; Debug.WriteLine("...Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
                             if (rc.Longitude.ToDouble() != c.Longitude.ToDouble()) { pass = false; Debug.WriteLine("...Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
                             break;
@@ -803,8 +835,8 @@ namespace CoordinateSharp_TestProj
 
             Benchmark(() => {
                 tc = new Coordinate();
-                tc.Latitude = new CoordinatePart(39, 45, 34, CoordinatesPosition.N, tc);
-                tc.Longitude = new CoordinatePart(74, 34, 45, CoordinatesPosition.W, tc);
+                tc.Latitude = new CoordinatePart(39, 45, 34, CoordinatesPosition.N);
+                tc.Longitude = new CoordinatePart(74, 34, 45, CoordinatesPosition.W);
                 tc.GeoDate = new DateTime(2018, 7, 26, 15, 49, 0);
 
             }, 100, "Secondary Initialization");

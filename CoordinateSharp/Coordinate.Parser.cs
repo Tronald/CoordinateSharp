@@ -111,8 +111,8 @@ namespace CoordinateSharp
                     CoordinatesPosition lngP = CoordinatesPosition.E;
                     if (d[2] != 0) { latP = CoordinatesPosition.S; }
                     if (d[5] != 0) { lngP = CoordinatesPosition.W; }
-                    CoordinatePart lat = new CoordinatePart((int)d[0], d[1], latP, c);
-                    CoordinatePart lng = new CoordinatePart((int)d[3], d[4], lngP, c);
+                    CoordinatePart lat = new CoordinatePart((int)d[0], d[1], latP);
+                    CoordinatePart lng = new CoordinatePart((int)d[3], d[4], lngP);
                     c = new Coordinate(eg);
                     c.Latitude = lat;
                     c.Longitude = lng;
@@ -141,8 +141,8 @@ namespace CoordinateSharp
                     if (d[3] != 0) { latP = CoordinatesPosition.S; }
                     if (d[7] != 0) { lngP = CoordinatesPosition.W; }
 
-                    CoordinatePart lat = new CoordinatePart((int)d[0], (int)d[1], d[2], latP, c);
-                    CoordinatePart lng = new CoordinatePart((int)d[4], (int)d[5], d[6], lngP, c);
+                    CoordinatePart lat = new CoordinatePart((int)d[0], (int)d[1], d[2], latP);
+                    CoordinatePart lng = new CoordinatePart((int)d[4], (int)d[5], d[6], lngP);
                     c = new Coordinate(eg);
                     c.Latitude = lat;
                     c.Longitude = lng;
@@ -652,24 +652,24 @@ namespace CoordinateSharp
                             //Attempt Lat first (default for signed)
                             try
                             {
-                                cp = new CoordinatePart(d[0], CoordinateType.Lat, c);
+                                cp = new CoordinatePart(d[0], CoordinateType.Lat);
                                 c.Parse_Format = Parse_Format_Type.Signed_Degree;
                                 return true;
                             }
                             catch
                             {
-                                cp = new CoordinatePart(d[0], CoordinateType.Long, c);
+                                cp = new CoordinatePart(d[0], CoordinateType.Long);
                                 c.Parse_Format = Parse_Format_Type.Signed_Degree;
                                 return true;
                             }
                         case 1:
                             //Attempt Lat
-                            cp = new CoordinatePart(d[0], CoordinateType.Lat, c);
+                            cp = new CoordinatePart(d[0], CoordinateType.Lat);
                             c.Parse_Format = Parse_Format_Type.Signed_Degree;
                             return true;
                         case 2:
                             //Attempt long
-                            cp = new CoordinatePart(d[0], CoordinateType.Long, c);
+                            cp = new CoordinatePart(d[0], CoordinateType.Long);
                             c.Parse_Format = Parse_Format_Type.Signed_Degree;
                             return true;
                     }
@@ -712,7 +712,7 @@ namespace CoordinateSharp
             {
                 try
                 {
-                    cp = new CoordinatePart(d[0], t, c);
+                    cp = new CoordinatePart(d[0], t);
                     c.Parse_Format = Parse_Format_Type.Decimal_Degree;
                     return true;
                 }
@@ -728,7 +728,7 @@ namespace CoordinateSharp
                     //0  Degree
                     //1  Minute
                     //2  Direction (0 = N, 1 = E, 2 = S, 3 = W)                          
-                    cp = new CoordinatePart((int)d[0], d[1], (CoordinatesPosition)direction, c);
+                    cp = new CoordinatePart((int)d[0], d[1], (CoordinatesPosition)direction);
                     c.Parse_Format = Parse_Format_Type.Degree_Decimal_Minute;
                     return true;
                 }
@@ -746,7 +746,7 @@ namespace CoordinateSharp
                     //1 Minute
                     //2 Second
                     //3 Direction (0 = N, 1 = E, 2 = S, 3 = W)                                     
-                    cp = new CoordinatePart((int)d[0], (int)d[1], d[2], (CoordinatesPosition)direction, c);
+                    cp = new CoordinatePart((int)d[0], (int)d[1], d[2], (CoordinatesPosition)direction);
                     c.Parse_Format = Parse_Format_Type.Degree_Minute_Second;
                     return true;
                 }

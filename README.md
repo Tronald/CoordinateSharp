@@ -1,10 +1,12 @@
 <p align="center"><img src="https://s8.postimg.cc/y7wuenuzp/LOGO_COORDINATE_SHARP.jpg"></p>
 
-<h2 align="center">v1.1.4.6</h2>
+<h2 align="center">v1.1.5.1</h2>
 
 CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations. This library has the ability to convert various lat long formats, UTM, MGRS(NATO UTM) and Cartesian (Spherical and ECEF X, Y, Z). 
 
-CAUTION: v1.1.4.1 makes slight changes to the UTM and MGRS `ToString()` behavior. If a conversion from Lat/Long to UTM/MGRS is made, and the conversion is outside the limitations of the UTM and MGRS systems (below 80 S or above 84 N), `ToString()` will return an empty `string`. Access to the UTM/MGRS individual properties is still available if needed, but these systems should not be used if conversion is outside the system's limitations.
+<b>CAUTION:</b> v1.1.5.1 begins the depracation of certain methods in preparation of CoordinateSharp v2.1.1.1. Many user mutable items, have also been made user immutable in v1.1.5.1. This only effects properties that do not need to be set by users (i.e. Celestial properties). You should see no negative effects from this conversion if the library has been used in accordance with the [CoordinateSharp Developer Guide](https://coordinatesharp.com/DeveloperGuide).
+
+<b>ANNOUNCEMENT:</b> v2.1.1.1 development has begun. This version is going to focus on simplifying constructors, better management of circular references and property change notification. It is also going to focus on proper assignment of user mutable vs user immutable properties. Tests will be expanded. Lastly, code examples are going to be provided in the library documentation in order to give developers a more standard documentation experience outside of the Developer Guide. This version should give the user an even simpler experience when using CoordinateSharp. 
 
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 

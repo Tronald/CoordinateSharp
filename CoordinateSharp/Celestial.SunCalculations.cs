@@ -17,10 +17,10 @@ namespace CoordinateSharp
 
             //Rise Set        
             DateTime?[] evDate = Get_Event_Time(lw, phi, -.8333, actualDate);
-            c.SunRise = evDate[0];
-            c.SunSet = evDate[1];
-
-            c.SunCondition = CelestialStatus.RiseAndSet;
+            c.sunRise = evDate[0];
+            c.sunSet = evDate[1];
+           
+            c.sunCondition = CelestialStatus.RiseAndSet;
             //Azimuth and Altitude
             CalculateSunAngle(date, longi, lat, c);
             // neither sunrise nor sunset
@@ -28,11 +28,11 @@ namespace CoordinateSharp
             {
                 if (c.SunAltitude < 0)
                 {
-                    c.SunCondition = CelestialStatus.DownAllDay;                 
+                    c.sunCondition = CelestialStatus.DownAllDay;                 
                 }
                 else
                 {
-                    c.SunCondition = CelestialStatus.UpAllDay;                 
+                    c.sunCondition = CelestialStatus.UpAllDay;                 
                 }
             }
             // sunrise or sunset
@@ -41,17 +41,17 @@ namespace CoordinateSharp
                 if (!c.SunRise.HasValue)
                 {
                     // No sunrise this date
-                    c.SunCondition = CelestialStatus.NoRise;
+                    c.sunCondition = CelestialStatus.NoRise;
 
                 }
                 else if (!c.SunSet.HasValue)
                 {
                     // No sunset this date
-                    c.SunCondition = CelestialStatus.NoSet;
+                    c.sunCondition = CelestialStatus.NoSet;
                 }
             }
             //Additional Times
-            c.AdditionalSolarTimes = new AdditionalSolarTimes();
+            c.additionalSolarTimes = new AdditionalSolarTimes();
             //Dusk and Dawn
             //Civil
             evDate = Get_Event_Time(lw, phi, -6, actualDate);
@@ -167,8 +167,7 @@ namespace CoordinateSharp
             //Libra (September 23-October 22)
             //Scorpio (October 23-November 21)
             //Sagittarius (November 22-December 21)
-            //Capricorn (December 22-January 19)
-           
+            //Capricorn (December 22-January 19)           
             if (date >= new DateTime(date.Year, 1, 1) && date <= new DateTime(date.Year, 1, 19, 23, 59, 59))
             {
                 c.AstrologicalSigns.ZodiacSign = "Capricorn";
@@ -319,8 +318,7 @@ namespace CoordinateSharp
             double a = approxTransit(approxTime, lw, n);
             double st = solarTransitJ(a, M, L);
           
-            return st;
-            
+            return st;            
         }
         private static double declination(double l, double b)    
         {
@@ -328,14 +326,9 @@ namespace CoordinateSharp
             
             return Math.Asin(Math.Sin(b) * Math.Cos(e) + Math.Cos(b) * Math.Sin(e) * Math.Sin(l)); 
         }
-        /// <summary>
-        /// Gets times for additional solar times
-        /// </summary>
-     
+   
         private static void CalculateSunAngle(DateTime date, double longi, double lat, Celestial c)
-        {
-           
-            //C# version of JavaScript date.valueOf();
+        {          
             TimeSpan ts = date - new DateTime(1970, 1, 1,0,0,0, DateTimeKind.Utc);
             double dms = (ts.TotalMilliseconds / dayMS -.5 + j1970)-j2000;
             
@@ -346,18 +339,9 @@ namespace CoordinateSharp
             double[] sc = sunCoords(dms);
           
             double H = SideRealTime(dms, lw) - sc[1];
-           // Console.WriteLine("Solar1: " + H);
-            c.SunAzimuth = Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(sc[0]) * Math.Cos(phi)) * 180 / Math.PI + 180;
-            c.SunAltitude = Math.Asin(Math.Sin(phi) * Math.Sin(sc[0]) + Math.Cos(phi) * Math.Cos(sc[0]) * Math.Cos(H)) * 180 / Math.PI;
-            //Console.WriteLine(c.SunAltitude + " " + c.SunAzimuth);
-            //double JD = JulianConversions.GetJulian(date);
-            //Console.WriteLine("JD2: " + JD);
-            //H = rad * MeeusFormulas.Get_Sidereal_Time(JD)-lw - sc[1];
-            //Console.WriteLine("Solar2: " + H);
-            //c.SunAzimuth = Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(sc[0]) * Math.Cos(phi)) * 180 / Math.PI + 180;
-            //c.SunAltitude = Math.Asin(Math.Sin(phi) * Math.Sin(sc[0]) + Math.Cos(phi) * Math.Cos(sc[0]) * Math.Cos(H)) * 180 / Math.PI;
-            //Console.WriteLine(c.SunAltitude + " " + c.SunAzimuth);
 
+            c.sunAzimuth = Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(sc[0]) * Math.Cos(phi)) * 180 / Math.PI + 180;
+            c.sunAltitude = Math.Asin(Math.Sin(phi) * Math.Sin(sc[0]) + Math.Cos(phi) * Math.Cos(sc[0]) * Math.Cos(H)) * 180 / Math.PI;           
         }
 
         private static double solarMeanAnomaly(double d) 

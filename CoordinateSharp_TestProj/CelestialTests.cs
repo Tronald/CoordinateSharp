@@ -39,7 +39,7 @@ namespace CoordinateSharp_TestProj
                 MoonFraction.Add(c.CelestialInfo.MoonIllum.Fraction);
                
             }
-
+          
             c.GeoDate = new DateTime(2018, 3, 1);
 
             SunRises = new List<DateTime?>();
