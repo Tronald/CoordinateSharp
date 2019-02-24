@@ -233,4 +233,83 @@ namespace CoordinateSharp
         /// </summary>
         Cartesian_ECEF
     }
+    /// <summary>
+    /// Used to display a celestial condition for a specified date.
+    /// </summary>
+    [Serializable]
+    public enum CelestialStatus
+    {
+        /// <summary>
+        /// Celestial body rises and sets on the set day.
+        /// </summary>
+        RiseAndSet,
+        /// <summary>
+        /// Celestial body is down all day
+        /// </summary>
+        DownAllDay,
+        /// <summary>
+        /// Celestial body is up all day
+        /// </summary>
+        UpAllDay,
+        /// <summary>
+        /// Celestial body rises, but does not set on the set day
+        /// </summary>
+        NoRise,
+        /// <summary>
+        /// Celestial body sets, but does not rise on the set day
+        /// </summary>
+        NoSet
+    }
+    /// <summary>
+    ///  moon perigee or apogee indicator
+    /// </summary>
+    internal enum MoonDistanceType
+    {
+        /// <summary>
+        /// Moon's perigee
+        /// </summary>
+        Perigee,
+        /// <summary>
+        /// Moon's apogee
+        /// </summary>
+        Apogee
+    }
+    /// <summary>
+    /// Solar eclipse type
+    /// </summary>
+    [Serializable]
+    public enum SolarEclipseType
+    {
+        /// <summary>
+        /// Partial Eclipse
+        /// </summary>
+        Partial,
+        /// <summary>
+        /// Annular Eclipse
+        /// </summary>
+        Annular,
+        /// <summary>
+        /// Total Eclipse...of the heart...
+        /// </summary>
+        Total
+    }
+    /// <summary>
+    /// Lunar eclipse type
+    /// </summary>
+    [Serializable]
+    public enum LunarEclipseType
+    {
+        /// <summary>
+        /// Penumbral Eclipse
+        /// </summary>
+        Penumbral,
+        /// <summary>
+        /// Partial Eclipse
+        /// </summary>
+        Partial,
+        /// <summary>
+        /// Total Eclipse...of the heart...
+        /// </summary>
+        Total
+    }
 }
