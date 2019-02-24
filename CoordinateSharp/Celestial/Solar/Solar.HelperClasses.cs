@@ -10,51 +10,61 @@ namespace CoordinateSharp
     [Serializable]
     public class AdditionalSolarTimes
     {
+        internal DateTime? civilDawn;
+        internal DateTime? civilDusk;
+        internal DateTime? nauticalDawn;
+        internal DateTime? nauticalDusk;
+        internal DateTime? astronomicalDawn;
+        internal DateTime? astronomicalDusk;
+        internal DateTime? sunriseBottomDisc;
+        internal DateTime? sunsetBottomDisc;
+
         /// <summary>
         /// Create an AdditionalSolarTimes object.
         /// </summary>
         public AdditionalSolarTimes()
         {
             //Set dates to avoid null errors. If year return 1900 event did not occur.
-            CivilDawn = new DateTime();
-            CivilDusk = new DateTime();
-            NauticalDawn = new DateTime();
-            NauticalDusk = new DateTime();
+            civilDawn = new DateTime();
+            civilDusk = new DateTime();
+            nauticalDawn = new DateTime();
+            nauticalDusk = new DateTime();
 
         }
+
         /// <summary>
         /// Returns Civil Dawn Time
         /// </summary>
-        public DateTime? CivilDawn { get; internal set; }
+        public DateTime? CivilDawn { get { return civilDawn; } }
         /// <summary>
         /// Returns Civil Dusk Time
         /// </summary>
-        public DateTime? CivilDusk { get; internal set; }
+        public DateTime? CivilDusk { get { return civilDusk; } }
         /// <summary>
         /// Returns Nautical Dawn Time
         /// </summary>
-        public DateTime? NauticalDawn { get; internal set; }
+        public DateTime? NauticalDawn { get { return nauticalDawn; } }
         /// <summary>
         /// Returns Nautical Dusk Time
         /// </summary>
-        public DateTime? NauticalDusk { get; internal set; }
+        public DateTime? NauticalDusk { get { return nauticalDusk; } }
         /// <summary>
         /// Returns Astronomical Dawn Time
         /// </summary>
-        public DateTime? AstronomicalDawn { get; internal set; }
+        public DateTime? AstronomicalDawn { get { return astronomicalDawn; } }
         /// <summary>
         /// Returns Astronomical Dusk Time
         /// </summary>
-        public DateTime? AstronomicalDusk { get; internal set; }
+        public DateTime? AstronomicalDusk { get { return astronomicalDusk; } }
 
         /// <summary>
         /// Returns the time when the bottom of the solar disc touches the horizon after sunrise
         /// </summary>
-        public DateTime? SunriseBottomDisc { get; internal set; }
+        public DateTime? SunriseBottomDisc { get { return sunriseBottomDisc; } }
         /// <summary>
         /// Returns the time when the bottom of the solar disc touches the horizon before sunset
         /// </summary>
-        public DateTime? SunsetBottomDisc { get; internal set; }
+        public DateTime? SunsetBottomDisc { get { return sunsetBottomDisc; } }
 
         internal void Convert_To_Local_Time(double offset)
         {
@@ -82,22 +92,25 @@ namespace CoordinateSharp
     [Serializable]
     public class SolarEclipse
     {
+        internal SolarEclipseDetails lastEclipse;
+        internal SolarEclipseDetails nextEclipse;
+
         /// <summary>
         /// Initialize a SolarEclipse object
         /// </summary>
         public SolarEclipse()
         {
-            LastEclipse = new SolarEclipseDetails();
-            NextEclipse = new SolarEclipseDetails();
+            lastEclipse = new SolarEclipseDetails();
+            nextEclipse = new SolarEclipseDetails();
         }
         /// <summary>
         /// Details about the previous solar eclipse
         /// </summary>
-        public SolarEclipseDetails LastEclipse { get; internal set; }
+        public SolarEclipseDetails LastEclipse { get { return lastEclipse; } }
         /// <summary>
         /// Details about the next solar eclipse
         /// </summary>
-        public SolarEclipseDetails NextEclipse { get; internal set; }
+        public SolarEclipseDetails NextEclipse { get { return nextEclipse; } }
 
         internal void ConvertTo_LocalTime(double offset)
         {
@@ -105,22 +118,21 @@ namespace CoordinateSharp
             NextEclipse.Convert_To_Local_Time(offset);
         }
     }
-
     /// <summary>
     /// Class containing specific solar eclipse information
     /// </summary>
     [Serializable]
     public class SolarEclipseDetails
     {
-        private DateTime date;
-        private SolarEclipseType type;
-        private DateTime partialEclispeBegin;
-        private DateTime aorTEclipseBegin;
-        private DateTime maximumEclipse;
-        private DateTime aorTEclipseEnd;
-        private DateTime partialEclispeEnd;
-        private TimeSpan aorTDuration;
-        private bool hasEclipseData;
+        internal DateTime date;
+        internal SolarEclipseType type;
+        internal DateTime partialEclispeBegin;
+        internal DateTime aorTEclipseBegin;
+        internal DateTime maximumEclipse;
+        internal DateTime aorTEclipseEnd;
+        internal DateTime partialEclispeEnd;
+        internal TimeSpan aorTDuration;
+        internal bool hasEclipseData;
 
         /// <summary>
         /// Initialize a SolarEclipseDetails object
@@ -320,8 +332,8 @@ namespace CoordinateSharp
 
     internal class CelCoords
     {
-        public double ra { get; internal set; }
-        public double dec { get; internal set; }
-        public double dist { get; internal set; }
+        public double ra { get; set; }
+        public double dec { get; set; }
+        public double dist { get; set; }
     }
 }

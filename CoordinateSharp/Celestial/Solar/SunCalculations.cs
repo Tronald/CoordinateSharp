@@ -55,25 +55,25 @@ namespace CoordinateSharp
             //Dusk and Dawn
             //Civil
             evDate = Get_Event_Time(lw, phi, -6, actualDate);
-            c.AdditionalSolarTimes.CivilDawn = evDate[0];
-            c.AdditionalSolarTimes.CivilDusk = evDate[1];
+            c.AdditionalSolarTimes.civilDawn = evDate[0];
+            c.AdditionalSolarTimes.civilDusk = evDate[1];
 
 
             //Nautical
             evDate = Get_Event_Time(lw, phi, -12, actualDate);
-            c.AdditionalSolarTimes.NauticalDawn = evDate[0];
-            c.AdditionalSolarTimes.NauticalDusk = evDate[1];
+            c.AdditionalSolarTimes.nauticalDawn = evDate[0];
+            c.AdditionalSolarTimes.nauticalDusk = evDate[1];
 
             //Astronomical
             evDate = Get_Event_Time(lw, phi, -18, actualDate);
 
-            c.AdditionalSolarTimes.AstronomicalDawn = evDate[0];
-            c.AdditionalSolarTimes.AstronomicalDusk = evDate[1];
+            c.AdditionalSolarTimes.astronomicalDawn = evDate[0];
+            c.AdditionalSolarTimes.astronomicalDusk = evDate[1];
 
             //BottomDisc
             evDate = Get_Event_Time(lw, phi, -.2998, actualDate);
-            c.AdditionalSolarTimes.SunriseBottomDisc = evDate[0];
-            c.AdditionalSolarTimes.SunsetBottomDisc = evDate[1];
+            c.AdditionalSolarTimes.sunriseBottomDisc = evDate[0];
+            c.AdditionalSolarTimes.sunsetBottomDisc = evDate[1];
 
             CalculateSolarEclipse(date, lat, longi, c);
 
@@ -170,67 +170,67 @@ namespace CoordinateSharp
             //Capricorn (December 22-January 19)           
             if (date >= new DateTime(date.Year, 1, 1) && date <= new DateTime(date.Year, 1, 19, 23, 59, 59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Capricorn";
+                c.AstrologicalSigns.zodiacSign = "Capricorn";
                 return;
             }
             if (date >= new DateTime(date.Year, 1, 20) && date <= new DateTime(date.Year, 2, 18, 23, 59, 59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Aquarius";
+                c.AstrologicalSigns.zodiacSign = "Aquarius";
                 return;
             }
             if (date >= new DateTime(date.Year, 2, 19) && date <= new DateTime(date.Year, 3, 20, 23, 59, 59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Pisces";
+                c.AstrologicalSigns.zodiacSign = "Pisces";
                 return;
             }
             if (date >= new DateTime(date.Year, 3, 21) && date <= new DateTime(date.Year, 4, 19, 23, 59, 59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Aries";
+                c.AstrologicalSigns.zodiacSign = "Aries";
                 return;
             }
             if (date >= new DateTime(date.Year, 4, 20) && date <= new DateTime(date.Year, 5, 20, 23, 59, 59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Taurus";
+                c.AstrologicalSigns.zodiacSign = "Taurus";
                 return;
             }
             if (date >= new DateTime(date.Year, 5, 21) && date <= new DateTime(date.Year, 6, 20,23,59,59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Gemini";
+                c.AstrologicalSigns.zodiacSign = "Gemini";
                 return;
             }
             if (date >= new DateTime(date.Year, 6, 21) && date <= new DateTime(date.Year, 7, 22, 23, 59, 59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Cancer";
+                c.AstrologicalSigns.zodiacSign = "Cancer";
                 return;
             }
             if (date >= new DateTime(date.Year, 7, 23) && date <= new DateTime(date.Year, 8, 22, 23, 59, 59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Leo";
+                c.AstrologicalSigns.zodiacSign = "Leo";
                 return;
             }
             if (date >= new DateTime(date.Year, 8, 23) && date <= new DateTime(date.Year, 9, 22, 23, 59, 59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Virgo";
+                c.AstrologicalSigns.zodiacSign = "Virgo";
                 return;
             }
             if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 10, 22, 23, 59, 59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Libra";
+                c.AstrologicalSigns.zodiacSign = "Libra";
                 return;
             }
             if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 11, 21, 23, 59, 59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Scorpio";
+                c.AstrologicalSigns.zodiacSign = "Scorpio";
                 return;
             }
             if (date >= new DateTime(date.Year, 11, 21) && date <= new DateTime(date.Year, 12, 21, 23, 59, 59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Sagittarius";
+                c.AstrologicalSigns.zodiacSign = "Sagittarius";
                 return;
             }
             if (date >= new DateTime(date.Year, 12, 22) && date <= new DateTime(date.Year, 12, 31, 23, 59, 59))
             {
-                c.AstrologicalSigns.ZodiacSign = "Capricorn";
+                c.AstrologicalSigns.zodiacSign = "Capricorn";
                 return;
             }
         }
@@ -260,11 +260,11 @@ namespace CoordinateSharp
             //SET ECLIPSE DATA
             if (lastE >= 0)
             {
-                c.SolarEclipse.LastEclipse = new SolarEclipseDetails(se[lastE]);
+                c.SolarEclipse.lastEclipse = new SolarEclipseDetails(se[lastE]);
             }
             if (nextE >= 0)
             {
-                c.SolarEclipse.NextEclipse = new SolarEclipseDetails(se[nextE]);
+                c.SolarEclipse.nextEclipse = new SolarEclipseDetails(se[nextE]);
             }
         }
 

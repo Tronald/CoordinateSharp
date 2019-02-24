@@ -315,9 +315,9 @@ namespace CoordinateSharp
             }
             if (date.Day == moonDate)
             {
-                c.AstrologicalSigns.MoonName = moonName;
+                c.AstrologicalSigns.moonName = moonName;
             }
-            else { c.AstrologicalSigns.MoonName = ""; }
+            else { c.AstrologicalSigns.moonName = ""; }
             CalculateLunarEclipse(date, lat, lng, c);
 
         }
@@ -347,11 +347,11 @@ namespace CoordinateSharp
             //SET ECLIPSE DATA
             if (lastE >= 0)
             {
-                c.LunarEclipse.LastEclipse = new LunarEclipseDetails(se[lastE]);
+                c.LunarEclipse.lastEclipse = new LunarEclipseDetails(se[lastE]);
             }
             if (nextE >= 0)
             {
-                c.LunarEclipse.NextEclipse = new LunarEclipseDetails(se[nextE]);
+                c.LunarEclipse.nextEclipse = new LunarEclipseDetails(se[nextE]);
             }
         }
 
@@ -456,19 +456,19 @@ namespace CoordinateSharp
 
             switch (sign.ToString())
             {
-                case "1": c.AstrologicalSigns.MoonSign = "Aries"; break;
-                case "2": c.AstrologicalSigns.MoonSign = "Taurus"; break;
-                case "3": c.AstrologicalSigns.MoonSign = "Gemini"; break;
-                case "4": c.AstrologicalSigns.MoonSign = "Cancer"; break;
-                case "5": c.AstrologicalSigns.MoonSign = "Leo"; break;
-                case "6": c.AstrologicalSigns.MoonSign = "Virgo"; break;
-                case "7": c.AstrologicalSigns.MoonSign = "Libra"; break;
-                case "8": c.AstrologicalSigns.MoonSign = "Scorpio"; break;
-                case "9": c.AstrologicalSigns.MoonSign = "Sagitarius"; break;
-                case "10": c.AstrologicalSigns.MoonSign = "Capricorn"; break;
-                case "11": c.AstrologicalSigns.MoonSign = "Aquarius"; break;
-                case "12": c.AstrologicalSigns.MoonSign = "Pisces"; break;
-                default: c.AstrologicalSigns.MoonSign = "Pisces"; break;
+                case "1": c.AstrologicalSigns.moonSign = "Aries"; break;
+                case "2": c.AstrologicalSigns.moonSign = "Taurus"; break;
+                case "3": c.AstrologicalSigns.moonSign = "Gemini"; break;
+                case "4": c.AstrologicalSigns.moonSign = "Cancer"; break;
+                case "5": c.AstrologicalSigns.moonSign = "Leo"; break;
+                case "6": c.AstrologicalSigns.moonSign = "Virgo"; break;
+                case "7": c.AstrologicalSigns.moonSign = "Libra"; break;
+                case "8": c.AstrologicalSigns.moonSign = "Scorpio"; break;
+                case "9": c.AstrologicalSigns.moonSign = "Sagitarius"; break;
+                case "10": c.AstrologicalSigns.moonSign = "Capricorn"; break;
+                case "11": c.AstrologicalSigns.moonSign = "Aquarius"; break;
+                case "12": c.AstrologicalSigns.moonSign = "Pisces"; break;
+                default: c.AstrologicalSigns.moonSign = "Pisces"; break;
             }
 
         }

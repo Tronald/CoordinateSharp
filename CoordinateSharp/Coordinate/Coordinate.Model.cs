@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 
-
 namespace CoordinateSharp
 {
+    
     /// <summary>
     /// Observable class for handling all location based information.
     /// This is the main class for CoordinateSharp.
@@ -129,6 +129,7 @@ namespace CoordinateSharp
                 }
             }
         }
+
         /// <summary>
         /// Universal Transverse Mercator Values
         /// </summary>
@@ -139,6 +140,7 @@ namespace CoordinateSharp
                 return utm;
             }
         }
+        
         /// <summary>
         /// Military Grid Reference System (NATO UTM)
         /// </summary>

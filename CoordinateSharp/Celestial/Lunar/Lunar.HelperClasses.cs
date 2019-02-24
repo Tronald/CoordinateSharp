@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
+using System.Reflection;
 namespace CoordinateSharp
 {
     /// <summary>
@@ -170,22 +169,25 @@ namespace CoordinateSharp
     [Serializable]
     public class LunarEclipse
     {
+        internal LunarEclipseDetails lastEclipse;
+        internal LunarEclipseDetails nextEclipse;
+
         /// <summary>
         /// Initialize a LunarEclipse object
         /// </summary>
         public LunarEclipse()
         {
-            LastEclipse = new LunarEclipseDetails();
-            NextEclipse = new LunarEclipseDetails();
+            lastEclipse = new LunarEclipseDetails();
+            nextEclipse = new LunarEclipseDetails();
         }
         /// <summary>
         /// Details about the previous lunar eclipse
         /// </summary>
-        public LunarEclipseDetails LastEclipse { get; internal set; }
+        public LunarEclipseDetails LastEclipse { get { return lastEclipse; } }
         /// <summary>
         /// Details about the next lunar eclipse
         /// </summary>
-        public LunarEclipseDetails NextEclipse { get; internal set; }
+        public LunarEclipseDetails NextEclipse { get { return nextEclipse; } }
 
         internal void ConvertTo_LocalTime(double offset)
         {
@@ -199,18 +201,22 @@ namespace CoordinateSharp
     [Serializable]
     public class AstrologicalSigns
     {
+        internal string moonName;
+        internal string moonSign;
+        internal string zodiacSign;
+
         /// <summary>
         /// Astrological Zodiac Sign
         /// </summary>
-        public string MoonName { get; internal set; }
+        public string MoonName { get { return moonName; } }
         /// <summary>
         /// Astrological Moon Sign
         /// </summary>
-        public string MoonSign { get; internal set; }
+        public string MoonSign { get { return moonSign; } }
         /// <summary>
         /// Astrological Zodiac Sign
         /// </summary>
-        public string ZodiacSign { get; internal set; }
+        public string ZodiacSign { get { return zodiacSign; } }
     }
     /// <summary>
     /// Class containing specific lunar eclipse information
@@ -422,16 +428,16 @@ namespace CoordinateSharp
     }
     internal class MoonTimes
     {
-        public DateTime set { get; internal set; }
-        public DateTime rise { get; internal set; }
-        public CelestialStatus status { get; internal set; }
+        public DateTime set { get; set; }
+        public DateTime rise { get;  set; }
+        public CelestialStatus status { get; set; }
     }
     internal class MoonPosition
     {
-        public double Azimuth { get; internal set; }
-        public double Altitude { get; internal set; }
-        public Distance Distance { get; internal set; }
-        public double ParallacticAngle { get; internal set; }
-        public double ParallaxCorection { get; internal set; }
+        public double Azimuth { get; set; }
+        public double Altitude { get; set; }
+        public Distance Distance { get; set; }
+        public double ParallacticAngle { get; set; }
+        public double ParallaxCorection { get; set; }
     }
 }
