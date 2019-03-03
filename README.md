@@ -4,18 +4,12 @@
 
 CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations. This library has the ability to convert various lat long formats, UTM, MGRS(NATO UTM) and Cartesian (Spherical and ECEF X, Y, Z). 
 
-<b>CAUTION:</b> v1.1.5.1 begins the depracation of certain methods in preparation of CoordinateSharp v2.1.1.1. Many user mutable items, have also been made user immutable in v1.1.5.1. This only effects properties that do not need to be set by users (i.e. Celestial properties). You should see no negative effects from this conversion if the library has been used in accordance with the [CoordinateSharp Developer Guide](https://coordinatesharp.com/DeveloperGuide).
-
-<b>ANNOUNCEMENT:</b> v2.1.1.1 development has begun. This version is going to focus on simplifying constructors, better management of circular references and property change notification. It is also going to focus on proper assignment of user mutable vs user immutable properties. Tests will be expanded. Lastly, code examples are going to be provided in the library documentation in order to give developers a more standard documentation experience outside of the Developer Guide. This version should give the user an even simpler experience when using CoordinateSharp. 
-
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 
-### Like CoordinateSharp? Tell us about it or please consider donating.
+### Like CoordinateSharp? Tell us about it!
 
-This library was built to help other developers. Please make the time and effort worth while by [telling us what you are using it for](https://github.com/Tronald/CoordinateSharp/issues/79). If you are unable to share your experience and use case, please consider donating.
-</br></br>
-[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=S78DZZX5KMVUS)
-</br></br>
+This library was built to help other developers. Please make the time and effort worth while by [telling us what you are using it for](https://github.com/Tronald/CoordinateSharp/issues/79).
+
 ### Prerequisites
 .NET 4.0 or .NET Standard 2.0, 1.4, 1.3 compatible runtimes.
 
