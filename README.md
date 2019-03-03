@@ -10,7 +10,7 @@ CoordinateSharp is a simple .NET library that is designed to assist with geograp
 
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
 
-### Like CoordinateSharp? Tell us about it or please consider donating.
+### Like CoordinateSharp? Tell us about it!
 
 This library was built to help other developers. Please make the time and effort worth while by [telling us what you are using it for](https://github.com/Tronald/CoordinateSharp/issues/79).
 
