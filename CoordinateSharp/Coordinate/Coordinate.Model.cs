@@ -3,14 +3,10 @@ using System.ComponentModel;
 
 namespace CoordinateSharp
 {
-    
     /// <summary>
-    /// Observable class for handling all location based information.
-    /// This is the main class for CoordinateSharp.
+    /// This is the main class of CoordinateSharp. It will contain all coordinate conversions and celestial information once populated. 
+    /// Most everything you need in the library will be contained in the Coordinate class.
     /// </summary>
-    /// <remarks>
-    /// All information should be pulled from this class to include celestial information
-    /// </remarks>
     [Serializable]
     public partial class Coordinate : INotifyPropertyChanged
     {      
