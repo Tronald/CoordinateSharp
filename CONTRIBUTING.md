@@ -15,6 +15,10 @@ Please make code readable and easy to understand. Comment on any obscure object 
 
 Developers are encouraged to write and share tests for changes made. Please use the automated testing project provided with the solution to verify changes. Forks will be tested both manually and automated prior to merging.
 
+### Contributor Licensing Agreement
+
+Before your contribution is accepted, you will be asked to sign a Contributor Licensing Agreement (starting with v2.1.1.1).
+
 ### Pull Requests
 
 It is asked that you are clear in specifying **WHAT** you changed and **WHY**. With that said there is no formal template for pull requests.
