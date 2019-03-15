@@ -1,22 +1,58 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<!--
+CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate 
+format conversions and location based celestial calculations.
+https://github.com/Tronald/CoordinateSharp
+
+Many celestial formulas in this library are based on Jean Meeus's 
+Astronomical Algorithms (2nd Edition). Comments that reference only a chapter
+are referring to this work.
+
+License
+
+Copyright (C) 2019, Signature Group, LLC
+  
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
+as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
+FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY Signature Group, LLC. Signature Group, LLC DISCLAIMS THE WARRANTY OF 
+NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. You should have received a copy of the GNU 
+Affero General Public License along with this program; if not, see http://www.gnu.org/licenses or write to the 
+Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA, 02110-1301 USA, or download the license from the following URL:
+
+https://www.gnu.org/licenses/agpl-3.0.html
+
+The interactive user interfaces in modified source and object code versions of this program must display Appropriate Legal Notices, 
+as required under Section 5 of the GNU Affero General Public License.
+
+You can be released from the requirements of the license by purchasing a commercial license. Buying such a license is mandatory 
+as soon as you develop commercial activities involving the CoordinateSharp software without disclosing the source code of your own applications. 
+These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application, 
+or shipping CoordinateSharp with a closed source product.
+
+For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
+-->
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Version>2.1.1.1</Version>
-    <Authors>Justin Gielski</Authors>
+    <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <Copyright>Copyright 2017</Copyright>
-    <Description>A simple .NET standard library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations.</Description>
-    <PackageReleaseNotes>Better constructors and property handling. Removes deprecated functions and properties.</PackageReleaseNotes>
-    <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian ECEF</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>Copyright 2019</Copyright>
+    <Description>A simple .NET standard library that is designed to assist with geographic coordinate conversions, formatting and location based solar and lunar calculations.</Description>
+    <PackageReleaseNotes>Better constructors, property handling and documentation. Removes deprecated functions and properties.</PackageReleaseNotes>
+    <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian ECEF Sunset Sunrise Set Moonset Moonrise</PackageTags>
+    <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/ICON.png</PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
     <AssemblyVersion>2.1.1.1</AssemblyVersion>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
