@@ -58,23 +58,176 @@ namespace CoordinateSharp
         /// </example>
         public Coordinate()
         {
+            Coordinate_Builder(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new EagerLoad());
+        }      
+        /// <summary>
+        /// Creates a populated Coordinate based on signed degrees formated latitude and longitude.
+        /// </summary>
+        /// <param name="lat">signed latitude</param>
+        /// <param name="longi">signed longitude</param>
+        /// <remarks>
+        /// GeoDate will default to 1900-01-01.
+        /// All properties will be set to EagerLoaded.
+        /// </remarks>
+        /// <example>
+        /// The following example demonstrates how to create a defined Coordinate.
+        /// <code>
+        /// Coordinate c = new Coordinate(25, 25);
+        /// </code>
+        /// </example>
+        public Coordinate(double lat, double longi)
+        {
+            Coordinate_Builder(lat, longi, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new EagerLoad());
+        }
+        /// <summary>
+        /// Creates a populated Coordinate object with an assigned GeoDate.
+        /// </summary>
+        /// <param name="lat">signed latitude</param>
+        /// <param name="longi">signed longitude</param>
+        /// <param name="date">DateTime (UTC)</param>
+        /// <remarks>
+        /// All properties will be set to EagerLoaded.
+        /// </remarks>
+        /// <example>
+        /// The following example demonstrates how to create a defined Coordinate object with a defined GeoDate.
+        /// <code>
+        /// Coordinate c = new Coordinate(25, 25, new DateTime(2018, 2, 5, 10, 38, 22));
+        /// </code>
+        /// </example>
+        public Coordinate(double lat, double longi, DateTime date)
+        {
+            Coordinate_Builder(lat, longi, date, new EagerLoad());
+        }
+        /// <summary>
+        /// Creates an empty Coordinates object with specified eager loading options.
+        /// </summary>
+        /// <remarks>
+        /// Coordinate will initialize with a latitude and longitude of 0 degrees and
+        /// a GeoDate of 1900-1-1.
+        /// </remarks>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <example>
+        /// The following example demonstrates how to create a default Coordinate object with defined
+        /// eager loading options
+        /// <code>
+        /// //Create a new EagerLoading object set to only
+        /// //eager load celestial calculations.
+        /// EagerLoading el = new EagerLoading(EagerLoadType.Celestial);
+        /// 
+        /// Coordinate c = new Coordinate(el);
+        /// </code>
+        /// </example>
+        public Coordinate(EagerLoad eagerLoad)
+        {
+            Coordinate_Builder(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), eagerLoad);
+        }
+        /// <summary>
+        /// Creates a populated Coordinate object with specified eager loading options.
+        /// </summary>
+        /// <remarks>
+        /// Geodate will default to 1900-01-01.
+        /// </remarks>
+        /// <param name="lat">signed latitude</param>
+        /// <param name="longi">signed longitude</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <example>
+        /// The following example demonstrates how to create a defined Coordinate object with defined 
+        /// eager loading options.
+        /// <code>
+        /// //Create a new EagerLoading object set to only
+        /// //eager load celestial calculations.
+        /// EagerLoading el = new EagerLoading(EagerLoadType.Celestial);
+        /// 
+        /// Coordinate c = new Coordinate(25, 25, el);
+        /// </code>
+        /// </example>
+        public Coordinate(double lat, double longi, EagerLoad eagerLoad)
+        {
+            Coordinate_Builder(lat, longi, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), eagerLoad);
+        }
+        /// <summary>
+        /// Creates a populated Coordinate object with specified eager load options and an assigned GeoDate.
+        /// </summary>
+        /// <param name="lat">signed latitude</param>
+        /// <param name="longi">signed longitude</param>
+        /// <param name="date">DateTime you wish to use for celestial calculation</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <example>
+        /// The following example demonstrates how to create a defined Coordinate object with defined 
+        /// eager loading options and a GeoDate.
+        /// <code>
+        /// //Create a new EagerLoading object set to only
+        /// //eager load celestial calculations.
+        /// EagerLoading el = new EagerLoading(EagerLoadType.Celestial);
+        /// DateTime geoDate = new DateTime(2018, 2, 5, 10, 38, 22);
+        /// 
+        /// Coordinate c = new Coordinate(25, 25, geoDate, el);
+        /// </code>
+        /// </example>
+        public Coordinate(double lat, double longi, DateTime date, EagerLoad eagerLoad)
+        {
+            Coordinate_Builder(lat, longi, date, eagerLoad);
+        }
+
+
+        /// <summary>
+        /// Coordinate build logic goes here.
+        /// </summary>
+        /// <param name="lat">Signed latitude</param>
+        /// <param name="longi">Signed longitude</param>
+        /// <param name="date">Date at location</param>
+        /// <param name="eagerLoad">Eagerloading settings</param>
+        private void Coordinate_Builder(double lat, double longi, DateTime date, EagerLoad eagerLoad)
+        {
             FormatOptions = new CoordinateFormatOptions();
-            geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            latitude = new CoordinatePart(CoordinateType.Lat);            
-            longitude = new CoordinatePart(CoordinateType.Long);
+
+            //Use default constructor if signed degree is 0 for performance.
+            if (lat == 0) { latitude = new CoordinatePart(CoordinateType.Lat); }
+            else { latitude = new CoordinatePart(lat, CoordinateType.Lat); }
+
+            if (longi == 0) { longitude = new CoordinatePart(CoordinateType.Long); }
+            else { longitude = new CoordinatePart(longi, CoordinateType.Long); }
+           
+            //Set CoordinatePart parents
             latitude.parent = this;
             longitude.parent = this;
-            celestialInfo = new Celestial();
-            utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
-            mgrs = new MilitaryGridReferenceSystem(utm);
-            cartesian = new Cartesian(this);
-            ecef = new ECEF(this);
 
-            EagerLoadSettings = new EagerLoad();
+            //Set UTC date at location
+            geoDate = date;
 
+
+            //LOAD NEW COORDINATE SYSTEMS HERE
+
+            //Load Celestial
+            if (eagerLoad.Celestial)
+            {
+                celestialInfo = new Celestial(lat, longi, date);
+            }
+            //Load UTM MGRS
+            if (eagerLoad.UTM_MGRS)
+            {
+                utm = new UniversalTransverseMercator(lat, longi, this);
+                mgrs = new MilitaryGridReferenceSystem(utm);
+            }
+            //Load CARTESIAN
+            if (eagerLoad.Cartesian)
+            {
+                cartesian = new Cartesian(this);
+            }
+            //Load ECEF
+            if (eagerLoad.ECEF)
+            {
+                ecef = new ECEF(this);
+            }
+
+            //SET EagerLoading Setting
+            EagerLoadSettings = eagerLoad;
+
+            //Set Ellipsoid
             equatorial_radius = 6378137.0;
             inverse_flattening = 298.257223563;
         }
+
         /// <summary>
         /// Creates a Coordinate object with default values and a custom datum.
         /// </summary>
@@ -99,226 +252,9 @@ namespace CoordinateSharp
             EagerLoadSettings = new EagerLoad();
             Set_Datum(equatorialRadius, inverseFlattening);
         }
-        /// <summary>
-        /// Creates a populated Coordinate based on signed degrees formated latitude and longitude.
-        /// </summary>
-        /// <param name="lat">signed latitude</param>
-        /// <param name="longi">signed longitude</param>
-        /// <remarks>
-        /// GeoDate will default to 1900-01-01.
-        /// All properties will be set to EagerLoaded.
-        /// </remarks>
-        /// <example>
-        /// The following example demonstrates how to create a defined Coordinate.
-        /// <code>
-        /// Coordinate c = new Coordinate(25, 25);
-        /// </code>
-        /// </example>
-        public Coordinate(double lat, double longi)
-        {
-            FormatOptions = new CoordinateFormatOptions();
-            geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            latitude = new CoordinatePart(lat, CoordinateType.Lat);
-            longitude = new CoordinatePart(longi, CoordinateType.Long);
-            latitude.parent = this;
-            longitude.parent = this;
-            celestialInfo = new Celestial(lat, longi, geoDate);
-            utm = new UniversalTransverseMercator(lat, longi, this);
-            mgrs = new MilitaryGridReferenceSystem(utm);
-            cartesian = new Cartesian(this);
-            ecef = new ECEF(this);
-            EagerLoadSettings = new EagerLoad();
-
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
-        }
-        /// <summary>
-        /// Creates a populated Coordinate object with an assigned GeoDate.
-        /// </summary>
-        /// <param name="lat">signed latitude</param>
-        /// <param name="longi">signed longitude</param>
-        /// <param name="date">DateTime (UTC)</param>
-        /// <remarks>
-        /// All properties will be set to EagerLoaded.
-        /// </remarks>
-        /// <example>
-        /// The following example demonstrates how to create a defined Coordinate object with a defined GeoDate.
-        /// <code>
-        /// Coordinate c = new Coordinate(25, 25, new DateTime(2018, 2, 5, 10, 38, 22));
-        /// </code>
-        /// </example>
-        public Coordinate(double lat, double longi, DateTime date)
-        {
-            FormatOptions = new CoordinateFormatOptions();
-            latitude = new CoordinatePart(lat, CoordinateType.Lat);
-            longitude = new CoordinatePart(longi, CoordinateType.Long);
-            latitude.parent = this;
-            longitude.parent = this;
-            celestialInfo = new Celestial(lat, longi, date);
-            geoDate = date;
-            utm = new UniversalTransverseMercator(lat, longi, this);
-            mgrs = new MilitaryGridReferenceSystem(utm);
-            cartesian = new Cartesian(this);
-            ecef = new ECEF(this);
-            EagerLoadSettings = new EagerLoad();
-
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
-        }
-        /// <summary>
-        /// Creates an empty Coordinates object with specified eager loading options.
-        /// </summary>
-        /// <remarks>
-        /// Coordinate will initialize with a latitude and longitude of 0 degrees and
-        /// a GeoDate of 1900-1-1.
-        /// </remarks>
-        /// <param name="eagerLoad">Eager loading options</param>
-        /// <example>
-        /// The following example demonstrates how to create a default Coordinate object with defined
-        /// eager loading options
-        /// <code>
-        /// //Create a new EagerLoading object set to only
-        /// //eager load celestial calculations.
-        /// EagerLoading el = new EagerLoading(EagerLoadType.Celestial);
-        /// 
-        /// Coordinate c = new Coordinate(el);
-        /// </code>
-        /// </example>
-        public Coordinate(EagerLoad eagerLoad)
-        {
-            FormatOptions = new CoordinateFormatOptions();
-            geoDate = geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            latitude = new CoordinatePart(CoordinateType.Lat);
-            longitude = new CoordinatePart(CoordinateType.Long);
-            latitude.parent = this;
-            longitude.parent = this;
-
-            if (eagerLoad.Cartesian)
-            {
-                cartesian = new Cartesian(this);
-            }
-            if (eagerLoad.Celestial)
-            {
-                celestialInfo = new Celestial();
-            }
-            if (eagerLoad.UTM_MGRS)
-            {
-                utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this);
-                mgrs = new MilitaryGridReferenceSystem(utm);
-            }
-            if (eagerLoad.ECEF)
-            {
-                ecef = new ECEF(this);
-            }
-            EagerLoadSettings = eagerLoad;
-
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
-        }
-        /// <summary>
-        /// Creates a populated Coordinate object with specified eager loading options.
-        /// </summary>
-        /// <remarks>
-        /// Geodate will default to 1900-01-01.
-        /// </remarks>
-        /// <param name="lat">signed latitude</param>
-        /// <param name="longi">signed longitude</param>
-        /// <param name="eagerLoad">Eager loading options</param>
-        /// <example>
-        /// The following example demonstrates how to create a defined Coordinate object with defined 
-        /// eager loading options.
-        /// <code>
-        /// //Create a new EagerLoading object set to only
-        /// //eager load celestial calculations.
-        /// EagerLoading el = new EagerLoading(EagerLoadType.Celestial);
-        /// 
-        /// Coordinate c = new Coordinate(25, 25, el);
-        /// </code>
-        /// </example>
-        public Coordinate(double lat, double longi, EagerLoad eagerLoad)
-        {
-            FormatOptions = new CoordinateFormatOptions();
-            geoDate = geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            latitude = new CoordinatePart(lat, CoordinateType.Lat);
-            longitude = new CoordinatePart(longi, CoordinateType.Long);
-            latitude.parent = this;
-            longitude.parent = this;
-
-            if (eagerLoad.Celestial)
-            {
-                celestialInfo = new Celestial(lat, longi, geoDate);
-            }
-            if (eagerLoad.UTM_MGRS)
-            {
-                utm = new UniversalTransverseMercator(lat, longi, this);
-                mgrs = new MilitaryGridReferenceSystem(utm);
-            }
-            if (eagerLoad.Cartesian)
-            {
-                cartesian = new Cartesian(this);
-            }
-            if (eagerLoad.ECEF)
-            {
-                ecef = new ECEF(this);
-            }
-
-            EagerLoadSettings = eagerLoad;
-
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
-        }
-        /// <summary>
-        /// Creates a populated Coordinate object with specified eager load options and an assigned GeoDate.
-        /// </summary>
-        /// <param name="lat">signed latitude</param>
-        /// <param name="longi">signed longitude</param>
-        /// <param name="date">DateTime you wish to use for celestial calculation</param>
-        /// <param name="eagerLoad">Eager loading options</param>
-        /// <example>
-        /// The following example demonstrates how to create a defined Coordinate object with defined 
-        /// eager loading options and a GeoDate.
-        /// <code>
-        /// //Create a new EagerLoading object set to only
-        /// //eager load celestial calculations.
-        /// EagerLoading el = new EagerLoading(EagerLoadType.Celestial);
-        /// DateTime geoDate = new DateTime(2018, 2, 5, 10, 38, 22);
-        /// 
-        /// Coordinate c = new Coordinate(25, 25, geoDate, el);
-        /// </code>
-        /// </example>
-        public Coordinate(double lat, double longi, DateTime date, EagerLoad eagerLoad)
-        {
-            FormatOptions = new CoordinateFormatOptions();
-            latitude = new CoordinatePart(lat, CoordinateType.Lat);
-            longitude = new CoordinatePart(longi, CoordinateType.Long);
-            latitude.parent = this;
-            longitude.parent = this;
-            geoDate = date;
-            if (eagerLoad.Celestial)
-            {
-                celestialInfo = new Celestial(lat, longi, date);
-            }
-
-            if (eagerLoad.UTM_MGRS)
-            {
-                utm = new UniversalTransverseMercator(lat, longi, this);
-                mgrs = new MilitaryGridReferenceSystem(utm);
-            }
-            if (eagerLoad.Cartesian)
-            {
-                cartesian = new Cartesian(this);
-            }
-            if (eagerLoad.ECEF)
-            {
-                ecef = new ECEF(this);
-            }
-            EagerLoadSettings = eagerLoad;
-
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
-        }
 
         /*DATA LOADERS*/
+        /*LOAD NEW COORDINATE SYSTEMS HERE*/
 
         /// <summary>
         /// Load celestial information (required if eager loading is turned off).
@@ -429,7 +365,6 @@ namespace CoordinateSharp
             string longSting = longitude.ToString();
             return latString + " " + longSting;
         }
-
         /// <summary>
         /// A string formatted and represented coordinate.
         /// </summary>
@@ -964,7 +899,7 @@ namespace CoordinateSharp
         }
 
         /*PROPERTY CHANGE HANDLER*/
-
+        /*NOTIFY NEW COORDINATE SYSTEMS HERE*/
         /// <summary>
         /// Property changed event
         /// </summary>
