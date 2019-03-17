@@ -39,7 +39,7 @@ using System.ComponentModel;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Observable class for handling latitudinal and longitudinal coordinate parts.
+    /// Observable class for handling geodetic (latitudinal and longitudinal) coordinate parts.
     /// </summary>
     /// <remarks>
     /// Values can be passed to Coordinate object Latitude and Longitude properties.
@@ -66,12 +66,12 @@ namespace CoordinateSharp
 
         internal Coordinate parent;
         /// <summary>
-        /// Used to determine and notify the CoordinatePart parent Coordinate object.
+        /// CoordinatePart's parent Coordinate object.
         /// </summary>
         public Coordinate Parent { get { return parent; } }
 
         /// <summary>
-        /// Observable decimal format coordinate.
+        /// Decimal Degree format coordinate.
         /// </summary>
         public double DecimalDegree
         {
@@ -164,7 +164,7 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Observable decimal format minute.
+        /// Decimal formatted minute.
         /// </summary>
         public double DecimalMinute
         {
@@ -215,7 +215,7 @@ namespace CoordinateSharp
 
         }
         /// <summary>
-        /// Observable coordinate degree.
+        /// Coordinate part degrees.
         /// </summary>
         public int Degrees
         {
@@ -262,7 +262,7 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Observable coordinate minute.
+        /// Coordinate part minutes.
         /// </summary>
         public int Minutes
         {
@@ -318,7 +318,7 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Observable coordinate second.
+        /// Coordinate part seconds.
         /// </summary>
         public double Seconds
         {
@@ -374,7 +374,7 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Formate coordinate part string.
+        /// Formatted coordinate part string.
         /// </summary>
         public string Display
         {
@@ -391,8 +391,11 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Observable coordinate position.
+        /// Coordinate part position.
         /// </summary>
+        /// <remarks>
+        /// Used to determine what hemisphere the coordinate part lies in.
+        /// </remarks>
         public CoordinatesPosition Position
         {
             get { return position; }
@@ -416,13 +419,15 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Used for notifying the correct properties.
+        /// Used for notify the correct properties.
         /// </summary>
         private enum PropertyTypes
         {
             DecimalDegree, DecimalMinute, Position, Degree, Minute, Second, FormatChange
         }
-
+        /// <summary>
+        /// Used to determine the set coordinate part string format.
+        /// </summary>
         private enum ToStringType
         {
             Decimal_Degree, Degree_Decimal_Minute, Degree_Minute_Second, Decimal

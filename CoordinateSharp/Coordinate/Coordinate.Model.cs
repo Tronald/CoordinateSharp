@@ -40,6 +40,7 @@ using System.ComponentModel;
 namespace CoordinateSharp
 {
     /// <summary>
+    /// Observable class for handling all located based information.
     /// This is the main class of CoordinateSharp. It will contain all coordinate conversions and celestial information once populated. 
     /// Most everything you need in the library will be contained in the Coordinate class.
     /// </summary>
@@ -61,7 +62,7 @@ namespace CoordinateSharp
         internal double inverse_flattening;
 
         /// <summary>
-        /// Latitudinal Coordinate Part
+        /// Latitudinal Coordinate Part.
         /// </summary>
         public CoordinatePart Latitude
         {
@@ -100,7 +101,7 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Longitudinal Coordinate Part
+        /// Longitudinal Coordinate Part.
         /// </summary>
         public CoordinatePart Longitude
         {
@@ -138,10 +139,10 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Date used to calculate celestial information
+        /// Date at coordinate used to calculate celestial information.
         /// </summary>
         /// <remarks>
-        /// Assumes all times are in UTC
+        /// Assumes all times are in UTC, regardless of DateTimeKind value.
         /// </remarks>
         public DateTime GeoDate
         {
@@ -163,7 +164,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Universal Transverse Mercator Values
+        /// Universal Transverse Mercator values.
         /// </summary>
         public UniversalTransverseMercator UTM
         {
@@ -174,7 +175,7 @@ namespace CoordinateSharp
         }
         
         /// <summary>
-        /// Military Grid Reference System (NATO UTM)
+        /// Military Grid Reference System (NATO UTM) values.
         /// </summary>
         public MilitaryGridReferenceSystem MGRS
         {
@@ -184,7 +185,7 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Cartesian (Based on Spherical Earth)
+        /// Cartesian (based on spherical earth).
         /// </summary>
         public Cartesian Cartesian
         {
@@ -196,7 +197,9 @@ namespace CoordinateSharp
         /// <summary>
         /// Earth Centered Earth Fixed Coordinate. 
         /// Uses Ellipsoidal height with no geoid model included.
-        /// 0 = Mean Sea Level based on the provided Datum.
+        /// <remarks>
+        /// GeoHeight at 0 = Mean Sea Level based on the provided Datum.
+        /// </remarks>
         /// </summary>
         public ECEF ECEF
         {
@@ -228,7 +231,7 @@ namespace CoordinateSharp
         /// </summary>
         public CoordinateFormatOptions FormatOptions { get; set; }
         /// <summary>
-        /// Eager loading settings.
+        /// Eagerloading settings.
         /// </summary>
         public EagerLoad EagerLoadSettings { get; set; }
 

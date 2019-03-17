@@ -38,7 +38,7 @@ using System;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Cartesian (X, Y, Z) Coordinate
+    /// Spherical Cartesian (X, Y, Z) Coordinate.
     /// </summary>
     [Serializable]
     public partial class Cartesian

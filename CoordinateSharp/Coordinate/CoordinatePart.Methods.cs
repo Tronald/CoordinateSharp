@@ -39,31 +39,55 @@ using System.ComponentModel;
 namespace CoordinateSharp
 {
     public partial class CoordinatePart : INotifyPropertyChanged
-    {     
+    {
         /// <summary>
-        /// Creates an empty CoordinatePart.
+        /// Creates a default CoordinatePart.
         /// </summary>
-        /// <param name="t">CoordinateType</param>
-        public CoordinatePart(CoordinateType t)
+        /// <param name="cType">Coordinate part type</param>
+        /// <remarks>
+        /// Defaults coordinate part value to 0 degrees.
+        /// </remarks>
+        /// <example>
+        /// The following example creates a default latitudinal coordinate part and assigns it to a Coordinate object
+        /// <code>
+        /// Coordinate c = new Coordinate();
+        /// CoordinatePart cp = new CoordinatePart(CoordinateType.Lat);
+        /// c.Latitude = cp;
+        /// </code>
+        /// </example>
+        public CoordinatePart(CoordinateType cType)
         {
-            type = t;
+            this.type = cType;
             decimalDegree = 0;
             degrees = 0;
             minutes = 0;
             seconds = 0;
-            if (type == CoordinateType.Lat) { position = CoordinatesPosition.N; }
+            if (this.type == CoordinateType.Lat) { position = CoordinatesPosition.N; }
             else { position = CoordinatesPosition.E; }
         }
         /// <summary>
-        /// Creates a populated CoordinatePart from a decimal format part.
+        /// Creates a populated CoordinatePart from a signed degree value.
         /// </summary>
-        /// <param name="value">Coordinate decimal value</param>
-        /// <param name="t">Coordinate type</param>
-        public CoordinatePart(double value, CoordinateType t)
+        /// <param name="value">Coordinate part signed value</param>
+        /// <param name="cType">Coordinate part type</param>       
+        /// <example>
+        /// The following example creates a populated latitudinal coordinate part from a signed value and assigns it to a Coordinate object.
+        /// <code>
+        /// //Create a new default coordinate
+        /// Coordinate c = new Coordinate();
+        /// 
+        /// //Create a coordinate part using a the signed latitude 25.6°.
+        /// CoordinatePart cp = new CoordinatePart(25.6, CoordinateType.Lat);
+        /// 
+        /// //Assign the latitudinal value to the coordinate.
+        /// c.Latitude = cp;
+        /// </code>
+        /// </example>
+        public CoordinatePart(double value, CoordinateType cType)
         {
-            type = t;
+            this.type = cType;
 
-            if (type == CoordinateType.Long)
+            if (this.type == CoordinateType.Long)
             {
                 if (value > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be greater than 180."); }
                 if (value < -180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be less than 180."); }
@@ -94,12 +118,25 @@ namespace CoordinateSharp
             seconds = Convert.ToDouble(sec);
         }
         /// <summary>
-        /// Creates a populated CoordinatePart object from a Degrees Minutes Seconds part.
+        /// Creates a populated CoordinatePart from a Degrees Minutes Seconds value.
         /// </summary>
         /// <param name="deg">Degrees</param>
         /// <param name="min">Minutes</param>
         /// <param name="sec">Seconds</param>
-        /// <param name="pos">Coordinate Part Position</param>
+        /// <param name="pos">Coordinate part position</param>
+        /// <example>
+        /// The following example creates a populated latitudinal coordinate part from Degrees Minutes Seconds values and assigns it to a Coordinate object.
+        /// <code>
+        /// //Create a new default coordinate
+        /// Coordinate c = new Coordinate();
+        /// 
+        /// //Create a coordinate part using the Degrees Minutes Seconds latitude N25 36 24.657°.
+        /// CoordinatePart cp = new CoordinatePart(25, 36, 24.657, CoordinatesPosition.N);
+        /// 
+        /// //Assign the latitudinal value to the coordinate.
+        /// c.Latitude = cp;
+        /// </code>
+        /// </example>
         public CoordinatePart(int deg, int min, double sec, CoordinatesPosition pos)
         {
             if (pos == CoordinatesPosition.N || pos == CoordinatesPosition.S) { type = CoordinateType.Lat; }
@@ -143,7 +180,20 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="deg">Degrees</param>
         /// <param name="minSec">Decimal Minutes</param> 
-        /// <param name="pos">Coordinate Part Position</param>
+        /// <param name="pos">Coordinate part position</param>
+        /// <example>
+        /// The following example creates a populated latitudinal coordinate part from Decimal Degree Minute values and assigns it to a Coordinate object.
+        /// <code>
+        /// //Create a new default coordinate
+        /// Coordinate c = new Coordinate();
+        /// 
+        /// //Create a coordinate part using the Decimal Degree latitude N25 36.24854°.
+        /// CoordinatePart cp = new CoordinatePart(25, 36.24854, CoordinatesPosition.N);
+        /// 
+        /// //Assign the latitudinal value to the coordinate.
+        /// c.Latitude = cp;
+        /// </code>
+        /// </example>
         public CoordinatePart(int deg, double minSec, CoordinatesPosition pos)
         {
             if (pos == CoordinatesPosition.N || pos == CoordinatesPosition.S) { type = CoordinateType.Lat; }
@@ -183,7 +233,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Signed degrees (decimal) format coordinate.
+        /// Signed degrees coordinate part.
         /// </summary>
         /// <returns>double</returns>
         public double ToDouble()
@@ -192,9 +242,9 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Overridden Coordinate ToString() method
+        /// Formatted coordinate part string.
         /// </summary>
-        /// <returns>String</returns>
+        /// <returns>string</returns>
         public override string ToString()
         {
             if (parent == null)
@@ -205,16 +255,16 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Formatted CoordinatePart string.
+        /// Formatted coordinate part string.
         /// </summary>
         /// <param name="options">CoordinateFormatOptions</param>
-        /// <returns>string (formatted)</returns>
+        /// <returns>string</returns>
         public string ToString(CoordinateFormatOptions options)
         {
             return FormatString(options);
         }
         /// <summary>
-        /// String formatting logic
+        /// String format settings.
         /// </summary>
         /// <param name="options">CoordinateFormatOptions</param>
         /// <returns>Formatted coordinate part string</returns>
@@ -408,14 +458,14 @@ namespace CoordinateSharp
 
         }
 
-        private string Leading_Trailing_Format(bool isLead, bool isTrail, int rounding, CoordinatesPosition? p = null)
+        private string Leading_Trailing_Format(bool isLead, bool isTrail, int rounding, CoordinatesPosition? pos = null)
         {
             string leadString = "{0:0";
             if (isLead)
             {
-                if (p != null)
+                if (pos != null)
                 {
-                    if (p.Value == CoordinatesPosition.W || p.Value == CoordinatesPosition.E)
+                    if (pos.Value == CoordinatesPosition.W || pos.Value == CoordinatesPosition.E)
                     {
                         leadString += "00";
                     }
@@ -447,12 +497,23 @@ namespace CoordinateSharp
         private string FormatError(string argument, string rule)
         {
             return "'" + argument + "' is not a valid argument for string format rule: " + rule + ".";
-        }            
+        }
 
         /// <summary>
-        /// Returns CoordinatePart in radians
+        /// Returns Coordinate part in radians.
         /// </summary>
-        /// <returns></returns>
+        /// <example>
+        /// The following example demonstrates how to get the radian values of the geodetic coordinate parts.
+        /// <code>
+        /// //Create a new coordinate at N25, E45
+        /// Coordinate c = new Coordinate(25,45);
+        /// 
+        /// //Get the radian values of each part
+        /// Console.WriteLine(c.Latitude.ToRadians()); //0.436332312998582
+        /// Console.WriteLine(c.Longitude.ToRadians()); //0.785398163397448
+        /// </code>
+        /// </example>
+        /// <returns>double</returns>
         public double ToRadians()
         {
             return decimalDegree * Math.PI / 180;
@@ -460,10 +521,11 @@ namespace CoordinateSharp
         /// <summary>
         /// Attempts to parse a string into a CoordinatePart.
         /// </summary>
-        /// <param name="s">CoordinatePart string</param>
-        /// <param name="cp">CoordinatePart</param>
+        /// <param name="value">CoordinatePart string</param>
+        /// <param name="coordinatePart">CoordinatePart object to populate</param>
         /// <returns>boolean</returns>
         /// <example>
+        /// The following example demonstrates how to parse a latitude from a string.
         /// <code>
         /// CoordinatePart cp;
         /// if(CoordinatePart.TryParse("N 32.891º", out cp))
@@ -472,11 +534,11 @@ namespace CoordinateSharp
         /// }
         /// </code>
         /// </example>
-        public static bool TryParse(string s, out CoordinatePart cp)
+        public static bool TryParse(string value, out CoordinatePart coordinatePart)
         {
-            cp = null;
+            coordinatePart = null;
 
-            if (FormatFinder_CoordPart.TryParse(s, out cp))
+            if (FormatFinder_CoordPart.TryParse(value, out coordinatePart))
             {
                 return true;
             }
@@ -485,11 +547,12 @@ namespace CoordinateSharp
         /// <summary>
         /// Attempts to parse a string into a CoordinatePart. 
         /// </summary>
-        /// <param name="s">CoordinatePart string</param>
-        /// <param name="t">CoordinateType</param>
-        /// <param name="cp">CoordinatePart</param>
+        /// <param name="value">CoordinatePart string</param>
+        /// <param name="cType">CoordinateType</param>
+        /// <param name="coordinatePart">CoordinatePart object to populate</param>
         /// <returns>boolean</returns>
         /// <example>
+        /// The following example demonstrates how to parse a latitude from a string.
         /// <code>
         /// CoordinatePart cp;
         /// if(CoordinatePart.TryParse("-32.891º", CoordinateType.Long, out cp))
@@ -498,14 +561,14 @@ namespace CoordinateSharp
         /// }
         /// </code>
         /// </example>
-        public static bool TryParse(string s, CoordinateType t, out CoordinatePart cp)
+        public static bool TryParse(string value, CoordinateType cType, out CoordinatePart coordinatePart)
         {
-            cp = null;
+            coordinatePart = null;
             //Comma at beginning parses to long
             //Asterisk forces lat
-            if (t == CoordinateType.Long) { s = "," + s; }
-            else { s = "*" + s; }
-            if (FormatFinder_CoordPart.TryParse(s, out cp))
+            if (cType == CoordinateType.Long) { value = "," + value; }
+            else { value = "*" + value; }
+            if (FormatFinder_CoordPart.TryParse(value, out coordinatePart))
             {
                 return true;
             }
@@ -517,12 +580,12 @@ namespace CoordinateSharp
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         /// <summary>
-        /// Notify the correct properties and parent properties.
+        /// Notifies the correct properties and parent properties.
         /// </summary>
-        /// <param name="p">Property Type</param>
-        private void NotifyProperties(PropertyTypes p)
+        /// <param name="props">Property Type</param>
+        private void NotifyProperties(PropertyTypes props)
         {
-            switch (p)
+            switch (props)
             {
                 case PropertyTypes.DecimalDegree:
                     NotifyPropertyChanged("DecimalDegree");
@@ -580,11 +643,8 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Property changed event.
-        /// </summary>
-        /// <summary>
-        /// Notify property changed
-        /// </summary>
+        /// Notify property changes
+        /// </summary>        
         /// <param name="propName">Property name</param>
         public void NotifyPropertyChanged(string propName)
         {

@@ -40,22 +40,43 @@ namespace CoordinateSharp
     public partial class Cartesian
     {
         /// <summary>
-        /// Create a Cartesian Object
+        /// Create a spherical Cartesian coordinate.        
         /// </summary>
-        /// <param name="c"></param>
-        public Cartesian(Coordinate c)
+        /// <remarks>
+        /// Cartesian values will be populated by converting from the passed geodetic Coordinate object.
+        /// </remarks>
+        /// <param name="coordinate">Geodetic coordinate</param>
+        /// <example>
+        /// The following example demonstrates how to create a populated spherical Cartesian coordinate
+        /// based on a converted geodetic coordinate.
+        /// <code>
+        /// //Create a geodetic coordinate at N25, E45
+        /// Coordinate c = new Coordinate(25,45);
+        /// 
+        /// //Create and convert geodetic to spherical Cartesian
+	    /// Cartesian cart = new Cartesian(c);
+        /// 
+        /// Console.WriteLine(cart); //0.64085638 0.64085638 0.42261826
+        /// </code>
+        /// </example>
+        public Cartesian(Coordinate coordinate)
         {
             //formulas:
-            x = Math.Cos(c.Latitude.ToRadians()) * Math.Cos(c.Longitude.ToRadians());
-            y = Math.Cos(c.Latitude.ToRadians()) * Math.Sin(c.Longitude.ToRadians());
-            z = Math.Sin(c.Latitude.ToRadians());
+            x = Math.Cos(coordinate.Latitude.ToRadians()) * Math.Cos(coordinate.Longitude.ToRadians());
+            y = Math.Cos(coordinate.Latitude.ToRadians()) * Math.Sin(coordinate.Longitude.ToRadians());
+            z = Math.Sin(coordinate.Latitude.ToRadians());
         }
         /// <summary>
-        /// Create a Cartesian Object
+        /// Create a spherical Cartesian coordinate.
         /// </summary>
         /// <param name="xc">X</param>
         /// <param name="yc">Y</param>
         /// <param name="zc">Z</param>
+        /// <example>
+        /// <code>
+        /// Cartesian cart = new Cartesian(0.64085638, 0.64085638, 0.42261826);
+        /// </code>
+        /// </example>
         public Cartesian(double xc, double yc, double zc)
         {
             //formulas:
@@ -65,23 +86,30 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Updates Cartesian Values
-        /// </summary>
-        /// <param name="c"></param>
-        public void ToCartesian(Coordinate c)
+        /// Updates Cartesian value when eagerloading is used.
+        /// </summary>       
+        /// <param name="coordinate">Geodetic coordinate</param>
+        internal void ToCartesian(Coordinate coordinate)
         {
-            x = Math.Cos(c.Latitude.ToRadians()) * Math.Cos(c.Longitude.ToRadians());
-            y = Math.Cos(c.Latitude.ToRadians()) * Math.Sin(c.Longitude.ToRadians());
-            z = Math.Sin(c.Latitude.ToRadians());
+            x = Math.Cos(coordinate.Latitude.ToRadians()) * Math.Cos(coordinate.Longitude.ToRadians());
+            y = Math.Cos(coordinate.Latitude.ToRadians()) * Math.Sin(coordinate.Longitude.ToRadians());
+            z = Math.Sin(coordinate.Latitude.ToRadians());
         }
-      
+
         /// <summary>
-        /// Returns a Lat Long Coordinate object based on the provided Cartesian Coordinate
+        /// Returns a geodetic Coordinate object based on the provided Cartesian coordinate X, Y, Z values.
         /// </summary>
         /// <param name="x">X</param>
         /// <param name="y">Y</param>
         /// <param name="z">Z</param>
-        /// <returns></returns>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on spherical Cartesian X, Y, Z values.
+        /// <code>
+        /// Coordinate c = Cartesian.CartesianToLatLong(0.64085638, 0.64085638, 0.42261826);	    
+        /// Console.WriteLine(c); N 24º 59' 60" E 45º 0' 0"
+        /// </code>
+        /// </example>
         public static Coordinate CartesianToLatLong(double x, double y, double z)
         {
             double lon = Math.Atan2(y, x);
@@ -93,10 +121,18 @@ namespace CoordinateSharp
             return new Coordinate(Lat, Lon);
         }
         /// <summary>
-        /// Returns a Lat Long Coordinate object based on the provided Cartesian Coordinate
+        /// Returns a geodetic Coordinate object based on the provided Cartesian coordinate.
         /// </summary>
         /// <param name="cart">Cartesian Coordinate</param>
-        /// <returns></returns>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on spherical Cartesian object.
+        /// <code>
+        /// Cartesian cart = new Cartesian(0.64085638, 0.64085638, 0.42261826);
+		/// Coordinate c = Cartesian.CartesianToLatLong(cart);
+        /// Console.WriteLine(c); N 24º 59' 60" E 45º 0' 0"
+        /// </code>
+        /// </example>
         public static Coordinate CartesianToLatLong(Cartesian cart)
         {
             double x = cart.X;
@@ -113,10 +149,12 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Cartesian Default String Format
+        /// Default formatted Cartesian string.
         /// </summary>
+        /// <remarks>
+        /// X, Y, Z values are rounded to the 8th place.
+        /// </remarks>
         /// <returns>Cartesian Formatted Coordinate String</returns>
-        /// <returns>Values rounded to the 8th place</returns>
         public override string ToString()
         {
             return Math.Round(x,8).ToString() + " " + Math.Round(y, 8).ToString() + " " + Math.Round(z, 8).ToString();

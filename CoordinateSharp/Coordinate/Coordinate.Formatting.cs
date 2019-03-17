@@ -38,13 +38,13 @@ using System;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Coordinate formatting options for a Coordinate object.
+    /// Coordinate formatting options for Coordinate objects.
     /// </summary>
     [Serializable]
     public class CoordinateFormatOptions
     {
         /// <summary>
-        /// Set default values with the constructor.
+        /// Creates a new CoordinateFormatOptions object with default values.
         /// </summary>
         public CoordinateFormatOptions()
         {
@@ -64,11 +64,11 @@ namespace CoordinateSharp
         /// </summary>
         public CoordinateFormatType Format { get; set; }
         /// <summary>
-        /// Rounds Coordinates to the set value.
+        /// Specifies at what decimal place the coordinate values will round when converted to a string.
         /// </summary>
         public int Round { get; set; }
         /// <summary>
-        /// Displays leading zeros.
+        /// Display leading zeros.
         /// </summary>
         public bool Display_Leading_Zeros { get; set; }
         /// <summary>
@@ -76,7 +76,7 @@ namespace CoordinateSharp
         /// </summary>
         public bool Display_Trailing_Zeros { get; set; }
         /// <summary>
-        /// Allow symbols to display.
+        /// Display all symbols.
         /// </summary>
         public bool Display_Symbols { get; set; }
         /// <summary>
@@ -97,8 +97,10 @@ namespace CoordinateSharp
         public bool Display_Hyphens { get; set; }
         /// <summary>
         /// Show coordinate position first.
-        /// Will show last if set 'false'.
         /// </summary>
+        /// <remarks>
+        /// Will show last if set 'false'.
+        /// </remarks>
         public bool Position_First { get; set; }
     }
   
