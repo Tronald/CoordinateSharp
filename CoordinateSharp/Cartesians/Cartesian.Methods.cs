@@ -86,7 +86,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Updates Cartesian value when eagerloading is used.
+        /// Updates Cartesian values when eagerloading is used.
         /// </summary>       
         /// <param name="coordinate">Geodetic coordinate</param>
         internal void ToCartesian(Coordinate coordinate)
@@ -126,7 +126,7 @@ namespace CoordinateSharp
         /// <param name="cart">Cartesian Coordinate</param>
         /// <returns>Coordinate</returns>
         /// <example>
-        /// The following example creates (converts to) a geodetic Coordinate object based on spherical Cartesian object.
+        /// The following example creates (converts to) a geodetic Coordinate object based on a spherical Cartesian object.
         /// <code>
         /// Cartesian cart = new Cartesian(0.64085638, 0.64085638, 0.42261826);
 		/// Coordinate c = Cartesian.CartesianToLatLong(cart);

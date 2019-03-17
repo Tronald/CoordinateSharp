@@ -55,12 +55,12 @@ namespace CoordinateSharp
         private double z;
         private Distance geodetic_height;
 
-        //Datum
+        //Ellipsoid
         internal double equatorial_radius;
         internal double inverse_flattening;
 
         /// <summary>
-        /// Datum Equatorial Radius / Semi Major Axis
+        /// Datums Equatorial Radius / Semi Major Axis (Ellipsoid)
         /// </summary>
         public double Equatorial_Radius
         {
@@ -68,7 +68,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Datum Flattening
+        /// Datums Flattening (Ellipsoid)
         /// </summary>
         public double Inverse_Flattening
         {
@@ -100,8 +100,10 @@ namespace CoordinateSharp
         /// <summary>
         /// GeoDetic Height from Mean Sea Level.
         /// Used for converting Lat Long / ECEF.
-        /// Default value is 0. Adjust as needed.
         /// </summary>
+        /// <remarks>
+        /// Default value is 0 MSL. Adjust as needed for conversions.
+        /// </remarks>
         public Distance GeoDetic_Height
         {
             get { return geodetic_height; }           

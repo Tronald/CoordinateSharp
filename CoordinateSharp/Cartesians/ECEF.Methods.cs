@@ -38,44 +38,92 @@ using System;
 namespace CoordinateSharp
 {
     public partial class ECEF 
-    {       
+    {
         /// <summary>
-        /// Create an ECEF Object
+        /// Creates an ECEF coordinate.
         /// </summary>
-        /// <param name="c">Coordinate</param>
-        public ECEF(Coordinate c)
+        /// <remarks>
+        /// ECEF values will be populated by converting from the passed geodetic Coordinate object.
+        /// </remarks>
+        /// <param name="coordinate">Coordinate</param>
+        /// <example>
+        /// The following example demonstrates how to create a populated ECEF coordinate
+        /// based on a converted geodetic coordinate.
+        /// <code>
+        /// //Create a geodetic coordinate at N25, E45
+        /// Coordinate c = new Coordinate(25,45);
+        /// 
+        /// //Create and convert geodetic to ECEF
+	    /// ECEF ecef = new ECEF(c);
+        /// 
+        /// Console.WriteLine(ecef); 4089.916 km, 4089.916 km, 2679.074 km
+        /// </code>
+        /// </example>
+        public ECEF(Coordinate coordinate)
         {
             equatorial_radius = 6378137.0;
             inverse_flattening = 298.257223563;
             WGS84();
             geodetic_height = new Distance(0);
-            double[] ecef = LatLong_To_ECEF(c.Latitude.DecimalDegree, c.Longitude.DecimalDegree, geodetic_height.Kilometers);
+            double[] ecef = LatLong_To_ECEF(coordinate.Latitude.DecimalDegree, coordinate.Longitude.DecimalDegree, geodetic_height.Kilometers);
             x = ecef[0];
             y = ecef[1];
             z = ecef[2];
         }
         /// <summary>
-        /// Create an ECEF Object
+        /// Creates an ECEF coordinate.
         /// </summary>
-        /// <param name="c">Coordinate</param>
-        /// <param name="height">Coordinate</param>
-        public ECEF(Coordinate c, Distance height)
+        /// <remarks>
+        /// ECEF values will be populated by converting from the passed geodetic Coordinate object and height (above mean sea level).
+        /// </remarks>
+        /// <param name="coordinate">Coordinate</param>
+        /// <param name="height">Height above Mean Sea Level</param>
+        /// <example>
+        /// The following example demonstrates how to create a populated ECEF coordinate
+        /// based on a converted geodetic coordinate and height above mean sea level.
+        /// <code>
+        /// //Create a geodetic coordinate at N25, E45
+        /// Coordinate c = new Coordinate(25,45);
+        /// 
+        /// //Create a distance object set at 450 meters.
+        /// //This will be used to signal the ECEF coordinate is 450 meters above MSL.
+        /// Distance height = new Distance(450, DistanceType.Meters);
+        /// 
+        /// //Create and convert geodetic to ECEF
+	    /// ECEF ecef = new ECEF(c, height);
+        /// 
+        /// Console.WriteLine(ecef); 4090.204 km, 4090.204 km, 2679.265 km
+        /// </code>
+        /// </example>
+        public ECEF(Coordinate coordinate, Distance height)
         {
             equatorial_radius = 6378137.0;
             inverse_flattening = 298.257223563;
             WGS84();
             geodetic_height = height;
-            double[] ecef = LatLong_To_ECEF(c.Latitude.DecimalDegree, c.Longitude.DecimalDegree, geodetic_height.Kilometers);
+            double[] ecef = LatLong_To_ECEF(coordinate.Latitude.DecimalDegree, coordinate.Longitude.DecimalDegree, geodetic_height.Kilometers);
             x = ecef[0];
             y = ecef[1];
             z = ecef[2];
         }
         /// <summary>
-        /// Create an ECEF Object
+        /// Create an ECEF coordinate.
         /// </summary>
-        /// <param name="xc">X</param>
-        /// <param name="yc">Y</param>
-        /// <param name="zc">Z</param>
+        /// <param name="xc">X coordinate in KM</param>
+        /// <param name="yc">Y coordinate in KM</param>
+        /// <param name="zc">Z coordinate in KM</param>
+        /// <remarks>
+        /// ECEF values will be populated from the provided X, Y, Z coordinates.
+        /// </remarks>        
+        /// <example>
+        /// The following example demonstrates how to create a populated ECEF coordinate.
+        /// <code>
+        /// //Create an ECEF coordinate
+	    /// ECEF ecef = new ECEF(4089.916, 4089.916, 2679.074);
+        /// 
+        /// Console.WriteLine(ecef); 4089.916 km, 4089.916 km, 2679.074 km
+        /// </code>
+        /// </example>
         public ECEF(double xc, double yc, double zc)
         {
             equatorial_radius = 6378137.0;
@@ -87,43 +135,70 @@ namespace CoordinateSharp
             z = zc;
         }
         /// <summary>
-        /// Updates ECEF Values
+        /// Updates ECEF values when eagerloading is used.
         /// </summary>
-        /// <param name="c">Coordinate</param>
-        public void ToECEF(Coordinate c)
+        /// <param name="coordinate">Geodetic coordinate</param>
+        internal void ToECEF(Coordinate coordinate)
         {
             equatorial_radius = 6378137.0;
             inverse_flattening = 298.257223563;
             WGS84();           
-            double[] ecef = LatLong_To_ECEF(c.Latitude.DecimalDegree, c.Longitude.DecimalDegree, geodetic_height.Kilometers);
+            double[] ecef = LatLong_To_ECEF(coordinate.Latitude.DecimalDegree, coordinate.Longitude.DecimalDegree, geodetic_height.Kilometers);
             x = ecef[0];
             y = ecef[1];
             z = ecef[2];
-        }      
-
-        /// <summary>
-        /// Sets GeoDetic height for ECEF conversion.
-        /// Recalculate ECEF Coordinate
-        /// </summary>
-        /// <param name="c">Coordinate</param>
-        /// <param name="dist">Height</param>
-        public void Set_GeoDetic_Height(Coordinate c, Distance dist)
-        {
-            geodetic_height = dist;
-            double[] values = LatLong_To_ECEF(c.Latitude.DecimalDegree, c.Longitude.DecimalDegree, dist.Kilometers);
-            x = values[0];
-            y = values[1];
-            z = values[2];
-
         }
 
         /// <summary>
-        /// Returns a Geodetic Coordinate object based on the provided ECEF Coordinate
+        /// Sets Geodetic height for ECEF conversion.
+        /// </summary>
+        /// <remarks>
+        /// Setting the height will trigger ECEF values to recalculate.
+        /// </remarks>
+        /// <param name="coordinate">Geodetic coordinate</param>
+        /// <param name="distance">Height above Mean Sea Level</param>
+        /// <example>
+        /// The following example demonstrates how to set the height above MSL at the geodetic coordinate. 
+        /// The provided height is used in the conversion from geodetic to ECEF.
+        /// <code>
+        /// //Create a geodetic coordinate at N25, E45 at 0 MSL.
+        /// Coordinate c = new Coordinate(25, 45);
+        ///
+        /// //Display converted ECEF values.        
+        /// Console.WriteLine(c.ECEF); //4089.916 km, 4089.916 km, 2679.074 km
+		///
+		/// //Set geodetic coordinate height to 1500 meters above MSL
+		/// c.ECEF.Set_GeoDetic_Height(c, new Distance(1500, DistanceType.Meters));						
+		/// 
+		/// //Display new ECEF values.        
+        /// Console.WriteLine(c.ECEF); //4090.877 km, 4090.877 km, 2679.708 km
+        /// </code>
+        /// </example>
+        public void Set_GeoDetic_Height(Coordinate coordinate, Distance distance)
+        {
+            geodetic_height = distance;
+            double[] values = LatLong_To_ECEF(coordinate.Latitude.DecimalDegree, coordinate.Longitude.DecimalDegree, distance.Kilometers);
+            x = values[0];
+            y = values[1];
+            z = values[2];
+        }
+
+        /// <summary>
+        /// Returns a Geodetic Coordinate object based on the provided ECEF coordinate X, Y, Z values.
         /// </summary>
         /// <param name="x">X</param>
         /// <param name="y">Y</param>
         /// <param name="z">Z</param>
         /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on ECEF X, Y, Z values.
+        /// <code>
+        /// Coordinate c = ECEF.ECEFToLatLong(4090.877, 4090.877, 2679.708);   
+        /// 
+        /// Console.WriteLine(c); //N 24º 59' 59.986" E 45º 0' 0"
+        /// Console.WriteLine(c.ECEF.GeoDetic_Height.Meters); //1499.97912820436
+        /// </code>
+        /// </example>
         public static Coordinate ECEFToLatLong(double x, double y, double z)
         {
             ECEF ecef = new ECEF(x, y, z);
@@ -135,10 +210,20 @@ namespace CoordinateSharp
             return c;
         }
         /// <summary>
-        /// Returns a Geodetic Coordinate object based on the provided ECEF Coordinate
+        /// Returns a Geodetic Coordinate object based on the provided ECEF coordinate.
         /// </summary>
         /// <param name="ecef">ECEF Coordinate</param>
         /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on an ECEF object.
+        /// <code>
+        /// ECEF ecef = new ECEF(4090.877, 4090.877, 2679.708);
+		/// Coordinate c = ECEF.ECEFToLatLong(ecef);
+        /// 
+        /// Console.WriteLine(c); //N 24º 59' 59.986" E 45º 0' 0"
+        /// Console.WriteLine(c.ECEF.GeoDetic_Height.Meters); //1499.97912820436
+        /// </code>
+        /// </example>
         public static Coordinate ECEFToLatLong(ECEF ecef)
         {           
             double[] values = ecef.ECEF_To_LatLong(ecef.X, ecef.Y, ecef.Z);
@@ -151,19 +236,23 @@ namespace CoordinateSharp
           
             return c;
         }
+
         /// <summary>
-        /// ECEF Default String Format
+        /// Default formatted ECEF string.
         /// </summary>
+        /// <remarks>
+        /// X, Y, Z values are rounded to the 3rd place.
+        /// </remarks>
         /// <returns>ECEF Formatted Coordinate String</returns>
-        /// <returns>Values rounded to the 3rd place</returns>
         public override string ToString()
         {
             return Math.Round(x, 3).ToString() + " km, " + Math.Round(y, 3).ToString() + " km, " + Math.Round(z, 3).ToString() + " km";
         }
   
-        //CONVERSION LOGIC      
+        /*CONVERSION LOGIC*/
+        
         /// <summary>
-        /// Initialize EARTH global variables based on the Datum
+        /// Initialize EARTH global variables based on the Datum.
         /// </summary>
         private void WGS84()
         {
@@ -193,9 +282,9 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Compute the radii at the geodetic latitude (degrees)
+        /// Compute the radii at the geodetic latitude (degrees).
         /// </summary>
-        /// <param name="lat">Latitude in degres</param>
+        /// <param name="lat">Latitude in degrees</param>
         /// <returns>double[]</returns>
         private double[] radcur(double lat)
         {
@@ -234,9 +323,9 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Physical radius of the Earth
+        /// Physical radius of the Earth.
         /// </summary>
-        /// <param name="lat">Latidude in degrees</param>
+        /// <param name="lat">Latitude in degrees</param>
         /// <returns>double</returns>
         private double rearth(double lat)
         {
@@ -287,9 +376,9 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Converts geodetic latitude to geocentric latitude
+        /// Converts geodetic latitude to geocentric latitude.
         /// </summary>
-        /// <param name="flatgd">Geodetic latitude tp geocentric latitide</param>
+        /// <param name="flatgd">Geodetic latitude to geocentric latitude</param>
         /// <param name="altkm">Altitude in KM</param>
         /// <returns>double</returns>
         private double gd2gc(double flatgd, double altkm)
@@ -314,7 +403,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Converts lat / long to east, north, up vectors
+        /// Converts lat / long to east, north, up vectors.
         /// </summary>
         /// <param name="flat">Latitude</param>
         /// <param name="flon">Longitude</param>
@@ -355,7 +444,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Gets ECEF vector in KM
+        /// Gets ECEF vector in KM.
         /// </summary>
         /// <param name="lat">Latitude</param>
         /// <param name="longi">Longitude</param>
@@ -389,14 +478,14 @@ namespace CoordinateSharp
 
             return xvec;
         }
-     
+
         /// <summary>
-        /// Converts ECEF X, Y, Z to GeoDetic Lat / Long and Height in KM
+        /// Converts ECEF X, Y, Z to GeoDetic Lat / Long and Height in KM.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <returns></returns>
+        /// <param name="x">X coordinate part</param>
+        /// <param name="y">Y coordinate part</param>
+        /// <param name="z">Z coordinate part</param>
+        /// <returns>double[]</returns>
         private double[] ECEF_To_LatLong(double x, double y, double z)
         {
             var dtr = Math.PI / 180.0;
