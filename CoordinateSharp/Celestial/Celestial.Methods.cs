@@ -62,11 +62,30 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Creates a Celestial based on a location and specified date
+        /// Creates a Celestial object based on a location and specified date.
         /// </summary>
         /// <param name="lat">latitude</param>
         /// <param name="longi">longitude</param>
         /// <param name="geoDate">DateTime (UTC)</param>
+        /// <remarks>
+        /// Celestial information is normally populated within the Coordinate classes CelestialInfo property. 
+        /// However, you may choose to work directly within the Celestial class.
+        /// </remarks>
+        /// <example>
+        /// The following example demonstrates how to get the sunset time at Seattle on 19-Mar-2019
+        /// directly from a Celestial object.
+        /// <code>
+        /// //Create a Celestial object the calculates from Seattle's signed lat/long on
+        /// //19-Mar-2019 (UTC) Date
+        /// Celestial cel = new Celestial(47.60357, -122.32945, new DateTime(2019, 3, 19));
+		///
+		/// //Check if a sunset will occur on the specified day.
+		/// if(cel.SunSet.HasValue)
+		/// {
+		///     Console.WriteLine(cel.SunSet.Value); //3/19/2019 2:19:31 AM
+		/// }
+        /// </code>
+        /// </example>
         public Celestial(double lat, double longi, DateTime geoDate)
         {
             DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
@@ -77,42 +96,63 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Creates a Celestial based on a location and date in the provided Coordinate.
+        /// Creates a Celestial object based on a Coordinate.
         /// </summary>
-        /// <param name="c">Coordinate</param>
-        /// <returns>Celestial</returns>
-        public static Celestial LoadCelestial(Coordinate c)
+        /// <param name="coord">Coordinate</param>
+        internal static Celestial LoadCelestial(Coordinate coord)
         {
-            DateTime geoDate = c.GeoDate;
+            DateTime geoDate = coord.GeoDate;
 
             DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
-            Celestial cel = new Celestial(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate);
+            Celestial cel = new Celestial(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate);
 
             return cel;
         }
-      
+
         /// <summary>
-        /// Converts Celestial values to local times.
+        /// Converts all Celestial values to local time.
         /// </summary>
-        /// <param name="c">Coordinate</param>
+        /// <param name="coord">Coordinate</param>
         /// <param name="offset">UTC offset</param>
-        /// <returns></returns>
-        public static Celestial Celestial_LocalTime(Coordinate c, double offset)
+        /// <returns>Celestial</returns>
+        /// <example>
+        /// The following example demonstrates how to get Celestial values in Local time.
+        /// DateTime offsets are done manually for readability purposes of this example. 
+        /// <code>
+        /// //Local time 
+        ///  DateTime d = new DateTime(2018, 3, 19, 6, 56, 0, 0, DateTimeKind.Local);
+        /// 
+        /// //EST Time is -4 hours from UTC
+        /// double offset = -4;
+        /// 
+        /// //Convert the date to UTC time
+        /// d = d.AddHours(offset*-1);
+        /// 
+        /// //Create a Coordinate with the UTC time		
+        /// Coordinate c = new Coordinate(39.0000, -72.0000, d);
+        /// //Create a new Celestial object by converting the existing one to Local
+        /// Celestial celestial = Celestial.Celestial_LocalTime(c, offset);
+        /// 
+        /// Console.WriteLine(celestial.IsSunUp); //True
+		/// Console.WriteLine(celestial.SunRise); //3/19/2018 6:54:25 AM
+        /// </code>
+        /// </example>        
+        public static Celestial Celestial_LocalTime(Coordinate coord, double offset)
         {
             if(offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 12 or less than -12."); }
             //Probably need to offset initial UTC date so user can op in local
             //Determine best way to do this.
-            DateTime d = c.GeoDate.AddHours(offset);
+            DateTime d = coord.GeoDate.AddHours(offset);
 
             //Get 3 objects for comparison
-            Celestial cel = new Celestial(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate);
-            Celestial celPre = new Celestial(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate.AddDays(-1));    
-            Celestial celPost = new Celestial(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate.AddDays(1));
+            Celestial cel = new Celestial(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate);
+            Celestial celPre = new Celestial(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(-1));    
+            Celestial celPost = new Celestial(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(1));
            
             //Slip objects for comparison. Compare with slipped date. 
-            celPre.Local_Convert(c, offset);
-            cel.Local_Convert(c, offset);
-            celPost.Local_Convert(c, offset);
+            celPre.Local_Convert(coord, offset);
+            cel.Local_Convert(coord, offset);
+            celPost.Local_Convert(coord, offset);
 
             //Get SunSet
             int i = Determine_Slipped_Event_Index(cel.SunSet, celPre.SunSet, celPost.SunSet, d);
@@ -285,13 +325,25 @@ namespace CoordinateSharp
             Calculate_Celestial_IsUp_Booleans(date, this);
 
         }
+
         /// <summary>
-        /// Calculate celestial data based on lat/long and date.
+        /// Calculate celestial data based on latitude, longitude and UTC date at the location.
         /// </summary>
         /// <param name="lat">Decimal format latitude</param>
         /// <param name="longi">Decimal format longitude</param>
         /// <param name="date">Geographic DateTime</param>
-        /// <returns>Fully populated Celestial object</returns>
+        /// <returns>Celestial (Fully Populated)</returns>
+        /// <example>
+        /// The following example demonstrates how to create a fully populated Celestial object 
+        /// using static functions.
+        /// <code>
+        /// //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
+		/// Celestial cel = Celestial.CalculateCelestialTimes(39, -72, new DateTime(2019, 3, 19, 10, 10, 12));
+        /// 
+        /// Console.WriteLine(cel.SunRise); //3/19/2019 10:54:50 AM
+        /// Console.WriteLine(cel.MoonRise); //3/19/2019 9:27:27 PM
+        /// </code>
+        /// </example>
         public static Celestial CalculateCelestialTimes(double lat, double longi, DateTime date)
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
@@ -314,12 +366,22 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Calculate sun data based on lat/long and date.
+        /// Calculate sun data based on latitude, longitude and UTC date at the location.
         /// </summary>
         /// <param name="lat">latitude</param>
         /// <param name="longi">longitude</param>
         /// <param name="date">DateTime</param>
         /// <returns>Celestial (Partially Populated)</returns>
+        /// <example>
+        /// The following example demonstrates how to create a partially populated Celestial object 
+        /// that only calculates solar data using static functions. 
+        /// <code>
+        /// //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
+        /// Celestial cel = Celestial.CalculateSunData(39, -72, new DateTime(2019, 3, 19, 10, 10, 12));
+        /// 
+        /// Console.WriteLine(cel.SunRise); //3/19/2019 10:54:50 AM
+        /// </code>
+        /// </example>
         public static Celestial CalculateSunData(double lat, double longi, DateTime date)
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
@@ -331,12 +393,22 @@ namespace CoordinateSharp
             return c;
         }
         /// <summary>
-        /// Calculate moon data based on lat/long and date.
+        /// Calculate moon data based on latitude, longitude and UTC date at the location.
         /// </summary>
         /// <param name="lat">latitude</param>
         /// <param name="longi">longitude</param>
         /// <param name="date">DateTime</param>
         /// <returns>Celestial (Partially Populated)</returns>
+        /// <example>
+        /// The following example demonstrates how to create a partially populated Celestial object 
+        /// that only calculates lunar data using static functions. 
+        /// <code>
+        /// //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
+        /// Celestial cel = Celestial.CalculateMoonData(39, -72, new DateTime(2019, 3, 19, 10, 10, 12));
+        /// 
+        /// Console.WriteLine(cel.MoonRise); //3/19/2019 9:27:27 PM
+        /// </code>
+        /// </example>
         public static Celestial CalculateMoonData(double lat, double longi, DateTime date)
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
@@ -355,13 +427,34 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Returns a List containing solar eclipse data for the century.
-        /// Century return is based on the date passed.
+        /// Returns a List containing solar eclipse data for the century at the specified location.
+        /// Century returned is based on the date passed.
         /// </summary>
         /// <param name="lat">latitude</param>
         /// <param name="longi">longitude</param>
         /// <param name="date">DateTime</param>
-        /// <returns></returns>
+        /// <returns>List&gt;SolarEclipseDetails&gt;</returns>
+        /// <example>
+        /// The following example gets a Solar Eclipse table for the 20th century at N 39, W 72
+        /// and displays each type of eclipse and occurrence date in that century.
+        /// <code>
+        /// List&gt;SolarEclipseDetails&gt; seList = Celestial.Get_Solar_Eclipse_Table(39, -72, new DateTime(1950, 1, 1));
+        ///
+        /// foreach(SolarEclipseDetails sd in seList)
+        /// {
+        ///	    Console.WriteLine(sd.Type + " " + sd.Date.ToShortDateString());
+        /// }
+        /// 
+        /// //Partial 8/30/1905
+        /// //Partial 6/28/1908
+        /// //Partial 6/18/1909
+        /// //Partial 4/17/1912
+        /// //Partial 2/3/1916
+        /// //Partial 6/7/1918
+        /// //Partial 11/22/1919
+        /// ...      
+        /// </code>
+        /// </example>
         public static List<SolarEclipseDetails> Get_Solar_Eclipse_Table(double lat, double longi, DateTime date)
         {
             //Convert to Radians
@@ -373,13 +466,34 @@ namespace CoordinateSharp
             return SolarEclipseCalc.CalculateSolarEclipse(date, latR, longR, events);
         }
         /// <summary>
-        /// Returns a List containing solar eclipse data for the century.
+        /// Returns a List containing solar eclipse data for the century at the specified location.
         /// Century return is based on the date passed.
         /// </summary>
         /// <param name="lat">latitude</param>
         /// <param name="longi">longitude</param>
         /// <param name="date">DateTime</param>
-        /// <returns></returns>
+        /// <returns>List&gt;LunarEclipseDetails&gt;</returns>
+        ///  /// <example>
+        /// The following example gets a Lunar Eclipse table for the 20th century at N 39, W 72
+        /// and displays each type of eclipse and occurrence date in that century.
+        /// <code>
+        /// List&gt;LunarEclipseDetails&gt; leList = Celestial.Get_Lunar_Eclipse_Table(39, -72, new DateTime(1950, 1, 1));
+        ///
+        /// foreach(LunarEclipseDetails ld in leList)
+        /// {
+        ///	    Console.WriteLine(ld.Type + " " + ld.Date.ToShortDateString());
+        /// }
+        /// 
+        /// //Total 10/17/1902
+        /// //Partial 4/11/1903
+        /// //Penumbral 3/2/1904
+        /// //Partial 8/15/1905
+        /// //Total 2/9/1906
+        /// //Partial 1/29/1907
+        /// //Partial 7/25/1907
+        /// ...      
+        /// </code>
+        /// </example>
         public static List<LunarEclipseDetails> Get_Lunar_Eclipse_Table(double lat, double longi, DateTime date)
         {
             //Convert to Radians
@@ -392,7 +506,7 @@ namespace CoordinateSharp
         }
         
         /// <summary>
-        /// Set bool SunIsUp and MoonIsUp values
+        /// Set boolean SunIsUp and MoonIsUp values
         /// </summary>
         /// <param name="date">Coordinate GeoDate</param>
         /// <param name="cel">Celestial Object</param>
@@ -502,21 +616,41 @@ namespace CoordinateSharp
                     break;
             }
         }
-        
+
         /// <summary>
-        /// Returns Apogee object containing last and next apogee based on the specified date.
+        /// Returns Apogee object containing last and next apogees based on the specified UTC date.
         /// </summary>
         /// <param name="d">DateTime</param>
         /// <returns>Apogee</returns>
+        /// <example>
+        /// The following example gets the last and next lunar apogees from the specified date
+        /// and display's their DateTime and Distance.
+        /// <code>
+        /// Apogee apogee = Celestial.GetApogees(new DateTime(2019,3,1));
+        ///
+        /// Console.WriteLine(apogee.LastApogee.Date + " " + apogee.LastApogee.Distance.Kilometers); //2/5/2019 9:27:28 AM 406551.526207563
+		/// Console.WriteLine(apogee.NextApogee.Date + " " + apogee.NextApogee.Distance.Kilometers); //3/4/2019 11:26:35 AM 406387.933655865
+        /// </code>
+        /// </example>
         public static Apogee GetApogees(DateTime d)
         {
             return MoonCalc.GetApogeeEvents(d);
         }
         /// <summary>
-        /// Returns Perigee object containing last and next perigee based on the specified date.
+        /// Returns Perigee object containing last and next perigees based on the specified UTC date.
         /// </summary>
         /// <param name="d">DateTime</param>
         /// <returns>Perigee</returns>
+        /// <example>
+        /// The following example gets the last and next lunar perigees from the specified date
+        /// and display's their DateTime and Distance.
+        /// <code>
+        /// Perigee perigee = Celestial.GetPerigees(new DateTime(2019, 3, 1));
+        ///
+        /// Console.WriteLine(perigee.LastPerigee.Date + " " + perigee.LastPerigee.Distance.Kilometers); //2/19/2019 9:06:55 AM 356762.812526435
+		/// Console.WriteLine(perigee.NextPerigee.Date + " " + perigee.NextPerigee.Distance.Kilometers); //3/19/2019 7:48:22 PM 359378.005775414
+        /// </code>
+        /// </example>
         public static Perigee GetPerigees(DateTime d)
         {
             return MoonCalc.GetPerigeeEvents(d);
