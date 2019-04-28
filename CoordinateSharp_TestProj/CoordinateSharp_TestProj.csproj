@@ -47,9 +47,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Colorful.Console, Version=1.2.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Colorful.Console.1.2.9\lib\net461\Colorful.Console.dll</HintPath>
-    </Reference>
     <Reference Include="CoordinateSharp">
       <HintPath>..\CoordinateSharp\bin\Debug\netstandard2.0\CoordinateSharp.dll</HintPath>
     </Reference>
@@ -64,13 +61,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Benchmark_Tests.cs" />
     <Compile Include="CelestialTests.cs" />
+    <Compile Include="Coordinate_Conversion_Tests.cs" />
+    <Compile Include="Coordinate_Initialization_Tests.cs" />
+    <Compile Include="Coordinate_Parser_Tests.cs" />
+    <Compile Include="Distance_Tests.cs" />
+    <Compile Include="EagerLoading_Tests.cs" />
+    <Compile Include="GeoFence_Tests.cs" />
+    <Compile Include="Pass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="CelestialData\Apogee.txt">
@@ -151,13 +155,13 @@
     <Content Include="CelestialData\SunSet.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Conversions.txt">
+    <Content Include="CoordinateData\Conversions.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="CoordinateParts.txt">
+    <Content Include="CoordinateData\CoordinateParts.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Coordinates.txt">
+    <Content Include="CoordinateData\Coordinates.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
