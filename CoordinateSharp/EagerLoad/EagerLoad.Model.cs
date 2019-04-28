@@ -38,7 +38,7 @@ using System;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Turn on/off eager loading of certain properties.
+    /// Class used to handle a Coordinate object's eager loading settings for geographic conversions and celestial calculation properties.
     /// </summary>
     [Serializable]
     public partial class EagerLoad

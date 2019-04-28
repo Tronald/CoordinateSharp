@@ -49,7 +49,14 @@ namespace CoordinateSharp
         /// Meeus Ch 7.
         /// </summary>
         /// <param name="d">DateTime</param>
-        /// <returns>JDE</returns>
+        /// <returns>Julian date</returns>
+        /// <example>
+        /// <code>
+        /// DateTime date = new DateTime(2019,1,1);
+        /// double jul = JulianConversions.GetJulian(date);
+        /// Console.WriteLine(jul); //2458484.5
+        /// </code>
+        /// </example>
         public static double GetJulian(DateTime d)
         {
             double y = d.Year;
@@ -75,7 +82,14 @@ namespace CoordinateSharp
         /// Meeus Ch 7.
         /// </summary>
         /// <param name="d">DateTime</param>
-        /// <returns>JDE</returns>
+        /// <returns>Julian date from epoch 2000</returns>
+        /// <example>
+        /// <code>
+        /// DateTime date = new DateTime(2019,1,1);
+        /// double jul = JulianConversions.GetJulian_Epoch2000(date);
+        /// Console.WriteLine(jul); //6939.5
+        /// </code>
+        /// </example>
         public static double GetJulian_Epoch2000(DateTime d)
         {
             return GetJulian(d) - J2000;
@@ -85,7 +99,14 @@ namespace CoordinateSharp
         /// Meeus Ch 7.
         /// </summary>
         /// <param name="d">DateTime</param>
-        /// <returns>JDE</returns>
+        /// <returns>Julian date from epoch 1970</returns>
+        /// <example>
+        /// <code>
+        /// DateTime date = new DateTime(2019,1,1);
+        /// double jul = JulianConversions.GetJulian_Epoch1970(date);
+        /// Console.WriteLine(jul); //17896.5
+        /// </code>
+        /// </example>
         public static double GetJulian_Epoch1970(DateTime d)
         {
             return GetJulian(d) - J1970;
@@ -95,8 +116,15 @@ namespace CoordinateSharp
         /// Returns date from Julian
         /// Meeus ch. 7
         /// </summary>
-        /// <param name="j">Julian</param>
+        /// <param name="j">Julian date</param>
         /// <returns>DateTime</returns>
+        /// <example>
+        /// <code>
+        /// double jul = 2458484.5;
+        /// DateTime? date = JulianConversions.GetDate_FromJulian(jul);
+        /// Console.WriteLine(date); //1/1/2019 12:00:00 AM
+        /// </code>
+        /// </example>
         public static DateTime? GetDate_FromJulian(double j)
         {
             if (Double.IsNaN(j)) { return null; } //No Event Occured
@@ -146,8 +174,15 @@ namespace CoordinateSharp
         /// Returns date from Julian based on epoch 2000
         /// Meeus ch. 7
         /// </summary>
-        /// <param name="j">Julian</param>
+        /// <param name="j">Julian date (epoch 2000)</param>
         /// <returns>DateTime</returns>
+        /// <example>
+        /// <code>
+        /// double jul = 6939.5;
+        /// DateTime? date = JulianConversions.GetDate_FromJulian_Epoch2000(jul);
+        /// Console.WriteLine(date); //1/1/2019 12:00:00 AM
+        /// </code>
+        /// </example>
         public static DateTime? GetDate_FromJulian_Epoch2000(double j)
         {
             return GetDate_FromJulian(j + J2000);
@@ -156,8 +191,15 @@ namespace CoordinateSharp
         /// Returns date from Julian based on epoch 1970
         /// Meeus ch. 7
         /// </summary>
-        /// <param name="j">Julian</param>
+        /// <param name="j">Julian date (epoch 1970)</param>
         /// <returns>DateTime</returns>
+        /// <example>
+        /// <code>
+        /// double jul = 17896.5;
+        /// DateTime? date = JulianConversions.GetDate_FromJulian_Epoch1970(jul);
+        /// Console.WriteLine(date); //1/1/2019 12:00:00 AM
+        /// </code>
+        /// </example>
         public static DateTime? GetDate_FromJulian_Epoch1970(double j)
         {
             return GetDate_FromJulian(j + J1970);

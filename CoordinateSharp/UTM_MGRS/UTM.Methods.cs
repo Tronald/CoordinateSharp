@@ -42,12 +42,17 @@ namespace CoordinateSharp
     public partial class UniversalTransverseMercator 
     {
         /// <summary>
-        /// Creates a UniversalTransverMercator object with a WGS84 Datum.
+        /// Creates a UniversalTransverMercator (UTM) object with a default WGS84 datum(ellipsoid).
         /// </summary>
         /// <param name="latz">Latitude zone</param>
         /// <param name="longz">Longitude zone</param>
         /// <param name="est">Easting</param>
         /// <param name="nrt">Northing</param>
+        /// <example>
+        /// <code>
+        /// UniversalTransverseMercator utm = new UniversalTransverseMercator("Q", 14, 581943.5, 2111989.8);
+        /// </code>
+        /// </example>
         public UniversalTransverseMercator(string latz, int longz, double est, double nrt)
         {
             if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
@@ -64,7 +69,7 @@ namespace CoordinateSharp
             inverse_flattening = 298.257223563;
         }
         /// <summary>
-        /// Creates a UniversalTransverMercator object with a custom Datum.
+        /// Creates a UniversalTransverMercator (UTM) object with a custom datum(ellipsoid).
         /// </summary>
         /// <param name="latz">Latitude zone</param>
         /// <param name="longz">Longitude zone</param>
@@ -72,6 +77,11 @@ namespace CoordinateSharp
         /// <param name="nrt">Northing</param>
         /// <param name="radius">Equatorial Radius</param>
         /// <param name="flaten">Inverse Flattening</param>
+        /// <example>
+        /// <code>
+        /// UniversalTransverseMercator utm = new UniversalTransverseMercator("Q", 14, 581943.5, 2111989.8, 6378160.000, 298.25);
+        /// </code>
+        /// </example>
         public UniversalTransverseMercator(string latz, int longz, double est, double nrt, double radius, double flaten)
         {
             if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
@@ -287,7 +297,7 @@ namespace CoordinateSharp
         }
        
         /// <summary>
-        /// UTM Default String Format
+        /// Default formatted UTM string
         /// </summary>
         /// <returns>UTM Formatted Coordinate String</returns>
         public override string ToString()
@@ -462,7 +472,15 @@ namespace CoordinateSharp
         /// Converts UTM coordinate to Lat/Long
         /// </summary>
         /// <param name="utm">utm</param>
-        /// <returns>Coordinate object</returns>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on a UTM object.
+        /// <code>
+        /// UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 233434, 234234);
+		/// Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
+        /// Console.WriteLine(c); //N 2º 7' 2.332" E 6º 36' 12.653"
+        /// </code>
+        /// </example>
         public static Coordinate ConvertUTMtoLatLong(UniversalTransverseMercator utm)
         {
 

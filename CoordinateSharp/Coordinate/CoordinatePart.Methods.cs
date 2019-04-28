@@ -57,12 +57,12 @@ namespace CoordinateSharp
         /// </example>
         public CoordinatePart(CoordinateType cType)
         {
-            this.type = cType;
+            type = cType;
             decimalDegree = 0;
             degrees = 0;
             minutes = 0;
             seconds = 0;
-            if (this.type == CoordinateType.Lat) { position = CoordinatesPosition.N; }
+            if (type == CoordinateType.Lat) { position = CoordinatesPosition.N; }
             else { position = CoordinatesPosition.E; }
         }
         /// <summary>
@@ -85,9 +85,9 @@ namespace CoordinateSharp
         /// </example>
         public CoordinatePart(double value, CoordinateType cType)
         {
-            this.type = cType;
+            type = cType;
 
-            if (this.type == CoordinateType.Long)
+            if (type == CoordinateType.Long)
             {
                 if (value > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be greater than 180."); }
                 if (value < -180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be less than 180."); }

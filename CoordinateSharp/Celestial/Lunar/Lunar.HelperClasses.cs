@@ -40,7 +40,7 @@ using System.Reflection;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Moon Illumination Information
+    /// Class for storing moon illumination Information.
     /// </summary>
     [Serializable]
     public class MoonIllum
@@ -65,7 +65,7 @@ namespace CoordinateSharp
 
     }
     /// <summary>
-    /// Stores Perigee or Apogee values
+    /// Class for storing perigee and apogee details.
     /// </summary>
     [Serializable]
     public class PerigeeApogee
@@ -128,7 +128,7 @@ namespace CoordinateSharp
 
     }
     /// <summary>
-    /// Contains last and next perigee
+    /// Class for storing last and next perigee information for a specified DateTime.
     /// </summary>
     [Serializable]
     public class Perigee
@@ -164,7 +164,7 @@ namespace CoordinateSharp
 
     }
     /// <summary>
-    /// Contains last and next apogee
+    /// Class for storing last and next apogee information for a specified DateTime.
     /// </summary>
     [Serializable]
     public class Apogee
@@ -199,7 +199,7 @@ namespace CoordinateSharp
         }
     }
     /// <summary>
-    /// Class containing lunar eclipse information
+    /// Class for storing last and next lunar eclipse information at a specified DateTime and Coordinate.
     /// </summary>
     [Serializable]
     public class LunarEclipse
@@ -216,11 +216,11 @@ namespace CoordinateSharp
             nextEclipse = new LunarEclipseDetails();
         }
         /// <summary>
-        /// Details about the previous lunar eclipse
+        /// Details about the previous lunar eclipse at the specified DateTime and Coordinate.
         /// </summary>
         public LunarEclipseDetails LastEclipse { get { return lastEclipse; } }
         /// <summary>
-        /// Details about the next lunar eclipse
+        /// Details about the next lunar eclipse at the specified DateTime and Coordinate.
         /// </summary>
         public LunarEclipseDetails NextEclipse { get { return nextEclipse; } }
 
@@ -231,7 +231,7 @@ namespace CoordinateSharp
         }
     }
     /// <summary>
-    /// Astrological Signs
+    /// Class for storing astrological sign information.
     /// </summary>
     [Serializable]
     public class AstrologicalSigns
@@ -241,20 +241,20 @@ namespace CoordinateSharp
         internal string zodiacSign;
 
         /// <summary>
-        /// Astrological Zodiac Sign
+        /// Astrological Zodiac Sign.
         /// </summary>
         public string MoonName { get { return moonName; } }
         /// <summary>
-        /// Astrological Moon Sign
+        /// Astrological Moon Sign.
         /// </summary>
         public string MoonSign { get { return moonSign; } }
         /// <summary>
-        /// Astrological Zodiac Sign
+        /// Astrological Zodiac Sign.
         /// </summary>
         public string ZodiacSign { get { return zodiacSign; } }
     }
     /// <summary>
-    /// Class containing specific lunar eclipse information
+    /// Class containing detailed lunar eclipse information.
     /// </summary>
     [Serializable]
     public class LunarEclipseDetails
@@ -272,9 +272,9 @@ namespace CoordinateSharp
         private bool hasEclipseData;
 
         /// <summary>
-        /// Initialize a LunarEclipseDetails object
+        /// Initialize a LunarEclipseDetails object.
         /// </summary>
-        /// <param name="values">Lunar Eclipse String Values</param>
+        /// <param name="values">Lunar Eclipse String Values.</param>
         public LunarEclipseDetails(List<string> values)
         {
             //Eclipse has value
@@ -334,7 +334,7 @@ namespace CoordinateSharp
             Adjust_Dates();
         }
         /// <summary>
-        /// Initialize an empty LunarEclipseDetails object
+        /// Initialize a default LunarEclipseDetails object.
         /// </summary>
         public LunarEclipseDetails()
         {
@@ -393,49 +393,53 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Determine if the LunarEclipseDetails object has been populated
+        /// Determine if the LunarEclipseDetails object has been populated.
         /// </summary>
         public bool HasEclipseData { get { return hasEclipseData; } }
         /// <summary>
-        /// Date of lunar eclipse
+        /// Date of lunar eclipse.
         /// </summary>
         public DateTime Date { get { return date; } }
         /// <summary>
-        /// Lunar eclipse type
+        /// Lunar eclipse type.
         /// </summary>
         public LunarEclipseType Type { get { return type; } }
         /// <summary>
-        /// DateTime when the penumbral eclipse begins
+        /// DateTime when the penumbral eclipse begins.
         /// </summary>
         public DateTime PenumbralEclipseBegin { get { return penumbralEclipseBegin; } }
         /// <summary>
-        /// DateTime when the partial eclipse begins (if applicable)
+        /// DateTime when the partial eclipse begins (if applicable).
         /// </summary>
+        /// <remarks>returns 0001/01/01 if event did not occur.</remarks>
         public DateTime PartialEclispeBegin { get { return partialEclispeBegin; } }
         /// <summary>
-        /// DateTime when Total eclipse begins (if applicable)
+        /// DateTime when Total eclipse begins (if applicable).
         /// </summary>
+        /// <remarks>returns 0001/01/01 if event did not occur.</remarks>
         public DateTime TotalEclipseBegin { get { return totalEclipseBegin; } }
         /// <summary>
-        /// DateTime when eclipse is at Mid
+        /// DateTime when eclipse is at Mid.
         /// </summary>
         public DateTime MidEclipse { get { return midEclipse; } }
         /// <summary>
-        /// DateTime when Total eclipse ends (if applicable)
+        /// DateTime when total eclipse ends (if applicable).
         /// </summary>
+        /// <remarks>returns 0001/01/01 if event did not occur.</remarks>
         public DateTime TotalEclipseEnd { get { return totalEclipseEnd; } }
         /// <summary>
-        /// DateTime when the partial elipse ends (if applicable)
+        /// DateTime when the partial eclipse ends (if applicable).
         /// </summary>
+        /// <remarks>returns 0001/01/01 if event did not occur.</remarks>
         public DateTime PartialEclispeEnd { get { return partialEclispeEnd; } }
         /// <summary>
-        /// DateTime when the penumbral elipse ends
+        /// DateTime when the penumbral eclipse ends.
         /// </summary>
         public DateTime PenumbralEclispeEnd { get { return penumbralEclipseEnd; } }
         /// <summary>
-        /// Lunar eclipse default string
+        /// Lunar eclipse default string.
         /// </summary>
-        /// <returns>Lunar eclipse base date string</returns>
+        /// <returns>Lunar eclipse base date string.</returns>
         public override string ToString()
         {
             return date.ToString("dd-MMM-yyyy");

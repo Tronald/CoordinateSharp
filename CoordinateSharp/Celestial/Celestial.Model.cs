@@ -149,7 +149,7 @@ namespace CoordinateSharp
         /// The following example gets the moon rise time in UTC at N 39, W 72 on 1-March-2018
         /// <code>
         /// Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
-		/// Console.WriteLine(coordinate.CelestialInfo.MoonRise); 3/1/2018 10:27:07 PM (UTC)
+	    /// Console.WriteLine(coordinate.CelestialInfo.MoonRise); 3/1/2018 10:27:07 PM (UTC)
         /// </code>
         /// </example>
         /// The following example demonstrates a returned null MoonRise value as the moon does not rise at N 39, W 72 on 1-March-2018. 

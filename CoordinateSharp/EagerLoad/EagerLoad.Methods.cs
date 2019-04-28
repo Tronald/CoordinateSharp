@@ -39,8 +39,31 @@ namespace CoordinateSharp
     public partial class EagerLoad
     {
         /// <summary>
-        /// Create an EagerLoad object
+        /// Creates a default EagerLoad object.
         /// </summary>
+        /// <remarks>
+        /// All properties are set with eager loading turned on.
+        /// </remarks>
+        /// <example>
+        /// The following example turns off eager loading for a Coordinate objects CelestialInfo property.
+        /// <code>
+        /// //Create a default EagerLoading object.
+        /// EagerLoad el = new EagerLoad();
+        ///
+        /// //Turn of eagerloading of celestial information.
+        /// el.Celestial = false;
+        /// 
+        /// //Create coordinate with defined eager loading settings.
+        /// Coordinate coord = new Coordinate(25, 25, new DateTime(2018, 3, 2), el);
+        /// 
+        /// //Load celestial information when ready.
+        /// //Failure to do this will cause NullReference Exceptions in the Coordinate objects CelestialInfo Property.
+        /// coord.LoadCelestialInfo();
+        /// 
+        /// //Display UTC sunset time at the location.
+        /// Console.WriteLine(coord.CelestialInfo.SunSet); //3/2/2018 4:23:46 PM
+        /// </code>
+        /// </example>
         public EagerLoad()
         {
             Celestial = true;
@@ -53,6 +76,24 @@ namespace CoordinateSharp
         /// Create an EagerLoad object with all options on or off
         /// </summary>
         /// <param name="isOn">Turns EagerLoad on or off</param>
+        /// <example>
+        /// The following example turns off eagerloading for a Coordinate objects UTM/MGRS, Cartesian/ECEF and CelestialInfo properties.
+        /// <code>
+        /// //Create an EagerLoading object with all properties turned off.
+        /// //(All properties will now be set to lazy load).
+        /// EagerLoad el = new EagerLoad(false);
+        /// 
+        /// //Create coordinate with defined eager loading settings.
+        /// Coordinate coord = new Coordinate(25, 25, new DateTime(2018, 3, 2), el);
+        /// 
+        /// //Load celestial information when ready.
+        /// //Failure to do this will cause NullReference Exceptions in the Coordinate objects CelestialInfo Property.
+        /// coord.LoadCelestialInfo();
+        /// 
+        /// //Display UTC sunset time at the location.
+        /// Console.WriteLine(coord.CelestialInfo.SunSet); //3/2/2018 4:23:46 PM
+        /// </code>
+        /// </example>
         public EagerLoad(bool isOn)
         {
             Celestial = isOn;
@@ -62,9 +103,27 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Create an EagerLoad object with only the specified flag options turned on.
+        /// Creates an EagerLoad object. Only the specified flags will be set to eager load.
         /// </summary>
         /// <param name="et">EagerLoadType</param>
+        /// <example>
+        /// The following example sets CelestialInfo and Cartesian properties to eager load. Other conversions will be lazy loaded.
+        /// <code>
+        /// //Create an EagerLoading object with only CelestialInfo and Cartesian properties set to eager load.
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Celestial | EagerLoadType.Cartesian);
+        /// 
+        /// //Create coordinate with defined eagerloading settings.
+        /// Coordinate coord = new Coordinate(25, 25, new DateTime(2018, 3, 2), el);
+        /// 
+        /// //Display UTC sunset time at the location.
+        /// Console.WriteLine(coord.CelestialInfo.SunSet); //3/2/2018 4:23:46 PM
+        /// Console.WriteLine(coord.Cartesian); //0.8213938 0.38302222 0.42261826
+        /// 
+        /// //Load UTM_MGRS when ready.
+        /// coord.LoadUTM_MGRS_Info();
+        /// Console.WriteLine(coord.UTM); //35R 298154mE 2766437mN
+        /// </code>
+        /// </example>
         public EagerLoad(EagerLoadType et)
         {
             Cartesian = false;
@@ -91,10 +150,25 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Creates an EagerLoad object. Only the specified flags will be set to EagerLoad.
+        /// Creates an EagerLoad object. Only the specified flags will be set to eager load.
         /// </summary>
         /// <param name="et">EagerLoadType</param>
         /// <returns>EagerLoad</returns>
+        /// <example>
+        /// The following example sets CelestialInfo and Cartesian properties to eager load using a static method. Other conversions will be lazy loaded.
+        /// <code>
+        /// //Create coordinate with defined eagerloading settings.
+        /// Coordinate coord = new Coordinate(25, 25, new DateTime(2018, 3, 2), EagerLoad.Create(EagerLoadType.Celestial | EagerLoadType.Cartesian));
+        /// 
+        /// //Display UTC sunset time at the location.
+        /// Console.WriteLine(coord.CelestialInfo.SunSet); //3/2/2018 4:23:46 PM
+        /// Console.WriteLine(coord.Cartesian); //0.8213938 0.38302222 0.42261826
+        /// 
+        /// //Load UTM_MGRS when ready.
+        /// coord.LoadUTM_MGRS_Info();
+        /// Console.WriteLine(coord.UTM); //35R 298154mE 2766437mN
+        /// </code>
+        /// </example>
         public static EagerLoad Create(EagerLoadType et)
         {
             EagerLoad el = new EagerLoad(et);

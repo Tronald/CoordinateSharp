@@ -38,7 +38,7 @@ using System;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Contains distance values between two coordinates.
+    /// Class for handling distance conversions and distance/bearing values between two coordinates.
     /// </summary>
     [Serializable]
     public partial class Distance

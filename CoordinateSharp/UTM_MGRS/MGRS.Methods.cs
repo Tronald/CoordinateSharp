@@ -43,13 +43,18 @@ namespace CoordinateSharp
     public partial class MilitaryGridReferenceSystem
     {
         /// <summary>
-        /// Create an MGRS object with WGS84 datum
+        /// Creates an MilitaryGridReferenceSystem (MGRS) object with a default WGS84 datum(ellipsoid).
         /// </summary>
         /// <param name="latz">Lat Zone</param>
         /// <param name="longz">Long Zone</param>
         /// <param name="d">Digraph</param>
         /// <param name="e">Easting</param>
         /// <param name="n">Northing</param>
+        /// <example>
+        /// <code>
+        /// MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
+        /// </code>
+        /// </example>
         public MilitaryGridReferenceSystem(string latz, int longz, string d, double e, double n)
         {
             string digraphLettersE = "ABCDEFGHJKLMNPQRSTUVWXYZ";
@@ -71,7 +76,7 @@ namespace CoordinateSharp
           
         }
         /// <summary>
-        /// Create an MGRS object with custom datum
+        /// Creates an MilitaryGridReferenceSystem (MGRS) object with a custom datum(ellipsoid).
         /// </summary>
         /// <param name="latz">Lat Zone</param>
         /// <param name="longz">Long Zone</param>
@@ -80,6 +85,11 @@ namespace CoordinateSharp
         /// <param name="n">Northing</param>
         /// <param name="rad">Equatorial Radius</param>
         /// <param name="flt">Inverse Flattening</param>
+        /// <example>
+        /// <code>
+        /// MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982, 6378160.000, 298.25);
+        /// </code>
+        /// </example>
         public MilitaryGridReferenceSystem(string latz, int longz, string d, double e, double n,double rad, double flt)
         {
             string digraphLettersE = "ABCDEFGHJKLMNPQRSTUVWXYZ";
@@ -147,12 +157,20 @@ namespace CoordinateSharp
 
             withinCoordinateSystemBounds = utm.WithinCoordinateSystemBounds;
         }
-       
+
         /// <summary>
         /// Creates a Coordinate object from an MGRS/NATO UTM Coordinate
         /// </summary>
         /// <param name="mgrs">MilitaryGridReferenceSystem</param>
         /// <returns>Coordinate object</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on a MGRS object.
+        /// <code>
+        /// MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
+        /// Coordinate c = MilitaryGridReferenceSystem.MGRStoLatLong(mgrs);
+        /// Console.WriteLine(c); //N 0º 33' 35.988" W 60º 0' 0.01"
+        /// </code>
+        /// </example>
         public static Coordinate MGRStoLatLong(MilitaryGridReferenceSystem mgrs)
         {
             string latz = mgrs.LatZone;
@@ -234,9 +252,9 @@ namespace CoordinateSharp
           
             return c;
         }
-       
+
         /// <summary>
-        /// MGRS Default String Format
+        /// Default formatted MGRS string
         /// </summary>
         /// <returns>MGRS Formatted Coordinate String</returns>
         public override string ToString()

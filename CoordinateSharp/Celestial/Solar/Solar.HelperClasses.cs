@@ -40,7 +40,7 @@ using System.Reflection;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Additional Solar Time Information
+    /// Class for storing additional solar time information.
     /// </summary>
     [Serializable]
     public class AdditionalSolarTimes
@@ -55,7 +55,7 @@ namespace CoordinateSharp
         internal DateTime? sunsetBottomDisc;
 
         /// <summary>
-        /// Create an AdditionalSolarTimes object.
+        /// Create a default AdditionalSolarTimes object.
         /// </summary>
         public AdditionalSolarTimes()
         {
@@ -68,37 +68,61 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Returns Civil Dawn Time
+        /// Civil Dawn Time.
         /// </summary>
+        /// <remarks>
+        /// DateTime will be null if event does not occur.
+        /// </remarks>
         public DateTime? CivilDawn { get { return civilDawn; } }
         /// <summary>
-        /// Returns Civil Dusk Time
+        /// Civil Dusk Time.
         /// </summary>
+        /// <remarks>
+        /// DateTime will be null if event does not occur.
+        /// </remarks>
         public DateTime? CivilDusk { get { return civilDusk; } }
         /// <summary>
-        /// Returns Nautical Dawn Time
+        /// Nautical Dawn Time.
         /// </summary>
+        /// <remarks>
+        /// DateTime will be null if event does not occur.
+        /// </remarks>
         public DateTime? NauticalDawn { get { return nauticalDawn; } }
         /// <summary>
-        /// Returns Nautical Dusk Time
+        /// Nautical Dusk Time.
         /// </summary>
+        /// <remarks>
+        /// DateTime will be null if event does not occur.
+        /// </remarks>
         public DateTime? NauticalDusk { get { return nauticalDusk; } }
         /// <summary>
-        /// Returns Astronomical Dawn Time
+        /// Astronomical Dawn Time.
         /// </summary>
+        /// <remarks>
+        /// DateTime will be null if event does not occur.
+        /// </remarks>
         public DateTime? AstronomicalDawn { get { return astronomicalDawn; } }
         /// <summary>
-        /// Returns Astronomical Dusk Time
+        /// Astronomical Dusk Time.
         /// </summary>
+        /// <remarks>
+        /// DateTime will be null if event does not occur.
+        /// </remarks>
         public DateTime? AstronomicalDusk { get { return astronomicalDusk; } }
 
         /// <summary>
-        /// Returns the time when the bottom of the solar disc touches the horizon after sunrise
+        /// DateTime when the bottom of the solar disc touches the horizon after a sunrise event.
         /// </summary>
+        /// <remarks>
+        /// DateTime will be null if event does not occur.
+        /// </remarks>
         public DateTime? SunriseBottomDisc { get { return sunriseBottomDisc; } }
         /// <summary>
-        /// Returns the time when the bottom of the solar disc touches the horizon before sunset
+        /// DateTime when the bottom of the solar disc touches the horizon before sunset
         /// </summary>
+        /// <remarks>
+        /// DateTime will be null if event does not occur.
+        /// </remarks>
         public DateTime? SunsetBottomDisc { get { return sunsetBottomDisc; } }
 
         internal void Convert_To_Local_Time(double offset)
@@ -122,7 +146,7 @@ namespace CoordinateSharp
         }
     }
     /// <summary>
-    /// Class containing solar eclipse information
+    /// Class for storing last and next solar eclipse information at a specified DateTime and Coordinate.
     /// </summary>
     [Serializable]
     public class SolarEclipse
@@ -131,7 +155,7 @@ namespace CoordinateSharp
         internal SolarEclipseDetails nextEclipse;
 
         /// <summary>
-        /// Initialize a SolarEclipse object
+        /// Initialize a SolarEclipse object.
         /// </summary>
         public SolarEclipse()
         {
@@ -139,11 +163,11 @@ namespace CoordinateSharp
             nextEclipse = new SolarEclipseDetails();
         }
         /// <summary>
-        /// Details about the previous solar eclipse
+        /// Details about the previous solar eclipse at the specified DateTime and Coordinate.
         /// </summary>
         public SolarEclipseDetails LastEclipse { get { return lastEclipse; } }
         /// <summary>
-        /// Details about the next solar eclipse
+        /// Details about the next solar eclipse at the specified DateTime and Coordinate.
         /// </summary>
         public SolarEclipseDetails NextEclipse { get { return nextEclipse; } }
 
@@ -154,7 +178,7 @@ namespace CoordinateSharp
         }
     }
     /// <summary>
-    /// Class containing specific solar eclipse information
+    /// Class containing detailed solar eclipse information.
     /// </summary>
     [Serializable]
     public class SolarEclipseDetails
@@ -167,10 +191,11 @@ namespace CoordinateSharp
         internal DateTime aorTEclipseEnd;
         internal DateTime partialEclispeEnd;
         internal TimeSpan aorTDuration;
+
         internal bool hasEclipseData;
 
         /// <summary>
-        /// Initialize a SolarEclipseDetails object
+        /// Initialize a SolarEclipseDetails object.
         /// </summary>
         /// <param name="values">Solar Eclipse String Values</param>
         public SolarEclipseDetails(List<string> values)
@@ -300,44 +325,45 @@ namespace CoordinateSharp
             }
         }
         /// <summary>
-        /// Determine if the SolarEclipseDetails object has been populated
+        /// Has SolarEclipseDetails object has been populated.
         /// </summary>
         public bool HasEclipseData { get { return hasEclipseData; } }
         /// <summary>
-        /// Date of solar eclipse
+        /// Date of solar eclipse.
         /// </summary>
         public DateTime Date { get { return date; } }
         /// <summary>
-        /// Solar eclipse type
+        /// Solar eclipse type.
         /// </summary>
         public SolarEclipseType Type { get { return type; } }
         /// <summary>
-        /// DateTime when the partial eclipse begins
+        /// DateTime when the partial eclipse begins.
         /// </summary>
         public DateTime PartialEclispeBegin { get { return partialEclispeBegin; } }
         /// <summary>
-        /// DateTime when an Annular or Total eclipse begins (if applicable)
+        /// DateTime when an Annular or Total eclipse begins (if applicable).
         /// </summary>
+        /// <remarks>returns 0001/01/01 if event did not occur</remarks>
         public DateTime AorTEclipseBegin { get { return aorTEclipseBegin; } }
         /// <summary>
-        /// DateTime when eclipse is at Maximum
+        /// DateTime when eclipse is at Maximum.
         /// </summary>
         public DateTime MaximumEclipse { get { return maximumEclipse; } }
-
         /// <summary>
-        /// DateTime when the Annular or Total eclipse ends (if applicable)
+        /// DateTime when the Annular or Total eclipse ends (if applicable).
         /// </summary>
+        /// <remarks>returns 0001/01/01 if event did not occur</remarks>
         public DateTime AorTEclipseEnd { get { return aorTEclipseEnd; } }
         /// <summary>
-        /// DateTime when the partial elipse ends
+        /// DateTime when the partial eclipse ends.
         /// </summary>
         public DateTime PartialEclispeEnd { get { return partialEclispeEnd; } }
         /// <summary>
-        /// Duration of Annular or Total eclipse (if applicable)
+        /// Duration of Annular or Total eclipse (if applicable).
         /// </summary>
         public TimeSpan AorTDuration { get { return aorTDuration; } }
         /// <summary>
-        /// Solat eclipse default string
+        /// Solar eclipse default string.
         /// </summary>
         /// <returns>Solar eclipse base date string</returns>
         public override string ToString()

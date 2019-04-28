@@ -39,27 +39,54 @@ using System;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Geo Fence class. It helps to check if points/coordinates are inside a polygon, 
-    /// Next to a polyline, and counting...
+    /// The GeoFence class is used to help check if points/coordinates are inside or near a specified polygon/polyline, 
     /// </summary>
     [Serializable]
     public partial class GeoFence
     {   
         private List<Point> _points = new List<Point>();
-       
+
         /// <summary>
-        /// Prepare GeoFence with a list of points
+        /// Create a GeoFence using a list of points. 
+        /// A GeoFence can be either a series of lines or polygons.
         /// </summary>
         /// <param name="points">List of points</param>
+        /// <example>
+        /// The following example creates a square in the USA using lat/long points.
+        /// <code>
+        /// List&lt;GeoFence.Point&gt; points = new List&lt;GeoFence.Point&gt;();
+        /// 
+        /// //Points specified manually to create a square in the USA.
+        /// //First and last points should be identical if creating a polygon boundary.
+        /// points.Add(new GeoFence.Point(31.65, -106.52));
+        /// points.Add(new GeoFence.Point(31.65, -84.02));
+        /// points.Add(new GeoFence.Point(42.03, -84.02));
+        /// points.Add(new GeoFence.Point(42.03, -106.52));
+        /// points.Add(new GeoFence.Point(31.65, -106.52));
+        /// </code>
+        /// </example>
         public GeoFence(List<Point> points)
         {
             _points = points;
         }
 
         /// <summary>
-        /// Prepare Geofence with a list of coordinates
+        /// Create a GeoFence using a list of coordinates
+        /// A GeoFence can be either a series of lines or polygons.
         /// </summary>
         /// <param name="coordinates">List of coordinates</param>
+        /// <example>
+        /// The following example creates a polyline base on coordinates.
+        /// <code>
+        /// List&lt;Coordinate&gt; coords = new List&lt;Coordinate&gt;();
+        ///  
+        /// coords.Add(new Coordinate(25,63));
+        /// coords.Add(new Coordinate(26,63));
+        /// coords.Add(new Coordinate(27,63));
+        ///  
+        /// GeoFence gf = new GeoFence(coords); 
+        /// </code>
+        /// </example>
         public GeoFence(List<Coordinate> coordinates)
         {
             foreach (var c in coordinates)
@@ -87,15 +114,37 @@ namespace CoordinateSharp
                 return new Coordinate(b.Latitude, b.Longitude);
 
             return new Coordinate(a.Latitude + (number / denom) * d.Latitude, a.Longitude + (number / denom) * d.Longitude);
-        }    
+        }
 
         /// <summary>
-        /// The function will return true if the point x,y is inside the polygon, or
-        /// false if it is not.  If the point is exactly on the edge of the polygon,
-        /// then the function may return true or false.
+        /// Determine if the coordinate is inside the polygon.     
         /// </summary>
-        /// <param name="point">The point to test</param>
+        /// <param name="point">Point to test</param>
+        /// <remarks>
+        /// Points sitting on the edge of a polygon may return true or false.
+        /// </remarks>
         /// <returns>bool</returns>
+        /// <example>
+        /// The following example shows how to determine if a coordinate is inside of a specified polygon.
+        /// <code>
+        /// List&lt;GeoFence.Point&gt; points = new List&lt;GeoFence.Point&gt;();
+        /// 
+        /// //Points specified manually to create a square in the USA.
+        /// //First and last points should be identical if creating a polygon boundary.
+        /// points.Add(new GeoFence.Point(31.65, -106.52));
+        /// points.Add(new GeoFence.Point(31.65, -84.02));
+        /// points.Add(new GeoFence.Point(42.03, -84.02));
+        /// points.Add(new GeoFence.Point(42.03, -106.52));
+        /// points.Add(new GeoFence.Point(31.65, -106.52));
+        /// 
+        /// GeoFence gf = new GeoFence(points);
+        /// 
+        /// Coordinate c = new Coordinate(36.67, -101.51);
+        /// 
+        /// //Determine if Coordinate is within polygon
+        /// Console.WriteLine(gf.IsPointInPolygon(c)); //True (coordinate is within the polygon)
+        /// </code>
+        /// </example>
         public bool IsPointInPolygon(Coordinate point)
         {
             if (point == null)
@@ -121,12 +170,33 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// The function will return true if the point x,y is next the given range of 
-        /// the polyline, or false if it is not.
+        /// Determine if a coordinate is next to the given range (in meters) of the polyline.
         /// </summary>
-        /// <param name="point">The point to test</param>
-        /// <param name="range">The range in meters</param>
+        /// <param name="point">Point to test</param>
+        /// <param name="range">Range in meters</param>
         /// <returns>bool</returns>
+        /// <example>
+        /// The following example shows how to determine if a coordinate is within 1000 meters of
+        /// the edge of the specified polygon.
+        /// <code>
+        /// List&lt;GeoFence.Point&gt; points = new List&lt;GeoFence.Point&gt;();
+        /// 
+        /// //Points specified manually to create a square in the USA.
+        /// //First and last points should be identical if creating a polygon boundary.
+        /// points.Add(new GeoFence.Point(31.65, -106.52));
+        /// points.Add(new GeoFence.Point(31.65, -84.02));
+        /// points.Add(new GeoFence.Point(42.03, -84.02));
+        /// points.Add(new GeoFence.Point(42.03, -106.52));
+        /// points.Add(new GeoFence.Point(31.65, -106.52));
+        /// 
+        /// GeoFence gf = new GeoFence(points);
+        /// 
+        /// Coordinate c = new Coordinate(36.67, -101.51);
+        ///  
+        /// //Determine if Coordinate is within specific range of shapes line.
+        /// Console.WriteLine(gf.IsPointInRangeOfLine(c, 1000)); //False (coordinate is not within 1000 meters of the edge of the polygon)
+        /// </code>
+        /// </example>
         public bool IsPointInRangeOfLine(Coordinate point, double range)
         {
             if (point == null)
@@ -143,12 +213,33 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// The function will return true if the point x,y is next the given range of 
-        /// the polyline, or false if it is not.
+        /// Determine if the coordinate is next the given range of the polyline.
         /// </summary>
-        /// <param name="point">The point to test</param>
-        /// <param name="range">The range is a distance object</param>
+        /// <param name="point">Point to test</param>
+        /// <param name="range">Range is a distance object</param>
         /// <returns>bool</returns>
+        /// <example>
+        /// The following example shows how to determine if a coordinate is within 1 km of
+        /// the edge of the specified polygon.
+        /// <code>
+        /// List&lt;GeoFence.Point&gt; points = new List&lt;GeoFence.Point&gt;();
+        /// 
+        /// //Points specified manually to create a square in the USA.
+        /// //First and last points should be identical if creating a polygon boundary.
+        /// points.Add(new GeoFence.Point(31.65, -106.52));
+        /// points.Add(new GeoFence.Point(31.65, -84.02));
+        /// points.Add(new GeoFence.Point(42.03, -84.02));
+        /// points.Add(new GeoFence.Point(42.03, -106.52));
+        /// points.Add(new GeoFence.Point(31.65, -106.52));
+        /// 
+        /// GeoFence gf = new GeoFence(points);
+        /// 
+        /// Coordinate c = new Coordinate(36.67, -101.51);
+        /// 
+        /// Distance d = new Distance(1, DistanceType.Kilometers);
+        /// Console.WriteLine(gf.IsPointInRangeOfLine(c, d)); //False (coordinate is not within 1 km of the edge of the polygon)
+        /// </code>
+        /// </example>
         public bool IsPointInRangeOfLine(Coordinate point, Distance range)
         {
             if (point == null || range == null)

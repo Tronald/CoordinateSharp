@@ -39,7 +39,7 @@ namespace CoordinateSharp
 {
 
     /// <summary>
-    /// Used for setting whether a coordinate part is latitudinal or longitudinal.
+    /// Used to specify whether a CoordinatePart object is latitudinal or longitudinal.
     /// </summary>
     [Serializable]
     public enum CoordinateType
@@ -55,7 +55,7 @@ namespace CoordinateSharp
     }
 
     /// <summary>
-    /// Used to set a coordinate part position.
+    /// Used to set a CoordinatePart object's position.
     /// </summary>
     [Serializable]
     public enum CoordinatesPosition : int
@@ -160,7 +160,7 @@ namespace CoordinateSharp
     }
 
     /// <summary>
-    /// EagerLoad Enumerator
+    /// EagerLoad property type enumerator
     /// </summary>
     [Serializable]
     [Flags]
@@ -186,7 +186,7 @@ namespace CoordinateSharp
     }
 
     /// <summary>
-    /// Coordinate Format Types.
+    /// Coordinate format types.
     /// </summary>
     [Serializable]
     public enum CoordinateFormatType
@@ -222,7 +222,7 @@ namespace CoordinateSharp
     }
 
     /// <summary>
-    /// Type of format a Coordinate parsed from. 
+    /// Type of format a Coordinate is parsed from. 
     /// </summary>
     [Serializable]
     public enum Parse_Format_Type
@@ -296,7 +296,7 @@ namespace CoordinateSharp
         NoSet
     }
     /// <summary>
-    ///  moon perigee or apogee indicator
+    /// Moon perigee or apogee indicator
     /// </summary>
     internal enum MoonDistanceType
     {

@@ -38,37 +38,76 @@ using System;
 namespace CoordinateSharp
 { 
     public partial class Distance
-    {        
+    {
         /// <summary>
-        /// Initializes a distance object using Haversine (Spherical Earth).
+        /// Initializes a Distance object based on the distance between 2 coordinates using the default distance formula.
         /// </summary>
-        /// <param name="c1">Coordinate 1</param>
-        /// <param name="c2">Coordinate 2</param>
-        public Distance(Coordinate c1, Coordinate c2)
+        /// <remarks>
+        /// Default distance formula uses Haversine (Spherical Earth) calculations.
+        /// </remarks>
+        /// <param name="coord1">Coordinate 1</param>
+        /// <param name="coord2">Coordinate 2</param>
+        /// <example>
+        /// The following example grabs the distance in KM and bearing between 2 coordinates
+        /// using the default Haversine calculations.
+        /// <code>
+        /// Coordinate coordinate1 = new Coordinate(25, 65);
+		/// Coordinate coordinate2 = new Coordinate(27.6, 63);
+        /// 
+        /// Distance distance = new Distance(coordinate1, coordinate2);
+        /// 
+        /// Console.WriteLine(distance.Kilometers); //351.167091506772
+		/// Console.WriteLine(distance.Bearing); //214.152133893015
+        /// </code>
+        /// </example>
+        public Distance(Coordinate coord1, Coordinate coord2)
         {
-            Haversine(c1, c2);
+            Haversine(coord1, coord2);
         }
         /// <summary>
-        /// Initializes a distance object using Haversine (Spherical Earth) or Vincenty (Elliptical Earth).
+        /// Initializes a Distance object based on the distance between 2 coordinates.
         /// </summary>
-        /// <param name="c1">Coordinate 1</param>
-        /// <param name="c2">Coordinate 2</param>
+        /// <remarks>
+        /// Distance formula may either be Haversine (Spherical Earth) or Vincenty (Ellipsoidal Earth) calculations.
+        /// </remarks>
+        /// <param name="coord1">Coordinate 1</param>
+        /// <param name="coord2">Coordinate 2</param>
         /// <param name="shape">Shape of earth</param>
-        public Distance(Coordinate c1, Coordinate c2, Shape shape)
+        /// /// <example>
+        /// The following example grabs the distance in KM and bearing between 2 coordinates
+        /// using Vincenty (ellipsoidal earth) calculations.
+        /// <code>
+        /// Coordinate coordinate1 = new Coordinate(25, 65);
+		/// Coordinate coordinate2 = new Coordinate(27.6, 63);
+        /// 
+        /// Distance distance = new Distance(coordinate1, coordinate2, Shape.Ellipsoid);
+        /// 
+        /// Console.WriteLine(distance.Kilometers); //350.50857212259
+		/// Console.WriteLine(distance.Bearing); //215.183316089463
+        /// </code>
+        /// </example>
+        public Distance(Coordinate coord1, Coordinate coord2, Shape shape)
         {
             if (shape == Shape.Sphere)
             {
-                Haversine(c1, c2);
+                Haversine(coord1, coord2);
             }
             else
             {
-                Vincenty(c1, c2);
+                Vincenty(coord1, coord2);
             }
         }
         /// <summary>
-        /// Initializes distance object based on distance in KM
+        /// Initializes Distance object based on distance in KM
         /// </summary>
         /// <param name="km">Kilometers</param>
+        /// <example>
+        /// The following example converts kilometers into miles.
+        /// <code>
+        /// Distance distance = new Distance(10.36);
+		/// Console.WriteLine(distance.Miles); //6.43740356
+        /// </code>
+        /// </example>
         public Distance(double km)
         {
             kilometers = km;
@@ -78,11 +117,19 @@ namespace CoordinateSharp
             nauticalMiles = meters * 0.0005399565;
             bearing = 0;//None specified
         }
+
         /// <summary>
-        /// Initializaes distance object based on specified distance and measurement type
+        /// Initializes a Distance object based on a specified distance and measurement type.
         /// </summary>
         /// <param name="distance">Distance</param>
         /// <param name="type">Measurement type</param>
+        /// <example>
+        /// The following example converts meters into miles.
+        /// <code>
+        /// Distance distance = new Distance(1000.36, DistanceType.Meters);
+		/// Console.WriteLine(distance.Miles); //0.62159469356
+        /// </code>
+        /// </example>
         public Distance(double distance, DistanceType type)
         {
             bearing = 0;
@@ -132,21 +179,22 @@ namespace CoordinateSharp
                     break;
             }
         }
-        private void Vincenty(Coordinate c1, Coordinate c2)
+
+        private void Vincenty(Coordinate coord1, Coordinate coord2)
         {
             double lat1, lat2, lon1, lon2;
             double d, crs12, crs21;
 
-            lat1 = c1.Latitude.ToRadians();
-            lat2 = c2.Latitude.ToRadians();
-            lon1 = c1.Longitude.ToRadians();
-            lon2 = c2.Longitude.ToRadians();
+            lat1 = coord1.Latitude.ToRadians();
+            lat2 = coord2.Latitude.ToRadians();
+            lon1 = coord1.Longitude.ToRadians();
+            lon2 = coord2.Longitude.ToRadians();
             //Ensure datums match between coords
-            if ((c1.equatorial_radius != c2.equatorial_radius) || (c1.inverse_flattening != c2.inverse_flattening))
+            if ((coord1.equatorial_radius != coord2.equatorial_radius) || (coord1.inverse_flattening != coord2.inverse_flattening))
             {
                 throw new InvalidOperationException("The datum set does not match between Coordinate objects.");
             }
-            double[] ellipse = new double[] { c1.equatorial_radius, c1.inverse_flattening };
+            double[] ellipse = new double[] { coord1.equatorial_radius, coord1.inverse_flattening };
 
 
             // elliptic code
@@ -165,20 +213,20 @@ namespace CoordinateSharp
 
         }
 
-        private void Haversine(Coordinate c1, Coordinate c2)
+        private void Haversine(Coordinate coord1, Coordinate coord2)
         {
             ////RADIANS
-            double nLat = c1.Latitude.ToDouble() * Math.PI / 180;
-            double nLong = c1.Longitude.ToDouble() * Math.PI / 180;
-            double cLat = c2.Latitude.ToDouble() * Math.PI / 180;
-            double cLong = c2.Longitude.ToDouble() * Math.PI / 180;
+            double nLat = coord1.Latitude.ToDouble() * Math.PI / 180;
+            double nLong = coord1.Longitude.ToDouble() * Math.PI / 180;
+            double cLat = coord2.Latitude.ToDouble() * Math.PI / 180;
+            double cLong = coord2.Longitude.ToDouble() * Math.PI / 180;
 
             //Calcs
             double R = 6371e3; //meters
             double v1 = nLat;
             double v2 = cLat;
-            double latRad = (c2.Latitude.ToDouble() - c1.Latitude.ToDouble()) * Math.PI / 180;
-            double longRad = (c2.Longitude.ToDouble() - c1.Longitude.ToDouble()) * Math.PI / 180;
+            double latRad = (coord2.Latitude.ToDouble() - coord1.Latitude.ToDouble()) * Math.PI / 180;
+            double longRad = (coord2.Longitude.ToDouble() - coord1.Longitude.ToDouble()) * Math.PI / 180;
 
             double a = Math.Sin(latRad / 2.0) * Math.Sin(latRad / 2.0) +
                 Math.Cos(nLat) * Math.Cos(cLat) * Math.Sin(longRad / 2.0) * Math.Sin(longRad / 2.0);

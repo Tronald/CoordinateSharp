@@ -39,7 +39,7 @@ using System;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Universal Transverse Mercator (UTM) coordinate system. Uses the WGS 84 Datum.
+    /// Universal Transverse Mercator (UTM) coordinate system. Uses the WGS 84 Datum by default.
     /// </summary>
     [Serializable]
     public partial class UniversalTransverseMercator 
@@ -101,7 +101,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Is the UTM conversion within the coordinate system's accurate boundaries after conversion from Lat/Long.
+        /// Determine if the UTM conversion within the coordinate system's accurate boundaries after conversion from Lat/Long.
         /// </summary>
         public bool WithinCoordinateSystemBounds
         {

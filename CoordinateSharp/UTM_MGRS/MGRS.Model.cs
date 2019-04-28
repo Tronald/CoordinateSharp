@@ -39,7 +39,7 @@ using System;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Military Grid Reference System (MGRS). Uses the WGS 84 Datum.
+    /// Military Grid Reference System (MGRS). Uses the WGS 84 datum by default.
     /// Relies upon values from the UniversalTransverseMercator class
     /// </summary>
     [Serializable]
@@ -98,7 +98,7 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Is MGRS conversion within the coordinate system's accurate boundaries after conversion from Lat/Long.
+        /// Determine if the MGRS conversion within the coordinate system's accurate boundaries after conversion from Lat/Long.
         /// </summary>
         public bool WithinCoordinateSystemBounds
         {
