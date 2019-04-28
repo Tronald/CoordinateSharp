@@ -12,4 +12,8 @@ The interactive user interfaces in modified source and object code versions of t
 
 You can be released from the requirements of the license by purchasing a commercial license. Buying such a license is mandatory as soon as you develop commercial activities involving the CoordinateSharp software without disclosing the source code of your own applications. These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application, or shipping CoordinateSharp with a closed source product.
 
+Organizations that fall under the following United States of America Departments may receive free commercial use licenses upon request.
+-Department of Defense
+-Department of Homeland Security
+
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
