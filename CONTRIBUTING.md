@@ -22,8 +22,7 @@ Before your contribution is accepted, you will be asked to sign a Contributor Li
 ### Pull Requests
 
 It is asked that you are clear in specifying **WHAT** you changed and **WHY**. With that said there is no formal template for pull requests.
-You may however be asked to adjust code if organization doesn't flow or code isn't clear. If you plan to make changes to celestial calculations,
-an explanation of the changes will be sought.
+You may however be asked to adjust code if organization doesn't flow or code isn't clear. If you plan to make changes to celestial calculations, an explanation of mathematical changes will be sought.
 
 Please submit Pull Requests to the [Develop Branch](https://github.com/Tronald/CoordinateSharp/tree/Develop). The Master branch will only contain stable versions.
 
