@@ -59,6 +59,7 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="distance">Distance</param>
         /// <param name="type">Measurement type</param>
+
         public Distance(double distance, DistanceType type)
         {
             bearing = 0;
@@ -108,21 +109,23 @@ namespace CoordinateSharp
                     break;
             }
         }
-        private void Vincenty(Coordinate c1, Coordinate c2)
+        private void Vincenty(Coordinate coord1, Coordinate coord2)
         {
             double lat1, lat2, lon1, lon2;
             double d, crs12, crs21;
 
-            lat1 = c1.Latitude.ToRadians();
-            lat2 = c2.Latitude.ToRadians();
-            lon1 = c1.Longitude.ToRadians();
-            lon2 = c2.Longitude.ToRadians();
+
+            lat1 = coord1.Latitude.ToRadians();
+            lat2 = coord2.Latitude.ToRadians();
+            lon1 = coord1.Longitude.ToRadians() * -1; //REVERSE FOR CALC 2.1.1.1
+            lon2 = coord2.Longitude.ToRadians() * -1; //REVERSE FOR CALC 2.1.1.1
+
             //Ensure datums match between coords
-            if ((c1.equatorial_radius != c2.equatorial_radius) || (c1.inverse_flattening != c2.inverse_flattening))
+            if ((coord1.equatorial_radius != coord2.equatorial_radius) || (coord1.inverse_flattening != coord2.inverse_flattening))
             {
                 throw new InvalidOperationException("The datum set does not match between Coordinate objects.");
             }
-            double[] ellipse = new double[] { c1.equatorial_radius, c1.inverse_flattening };
+            double[] ellipse = new double[] { coord1.equatorial_radius, coord1.inverse_flattening };
 
 
             // elliptic code
@@ -131,8 +134,8 @@ namespace CoordinateSharp
             crs21 = cde[2] * (180 / Math.PI); //Reverse Bearing
             d = cde[0]; //Distance
 
-            bearing = crs21;
-            //reverseBearing = crs12;
+            bearing = crs12;
+            //reverseBearing = crs21;
             meters = d;
             kilometers = d / 1000;
             feet = d * 3.28084;
@@ -141,32 +144,33 @@ namespace CoordinateSharp
 
         }
 
-        private void Haversine(Coordinate c1, Coordinate c2)
+        private void Haversine(Coordinate coord1, Coordinate coord2)
         {
             ////RADIANS
-            double nLat = c1.Latitude.ToDouble() * Math.PI / 180;
-            double nLong = c1.Longitude.ToDouble() * Math.PI / 180;
-            double cLat = c2.Latitude.ToDouble() * Math.PI / 180;
-            double cLong = c2.Longitude.ToDouble() * Math.PI / 180;
+            double lat1 = coord1.Latitude.ToRadians();
+            double long1 = coord1.Longitude.ToRadians();
+            double lat2 = coord2.Latitude.ToRadians();
+            double long2 = coord2.Longitude.ToRadians();
 
-            //Calcs
-            double R = 6371e3; //meters
-            double v1 = nLat;
-            double v2 = cLat;
-            double latRad = (c2.Latitude.ToDouble() - c1.Latitude.ToDouble()) * Math.PI / 180;
-            double longRad = (c2.Longitude.ToDouble() - c1.Longitude.ToDouble()) * Math.PI / 180;
+            //Distance Calcs
+            double R = 6371000; //6378137.0;//6371e3; //meters
+            double latRad = coord2.Latitude.ToRadians() - coord1.Latitude.ToRadians();
+            double longRad = coord2.Longitude.ToRadians() - coord1.Longitude.ToRadians();
 
             double a = Math.Sin(latRad / 2.0) * Math.Sin(latRad / 2.0) +
-                Math.Cos(nLat) * Math.Cos(cLat) * Math.Sin(longRad / 2.0) * Math.Sin(longRad / 2.0);
+                Math.Cos(lat1) * Math.Cos(lat2) * Math.Sin(longRad / 2.0) * Math.Sin(longRad / 2.0);
             double cl = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
             double dist = R * cl;
 
-            //Get bearing
-            double y = Math.Sin(cLong - nLong) * Math.Cos(cLat);
-            double x = Math.Cos(nLat) * Math.Sin(cLat) -
-                    Math.Sin(nLat) * Math.Cos(cLat) * Math.Cos(cLong - nLong);
+            //Get bearing         
+            double dLong = long2 - long1;
+            double y = Math.Sin(dLong) * Math.Cos(lat2);
+            double x = Math.Cos(lat1) * Math.Sin(lat2) - Math.Sin(lat1) * Math.Cos(lat2) * Math.Cos(dLong);
             double brng = Math.Atan2(y, x) * (180 / Math.PI); //Convert bearing back to degrees.
-            if (brng < 0) { brng -= 180; brng = Math.Abs(brng); }
+
+            //if (brng < 0) { brng -= 180; brng = Math.Abs(brng); }
+            brng = (brng + 360) % 360; //v2.1.1.1 NORMALIZE HEADING
+
             kilometers = dist / 1000;
             meters = dist;
             feet = dist * 3.28084;
@@ -258,6 +262,7 @@ namespace CoordinateSharp
         /// <returns>double[]</returns>
         public static double[] Direct_Ell(double glat1, double glon1, double faz, double s, double[] ellipse)
         {
+            glon1 *= -1; //REVERSE LONG FOR CALC 2.1.1.1
             double EPS = 0.00000000005;//Used to determine if starting at pole.
             double r, tu, sf, cf, b, cu, su, sa, c2a, x, c, d, y, sy = 0, cy = 0, cz = 0, e = 0;
             double glat2, glon2, f;
@@ -331,6 +336,7 @@ namespace CoordinateSharp
         /// <returns>double[]</returns>
         public static double[] Direct(double lat1, double lon1, double crs12, double d12)
         {
+            lon1 *= -1; //REVERSE LONG FOR CALC 2.1.1.1
             var EPS = 0.00000000005;//Used to determine if near pole.
             double dlon, lat, lon;
             d12 = d12 * 0.0005399565; //convert meter to nm

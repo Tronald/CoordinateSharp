@@ -623,13 +623,30 @@ namespace CoordinateSharp
         {
             return new Distance(this, c2, shape);
         }
-      
+
         /// <summary>
         /// Move coordinate based on provided bearing and distance (in meters).
         /// </summary>
-        /// <param name="distance">distance in meters</param>
-        /// <param name="bearing">bearing</param>
-        /// <param name="shape">shape of earth</param>
+        /// <param name="distance">Distance in meters</param>
+        /// <param name="bearing">Bearing</param>
+        /// <param name="shape">Shape of earth</param>
+        /// <example>
+        /// The following example moves a coordinate 10km in the direction of 
+        /// the specified bearing using ellipsoidal earth calculations.
+        /// <code>
+        /// //N 25º 0' 0" E 25º 0' 0"
+        /// Coordinate c = Coordinate(25,25);
+        /// 
+        /// double meters = 10000;
+        /// double bearing = 25;
+        /// 
+        /// //Move coordinate the specified meters
+        /// //and direction using ellipsoidal calculations
+        /// c.Move(meters, bearing, Shape.Ellipsoid);
+        /// 
+        /// //New Coordinate - N 25º 4' 54.517" E 24º 57' 29.189"
+        /// </code>
+        /// </example>
         public void Move(double distance, double bearing, Shape shape)
         {
             //Convert to Radians for formula
@@ -644,32 +661,49 @@ namespace CoordinateSharp
                 double[] cd = Distance_Assistant.Direct(lat1, lon1, crs12, distance);
                 double lat2 = cd[0] * (180 / Math.PI);
                 double lon2 = cd[1] * (180 / Math.PI);
-
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
-                Longitude.DecimalDegree = lon2;
+                Longitude.DecimalDegree = -lon2;//v2.1.1.1
             }
             else
             {
                 double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance, ellipse);  // ellipse uses East negative
                 //Convert back from radians 
                 double lat2 = cde[0] * (180 / Math.PI);
-                double lon2 = -cde[1] * (180 / Math.PI); // ellipse uses East negative             
+                double lon2 = cde[1] * (180 / Math.PI); //v2.1.1.1          
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
                 Longitude.DecimalDegree = lon2;
-            }        
+            }
         }
-       
         /// <summary>
-        /// Move coordinate based on provided target coordinate and distance (in meters).
+        /// Move a coordinate a specified distance (in meters) towards a target coordinate.
         /// </summary>
-        /// <param name="c">Target coordinate</param>
+        /// <param name="target">Target coordinate</param>
         /// <param name="distance">Distance toward target in meters</param>
         /// <param name="shape">Shape of earth</param>
-        public void Move(Coordinate c, double distance, Shape shape)
+        /// <example>
+        /// The following example moves a coordinate 10km towards a target coordinate using
+        /// ellipsoidal earth calculations.
+        /// <code>
+        /// //N 25º 0' 0" E 25º 0' 0"
+        /// Coordinate coord = Coordinate(25,25);
+        /// 
+        /// //Target Coordinate
+        /// Coordinate target = new Coordinate(26.5, 23.2);
+        /// 
+        /// double meters = 10000;
+        /// 
+        /// //Move coordinate the specified meters
+        /// //towards target using ellipsoidal calculations
+        /// coord.Move(target, meters, Shape.Ellipsoid);
+        /// 
+        /// //New Coordinate - N 24º 56' 21.526" E 25º 4' 23.944"
+        /// </code>
+        /// </example>
+        public void Move(Coordinate target, double distance, Shape shape)
         {
-            Distance d = new Distance(this, c, shape);
+            Distance d = new Distance(this, target, shape);
             //Convert to Radians for formula
             double lat1 = latitude.ToRadians();
             double lon1 = longitude.ToRadians();
@@ -685,14 +719,123 @@ namespace CoordinateSharp
 
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
-                Longitude.DecimalDegree = lon2;
+                Longitude.DecimalDegree = -lon2; //v2.1.1.1 update
             }
             else
             {
                 double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance, ellipse);  // ellipse uses East negative
                 //Convert back from radians 
                 double lat2 = cde[0] * (180 / Math.PI);
-                double lon2 = -cde[1] * (180 / Math.PI); // ellipse uses East negative             
+                double lon2 = cde[1] * (180 / Math.PI); // v2.1.1.1           
+                //ADJUST CORD
+                Latitude.DecimalDegree = lat2;
+                Longitude.DecimalDegree = lon2;
+            }
+        }
+        /// <summary>
+        /// Move coordinate based on provided bearing and distance (in meters).
+        /// </summary>
+        /// <param name="distance">Distance</param>
+        /// <param name="bearing">Bearing</param>
+        /// <param name="shape">Shape of earth</param>
+        /// <example>
+        /// The following example moves a coordinate 10km in the direction of 
+        /// the specified bearing using ellipsoidal earth calculations.
+        /// <code>
+        /// //N 25º 0' 0" E 25º 0' 0"
+        /// Coordinate c = Coordinate(25,25);
+        /// 
+        /// Distance distance = new Distance(10, DistanceType.Kilometers);
+        /// double bearing = 25;
+        /// 
+        /// //Move coordinate the specified distance
+        /// //and direction using ellipsoidal calculations
+        /// c.Move(distance, bearing, Shape.Ellipsoid);
+        /// 
+        /// //New Coordinate - N 25º 4' 54.517" E 24º 57' 29.189"
+        /// </code>
+        /// </example>
+        public void Move(Distance distance, double bearing, Shape shape)
+        {
+            //Convert to Radians for formula
+            double lat1 = latitude.ToRadians();
+            double lon1 = longitude.ToRadians();
+            double crs12 = bearing * Math.PI / 180; //Convert bearing to radians
+
+            double[] ellipse = new double[] { equatorial_radius, inverse_flattening };
+
+            if (shape == Shape.Sphere)
+            {
+                double[] cd = Distance_Assistant.Direct(lat1, lon1, crs12, distance.Meters);
+                double lat2 = cd[0] * (180 / Math.PI);
+                double lon2 = cd[1] * (180 / Math.PI);
+
+                //ADJUST CORD
+                Latitude.DecimalDegree = lat2;
+                Longitude.DecimalDegree = -lon2; //v2.1.1.1
+            }
+            else
+            {
+                double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance.Meters, ellipse);  // ellipse uses East negative
+                //Convert back from radians 
+                double lat2 = cde[0] * (180 / Math.PI);
+                double lon2 = cde[1] * (180 / Math.PI); //v2.1.1.1         
+                //ADJUST CORD
+                Latitude.DecimalDegree = lat2;
+                Longitude.DecimalDegree = lon2;
+            }
+        }
+        /// <summary>
+        /// Move a coordinate a specified distance towards a target coordinate.
+        /// </summary>
+        /// <param name="target">Target coordinate</param>
+        /// <param name="distance">Distance toward target</param>
+        /// <param name="shape">Shape of earth</param>
+        /// <example>
+        /// The following example moves a coordinate 10km towards a target coordinate using
+        /// ellipsoidal earth calculations.
+        /// <code>
+        /// //N 25º 0' 0" E 25º 0' 0"
+        /// Coordinate coord = Coordinate(25,25);
+        /// 
+        /// //Target Coordinate
+        /// Coordinate target = new Coordinate(26.5, 23.2);
+        /// 
+        /// Distance distance = new Distance(10, DistanceType.Kilometers);
+        /// 
+        /// //Move coordinate the specified distance
+        /// //towards target using ellipsoidal calculations
+        /// coord.Move(target, distance, Shape.Ellipsoid);
+        /// 
+        /// //New Coordinate - N 24º 56' 21.526" E 25º 4' 23.944"
+        /// </code>
+        /// </example>
+        public void Move(Coordinate target, Distance distance, Shape shape)
+        {
+            Distance d = new Distance(this, target, shape);
+            //Convert to Radians for formula
+            double lat1 = latitude.ToRadians();
+            double lon1 = longitude.ToRadians();
+            double crs12 = d.Bearing * Math.PI / 180; //Convert bearing to radians
+
+            double[] ellipse = new double[] { equatorial_radius, inverse_flattening };
+
+            if (shape == Shape.Sphere)
+            {
+                double[] cd = Distance_Assistant.Direct(lat1, lon1, crs12, distance.Meters);
+                double lat2 = cd[0] * (180 / Math.PI);
+                double lon2 = cd[1] * (180 / Math.PI);
+
+                //ADJUST CORD
+                Latitude.DecimalDegree = lat2;
+                Longitude.DecimalDegree = -lon2; //v2.1.1.1 update
+            }
+            else
+            {
+                double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance.Meters, ellipse);
+                //Convert back from radians 
+                double lat2 = cde[0] * (180 / Math.PI);
+                double lon2 = cde[1] * (180 / Math.PI); //v2.1.1.1         
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
                 Longitude.DecimalDegree = lon2;
