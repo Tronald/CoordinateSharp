@@ -154,6 +154,9 @@
     <Content Include="Conversions.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="CoordinateData\MoveCoords.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="CoordinateParts.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
