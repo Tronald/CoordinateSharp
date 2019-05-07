@@ -51,6 +51,7 @@ namespace CoordinateSharp
         /// <returns>double[]</returns>
         public static double[] Direct_Ell(double glat1, double glon1, double faz, double s, double[] ellipse)
         {
+            glon1 *= -1; //REVERSE LONG FOR CALC 2.1.1.1
             double EPS = 0.00000000005;//Used to determine if starting at pole.
             double r, tu, sf, cf, b, cu, su, sa, c2a, x, c, d, y, sy = 0, cy = 0, cz = 0, e = 0;
             double glat2, glon2, f;
@@ -124,6 +125,7 @@ namespace CoordinateSharp
         /// <returns>double[]</returns>
         public static double[] Direct(double lat1, double lon1, double crs12, double d12)
         {
+            lon1 *= -1; //REVERSE LONG FOR CALC 2.1.1.1
             var EPS = 0.00000000005;//Used to determine if near pole.
             double dlon, lat, lon;
             d12 = d12 * 0.0005399565; //convert meter to nm

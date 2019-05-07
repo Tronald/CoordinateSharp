@@ -107,7 +107,7 @@ namespace CoordinateSharp
         /// The following example creates (converts to) a geodetic Coordinate object based on spherical Cartesian X, Y, Z values.
         /// <code>
         /// Coordinate c = Cartesian.CartesianToLatLong(0.64085638, 0.64085638, 0.42261826);	    
-        /// Console.WriteLine(c); N 24º 59' 60" E 45º 0' 0"
+        /// Console.WriteLine(c); //N 24º 59' 60" E 45º 0' 0"
         /// </code>
         /// </example>
         public static Coordinate CartesianToLatLong(double x, double y, double z)
@@ -130,7 +130,7 @@ namespace CoordinateSharp
         /// <code>
         /// Cartesian cart = new Cartesian(0.64085638, 0.64085638, 0.42261826);
 		/// Coordinate c = Cartesian.CartesianToLatLong(cart);
-        /// Console.WriteLine(c); N 24º 59' 60" E 45º 0' 0"
+        /// Console.WriteLine(c); //N 24º 59' 60" E 45º 0' 0"
         /// </code>
         /// </example>
         public static Coordinate CartesianToLatLong(Cartesian cart)

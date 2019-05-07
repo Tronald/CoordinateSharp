@@ -572,18 +572,17 @@ namespace CoordinateSharp
             {
                 double[] cd = Distance_Assistant.Direct(lat1, lon1, crs12, distance);
                 double lat2 = cd[0] * (180 / Math.PI);
-                double lon2 = cd[1] * (180 / Math.PI);
-
+                double lon2 = cd[1] * (180 / Math.PI); 
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
-                Longitude.DecimalDegree = lon2;
+                Longitude.DecimalDegree = -lon2;//v2.1.1.1
             }
             else
             {
                 double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance, ellipse);  // ellipse uses East negative
                 //Convert back from radians 
                 double lat2 = cde[0] * (180 / Math.PI);
-                double lon2 = -cde[1] * (180 / Math.PI); // ellipse uses East negative             
+                double lon2 = cde[1] * (180 / Math.PI); //v2.1.1.1          
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
                 Longitude.DecimalDegree = lon2;
@@ -632,14 +631,14 @@ namespace CoordinateSharp
 
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
-                Longitude.DecimalDegree = lon2;
+                Longitude.DecimalDegree = -lon2; //v2.1.1.1 update
             }
             else
             {
                 double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance, ellipse);  // ellipse uses East negative
                 //Convert back from radians 
                 double lat2 = cde[0] * (180 / Math.PI);
-                double lon2 = -cde[1] * (180 / Math.PI); // ellipse uses East negative             
+                double lon2 = cde[1] * (180 / Math.PI); // v2.1.1.1           
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
                 Longitude.DecimalDegree = lon2;
@@ -685,14 +684,14 @@ namespace CoordinateSharp
 
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
-                Longitude.DecimalDegree = lon2;
+                Longitude.DecimalDegree = -lon2; //v2.1.1.1
             }
             else
             {
                 double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance.Meters, ellipse);  // ellipse uses East negative
                 //Convert back from radians 
                 double lat2 = cde[0] * (180 / Math.PI);
-                double lon2 = -cde[1] * (180 / Math.PI); // ellipse uses East negative             
+                double lon2 = cde[1] * (180 / Math.PI); //v2.1.1.1         
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
                 Longitude.DecimalDegree = lon2;
@@ -741,14 +740,14 @@ namespace CoordinateSharp
 
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
-                Longitude.DecimalDegree = lon2;
+                Longitude.DecimalDegree = -lon2; //v2.1.1.1 update
             }
             else
             {
-                double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance.Meters, ellipse);  // ellipse uses East negative
+                double[] cde = Distance_Assistant.Direct_Ell(lat1, -lon1, crs12, distance.Meters, ellipse);  
                 //Convert back from radians 
                 double lat2 = cde[0] * (180 / Math.PI);
-                double lon2 = -cde[1] * (180 / Math.PI); // ellipse uses East negative             
+                double lon2 = cde[1] * (180 / Math.PI); //v2.1.1.1         
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
                 Longitude.DecimalDegree = lon2;

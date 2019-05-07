@@ -40,7 +40,7 @@ using System.ComponentModel;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Observable class for handling all located based information.
+    /// Class for handling all location based information.
     /// This is the main class of CoordinateSharp. It will contain all coordinate conversions and celestial information once populated. 
     /// Most everything you need in the library will be contained in the Coordinate class.
     /// </summary>

@@ -139,8 +139,8 @@ namespace CoordinateSharp
         /// <summary>
         /// Initializes an Perigee object.
         /// </summary>
-        /// <param name="last"></param>
-        /// <param name="next"></param>
+        /// <param name="last">Last perigee</param>
+        /// <param name="next">Next perigee</param>
         public Perigee(PerigeeApogee last, PerigeeApogee next)
         {
             lastPerigee = last;
@@ -175,8 +175,8 @@ namespace CoordinateSharp
         /// <summary>
         /// Initializes an Apogee object.
         /// </summary>
-        /// <param name="last"></param>
-        /// <param name="next"></param>
+        /// <param name="last">Last apogee</param>
+        /// <param name="next">Next apogee</param>
         public Apogee(PerigeeApogee last, PerigeeApogee next)
         {
             lastApogee = last;
