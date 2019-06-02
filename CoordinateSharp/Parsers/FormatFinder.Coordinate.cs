@@ -36,6 +36,7 @@ For more information, please contact Signature Group, LLC at this address: sales
 using System;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Globalization;
 
 namespace CoordinateSharp
 {
@@ -209,6 +210,8 @@ namespace CoordinateSharp
             c = null;
             return false;
         }
+
+        #region PARSERS
         private static bool TrySignedDegree(string s, out double[] d)
         {
             d = null;
@@ -233,20 +236,20 @@ namespace CoordinateSharp
             switch (sA.Count())
             {
                 case 2:
-                    if (!double.TryParse(sA[0], out lat))
+                    if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out lat))
                     { return false; }
-                    if (!double.TryParse(sA[1], out lng))
+                    if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out lng))
                     { return false; }
                     d = new double[] { lat, lng };
                     return true;
                 case 4:
-                    if (!double.TryParse(sA[0], out degLat))
+                    if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out degLat))
                     { return false; }
-                    if (!double.TryParse(sA[1], out minLat))
+                    if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out minLat))
                     { return false; }
-                    if (!double.TryParse(sA[2], out degLng))
+                    if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out degLng))
                     { return false; }
-                    if (!double.TryParse(sA[3], out minLng))
+                    if (!double.TryParse(sA[3], NumberStyles.Any, CultureInfo.InvariantCulture, out minLng))
                     { return false; }
 
                     if (degLat < 0) { signLat = -1; }
@@ -258,17 +261,17 @@ namespace CoordinateSharp
                     d = new double[] { lat, lng };
                     return true;
                 case 6:
-                    if (!double.TryParse(sA[0], out degLat))
+                    if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out degLat))
                     { return false; }
-                    if (!double.TryParse(sA[1], out minLat))
+                    if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out minLat))
                     { return false; }
-                    if (!double.TryParse(sA[2], out secLat))
+                    if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out secLat))
                     { return false; }
-                    if (!double.TryParse(sA[3], out degLng))
+                    if (!double.TryParse(sA[3], NumberStyles.Any, CultureInfo.InvariantCulture, out degLng))
                     { return false; }
-                    if (!double.TryParse(sA[4], out minLng))
+                    if (!double.TryParse(sA[4], NumberStyles.Any, CultureInfo.InvariantCulture, out minLng))
                     { return false; }
-                    if (!double.TryParse(sA[5], out secLng))
+                    if (!double.TryParse(sA[5], NumberStyles.Any, CultureInfo.InvariantCulture, out secLng))
                     { return false; }
                     if (degLat < 0) { signLat = -1; }
                     if (degLng < 0) { signLng = -1; }
@@ -326,9 +329,9 @@ namespace CoordinateSharp
                 sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
                 sA[1] = Regex.Replace(sA[1], "[^0-9.]", "");
 
-                if (!double.TryParse(sA[0], out lat))
+                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out lat))
                 { return false; }
-                if (!double.TryParse(sA[1], out lng))
+                if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out lng))
                 { return false; }
                 lat *= latR;
                 lng *= lngR;
@@ -396,13 +399,13 @@ namespace CoordinateSharp
                 sA[2] = Regex.Replace(sA[2], "[^0-9.]", "");
                 sA[3] = Regex.Replace(sA[3], "[^0-9.]", "");
 
-                if (!double.TryParse(sA[0], out latD))
+                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out latD))
                 { return false; }
-                if (!double.TryParse(sA[1], out latMS))
+                if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out latMS))
                 { return false; }
-                if (!double.TryParse(sA[2], out lngD))
+                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out lngD))
                 { return false; }
-                if (!double.TryParse(sA[3], out lngMS))
+                if (!double.TryParse(sA[3], NumberStyles.Any, CultureInfo.InvariantCulture, out lngMS))
                 { return false; }
 
                 d = new double[] { latD, latMS, latR, lngD, lngMS, lngR };
@@ -472,17 +475,17 @@ namespace CoordinateSharp
                 sA[4] = Regex.Replace(sA[4], "[^0-9.]", "");
                 sA[5] = Regex.Replace(sA[5], "[^0-9.]", "");
 
-                if (!double.TryParse(sA[0], out latD))
+                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out latD))
                 { return false; }
-                if (!double.TryParse(sA[1], out latM))
+                if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out latM))
                 { return false; }
-                if (!double.TryParse(sA[2], out latS))
+                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out latS))
                 { return false; }
-                if (!double.TryParse(sA[3], out lngD))
+                if (!double.TryParse(sA[3], NumberStyles.Any, CultureInfo.InvariantCulture, out lngD))
                 { return false; }
-                if (!double.TryParse(sA[4], out lngM))
+                if (!double.TryParse(sA[4], NumberStyles.Any, CultureInfo.InvariantCulture, out lngM))
                 { return false; }
-                if (!double.TryParse(sA[5], out lngS))
+                if (!double.TryParse(sA[5], NumberStyles.Any, CultureInfo.InvariantCulture, out lngS))
                 { return false; }
 
                 d = new double[] { latD, latM, latS, latR, lngD, lngM, lngS, lngR };
@@ -512,11 +515,11 @@ namespace CoordinateSharp
                 if (zoneL == string.Empty) { return false; }
                 sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
 
-                if (!double.TryParse(sA[0], out zone))
+                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out zone))
                 { return false; }
-                if (!double.TryParse(sA[1], out easting))
+                if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out easting))
                 { return false; }
-                if (!double.TryParse(sA[2], out northing))
+                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out northing))
                 { return false; }
 
                 utm = new string[] { zone.ToString(), zoneL, easting.ToString(), northing.ToString() };
@@ -546,11 +549,11 @@ namespace CoordinateSharp
                 if (zoneL == string.Empty) { return false; }
                 sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
                 diagraph = sA[1];
-                if (!double.TryParse(sA[0], out zone))
+                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out zone))
                 { return false; }
-                if (!double.TryParse(sA[2], out easting))
+                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out easting))
                 { return false; }
-                if (!double.TryParse(sA[3], out northing))
+                if (!double.TryParse(sA[3], NumberStyles.Any, CultureInfo.InvariantCulture, out northing))
                 { return false; }
 
                 mgrs = new string[] { zone.ToString(), zoneL, diagraph, easting.ToString(), northing.ToString() };
@@ -568,17 +571,18 @@ namespace CoordinateSharp
                 double x;
                 double y;
                 double z;
-                if (!double.TryParse(sA[0], out x))
+                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out x))
                 { return false; }
-                if (!double.TryParse(sA[1], out y))
+                if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out y))
                 { return false; }
-                if (!double.TryParse(sA[2], out z))
+                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out z))
                 { return false; }
                 d = new double[] { x, y, z };
                 return true;
             }
             return false;
         }
+        #endregion
 
         //KEEP DASHES FOR SIGNED AND CARTESIAN AS THEY ARE USED FOR NEGATVE VALUES
         private static string[] SpecialSplit(string s, bool removeDashes)

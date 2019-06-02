@@ -347,4 +347,8 @@ namespace CoordinateSharp
         /// </summary>
         Total
     }
+    internal enum Celestial_EagerLoad
+    {
+        All, Lunar, Solar
+    }
 }

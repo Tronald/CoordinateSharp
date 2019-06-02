@@ -53,6 +53,7 @@ For more information, please contact Signature Group, LLC at this address: sales
     <Title>CoordinateSharp</Title>
     <AssemblyVersion>2.1.1.1</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">

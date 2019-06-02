@@ -36,6 +36,7 @@ For more information, please contact Signature Group, LLC at this address: sales
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Globalization;
 namespace CoordinateSharp
 {
     internal class FormatFinder_CoordPart
@@ -199,14 +200,14 @@ namespace CoordinateSharp
             switch (sA.Count())
             {
                 case 1:
-                    if (!double.TryParse(sA[0], out deg))
+                    if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
                     { return false; }
                     d = new double[] { deg };
                     return true;
                 case 2:
-                    if (!double.TryParse(sA[0], out deg))
+                    if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
                     { return false; }
-                    if (!double.TryParse(sA[1], out min))
+                    if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out min))
                     { return false; }
 
                     if (deg < 0) { sign = -1; }
@@ -214,11 +215,11 @@ namespace CoordinateSharp
                     d = new double[] { (Math.Abs(deg) + (min / 60.0)) * sign };
                     return true;
                 case 3:
-                    if (!double.TryParse(sA[0], out deg))
+                    if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
                     { return false; }
-                    if (!double.TryParse(sA[1], out min))
+                    if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out min))
                     { return false; }
-                    if (!double.TryParse(sA[2], out sec))
+                    if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out sec))
                     { return false; }
                     if (min >= 60 || min < 0) { return false; } //Handle in parser as degree will be incorrect.
                     if (sec >= 60 || sec < 0) { return false; } //Handle in parser as degree will be incorrect.
@@ -245,7 +246,7 @@ namespace CoordinateSharp
 
             if (sA.Count() == 1)
             {
-                if (!double.TryParse(s, out coord))
+                if (!double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out coord))
                 { return false; }
 
                 coord *= sign;
@@ -266,9 +267,9 @@ namespace CoordinateSharp
             string[] sA = SpecialSplit(s,true);
             if (sA.Count() == 2)
             {
-                if (!double.TryParse(sA[0], out deg))
+                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
                 { return false; }
-                if (!double.TryParse(sA[1], out minSec))
+                if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out minSec))
                 { return false; }
 
                 d = new double[] { deg, minSec };
@@ -289,11 +290,11 @@ namespace CoordinateSharp
             if (sA.Count() == 3)
             {
 
-                if (!double.TryParse(sA[0], out deg))
+                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
                 { return false; }
-                if (!double.TryParse(sA[1], out min))
+                if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out min))
                 { return false; }
-                if (!double.TryParse(sA[2], out sec))
+                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out sec))
                 { return false; }
 
                 d = new double[] { deg, min, sec };
