@@ -48,7 +48,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CoordinateSharp">
-      <HintPath>..\CoordinateSharp\bin\Debug\netstandard2.0\CoordinateSharp.dll</HintPath>
+      <HintPath>..\CoordinateSharp\bin\Debug\net40\CoordinateSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

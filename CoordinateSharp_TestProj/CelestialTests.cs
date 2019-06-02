@@ -20,7 +20,7 @@ namespace CoordinateSharp_TestProj
             Coordinate c = new Coordinate();
 
             Pass.Write("Sunset: ", ct.Check_Values(ct.SunSets, "CelestialData\\SunSet.txt"));
-            Pass.Write("Sunrise: ", ct.Check_Values(ct.SunRises, "CelestialData\\SunRise.txt"));
+            Pass.Write("Sunrise: ", ct.Check_Values(ct.SunRises, "CelestialData\\SunRise.txt"));          
             Pass.Write("AstroDawn: ", ct.Check_Values(ct.AstroDawn, "CelestialData\\AstroDawn.txt"));
             Pass.Write("AstroDusk: ", ct.Check_Values(ct.AstroDusk, "CelestialData\\AstroDusk.txt"));
             Pass.Write("CivilDawn: ", ct.Check_Values(ct.CivilDawn, "CelestialData\\CivilDawn.txt"));
@@ -87,7 +87,7 @@ namespace CoordinateSharp_TestProj
           
             c.GeoDate = new DateTime(2018, 3, 1);
 
-            SunRises = new List<DateTime?>();
+            SunRises = new List<DateTime?>();        
             SunSets = new List<DateTime?>();
             MoonRises = new List<DateTime?>();
             MoonSets = new List<DateTime?>();
@@ -123,7 +123,7 @@ namespace CoordinateSharp_TestProj
                 BottomSolarDiscSet.Add(c.CelestialInfo.AdditionalSolarTimes.SunsetBottomDisc);
 
                 MoonPhase.Add(c.CelestialInfo.MoonIllum.Phase);
-                MoonPhaseName.Add(c.CelestialInfo.MoonIllum.PhaseName);
+                MoonPhaseName.Add(c.CelestialInfo.MoonIllum.PhaseName);            
             }
 
             //Set Dates and Finish
@@ -135,7 +135,13 @@ namespace CoordinateSharp_TestProj
             Perigee = c.CelestialInfo.Perigee;
             Apogee = c.CelestialInfo.Apogee;          
         }
+        private void Check_Solar_Only_Times()
+        {
+            bool pass = true;
 
+            //Check if values populate.
+            Celestial c = Celestial.CalculateSunData(45, 45, DateTime.Now);
+        }
         private bool Check_Values(object prop, string file)
         {
             string[] lines = File.ReadAllLines(file);
@@ -501,7 +507,7 @@ namespace CoordinateSharp_TestProj
             return true;
         }
 
-        private List<DateTime?> SunRises { get; set; }
+        private List<DateTime?> SunRises { get; set; }   
         private List<DateTime?> MoonRises { get; set; }
         private List<DateTime?> SunSets { get; set; }
         private List<DateTime?> MoonSets { get; set; }

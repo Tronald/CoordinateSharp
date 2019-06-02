@@ -2,7 +2,8 @@
  * The following program is used to automate certain aspects of the testing of CoordinateSharp.
  */
 using System;
-
+using System.Globalization;
+using System.Threading;
 namespace CoordinateSharp_TestProj
 {
     class Program
@@ -11,6 +12,7 @@ namespace CoordinateSharp_TestProj
         static void Main(string[] args)
         {
             Console.ForegroundColor = ConsoleColor.White;
+          
             while (true)
             {
                 Console.WriteLine("Select Test Module to Run (Enter Test Number):");

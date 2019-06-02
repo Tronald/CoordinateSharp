@@ -2,16 +2,36 @@
 using System.IO;
 using CoordinateSharp;
 using System.Diagnostics;
+using System.Threading;
+using System.Globalization;
 namespace CoordinateSharp_TestProj
 {
     public class Coordinate_Parser_Tests
     {
         public static void Run_Test()
         {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("*****PARSING WITH US CULTURE*****");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine();
             Coordinate_Parses_Test();
             CoordinatePart_Parses_Test();
             ECEF_Parse_Options_Test();
-            Parse_Type_Enumerator_Test();            
+            Parse_Type_Enumerator_Test();
+
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("nl");
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("*****PARSING WITH DUTCH CULTURE*****");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine();
+            Coordinate_Parses_Test();
+            CoordinatePart_Parses_Test();
+            ECEF_Parse_Options_Test();
+            Parse_Type_Enumerator_Test();
+
         }
         private static void Coordinate_Parses_Test()
         {
@@ -42,7 +62,8 @@ namespace CoordinateSharp_TestProj
                     }
                     else
                     {
-                        if (coordinate.ToString() != cc[1])
+                        //CHECK STRING COMPARISON, BUT REPLACE , and . with * to avoid cultural mismatch
+                        if (coordinate.ToString().Replace(",","*").Replace(".", "*") != cc[1].Replace(",","*").Replace(".", "*"))
                         {
 
                             Debug.WriteLine("...MISMATCH: " + coordinate.ToString() + " - " + cc[1]);
@@ -105,7 +126,7 @@ namespace CoordinateSharp_TestProj
                     }
                     else
                     {
-                        if (cp.ToString() != cc[1])
+                        if (cp.ToString().Replace(",", "*").Replace(".", "*") != cc[1].Replace(",", "*").Replace(".", "*"))
                         {
                             Debug.WriteLine("...MISMATCH: " + cp.ToString() + " - " + cc[1]);
                             pass = false;

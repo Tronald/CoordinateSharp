@@ -27,7 +27,7 @@ namespace CoordinateSharp_TestProj
             //Benchmark with EagerLoad fully off
             Benchmark(() => {
                 EagerLoad eg = new EagerLoad(false);
-             
+              
                 tc = new Coordinate(39.891219, -74.872435, new DateTime(2018, 7, 26, 15, 49, 0), eg);
             }, 100, "EagerLoad Off Initialization");
             tc = new Coordinate(39.891219, -74.872435, new DateTime(2018, 7, 26, 15, 49, 0));
@@ -35,9 +35,16 @@ namespace CoordinateSharp_TestProj
             //Benchmark property change
             Random r = new Random();
             Benchmark(() => { tc.Latitude.DecimalDegree = r.Next(-90, 90); }, 100, "Property Change");
-           
-            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now,new EagerLoad(false)); Celestial cel = Celestial.Celestial_LocalTime(c, -7); }, 100, "Local Time");
-            
+
+            //Benchmark Celestial Times
+            Benchmark(() => { Celestial cel = new Celestial(45, 45, DateTime.Now); }, 100, "Celestial Time Calculations");
+            Benchmark(() => { Celestial cel = Celestial.CalculateSunData(45, 45, DateTime.Now); }, 100, "Solar Time Calculations");
+            Benchmark(() => { Celestial cel = Celestial.CalculateMoonData(45, 45, DateTime.Now); }, 100, "Lunar Time Calculations");
+
+            //Benchmark Local Times
+            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now,new EagerLoad(false)); Celestial cel = Celestial.Celestial_LocalTime(c, -7); }, 100, "Local Time");       
+            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now, new EagerLoad(false)); Celestial cel = Celestial.Solar_LocalTime(c, -7); }, 100, "Local Sun Time");
+            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now, new EagerLoad(false)); Celestial cel = Celestial.Lunar_LocalTime(c, -7); }, 100, "Local Moon Time");
         }
 
         private static void Benchmark(Action act, int iterations, string s)
