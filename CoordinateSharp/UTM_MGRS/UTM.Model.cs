@@ -57,14 +57,14 @@ namespace CoordinateSharp
         private bool withinCoordinateSystemBounds = true;
 
         /// <summary>
-        /// UTM Zone Letter
+        /// UTM Latitude Band Grid Zone Designation
         /// </summary>
         public string LatZone
         {
             get { return latZone; }
         }
         /// <summary>
-        /// UTM Zone Number
+        /// UTM Longitude Band Grid Zone Designation
         /// </summary>
         public int LongZone
         {

@@ -493,40 +493,6 @@ namespace CoordinateSharp
             }
             return false;
         }
-        private static bool TryUTM(string s, out string[] utm)
-        {
-            utm = null;
-            string[] sA = SpecialSplit(s, false);
-            if (sA.Count() == 3 || sA.Count() == 4)
-            {
-                double zone;
-                string zoneL;
-                double easting;
-                double northing;
-
-                if (sA.Count() == 4)
-                {
-
-                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
-                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
-                    else { return false; }
-                }
-                zoneL = new string(sA[0].Where(Char.IsLetter).ToArray());
-                if (zoneL == string.Empty) { return false; }
-                sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
-
-                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out zone))
-                { return false; }
-                if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out easting))
-                { return false; }
-                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out northing))
-                { return false; }
-
-                utm = new string[] { zone.ToString(), zoneL, easting.ToString(), northing.ToString() };
-                return true;
-            }
-            return false;
-        }
         private static bool TryMGRS(string s, out string[] mgrs)
         {
             mgrs = null;
@@ -547,8 +513,10 @@ namespace CoordinateSharp
                 }
                 zoneL = new string(sA[0].Where(Char.IsLetter).ToArray());
                 if (zoneL == string.Empty) { return false; }
+                if (zoneL.Count() != 1) { return false; }
                 sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
                 diagraph = sA[1];
+                if(diagraph.Count() != 2) { return false; }
                 if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out zone))
                 { return false; }
                 if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out easting))
@@ -561,6 +529,43 @@ namespace CoordinateSharp
             }
             return false;
         }
+        private static bool TryUTM(string s, out string[] utm)
+        {
+            utm = null;
+            string[] sA = SpecialSplit(s, false);
+            if (sA.Count() == 3 || sA.Count() == 4)
+            {
+                double zone;
+                string zoneL;
+                double easting;
+                double northing;
+
+                if (sA.Count() == 4)
+                {
+
+                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
+                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
+                    else { return false; }
+                }
+               
+                zoneL = new string(sA[0].Where(Char.IsLetter).ToArray());
+                if (zoneL == string.Empty) { return false; }
+                if(zoneL.Count() != 1) { return false; }
+                sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
+
+                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out zone))
+                { return false; }
+                if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out easting))
+                { return false; }
+                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out northing))
+                { return false; }
+
+                utm = new string[] { zone.ToString(), zoneL, easting.ToString(), northing.ToString() };
+                return true;
+            }
+            return false;
+        }
+     
         private static bool TryCartesian(string s, out double[] d)
         {
             d = null;

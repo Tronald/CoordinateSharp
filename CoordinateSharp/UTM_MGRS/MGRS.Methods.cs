@@ -36,8 +36,7 @@ For more information, please contact Signature Group, LLC at this address: sales
 using System;
 using System.Linq;
 using System.Diagnostics;
-using System.ComponentModel;
-
+using System.Text.RegularExpressions;
 namespace CoordinateSharp
 {
     public partial class MilitaryGridReferenceSystem
@@ -45,9 +44,9 @@ namespace CoordinateSharp
         /// <summary>
         /// Creates an MilitaryGridReferenceSystem (MGRS) object with a default WGS84 datum(ellipsoid).
         /// </summary>
-        /// <param name="latz">Lat Zone</param>
-        /// <param name="longz">Long Zone</param>
-        /// <param name="d">Digraph</param>
+        /// <param name="latz">MGRS Latitude Band Grid Zone Designation (Letter)</param>
+        /// <param name="longz">MGRS Longitude Band Grid Zone Designation (Number)</param>
+        /// <param name="d">MGRS 100,000 Meter Square Identifier (2 Letter)</param>
         /// <param name="e">Easting</param>
         /// <param name="n">Northing</param>
         /// <example>
@@ -78,9 +77,9 @@ namespace CoordinateSharp
         /// <summary>
         /// Creates an MilitaryGridReferenceSystem (MGRS) object with a custom datum(ellipsoid).
         /// </summary>
-        /// <param name="latz">Lat Zone</param>
-        /// <param name="longz">Long Zone</param>
-        /// <param name="d">Digraph</param>
+        /// <param name="latz">MGRS Latitude Band Grid Zone Designation (Letter)</param>
+        /// <param name="longz">MGRS Longitude Band Grid Zone Designation (Number)</param>
+        /// <param name="d">MGRS 100,000 Meter Square Identifier (2 Letter)</param>
         /// <param name="e">Easting</param>
         /// <param name="n">Northing</param>
         /// <param name="rad">Equatorial Radius</param>
@@ -108,7 +107,96 @@ namespace CoordinateSharp
           
             equatorialRadius = rad;
             inverseFlattening = flt;
-        }   
+        }
+
+        /// <summary>
+        /// Creates an MilitaryGridReferenceSystem (MGRS) object with a default WGS84 datum(ellipsoid).
+        /// </summary>
+        /// <param name="gridZone">MGRS Grid Zone Designation</param>
+        /// <param name="d">MGRS 100,000 Meter Square Identifier (2 Letter)</param>
+        /// <param name="e">Easting</param>
+        /// <param name="n">Northing</param>
+        /// <example>
+        /// <code>
+        /// MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
+        /// </code>
+        /// </example>
+        public MilitaryGridReferenceSystem(string gridZone, string d, double e, double n)
+        {
+
+            string digraphLettersE = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+            string digraphLettersN = "ABCDEFGHJKLMNPQRSTUV";
+
+            string resultString = Regex.Match(gridZone, @"\d+").Value;
+            int longz;
+            if(!int.TryParse(resultString, out longz))
+            {
+                throw new FormatException("The MGRS Grid Zone Designator format is invalid.");
+            }
+
+            string latz = gridZone.Replace(resultString, "");
+        
+            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
+            if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
+            if (d.Count() < 2 || d.Count() > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (digraphLettersE.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (digraphLettersN.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[1].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            latZone = latz;
+            longZone = longz;
+            digraph = d;
+            easting = e;
+            northing = n;
+            //WGS84
+            equatorialRadius = 6378137.0;
+            inverseFlattening = 298.257223563;
+
+        }
+        /// <summary>
+        /// Creates an MilitaryGridReferenceSystem (MGRS) object with a default WGS84 datum(ellipsoid).
+        /// </summary>
+        /// <param name="gridZone">MGRS Grid Zone Designation</param>
+        /// <param name="d">MGRS 100,000 Meter Square Identifier (2 Letter)</param>
+        /// <param name="e">Easting</param>
+        /// <param name="n">Northing</param>
+        /// <param name="rad">Equatorial Radius</param>
+        /// <param name="flt">Inverse Flattening</param>
+        /// <example>
+        /// <code>
+        /// MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
+        /// </code>
+        /// </example>
+        public MilitaryGridReferenceSystem(string gridZone, string d, double e, double n, double rad, double flt)
+        {
+
+            string digraphLettersE = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+            string digraphLettersN = "ABCDEFGHJKLMNPQRSTUV";
+
+            string resultString = Regex.Match(gridZone, @"\d+").Value;
+            int longz;
+            if (!int.TryParse(resultString, out longz))
+            {
+                throw new FormatException("The MGRS Grid Zone Designator format is invalid.");
+            }
+
+            string latz = gridZone.Replace(resultString, "");
+
+            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
+            if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
+            if (d.Count() < 2 || d.Count() > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (digraphLettersE.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (digraphLettersN.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[1].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            latZone = latz;
+            longZone = longz;
+            digraph = d;
+            easting = e;
+            northing = n;
+            //WGS84
+            equatorialRadius = rad;
+            inverseFlattening = flt;
+
+        }
 
         private bool Verify_Lat_Zone(string l)
         {

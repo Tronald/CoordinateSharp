@@ -58,7 +58,7 @@ namespace CoordinateSharp
      
 
         /// <summary>
-        /// MGRS Zone Letter
+        /// MGRS Latitude Band Grid Zone Designation
         /// </summary>
         public string LatZone
         {
@@ -66,13 +66,14 @@ namespace CoordinateSharp
 
         }
         /// <summary>
-        /// MGRS Zone Number
+        /// MGRS Longitude Band Grid Zone Designation
         /// </summary>
         public int LongZone
         {
             get { return longZone; }
 
         }
+      
         /// <summary>
         /// MGRS Easting
         /// </summary>
@@ -89,8 +90,9 @@ namespace CoordinateSharp
             get { return northing; }
 
         }
+     
         /// <summary>
-        /// MGRS Digraph
+        /// MGRS 100,000 Meter Square Identifier
         /// </summary>
         public string Digraph
         {

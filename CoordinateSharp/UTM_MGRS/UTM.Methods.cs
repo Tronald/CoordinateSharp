@@ -36,6 +36,7 @@ For more information, please contact Signature Group, LLC at this address: sales
 using System;
 using System.Linq;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace CoordinateSharp
 {
@@ -44,8 +45,8 @@ namespace CoordinateSharp
         /// <summary>
         /// Creates a UniversalTransverMercator (UTM) object with a default WGS84 datum(ellipsoid).
         /// </summary>
-        /// <param name="latz">Latitude zone</param>
-        /// <param name="longz">Longitude zone</param>
+        /// <param name="latz">Latitude Band Grid Zone Designation (Letter)</param>
+        /// <param name="longz">Longitude Band Grid Zone Designation (Number)</param>
         /// <param name="est">Easting</param>
         /// <param name="nrt">Northing</param>
         /// <example>
@@ -71,8 +72,8 @@ namespace CoordinateSharp
         /// <summary>
         /// Creates a UniversalTransverMercator (UTM) object with a custom datum(ellipsoid).
         /// </summary>
-        /// <param name="latz">Latitude zone</param>
-        /// <param name="longz">Longitude zone</param>
+        /// <param name="latz">Latitude Band Grid Zone Designation (Letter)</param>
+        /// <param name="longz">Longitude Band Grid Zone Designation (Number)</param>
         /// <param name="est">Easting</param>
         /// <param name="nrt">Northing</param>
         /// <param name="radius">Equatorial Radius</param>
@@ -96,7 +97,80 @@ namespace CoordinateSharp
 
             equatorial_radius = radius;
             inverse_flattening = flaten;
-        }     
+        }
+
+        /// <summary>
+        /// Creates a UniversalTransverMercator (UTM) object with a default WGS84 datum(ellipsoid).
+        /// </summary>
+        /// <param name="gridZone">UTM Grid Zone Designation</param>
+        /// <param name="est">Easting</param>
+        /// <param name="nrt">Northing</param>
+        /// <example>
+        /// <code>
+        /// UniversalTransverseMercator utm = new UniversalTransverseMercator("Q", 14, 581943.5, 2111989.8);
+        /// </code>
+        /// </example>
+        public UniversalTransverseMercator(string gridZone, double est, double nrt)
+        {
+            string resultString = Regex.Match(gridZone, @"\d+").Value;
+            int longz;
+            if (!int.TryParse(resultString, out longz))
+            {
+                throw new FormatException("The MGRS Grid Zone Designator format is invalid.");
+            }
+            string latz = gridZone.Replace(resultString, "");
+
+            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if (!Verify_Lat_Zone(latz)) { Debug.WriteLine("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
+            if (est < 160000 || est > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
+            if (nrt < 0 || nrt > 10000000) { Debug.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
+
+            latZone = latz;
+            longZone = longz;
+            easting = est;
+            northing = nrt;
+
+            equatorial_radius = 6378137.0;
+            inverse_flattening = 298.257223563;
+        }
+
+
+        /// <summary>
+        /// Creates a UniversalTransverMercator (UTM) object with a default WGS84 datum(ellipsoid).
+        /// </summary>
+        /// <param name="gridZone">UTM Grid Zone Designation</param>
+        /// <param name="est">Easting</param>
+        /// <param name="nrt">Northing</param>
+        /// <param name="radius">Equatorial Radius</param>
+        /// <param name="flaten">Inverse Flattening</param>
+        /// <example>
+        /// <code>
+        /// UniversalTransverseMercator utm = new UniversalTransverseMercator("Q", 14, 581943.5, 2111989.8);
+        /// </code>
+        /// </example>
+        public UniversalTransverseMercator(string gridZone, double est, double nrt, double radius, double flaten)
+        {
+            string resultString = Regex.Match(gridZone, @"\d+").Value;
+            int longz;
+            if (!int.TryParse(resultString, out longz))
+            {
+                throw new FormatException("The MGRS Grid Zone Designator format is invalid.");
+            }
+            string latz = gridZone.Replace(resultString, "");
+
+            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if (!Verify_Lat_Zone(latz)) { Debug.WriteLine("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
+            if (est < 160000 || est > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
+            if (nrt < 0 || nrt > 10000000) { Debug.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
+
+            latZone = latz;
+            longZone = longz;
+            easting = est;
+            northing = nrt;
+
+            equatorial_radius = radius;
+            inverse_flattening = flaten;
+        }
 
         /// <summary>
         /// Constructs a UTM object based off DD Lat/Long
