@@ -10,6 +10,7 @@ namespace CoordinateSharp_TestProj
     {
         public static void Run_Test()
         {
+            //RUN IN BOTH ENGLISH AND DUTCH AS PERIODS CHANGE TO COMMAS
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -32,6 +33,7 @@ namespace CoordinateSharp_TestProj
             ECEF_Parse_Options_Test();
             Parse_Type_Enumerator_Test();
 
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US"); //RESET CULTURE
         }
         private static void Coordinate_Parses_Test()
         {

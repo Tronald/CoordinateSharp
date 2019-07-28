@@ -77,6 +77,8 @@ namespace CoordinateSharp_TestProj
             {
                 UniversalTransverseMercator utm = new UniversalTransverseMercator("Q", 14, 581943.5, 2111989.8);
                 utm = new UniversalTransverseMercator("Q", 14, 581943.5, 2111989.8, 6378160.000, 298.25);
+                utm = new UniversalTransverseMercator("14Q", 581943.5, 2111989.8);
+                utm = new UniversalTransverseMercator("14Q", 581943.5, 2111989.8, 6378160.000, 298.25);
             }
             catch { pass = false; }
             Pass.Write("UniversalTransverseMercator Initialization Error Checks", pass);
@@ -90,6 +92,8 @@ namespace CoordinateSharp_TestProj
                 //Outputs 19T CE 51307 93264
                 MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("T", 19, "CE", 51307, 93264);
                 mgrs = new MilitaryGridReferenceSystem("T", 19, "CE", 51307, 93264, 6378160.000, 298.25);
+                mgrs = new MilitaryGridReferenceSystem("19T", "CE", 51307, 93264);
+                mgrs = new MilitaryGridReferenceSystem("19T", "CE", 51307, 93264, 6378160.000, 298.25);
             }
             catch { pass = false; }
             Pass.Write("MilitaryGridReferenceSytem Initialization Error Checks", pass);
