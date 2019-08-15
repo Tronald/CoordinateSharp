@@ -486,6 +486,107 @@ namespace CoordinateSharp
            
             return c;
         }
+        private static double[] UTMtoSigned(double x, double y, double zone, double equatorialRadius, double flattening)
+        {
+            //x easting
+            //y northing
+
+            //http://home.hiwaay.net/~taylorc/toolbox/geography/geoutm.html
+            double phif, Nf, Nfpow, nuf2, ep2, tf, tf2, tf4, cf;
+            double x1frac, x2frac, x3frac, x4frac, x5frac, x6frac, x7frac, x8frac;
+            double x2poly, x3poly, x4poly, x5poly, x6poly, x7poly, x8poly;
+
+            double sm_a = equatorialRadius;
+            double sm_b = equatorialRadius * (1 - (1.0 / flattening)); //Polar Radius
+
+            /* Get the value of phif, the footpoint latitude. */
+            phif = FootpointLatitude(y, equatorialRadius, flattening);
+
+            /* Precalculate ep2 */
+            ep2 = (Math.Pow(sm_a, 2.0) - Math.Pow(sm_b, 2.0))
+                  / Math.Pow(sm_b, 2.0);
+
+            /* Precalculate cos (phif) */
+            cf = Math.Cos(phif);
+
+            /* Precalculate nuf2 */
+            nuf2 = ep2 * Math.Pow(cf, 2.0);
+
+            /* Precalculate Nf and initialize Nfpow */
+            Nf = Math.Pow(sm_a, 2.0) / (sm_b * Math.Sqrt(1 + nuf2));
+            Nfpow = Nf;
+
+            /* Precalculate tf */
+            tf = Math.Tan(phif);
+            tf2 = tf * tf;
+            tf4 = tf2 * tf2;
+
+            /* Precalculate fractional coefficients for x**n in the equations
+               below to simplify the expressions for latitude and longitude. */
+            x1frac = 1.0 / (Nfpow * cf);
+
+            Nfpow *= Nf;   /* now equals Nf**2) */
+            x2frac = tf / (2.0 * Nfpow);
+
+            Nfpow *= Nf;   /* now equals Nf**3) */
+            x3frac = 1.0 / (6.0 * Nfpow * cf);
+
+            Nfpow *= Nf;   /* now equals Nf**4) */
+            x4frac = tf / (24.0 * Nfpow);
+
+            Nfpow *= Nf;   /* now equals Nf**5) */
+            x5frac = 1.0 / (120.0 * Nfpow * cf);
+
+            Nfpow *= Nf;   /* now equals Nf**6) */
+            x6frac = tf / (720.0 * Nfpow);
+
+            Nfpow *= Nf;   /* now equals Nf**7) */
+            x7frac = 1.0 / (5040.0 * Nfpow * cf);
+
+            Nfpow *= Nf;   /* now equals Nf**8) */
+            x8frac = tf / (40320.0 * Nfpow);
+
+            /* Precalculate polynomial coefficients for x**n.
+               -- x**1 does not have a polynomial coefficient. */
+            x2poly = -1.0 - nuf2;
+
+            x3poly = -1.0 - 2 * tf2 - nuf2;
+
+            x4poly = 5.0 + 3.0 * tf2 + 6.0 * nuf2 - 6.0 * tf2 * nuf2
+                - 3.0 * (nuf2 * nuf2) - 9.0 * tf2 * (nuf2 * nuf2);
+
+            x5poly = 5.0 + 28.0 * tf2 + 24.0 * tf4 + 6.0 * nuf2 + 8.0 * tf2 * nuf2;
+
+            x6poly = -61.0 - 90.0 * tf2 - 45.0 * tf4 - 107.0 * nuf2
+                + 162.0 * tf2 * nuf2;
+
+            x7poly = -61.0 - 662.0 * tf2 - 1320.0 * tf4 - 720.0 * (tf4 * tf2);
+
+            x8poly = 1385.0 + 3633.0 * tf2 + 4095.0 * tf4 + 1575 * (tf4 * tf2);
+
+            /* Calculate latitude */
+            double nLat = phif + x2frac * x2poly * (x * x)
+                + x4frac * x4poly * Math.Pow(x, 4.0)
+                + x6frac * x6poly * Math.Pow(x, 6.0)
+                + x8frac * x8poly * Math.Pow(x, 8.0);
+
+            /* Calculate longitude */
+            double nLong = zone + x1frac * x
+                + x3frac * x3poly * Math.Pow(x, 3.0)
+                + x5frac * x5poly * Math.Pow(x, 5.0)
+                + x7frac * x7poly * Math.Pow(x, 7.0);
+
+            double dLat = RadToDeg(nLat);
+            double dLong = RadToDeg(nLong);
+            if (dLat > 90) { dLat = 90; }
+            if (dLat < -90) { dLat = -90; }
+            if (dLong > 180) { dLong = 180; }
+            if (dLong < -180) { dLong = -180; }
+
+        
+
+            return new double[] { dLat, dLong };
+        }
 
         private static double RadToDeg(double rad)
         {
@@ -592,7 +693,57 @@ namespace CoordinateSharp
 
 
         }
+        /// <summary>
+        /// Converts UTM coordinate to Signed Degree Lat/Long
+        /// </summary>
+        /// <param name="utm">utm</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a signed degree lat long based on a UTM object.
+        /// <code>
+        /// UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 233434, 234234);
+        /// double[] signed = UniversalTransverseMercator.ConvertUTMtoSignedDegree(utm);
+        /// Coordinate c = new Coordinate(signed[0], signed[1], new EagerLoad(false));
+        /// Console.WriteLine(c); //N 2º 7' 2.332" E 6º 36' 12.653"
+        /// </code>
+        /// </example>
+        public static double[] ConvertUTMtoSignedDegree(UniversalTransverseMercator utm)
+        {
 
+            bool southhemi = false;
+            if (utm.latZone == "A" || utm.latZone == "B" || utm.latZone == "C" || utm.latZone == "D" || utm.latZone == "E" || utm.latZone == "F" || utm.latZone == "G" || utm.latZone == "H" || utm.latZone == "J" ||
+                   utm.latZone == "K" || utm.latZone == "L" || utm.latZone == "M")
+            {
+                southhemi = true;
+            }
+
+            double cmeridian;
+
+            double x = utm.Easting - 500000.0;
+            double UTMScaleFactor = 0.9996;
+            x /= UTMScaleFactor;
+
+            /* If in southern hemisphere, adjust y accordingly. */
+            double y = utm.Northing;
+            if (southhemi)
+            {
+                y -= 10000000.0;
+            }
+
+            y /= UTMScaleFactor;
+
+            cmeridian = UTMCentralMeridian(utm.LongZone);
+
+            double[] signed = UTMtoSigned(x, y, cmeridian, utm.equatorial_radius, utm.inverse_flattening);
+
+            if (signed[0] > 85 || signed[1] < -85)
+            {
+                Debug.WriteLine("UTM conversions greater than 85 degrees or less than -85 degree latitude contain major deviations and should be used with caution.");
+            }
+            return signed;
+
+
+        }
         private static double UTMCentralMeridian(double zone)
         {
             double cmeridian;

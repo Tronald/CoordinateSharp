@@ -41,7 +41,7 @@ namespace CoordinateSharp
 {     
     public partial class Coordinate : INotifyPropertyChanged
     {
-        /*CONSTRUCTORS*/
+        /*CONSTRUCTORS*/ 
 
         /// <summary>
         /// Creates a Coordinate object with default values.
@@ -236,7 +236,7 @@ namespace CoordinateSharp
         /// a GeoDate of 1900-1-1 00:00:00. All properties will be set to EagerLoaded.
         /// </remarks>     
         internal Coordinate(double equatorialRadius, double inverseFlattening, bool t)
-        {
+        {          
             FormatOptions = new CoordinateFormatOptions();
             geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             latitude = new CoordinatePart(CoordinateType.Lat);
