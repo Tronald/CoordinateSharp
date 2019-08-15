@@ -89,15 +89,23 @@ namespace CoordinateSharp_TestProj
                         case 4:
                             if (c.UTM.ToString() != coordList[y] && c.UTM.WithinCoordinateSystemBounds) { pass = false; }
                             UniversalTransverseMercator utm = new UniversalTransverseMercator(c.UTM.LatZone, c.UTM.LongZone, c.UTM.Easting, c.UTM.Northing);
-                            rc = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
+                            rc = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);                       
                             if (Math.Abs(rc.Latitude.ToDouble() - c.Latitude.ToDouble()) >= .00001 && c.UTM.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...UTM Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
                             if (Math.Abs(rc.Longitude.ToDouble() - c.Longitude.ToDouble()) >= .00001 && c.UTM.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...UTM Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
 
-                            //OVERLOAD
+                            //SIGNED DEGREE METHOD                                                      
+                            double[] sd = UniversalTransverseMercator.ConvertUTMtoSignedDegree(utm);
+                            if (Math.Abs(sd[0] - c.Latitude.ToDouble()) >= .00001 && c.UTM.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...UTM Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
+                            if (Math.Abs(sd[1] - c.Longitude.ToDouble()) >= .00001 && c.UTM.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...UTM Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
+
+
+                            //OVERLOAD METHOD
                             utm = new UniversalTransverseMercator(c.UTM.LongZone + c.UTM.LatZone.ToString(), c.UTM.Easting, c.UTM.Northing);
                             rc = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
                             if (Math.Abs(rc.Latitude.ToDouble() - c.Latitude.ToDouble()) >= .00001 && c.UTM.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...UTM Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
                             if (Math.Abs(rc.Longitude.ToDouble() - c.Longitude.ToDouble()) >= .00001 && c.UTM.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...UTM Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
+
+                            
 
                             break;
                         case 5:
@@ -107,7 +115,13 @@ namespace CoordinateSharp_TestProj
                             if (Math.Abs(rc.Latitude.ToDouble() - c.Latitude.ToDouble()) >= .0001 && c.MGRS.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...MGRS Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
                             if (Math.Abs(rc.Longitude.ToDouble() - c.Longitude.ToDouble()) >= .0001 && c.MGRS.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...MGRS Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
 
-                            //OVERLOAD
+                            //SIGNED DEGREE METHOD                                                      
+                            double[] sdM = MilitaryGridReferenceSystem.MGRStoSignedDegree(mgrs);
+                            if (Math.Abs(sdM[0] - c.Latitude.ToDouble()) >= .0001 && c.MGRS.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...MGRS Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
+                            if (Math.Abs(sdM[1] - c.Longitude.ToDouble()) >= .0001 && c.MGRS.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...MGRS Conversion Outside Limits: " + rc.Longitude.ToDouble() + " - " + c.Longitude.ToDouble()); }
+
+
+                            //OVERLOAD METHOD
                             mgrs = new MilitaryGridReferenceSystem(c.MGRS.LongZone + c.MGRS.LatZone.ToString(), c.MGRS.Digraph, c.MGRS.Easting, c.MGRS.Northing);
                             rc = MilitaryGridReferenceSystem.MGRStoLatLong(mgrs);
                             if (Math.Abs(rc.Latitude.ToDouble() - c.Latitude.ToDouble()) >= .0001 && c.MGRS.WithinCoordinateSystemBounds) { pass = false; Debug.WriteLine("...MGRS Conversion Outside Limits: " + rc.Latitude.ToDouble() + " - " + c.Latitude.ToDouble()); }
