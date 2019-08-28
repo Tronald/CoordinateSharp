@@ -87,4 +87,3 @@ You may also view the [Documentation](https://www.coordinatesharp.com/Help/index
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes).
    
 <p align="center"><img src="https://s8.postimg.cc/wvf5cfpqt/LOGO_COORDINATE_SHARP_1.jpg"></p>
-
