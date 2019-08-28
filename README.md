@@ -1,6 +1,11 @@
 <p align="center"><img src="https://s8.postimg.cc/y7wuenuzp/LOGO_COORDINATE_SHARP.jpg"></p>
 
-<h2 align="center">v2.1.1.1 BETA-2</h2>
+<h2 align="center">v2.1.1.1</h2>
+
+![Release](https://img.shields.io/github/v/release/Tronald/CoordinateSharp)
+![Nuget Downloads](https://img.shields.io/nuget/dt/CoordinateSharp)
+![Open Issues](https://img.shields.io/github/issues-raw/Tronald/CoordinateSharp)
+![Website](https://img.shields.io/website/https/coordinatesharp.com)
 
 CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations. This library has the ability to convert various lat long formats, UTM, MGRS(NATO UTM) and Cartesian (Spherical and ECEF X, Y, Z). 
 
