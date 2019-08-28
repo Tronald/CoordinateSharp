@@ -10,9 +10,6 @@
 
 CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations.
 
-Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
-
-
 ### Like CoordinateSharp? Tell us about it!
 
 This library was built to help other developers. Please make the time and effort worth while by [telling us what you are using it for](https://github.com/Tronald/CoordinateSharp/issues/79).
@@ -86,6 +83,8 @@ Console.WriteLine(c.CelestialInfo.MoonAltitude);   // 14.4169966277874
 Check out the [CoordinateSharp Developer Guide](https://www.coordinatesharp.com/DeveloperGuide) for more detailed instructions on the usage and abilities of CoordinateSharp.
 
 You may also view the [Documentation](https://www.coordinatesharp.com/Help/index.html) for a more in depth look at CoordinateSharp's structure.
+
+Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes).
    
 <p align="center"><img src="https://s8.postimg.cc/wvf5cfpqt/LOGO_COORDINATE_SHARP_1.jpg"></p>
 
