@@ -1,7 +1,7 @@
 <p align="center"><img src="https://s8.postimg.cc/y7wuenuzp/LOGO_COORDINATE_SHARP.jpg"></p>
 <br/>
 <p align="center">
-<img src="https://img.shields.io/github/v/release/Tronald/CoordinateSharp"/>
+<img src="https://img.shields.io/github/v/release/Tronald/CoordinateSharp?include_prereleases"/>
 <img src="https://img.shields.io/nuget/dt/CoordinateSharp"/>
 <img src="https://img.shields.io/github/issues-raw/Tronald/CoordinateSharp"/>
 <img src="https://img.shields.io/website/https/coordinatesharp.com"/>
