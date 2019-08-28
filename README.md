@@ -65,7 +65,7 @@ Console.WriteLine(c.CelestialInfo.MoonAltitude);   // 14.4169966277874
 ### Demo
 
 <kbd>
-  <img src="https://github.com/Tronald/CoordinateSharp/blob/v2.1.1.1/Graphics/ice_video_20190828-153122.gif">
+  <img src="https://github.com/Tronald/CoordinateSharp/Graphics/ice_video_20190828-153122.gif">
 </kbd>
 
 ### Abilities
