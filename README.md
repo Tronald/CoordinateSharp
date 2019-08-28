@@ -1,13 +1,17 @@
 <p align="center"><img src="https://s8.postimg.cc/y7wuenuzp/LOGO_COORDINATE_SHARP.jpg"></p>
-
-![Release](https://img.shields.io/github/v/release/Tronald/CoordinateSharp)
-![Nuget Downloads](https://img.shields.io/nuget/dt/CoordinateSharp)
-![Open Issues](https://img.shields.io/github/issues-raw/Tronald/CoordinateSharp)
-![Website](https://img.shields.io/website/https/coordinatesharp.com)
+<br/>
+<p align="center">
+<img src="https://img.shields.io/github/v/release/Tronald/CoordinateSharp"/>
+<img src="https://img.shields.io/nuget/dt/CoordinateSharp"/>
+<img src="https://img.shields.io/github/issues-raw/Tronald/CoordinateSharp"/>
+<img src="https://img.shields.io/website/https/coordinatesharp.com"/>
+</p>
+<br/>
 
 CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations. This library has the ability to convert various lat long formats, UTM, MGRS(NATO UTM) and Cartesian (Spherical and ECEF X, Y, Z). 
 
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes)
+
 
 ### Like CoordinateSharp? Tell us about it!
 
@@ -61,7 +65,11 @@ Console.WriteLine(c.CelestialInfo.SunSet);         // 5-Jun-2018 4:02:00 AM
 Console.WriteLine(c.CelestialInfo.MoonAltitude);   // 14.4169966277874
 ```
 
+### Demo
 
+<kbd>
+  <img src="https://github.com/Tronald/CoordinateSharp/blob/v2.1.1.1/Graphics/ice_video_20190828-153122.gif">
+</kbd>
 
 ### Abilities
  
