@@ -1,7 +1,5 @@
 <p align="center"><img src="https://s8.postimg.cc/y7wuenuzp/LOGO_COORDINATE_SHARP.jpg"></p>
 
-<h2 align="center">v2.1.1.1</h2>
-
 ![Release](https://img.shields.io/github/v/release/Tronald/CoordinateSharp)
 ![Nuget Downloads](https://img.shields.io/nuget/dt/CoordinateSharp)
 ![Open Issues](https://img.shields.io/github/issues-raw/Tronald/CoordinateSharp)
