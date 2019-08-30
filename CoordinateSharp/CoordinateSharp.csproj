@@ -38,20 +38,20 @@ For more information, please contact Signature Group, LLC at this address: sales
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.1.1.1-beta.2</Version>
+    <Version>2.2.1.1</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2019</Copyright>
     <Description>A simple .NET standard library that is designed to assist with geographic coordinate conversions, formatting and location based solar and lunar calculations.</Description>
-    <PackageReleaseNotes>Major code refactor and efficiency improvements. Better constructors, property handling and documentation. Removes deprecated functions and properties. License &amp; Ownership change.</PackageReleaseNotes>
+    <PackageReleaseNotes>Increases precision of UTM Easting and Northing values. Parser bug fixes and improvements with MGRS.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian ECEF Sunset Sunrise Set Moonset Moonrise</PackageTags>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/ICON.png</PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
-    <AssemblyVersion>2.1.1.1</AssemblyVersion>
+    <AssemblyVersion>2.2.1.1</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
