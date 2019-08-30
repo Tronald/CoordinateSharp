@@ -1,6 +1,9 @@
 ## Contributing to CoordinateSharp
-Any contribution to this library is greatly appreciated! Developers are encouraged to create issues, ask questions and fork this library. 
-If you wish to contribute to the codebase, please follow the below guidelines. 
+Any contribution to this library is greatly appreciated! Developers are encouraged to create issues, ask questions and fork this library. If you wish to contribute to the codebase, please follow the below guidelines. 
+
+### Agree to the Terms
+
+A Contributor Agreement is required to be on file before any pull requests will be considered. The agreement can be signed and emailed to support@signatgroup.com. You may download the agreement [here](https://github.com/Tronald/CoordinateSharp/raw/develop/Signature%20Group%20Contributor%20Agreement.pdf).
 
 ### Organization
 
