@@ -358,8 +358,8 @@ namespace CoordinateSharp
             }
 
 
-            easting = Math.Round(10 * (x)) / 10.0;
-            northing = Math.Round(10 * y) / 10.0;
+            easting = x;
+            northing = y; 
                
             utm.latZone = letter;
             utm.longZone = zone;
