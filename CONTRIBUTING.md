@@ -1,11 +1,14 @@
 ## Contributing to CoordinateSharp
-Any contribution to this library is greatly appreciated! Developers are encouraged to create issues, ask questions and fork this library. 
-If you wish to contribute to the codebase, please follow the below guidelines. 
+Any contribution to this library is greatly appreciated! Developers are encouraged to create issues, ask questions and fork this library. If you wish to contribute to the codebase, please follow the below guidelines. 
+
+### Agree to the Terms
+
+A Contributor Agreement is required to be on file before any pull requests will be considered. The agreement can be signed and emailed to support@signatgroup.com. You may download the agreement [here](https://github.com/Tronald/CoordinateSharp/raw/develop/Signature%20Group%20Contributor%20Agreement.pdf).
 
 ### Organization
 
 The codebase is organized into various .cs files. If modifying the codebase, ensure you are familiar with how it is organized so that
-items go into the proper file. 
+items go into the proper area. If you are unsure about something, ask and we will be happy to give guidance.
 
 ### Readable Code
 
@@ -13,11 +16,7 @@ Please make code readable and easy to understand. Comment on any obscure object 
 
 ### Testing
 
-Developers are encouraged to write and share tests for changes made. Please use the automated testing project provided with the solution to verify changes. Forks will be tested both manually and automated prior to merging.
-
-### Contributor Licensing Agreement
-
-Before your contribution is accepted, you will be asked to sign a Contributor Licensing Agreement (starting with v2.1.1.1).
+Developers are encouraged to write and share tests for changes made. Please use the automated testing project provided with the solution to verify changes. Forks will be tested prior to merging.
 
 ### Pull Requests
 
