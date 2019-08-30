@@ -3,7 +3,6 @@
 <p align="center">
 <img src="https://img.shields.io/github/v/release/Tronald/CoordinateSharp?include_prereleases"/>
 <img src="https://img.shields.io/nuget/dt/CoordinateSharp"/>
-<img src="https://img.shields.io/github/issues-raw/Tronald/CoordinateSharp"/>
 <img src="https://img.shields.io/website/https/coordinatesharp.com"/>
 </p>
 <br/>
