@@ -912,12 +912,14 @@ namespace CoordinateSharp
             switch (propName)
             {
                 case "CelestialInfo":
-                    if (!EagerLoadSettings.Celestial || celestialInfo == null) { return; } //Prevent Null Exceptions and calls while eagerloading is off
-                    celestialInfo.CalculateCelestialTime(latitude.DecimalDegree, longitude.DecimalDegree, geoDate);
+                    if (!EagerLoadSettings.Celestial) { return; } //Prevent calls while eagerloading is off
+                    if(EagerLoadSettings.Celestial && celestialInfo == null) { celestialInfo = new Celestial(false); } //Create object if EagerLoading is on and object is null (EagerLoading turned on later).
+                    celestialInfo.CalculateCelestialTime(latitude.DecimalDegree, longitude.DecimalDegree, geoDate, EagerLoadSettings);
                     break;
                 case "UTM":
-                    if (!EagerLoadSettings.UTM_MGRS || UTM == null) { return; }
-                    utm.ToUTM(latitude.ToDouble(), longitude.ToDouble(), utm);
+                    if (!EagerLoadSettings.UTM_MGRS) { return; }
+                    else if (EagerLoadSettings.UTM_MGRS && utm == null) { utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, equatorial_radius, inverse_flattening); }
+                    else { utm.ToUTM(latitude.ToDouble(), longitude.ToDouble(), utm); }
                     break;
                 case "utm":
                     //Adjust case and notify of change. 
@@ -925,16 +927,19 @@ namespace CoordinateSharp
                     propName = "UTM";
                     break;
                 case "MGRS":
-                    if (!EagerLoadSettings.UTM_MGRS || MGRS == null) { return; }
-                    MGRS.ToMGRS(utm);
+                    if (!EagerLoadSettings.UTM_MGRS || !EagerLoadSettings.Extensions.MGRS || utm == null) { return; }
+                    else if (EagerLoadSettings.UTM_MGRS && EagerLoadSettings.Extensions.MGRS && mgrs == null) { mgrs = new MilitaryGridReferenceSystem(utm); }
+                    else { MGRS.ToMGRS(utm); }
                     break;
                 case "Cartesian":
-                    if (!EagerLoadSettings.Cartesian || Cartesian == null) { return; }
-                    Cartesian.ToCartesian(this);
+                    if (!EagerLoadSettings.Cartesian) { return; }
+                    else if (EagerLoadSettings.Cartesian && cartesian == null) { cartesian = new Cartesian(this); }
+                    else { Cartesian.ToCartesian(this); }
                     break;
                 case "ECEF":
                     if (!EagerLoadSettings.ECEF) { return; }
-                    ECEF.ToECEF(this);
+                    else if(EagerLoadSettings.ECEF && ecef == null) { ecef = new ECEF(this); }
+                    else ECEF.ToECEF(this);
                     break;
                 default:
                     break;

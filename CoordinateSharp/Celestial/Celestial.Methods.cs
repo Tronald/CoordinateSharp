@@ -34,7 +34,6 @@ or shipping CoordinateSharp with a closed source product.
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
 namespace CoordinateSharp
 { 
@@ -49,16 +48,17 @@ namespace CoordinateSharp
             astrologicalSigns = new AstrologicalSigns();
             lunarEclipse = new LunarEclipse();
             solarEclipse = new SolarEclipse();
-            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc));                     
+            CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new EagerLoad());                     
         }
-      
-        private Celestial(bool hasCalcs)
+       
+        /// Holdover. Determine if needed.
+        internal Celestial(bool hasCalcs)
         {
 
             astrologicalSigns = new AstrologicalSigns();
             lunarEclipse = new LunarEclipse();
             solarEclipse = new SolarEclipse();
-            if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)); }
+            if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new EagerLoad()); }
         }
 
         /// <summary>
@@ -92,9 +92,9 @@ namespace CoordinateSharp
             astrologicalSigns = new AstrologicalSigns();
             lunarEclipse = new LunarEclipse();
             solarEclipse = new SolarEclipse();
-            CalculateCelestialTime(lat, longi, d);
+            CalculateCelestialTime(lat, longi, d, new EagerLoad());
         }
-
+              
         /// <summary>
         /// Creates a Celestial object based on a Coordinate.
         /// </summary>
@@ -182,15 +182,16 @@ namespace CoordinateSharp
             {
                 celPre.MoonCondition,cel.MoonCondition,celPost.MoonCondition
             };
-            cel.moonCondition = Celestial.GetStatus(cel.MoonRise, cel.MoonSet, cels);
+            cel.moonCondition = GetStatus(cel.MoonRise, cel.MoonSet, cels);
             cels = new CelestialStatus[]
             {
                 celPre.SunCondition, cel.SunCondition, celPost.SunCondition
             };
-            cel.sunCondition = Celestial.GetStatus(cel.SunRise, cel.SunSet, cels);
+            cel.sunCondition = GetStatus(cel.SunRise, cel.SunSet, cels);
 
             //Load IsUp values based on local time with populated Celestial
-            Celestial.Calculate_Celestial_IsUp_Booleans(d, cel);
+            //If EagerLoading Extensions used, this function will handle null values
+            Calculate_Celestial_IsUp_Booleans(d, cel);
 
             return cel;
         }
@@ -450,28 +451,33 @@ namespace CoordinateSharp
         /// <param name="lat">Decimal format latitude</param>
         /// <param name="longi">Decimal format longitude</param>
         /// <param name="date">Geographic DateTime</param>
-        internal void CalculateCelestialTime(double lat, double longi, DateTime date)
+        /// <param name="el">EagerLoading Info for Auto-Calculations</param>
+        internal void CalculateCelestialTime(double lat, double longi, DateTime date, EagerLoad el)
         {
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
 
-            SunCalc.CalculateSunTime(lat, longi, date, this);
-
-            MoonCalc.GetMoonTimes(date, lat, longi, this);
-
-            MoonCalc.GetMoonDistance(date, this);
             
-            SunCalc.CalculateZodiacSign(date, this);
-
-            MoonCalc.GetMoonSign(date, this);
-
-            MoonCalc.GetMoonIllumination(date, this,lat,longi);
+            SunCalc.CalculateSunTime(lat, longi, date, this, el);
 
            
-            perigee = MoonCalc.GetPerigeeEvents(date);
-            apogee = MoonCalc.GetApogeeEvents(date);
+            if (el.Extensions.Lunar_Cycle)
+            {
+                MoonCalc.GetMoonTimes(date, lat, longi, this);
+                MoonCalc.GetMoonDistance(date, this);
+               
 
+                perigee = MoonCalc.GetPerigeeEvents(date);
+                apogee = MoonCalc.GetApogeeEvents(date);
+            }
+            MoonCalc.GetMoonIllumination(date, this, lat, longi, el);
+
+            if (el.Extensions.Zodiac)
+            {
+                SunCalc.CalculateZodiacSign(date, this);
+                MoonCalc.GetMoonSign(date, this);
+            }
+       
             Calculate_Celestial_IsUp_Booleans(date, this);
-
         }
 
         /// <summary>
@@ -498,12 +504,15 @@ namespace CoordinateSharp
 
             Celestial c = new Celestial(false);
 
-            SunCalc.CalculateSunTime(lat, longi, date, c);
+            SunCalc.CalculateSunTime(lat, longi, date, c, new EagerLoad());
             MoonCalc.GetMoonTimes(date, lat, longi, c);
             MoonCalc.GetMoonDistance(date, c);
+            MoonCalc.GetMoonIllumination(date, c, lat, longi, new EagerLoad());
+
             SunCalc.CalculateZodiacSign(date, c);
             MoonCalc.GetMoonSign(date, c);
-            MoonCalc.GetMoonIllumination(date, c,lat,longi);
+
+          
            
             c.perigee = MoonCalc.GetPerigeeEvents(date);
             c.apogee = MoonCalc.GetApogeeEvents(date);
@@ -535,7 +544,7 @@ namespace CoordinateSharp
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
 
             Celestial c = new Celestial(false);
-            SunCalc.CalculateSunTime(lat, longi, date, c);
+            SunCalc.CalculateSunTime(lat, longi, date, c, new EagerLoad());
             SunCalc.CalculateZodiacSign(date, c);
            
             return c;
@@ -566,7 +575,7 @@ namespace CoordinateSharp
             MoonCalc.GetMoonTimes(date, lat, longi, c);
             MoonCalc.GetMoonDistance(date, c);
             MoonCalc.GetMoonSign(date, c);
-            MoonCalc.GetMoonIllumination(date, c,lat,longi);
+            MoonCalc.GetMoonIllumination(date, c,lat,longi, new EagerLoad());
 
             c.perigee = MoonCalc.GetPerigeeEvents(date);
             c.apogee = MoonCalc.GetApogeeEvents(date);
@@ -708,7 +717,7 @@ namespace CoordinateSharp
                     }
                     break;
                 default:
-                    //Should never be reached. If reached, previous calculations failed somewhere.
+                    //Should never be reached unless intended null. If reached, previous calculations failed somewhere.
                     break;
             }
 
@@ -760,7 +769,7 @@ namespace CoordinateSharp
                     }
                     break;
                 default:
-                    //Should never be reached. If reached, previous calculations failed somewhere.
+                    //Should never be reached unless intended null. If reached, previous calculations failed somewhere.
                     break;
             }
         }

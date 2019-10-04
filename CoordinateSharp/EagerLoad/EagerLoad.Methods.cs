@@ -66,10 +66,12 @@ namespace CoordinateSharp
         /// </example>
         public EagerLoad()
         {
+            Extensions = new EagerLoad_Extensions();
             Celestial = true;
             UTM_MGRS = true;
             Cartesian = true;
             ECEF = true;
+           
         }
 
         /// <summary>
@@ -96,6 +98,7 @@ namespace CoordinateSharp
         /// </example>
         public EagerLoad(bool isOn)
         {
+            Extensions = new EagerLoad_Extensions();
             Celestial = isOn;
             UTM_MGRS = isOn;
             Cartesian = isOn;
@@ -126,6 +129,7 @@ namespace CoordinateSharp
         /// </example>
         public EagerLoad(EagerLoadType et)
         {
+            Extensions = new EagerLoad_Extensions();
             Cartesian = false;
             Celestial = false;
             UTM_MGRS = false;
@@ -175,5 +179,83 @@ namespace CoordinateSharp
             return el;
         }      
     }
-   
+    public partial class EagerLoad_Extensions
+    {
+        /// <summary>
+        /// Create a new EagerLoad_Extensions object. 
+        /// All values will be set to true.
+        /// </summary>
+        public EagerLoad_Extensions()
+        {
+            Solar_Cycle = true;
+            Lunar_Cycle = true;
+            Solar_Eclipse = true;
+            Lunar_Eclipse = true;
+            Zodiac = true;
+            MGRS = true;
+        }
+        /// <summary>
+        /// Create a new EagerLoad_Extensions object. 
+        /// All values will be set to the pass parameter.
+        /// </summary>
+        /// <param name="eagerLoad">bool</param>
+        public EagerLoad_Extensions(bool eagerLoad)
+        {
+            Solar_Cycle = eagerLoad;
+            Lunar_Cycle = eagerLoad;
+            Solar_Eclipse = eagerLoad;
+            Lunar_Eclipse = eagerLoad;
+            Zodiac = eagerLoad;
+            MGRS = eagerLoad;
+        }
+
+        public EagerLoad_Extensions(EagerLoad_ExtensionsType et)
+        {
+
+            Solar_Cycle = false;
+            Lunar_Cycle = false;
+            Solar_Eclipse = false;
+            Lunar_Eclipse = false;
+            Zodiac = false;
+            MGRS = false;
+
+            if (et.HasFlag(EagerLoad_ExtensionsType.Solar_Cycle))
+            {
+                Solar_Cycle = true;
+            }
+            if (et.HasFlag(EagerLoad_ExtensionsType.Lunar_Cycle))
+            {
+                Lunar_Cycle = true;
+            }
+            if (et.HasFlag(EagerLoad_ExtensionsType.Solar_Eclipse))
+            {
+                Solar_Eclipse = true;
+            }
+            if (et.HasFlag(EagerLoad_ExtensionsType.Lunar_Eclipse))
+            {
+                Lunar_Eclipse = true;
+            }
+            if (et.HasFlag(EagerLoad_ExtensionsType.Zodiac))
+            {
+                Zodiac = true;
+            }
+            if(et.HasFlag(EagerLoad_ExtensionsType.MGRS))
+            {
+                MGRS = true;
+            }
+        }
+
+        /// <summary>
+        /// Sets all celestial related extensions 
+        /// </summary>
+        /// <param name="option">bool</param>
+        internal void Set_Celestial_Items(bool option)
+        {
+            Solar_Cycle = option;
+            Lunar_Cycle = option;
+            Solar_Eclipse = option;
+            Lunar_Eclipse = option;
+            Zodiac = option;
+        }
+    }
 }

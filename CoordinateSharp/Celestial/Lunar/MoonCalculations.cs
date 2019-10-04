@@ -54,6 +54,7 @@ namespace CoordinateSharp
         public static void GetMoonTimes(DateTime date, double lat, double lng, Celestial c)
         {
             //Get current Moon Position to populate passed Alt / Azi for user specified date
+        
             MoonPosition mp = GetMoonPosition(date, lat, lng, c);
             double altRad = mp.Altitude / Math.PI*180; //Convert alt to degrees
             c.moonAltitude = (altRad - mp.ParallaxCorection); //Set altitude with adjusted parallax                
@@ -229,131 +230,138 @@ namespace CoordinateSharp
             return mc;
         }
       
-        public static void GetMoonIllumination(DateTime date, Celestial c, double lat, double lng)
+        public static void GetMoonIllumination(DateTime date, Celestial c, double lat, double lng, EagerLoad el)
         {
-            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-         
-            double d = JulianConversions.GetJulian_Epoch2000(date);
-            CelCoords s = GetSunCoords(d);
-            double JDE = JulianConversions.GetJulian(date);//Get julian 
-            double T = (JDE - 2451545) / 36525; //Get dynamic time.
-            double[] LDMNF = Get_Moon_LDMNF(T);
-          
-            CelCoords m = GetMoonCoords(d, c,LDMNF, T);
+            //Moon Illum must be done for both the Moon Name and Phase so either will trigger it to load
+            if (el.Extensions.Lunar_Cycle || el.Extensions.Zodiac)
+            {
+                date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
 
-            double sdist = 149598000,
-            phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra)),
-            inc = Math.Atan2(sdist * Math.Sin(phi), m.dist - sdist * Math.Cos(phi)),
-            angle = Math.Atan2(Math.Cos(s.dec) * Math.Sin(s.ra - m.ra), Math.Sin(s.dec) * Math.Cos(m.dec) -
-                    Math.Cos(s.dec) * Math.Sin(m.dec) * Math.Cos(s.ra - m.ra));
+                double d = JulianConversions.GetJulian_Epoch2000(date);
+                CelCoords s = GetSunCoords(d);
+                double JDE = JulianConversions.GetJulian(date);//Get julian 
+                double T = (JDE - 2451545) / 36525; //Get dynamic time.
+                double[] LDMNF = Get_Moon_LDMNF(T);
 
+                CelCoords m = GetMoonCoords(d, c, LDMNF, T);
 
-            MoonIllum mi = new MoonIllum();
-
-            mi.Fraction = (1 + Math.Cos(inc)) / 2;
-            mi.Phase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
-            mi.Angle = angle;
-
-           
-            c.moonIllum = mi;
-            
-             string moonName = "";
-             int moonDate = 0;
-            //GET PHASE NAME
-
-            //CHECK MOON AT BEGINNING AT END OF DAY TO GET DAY PHASE
-            DateTime dMon = new DateTime(date.Year, date.Month, 1);
-            for(int x = 1;x<= date.Day;x++)
-            {               
-                DateTime nDate = new DateTime(dMon.Year, dMon.Month, x, 0, 0, 0, DateTimeKind.Utc);
-                d = JulianConversions.GetJulian_Epoch2000(nDate);
-                s = GetSunCoords(d);
-                JDE = JulianConversions.GetJulian(nDate);//Get julian 
-                T = (JDE - 2451545) / 36525; //Get dynamic time.
-                LDMNF = Get_Moon_LDMNF(T);        
-                m = GetMoonCoords(d, c,LDMNF,T);
-
-                phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra));
-                inc = Math.Atan2(sdist * Math.Sin(phi), m.dist - sdist * Math.Cos(phi));
+                double sdist = 149598000,
+                phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra)),
+                inc = Math.Atan2(sdist * Math.Sin(phi), m.dist - sdist * Math.Cos(phi)),
                 angle = Math.Atan2(Math.Cos(s.dec) * Math.Sin(s.ra - m.ra), Math.Sin(s.dec) * Math.Cos(m.dec) -
                         Math.Cos(s.dec) * Math.Sin(m.dec) * Math.Cos(s.ra - m.ra));
 
-                double startPhase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
 
-                nDate = new DateTime(dMon.Year, dMon.Month, x, 23, 59, 59, DateTimeKind.Utc);
-                d = JulianConversions.GetJulian_Epoch2000(nDate);
-                s = GetSunCoords(d);
-                JDE = JulianConversions.GetJulian(nDate);//Get julian 
-                T = (JDE - 2451545) / 36525; //Get dynamic time.
-                LDMNF = Get_Moon_LDMNF(T);
-                m = GetMoonCoords(d, c,LDMNF,T);
+                MoonIllum mi = new MoonIllum();
 
-                phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra));
-                inc = Math.Atan2(sdist * Math.Sin(phi), m.dist - sdist * Math.Cos(phi));
-                angle = Math.Atan2(Math.Cos(s.dec) * Math.Sin(s.ra - m.ra), Math.Sin(s.dec) * Math.Cos(m.dec) -
-                        Math.Cos(s.dec) * Math.Sin(m.dec) * Math.Cos(s.ra - m.ra));
+                mi.Fraction = (1 + Math.Cos(inc)) / 2;
+                mi.Phase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
+                mi.Angle = angle;
 
-                double endPhase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
-                //Determine Moon Name.
-                if (startPhase <= .5 && endPhase >= .5)
+
+                c.moonIllum = mi;
+
+                string moonName = "";
+                int moonDate = 0;
+                //GET PHASE NAME
+
+                //CHECK MOON AT BEGINNING AT END OF DAY TO GET DAY PHASE
+                DateTime dMon = new DateTime(date.Year, date.Month, 1);
+                for (int x = 1; x <= date.Day; x++)
                 {
-                    moonDate = x;
-                    moonName = GetMoonName(dMon.Month, moonName);
-                }
-                //Get Moon Name (month, string);
-                //Get Moon Phase Name          
-                if (date.Day == x)
-                {
-                    if (startPhase > endPhase)
-                    {
-                        mi.PhaseName = "New Moon";
-                        break;
-                    }
-                    if (startPhase <= .25 && endPhase >= .25)
-                    {
-                        mi.PhaseName = "First Quarter";
-                        break;
-                    }
+                    DateTime nDate = new DateTime(dMon.Year, dMon.Month, x, 0, 0, 0, DateTimeKind.Utc);
+                    d = JulianConversions.GetJulian_Epoch2000(nDate);
+                    s = GetSunCoords(d);
+                    JDE = JulianConversions.GetJulian(nDate);//Get julian 
+                    T = (JDE - 2451545) / 36525; //Get dynamic time.
+                    LDMNF = Get_Moon_LDMNF(T);
+                    m = GetMoonCoords(d, c, LDMNF, T);
+
+                    phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra));
+                    inc = Math.Atan2(sdist * Math.Sin(phi), m.dist - sdist * Math.Cos(phi));
+                    angle = Math.Atan2(Math.Cos(s.dec) * Math.Sin(s.ra - m.ra), Math.Sin(s.dec) * Math.Cos(m.dec) -
+                            Math.Cos(s.dec) * Math.Sin(m.dec) * Math.Cos(s.ra - m.ra));
+
+                    double startPhase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
+
+                    nDate = new DateTime(dMon.Year, dMon.Month, x, 23, 59, 59, DateTimeKind.Utc);
+                    d = JulianConversions.GetJulian_Epoch2000(nDate);
+                    s = GetSunCoords(d);
+                    JDE = JulianConversions.GetJulian(nDate);//Get julian 
+                    T = (JDE - 2451545) / 36525; //Get dynamic time.
+                    LDMNF = Get_Moon_LDMNF(T);
+                    m = GetMoonCoords(d, c, LDMNF, T);
+
+                    phi = Math.Acos(Math.Sin(s.dec) * Math.Sin(m.dec) + Math.Cos(s.dec) * Math.Cos(m.dec) * Math.Cos(s.ra - m.ra));
+                    inc = Math.Atan2(sdist * Math.Sin(phi), m.dist - sdist * Math.Cos(phi));
+                    angle = Math.Atan2(Math.Cos(s.dec) * Math.Sin(s.ra - m.ra), Math.Sin(s.dec) * Math.Cos(m.dec) -
+                            Math.Cos(s.dec) * Math.Sin(m.dec) * Math.Cos(s.ra - m.ra));
+
+                    double endPhase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
+                    //Determine Moon Name.
                     if (startPhase <= .5 && endPhase >= .5)
                     {
-                        mi.PhaseName = "Full Moon";                       
-                        break;
+                        moonDate = x;
+                        moonName = GetMoonName(dMon.Month, moonName);
                     }
-                    if (startPhase <= .75 && endPhase >= .75)
+                    //Get Moon Name (month, string);
+                    //Get Moon Phase Name          
+                    if (date.Day == x)
                     {
-                        mi.PhaseName = "Last Quarter";
-                        break;
+                        if (startPhase > endPhase)
+                        {
+                            mi.PhaseName = "New Moon";
+                            break;
+                        }
+                        if (startPhase <= .25 && endPhase >= .25)
+                        {
+                            mi.PhaseName = "First Quarter";
+                            break;
+                        }
+                        if (startPhase <= .5 && endPhase >= .5)
+                        {
+                            mi.PhaseName = "Full Moon";
+                            break;
+                        }
+                        if (startPhase <= .75 && endPhase >= .75)
+                        {
+                            mi.PhaseName = "Last Quarter";
+                            break;
+                        }
+
+                        if (startPhase > 0 && startPhase < .25 && endPhase > 0 && endPhase < .25)
+                        {
+                            mi.PhaseName = "Waxing Crescent";
+                            break;
+                        }
+                        if (startPhase > .25 && startPhase < .5 && endPhase > .25 && endPhase < .5)
+                        {
+                            mi.PhaseName = "Waxing Gibbous";
+                            break;
+                        }
+                        if (startPhase > .5 && startPhase < .75 && endPhase > .5 && endPhase < .75)
+                        {
+                            mi.PhaseName = "Waning Gibbous";
+                            break;
+                        }
+                        if (startPhase > .75 && startPhase < 1 && endPhase > .75 && endPhase < 1)
+                        {
+                            mi.PhaseName = "Waning Crescent";
+                            break;
+                        }
                     }
 
-                    if (startPhase > 0 && startPhase < .25 && endPhase > 0 && endPhase < .25)
+                }
+                if (date.Day == moonDate)
+                {
+                    if (el.Extensions.Zodiac)
                     {
-                        mi.PhaseName = "Waxing Crescent";
-                        break;
-                    }
-                    if (startPhase > .25 && startPhase < .5 && endPhase > .25 && endPhase < .5)
-                    {
-                        mi.PhaseName = "Waxing Gibbous";
-                        break;
-                    }
-                    if (startPhase > .5 && startPhase < .75 && endPhase > .5 && endPhase < .75)
-                    {
-                        mi.PhaseName = "Waning Gibbous";
-                        break;
-                    }
-                    if (startPhase > .75 && startPhase < 1 && endPhase > .75 && endPhase < 1)
-                    {
-                        mi.PhaseName = "Waning Crescent";
-                        break;
+                        c.AstrologicalSigns.moonName = moonName;
                     }
                 }
-               
+                else { if (el.Extensions.Zodiac) { c.AstrologicalSigns.moonName = ""; } }
             }
-            if (date.Day == moonDate)
-            {
-                c.AstrologicalSigns.moonName = moonName;
-            }
-            else { c.AstrologicalSigns.moonName = ""; }
-            CalculateLunarEclipse(date, lat, lng, c);
+            if (el.Extensions.Lunar_Eclipse) { CalculateLunarEclipse(date, lat, lng, c); }
 
         }
         public static void CalculateLunarEclipse(DateTime date, double lat, double longi, Celestial c)

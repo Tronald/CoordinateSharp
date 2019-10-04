@@ -214,7 +214,7 @@ namespace CoordinateSharp
         internal void ToMGRS(UniversalTransverseMercator utm)
         {
             Digraphs digraphs = new Digraphs();
-
+       
             string digraph1 = digraphs.getDigraph1(utm.LongZone, utm.Easting);
             string digraph2 = digraphs.getDigraph2(utm.LongZone, utm.Northing);
 

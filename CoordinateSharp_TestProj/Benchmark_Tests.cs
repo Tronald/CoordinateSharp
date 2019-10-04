@@ -42,9 +42,26 @@ namespace CoordinateSharp_TestProj
             Benchmark(() => { Celestial cel = Celestial.CalculateMoonData(45, 45, DateTime.Now); }, 100, "Lunar Time Calculations");
 
             //Benchmark Local Times
-            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now,new EagerLoad(false)); Celestial cel = Celestial.Celestial_LocalTime(c, -7); }, 100, "Local Time");       
-            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now, new EagerLoad(false)); Celestial cel = Celestial.Solar_LocalTime(c, -7); }, 100, "Local Sun Time");
-            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now, new EagerLoad(false)); Celestial cel = Celestial.Lunar_LocalTime(c, -7); }, 100, "Local Moon Time");
+            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now,new EagerLoad(false)); Celestial cel = Celestial.Celestial_LocalTime(c, -7); }, 100, "Local Celestial Times");       
+            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now, new EagerLoad(false)); Celestial cel = Celestial.Solar_LocalTime(c, -7); }, 100, "Local Sun Only Times");
+            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now, new EagerLoad(false)); Celestial cel = Celestial.Lunar_LocalTime(c, -7); }, 100, "Local Moon Only Times");
+
+            //Benchmark EagerLoadin Exentsion Times
+            Benchmark(() => 
+            {
+                EagerLoad el = new EagerLoad();
+                el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
+                Coordinate c = new Coordinate(45, 45, DateTime.Now, el); 
+            }, 100, "Coordinate Initialization with Solar Cycle Calculations Only.");
+
+            Benchmark(() =>
+            {
+                EagerLoad el = new EagerLoad();
+                el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Lunar_Cycle);
+                Coordinate c = new Coordinate(45, 45, DateTime.Now, el);
+            }, 100, "Coordinate Initialization with Lunar Cycle Calculations Only.");
+
+
         }
 
         private static void Benchmark(Action act, int iterations, string s)

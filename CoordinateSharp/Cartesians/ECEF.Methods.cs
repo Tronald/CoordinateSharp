@@ -134,6 +134,7 @@ namespace CoordinateSharp
             y = yc;
             z = zc;
         }
+        
         /// <summary>
         /// Updates ECEF values when eagerloading is used.
         /// </summary>
