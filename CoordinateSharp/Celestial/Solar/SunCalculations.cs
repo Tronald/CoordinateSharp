@@ -39,78 +39,80 @@ namespace CoordinateSharp
 {
     internal class SunCalc
     {     
-        public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c,double offset = 0)
+        public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c, EagerLoad el, double offset = 0)
         {
-            if (date.Year == 0001) { return; } //Return if date vaue hasn't been established.
-            DateTime actualDate = new DateTime(date.Year,date.Month,date.Day,0, 0, 0, DateTimeKind.Utc);
-
-            ////Sun Time Calculations
-         
-            //Get Julian     
-            double lw = rad * -longi;
-            double phi = rad * lat;            
-
-            //Rise Set        
-            DateTime?[] evDate = Get_Event_Time(lw, phi, -.8333, actualDate);
-            c.sunRise = evDate[0];
-            c.sunSet = evDate[1];
-           
-            c.sunCondition = CelestialStatus.RiseAndSet;
-            //Azimuth and Altitude
-            CalculateSunAngle(date, longi, lat, c);
-            // neither sunrise nor sunset
-            if ((!c.SunRise.HasValue) && (!c.SunSet.HasValue))
+            if (date.Year == 0001) { return; } //Return if date value hasn't been established.
+            if (el.Extensions.Solar_Cycle)
             {
-                if (c.SunAltitude < 0)
+                DateTime actualDate = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
+              
+                ////Sun Time Calculations
+
+                //Get Julian     
+                double lw = rad * -longi;
+                double phi = rad * lat;
+
+                //Rise Set        
+                DateTime?[] evDate = Get_Event_Time(lw, phi, -.8333, actualDate);
+                c.sunRise = evDate[0];
+                c.sunSet = evDate[1];
+
+                c.sunCondition = CelestialStatus.RiseAndSet;
+                //Azimuth and Altitude
+                CalculateSunAngle(date, longi, lat, c);
+                // neither sunrise nor sunset
+                if ((!c.SunRise.HasValue) && (!c.SunSet.HasValue))
                 {
-                    c.sunCondition = CelestialStatus.DownAllDay;                 
+                    if (c.SunAltitude < 0)
+                    {
+                        c.sunCondition = CelestialStatus.DownAllDay;
+                    }
+                    else
+                    {
+                        c.sunCondition = CelestialStatus.UpAllDay;
+                    }
                 }
+                // sunrise or sunset
                 else
                 {
-                    c.sunCondition = CelestialStatus.UpAllDay;                 
+                    if (!c.SunRise.HasValue)
+                    {
+                        // No sunrise this date
+                        c.sunCondition = CelestialStatus.NoRise;
+
+                    }
+                    else if (!c.SunSet.HasValue)
+                    {
+                        // No sunset this date
+                        c.sunCondition = CelestialStatus.NoSet;
+                    }
                 }
+                //Additional Times
+                c.additionalSolarTimes = new AdditionalSolarTimes();
+                //Dusk and Dawn
+                //Civil
+                evDate = Get_Event_Time(lw, phi, -6, actualDate);
+                c.AdditionalSolarTimes.civilDawn = evDate[0];
+                c.AdditionalSolarTimes.civilDusk = evDate[1];
+
+
+                //Nautical
+                evDate = Get_Event_Time(lw, phi, -12, actualDate);
+                c.AdditionalSolarTimes.nauticalDawn = evDate[0];
+                c.AdditionalSolarTimes.nauticalDusk = evDate[1];
+
+                //Astronomical
+                evDate = Get_Event_Time(lw, phi, -18, actualDate);
+
+                c.AdditionalSolarTimes.astronomicalDawn = evDate[0];
+                c.AdditionalSolarTimes.astronomicalDusk = evDate[1];
+
+                //BottomDisc
+                evDate = Get_Event_Time(lw, phi, -.2998, actualDate);
+                c.AdditionalSolarTimes.sunriseBottomDisc = evDate[0];
+                c.AdditionalSolarTimes.sunsetBottomDisc = evDate[1];
             }
-            // sunrise or sunset
-            else
-            {
-                if (!c.SunRise.HasValue)
-                {
-                    // No sunrise this date
-                    c.sunCondition = CelestialStatus.NoRise;
-
-                }
-                else if (!c.SunSet.HasValue)
-                {
-                    // No sunset this date
-                    c.sunCondition = CelestialStatus.NoSet;
-                }
-            }
-            //Additional Times
-            c.additionalSolarTimes = new AdditionalSolarTimes();
-            //Dusk and Dawn
-            //Civil
-            evDate = Get_Event_Time(lw, phi, -6, actualDate);
-            c.AdditionalSolarTimes.civilDawn = evDate[0];
-            c.AdditionalSolarTimes.civilDusk = evDate[1];
-
-
-            //Nautical
-            evDate = Get_Event_Time(lw, phi, -12, actualDate);
-            c.AdditionalSolarTimes.nauticalDawn = evDate[0];
-            c.AdditionalSolarTimes.nauticalDusk = evDate[1];
-
-            //Astronomical
-            evDate = Get_Event_Time(lw, phi, -18, actualDate);
-
-            c.AdditionalSolarTimes.astronomicalDawn = evDate[0];
-            c.AdditionalSolarTimes.astronomicalDusk = evDate[1];
-
-            //BottomDisc
-            evDate = Get_Event_Time(lw, phi, -.2998, actualDate);
-            c.AdditionalSolarTimes.sunriseBottomDisc = evDate[0];
-            c.AdditionalSolarTimes.sunsetBottomDisc = evDate[1];
-
-            CalculateSolarEclipse(date, lat, longi, c);
+            if (el.Extensions.Solar_Eclipse) { CalculateSolarEclipse(date, lat, longi, c); }
 
         }  
         /// <summary>
@@ -120,7 +122,7 @@ namespace CoordinateSharp
         /// <param name="phi">Observer Latitude in radians</param>
         /// <param name="h">Angle in Degrees</param>
         /// <param name="date">Date of Event</param>
-        /// <returns>DateTime?[]{rise, set}</returns>
+        /// <returns>DateTime?[]{rise, set}</returns> 
         private static DateTime?[] Get_Event_Time(double lw, double phi, double h,DateTime date)
         {
             //Create arrays. Index 0 = Day -1, 1 = Day, 2 = Day + 1;
@@ -154,8 +156,8 @@ namespace CoordinateSharp
                 Jset = GetTime(h * rad, lw, phi, dec, n, M, L);
                 Jrise = Jnoon - (Jset - Jnoon);
 
-                DateTime? rise = JulianConversions.GetDate_FromJulian(Jrise);
-                DateTime? set = JulianConversions.GetDate_FromJulian(Jset);
+                DateTime? rise = JulianConversions.GetDate_FromJulian(Jrise); //Adjusting julian for  DT OFFSET MAY HELP WITH LOCAL TIME
+                DateTime? set = JulianConversions.GetDate_FromJulian(Jset); //Adjusting julian for DT OFFSET MAY HELP WITH LOCAL TIME
 
                 rises[x] = rise;
                 sets[x] = set;

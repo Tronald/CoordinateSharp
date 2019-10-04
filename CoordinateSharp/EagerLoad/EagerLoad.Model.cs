@@ -42,22 +42,74 @@ namespace CoordinateSharp
     /// </summary>
     [Serializable]
     public partial class EagerLoad
-    {       
+    {
+        private bool celestial;
+
         /// <summary>
-        /// Eager load celestial information.
+        /// Eager load all celestial information. 
+        /// Setting this will also set all Celestial related extensions.
         /// </summary>
-        public bool Celestial { get; set; }
+        public bool Celestial
+        {
+            get { return celestial; }    
+            set
+            {
+                celestial = value;
+                Extensions.Set_Celestial_Items(value);
+            }
+        }
         /// <summary>
-        /// Eager load UTM and MGRS information
+        /// Eager load UTM and MGRS information.
         /// </summary>
         public bool UTM_MGRS { get; set; }
         /// <summary>
-        /// Eager load Cartesian information
+        /// Eager load Cartesian information.
         /// </summary>
         public bool Cartesian { get; set; }
         /// <summary>
-        /// Eager load ECEF information
+        /// Eager load ECEF information.
         /// </summary>
         public bool ECEF { get; set; }
+        /// <summary>
+        /// Extensions that allow for more specific EagerLoading specifications.
+        /// </summary>
+        public EagerLoad_Extensions Extensions
+        {
+            get;set;
+        }    
     }
+    /// <summary>
+    /// Extensions to the EagerLoading class which allow for more specific EagerLoading specifications.
+    /// </summary>
+    public partial class EagerLoad_Extensions
+    {
+       
+        /// <summary>
+        /// Eager load solar cycle information.
+        /// Includes rises, sets, dusks, dawns and azimuth / altitude data.
+        /// </summary>
+        public bool Solar_Cycle { get; set; }
+        /// <summary>
+        /// Eager load lunar information.
+        /// Includes rises, sets, phase, distance and azimuth / altitude data.
+        /// </summary>
+        public bool Lunar_Cycle { get; set; }
+        /// <summary>
+        /// Eager load solar eclipse data.
+        /// </summary>
+        public bool Solar_Eclipse { get; set; }
+        /// <summary>
+        /// Eager load lunar eclipse data.
+        /// </summary>
+        public bool Lunar_Eclipse { get; set; }
+        /// <summary>
+        /// Eager load zodiac data.
+        /// </summary>
+        public bool Zodiac { get; set; }
+        /// <summary>
+        /// Eager load MGRS data.
+        /// </summary>
+        public bool MGRS { get; set; }
+    }
+    
 }

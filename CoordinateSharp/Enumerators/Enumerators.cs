@@ -184,6 +184,42 @@ namespace CoordinateSharp
         ECEF = 8
 
     }
+    /// <summary>
+    /// EagerLoad extensions property type enumerator
+    /// </summary>
+    [Serializable]
+    [Flags]
+    public enum EagerLoad_ExtensionsType
+    {
+        /// <summary>
+        /// Eager load solar cycle information.
+        /// Includes rises, sets, dusks, dawns and azimuth / altitude data.
+        /// </summary>
+        Solar_Cycle = 1,
+        /// <summary>
+        /// Eager load lunar information.
+        /// Includes rises, sets, phase, distance and azimuth / altitude data.
+        /// </summary>
+        Lunar_Cycle = 2,
+        /// <summary>
+        /// Eager load solar eclipse data.
+        /// </summary>
+        Solar_Eclipse = 4,
+        /// <summary>
+        /// Eager load lunar eclipse data.
+        /// </summary>
+        Lunar_Eclipse = 8,
+        /// <summary>
+        /// Eager load zodiac data.
+        /// </summary>
+        Zodiac = 16,
+        /// <summary>
+        /// Eager load MGRS data.
+        /// </summary>
+        MGRS = 32
+
+
+    }
 
     /// <summary>
     /// Coordinate format types.
@@ -347,8 +383,13 @@ namespace CoordinateSharp
         /// </summary>
         Total
     }
+    /// <summary>
+    /// For static local time conversions.
+    /// Used internally during local time calls.
+    /// </summary>
     internal enum Celestial_EagerLoad
     {
         All, Lunar, Solar
     }
+
 }

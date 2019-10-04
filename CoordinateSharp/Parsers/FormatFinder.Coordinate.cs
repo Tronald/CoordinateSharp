@@ -146,7 +146,7 @@ namespace CoordinateSharp
             if (TryMGRS(s, out um))
             {
                 try
-                {
+                {               
                     double zone = Convert.ToDouble(um[0]);
                     double easting = Convert.ToDouble(um[3]);
                     double northing = Convert.ToDouble(um[4]);
@@ -496,7 +496,41 @@ namespace CoordinateSharp
         private static bool TryMGRS(string s, out string[] mgrs)
         {
             mgrs = null;
+            //Attempt Regex Match
+            Regex regex = new Regex("[0-9]{1,2}[a-z,A-Z]{3}\\d+");
+            Match match = regex.Match(s);
+            if(match.Success)
+            {
+                //Extract Numbers for one string MGRS
+                regex = new Regex("\\d+");
+                MatchCollection matches = regex.Matches(s);
+
+                //IF character count of Easting Northing aren't even return false as precisions is unknown.
+                int splitSpot = matches[1].Value.Count();
+                if (splitSpot%2 == 0)
+                {
+                    
+                    string longZone = matches[0].Value;
+                    string eastingNorthing = matches[1].Value;
+
+                    //Extract Letters
+
+                    regex = new Regex("[a-z,A-Z]");
+                    matches = regex.Matches(s);
+                    string latZone = matches[0].Value;
+                    string identifier = matches[1].Value + matches[2].Value;
+
+                    //Split Easting and Northing Values
+                    string easting = eastingNorthing.Substring(0, (int)(eastingNorthing.Length / 2));
+                    string northing = eastingNorthing.Substring((int)(eastingNorthing.Length / 2), (int)(eastingNorthing.Length / 2));
+
+                    mgrs = new string[] { longZone, latZone, identifier, easting, northing };
+                    return true;
+                }
+
+            }
             string[] sA = SpecialSplit(s, false);
+
             if (sA.Count() == 4 || sA.Count() == 5)
             {
                 double zone;
@@ -507,8 +541,8 @@ namespace CoordinateSharp
 
                 if (sA.Count() == 5)
                 {
-                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
-                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
+                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; sA[3] = sA[4]; }
+                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; ; sA[3] = sA[4]; }
                     else { return false; }
                 }
                 zoneL = new string(sA[0].Where(Char.IsLetter).ToArray());

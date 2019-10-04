@@ -77,7 +77,7 @@ namespace CoordinateSharp
                     latitude.parent = this;
                     if (EagerLoadSettings.Celestial)
                     {
-                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate);
+                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate, EagerLoadSettings);
                     }
                     if (longitude != null)
                     {
@@ -116,7 +116,7 @@ namespace CoordinateSharp
                     longitude.parent = this;
                     if (EagerLoadSettings.Celestial)
                     {
-                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate);
+                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate, EagerLoadSettings);
                     }
                     if (latitude != null)
                     {
@@ -154,7 +154,7 @@ namespace CoordinateSharp
                     geoDate = value;
                     if (EagerLoadSettings.Celestial)
                     {
-                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate);
+                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate, EagerLoadSettings);
                         NotifyPropertyChanged("CelestialInfo");
                     }
 
