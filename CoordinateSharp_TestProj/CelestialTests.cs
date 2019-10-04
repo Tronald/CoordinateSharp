@@ -136,9 +136,7 @@ namespace CoordinateSharp_TestProj
             Apogee = c.CelestialInfo.Apogee;          
         }
         private void Check_Solar_Only_Times()
-        {
-            bool pass = true;
-
+        {          
             //Check if values populate.
             Celestial c = Celestial.CalculateSunData(45, 45, DateTime.Now);
         }
