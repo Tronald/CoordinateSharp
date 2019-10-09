@@ -45,7 +45,7 @@ For more information, please contact Signature Group, LLC at this address: sales
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2019</Copyright>
     <Description>A simple .NET standard library that is designed to assist with geographic coordinate conversions, formatting and location based solar and lunar calculations.</Description>
-    <PackageReleaseNotes>Increases precision of UTM Easting and Northing values. Parser bug fixes and improvements with MGRS.</PackageReleaseNotes>
+    <PackageReleaseNotes>Adds eager loading extension properties to allow for finer performance tweaks.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian ECEF Sunset Sunrise Set Moonset Moonrise</PackageTags>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/ICON.png</PackageIconUrl>
