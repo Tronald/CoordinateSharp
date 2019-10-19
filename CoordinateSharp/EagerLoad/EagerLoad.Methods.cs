@@ -209,6 +209,11 @@ namespace CoordinateSharp
             MGRS = eagerLoad;
         }
 
+        /// <summary>
+        /// Create a new EagerLoad_Extensions object.
+        /// Extension values can be specified with enum flags.
+        /// </summary>
+        /// <param name="et">EagerLoad_ExtensionsType flag</param>
         public EagerLoad_Extensions(EagerLoad_ExtensionsType et)
         {
 

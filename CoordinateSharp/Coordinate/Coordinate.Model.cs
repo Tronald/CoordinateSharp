@@ -50,6 +50,7 @@ namespace CoordinateSharp
         private CoordinatePart latitude;
         private CoordinatePart longitude;
         private DateTime geoDate;
+        private double offset=0;
 
         private UniversalTransverseMercator utm;
         private MilitaryGridReferenceSystem mgrs;
@@ -77,7 +78,7 @@ namespace CoordinateSharp
                     latitude.parent = this;
                     if (EagerLoadSettings.Celestial)
                     {
-                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate, EagerLoadSettings);
+                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate, EagerLoadSettings, offset);
                     }
                     if (longitude != null)
                     {
@@ -116,7 +117,7 @@ namespace CoordinateSharp
                     longitude.parent = this;
                     if (EagerLoadSettings.Celestial)
                     {
-                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate, EagerLoadSettings);
+                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate, EagerLoadSettings, offset);
                     }
                     if (latitude != null)
                     {
@@ -151,17 +152,33 @@ namespace CoordinateSharp
             {
                 if (geoDate != value)
                 {
-                    geoDate = value;
-                    if (EagerLoadSettings.Celestial)
-                    {
-                        celestialInfo.CalculateCelestialTime(Latitude.DecimalDegree, Longitude.DecimalDegree, geoDate, EagerLoadSettings);
-                        NotifyPropertyChanged("CelestialInfo");
-                    }
-
+                    geoDate = value;                 
+                    NotifyPropertyChanged("CelestialInfo");
                     NotifyPropertyChanged("GeoDate");
                 }
             }
         }
+        /// <summary>
+        /// GeoDate UTC Offset. This must be set if working / eager loading in local time.
+        /// </summary>
+        public double Offset
+        {
+            get { return offset; }
+            set
+            {              
+                if (offset != value)
+                {
+                    if (value < -12 || value > 12)
+                    { throw new ArgumentOutOfRangeException("Time offsets cannot be greater than 12 or less than -12."); }
+
+                    offset = value;
+                   
+                    NotifyPropertyChanged("CelestialInfo");
+                    NotifyPropertyChanged("Offset");
+                }
+            }
+        }
+
 
         /// <summary>
         /// Universal Transverse Mercator values.

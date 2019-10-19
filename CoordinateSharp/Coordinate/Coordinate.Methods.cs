@@ -179,6 +179,9 @@ namespace CoordinateSharp
         /// <param name="eagerLoad">Eagerloading settings</param>
         private void Coordinate_Builder(double lat, double longi, DateTime date, EagerLoad eagerLoad)
         {
+            //SET EagerLoading Setting
+            EagerLoadSettings = eagerLoad;
+
             FormatOptions = new CoordinateFormatOptions();
 
             //Use default constructor if signed degree is 0 for performance.
@@ -201,7 +204,7 @@ namespace CoordinateSharp
             //Load Celestial
             if (eagerLoad.Celestial)
             {
-                celestialInfo = new Celestial(lat, longi, date);
+                celestialInfo = new Celestial(lat, longi, date,0, eagerLoad);
             }
             //Load UTM MGRS
             if (eagerLoad.UTM_MGRS)
@@ -220,8 +223,7 @@ namespace CoordinateSharp
                 ecef = new ECEF(this);
             }
 
-            //SET EagerLoading Setting
-            EagerLoadSettings = eagerLoad;
+          
 
             //Set Ellipsoid
             equatorial_radius = 6378137.0;
@@ -897,6 +899,27 @@ namespace CoordinateSharp
             return false;
         }
 
+        //LOCAL TIME METHOD
+        /// <summary>
+        /// Returns a new Celestial object in local time, based on the Coordinate objects values.
+        /// </summary>
+        /// <param name="hourOffset">Offset hours</param>
+        /// <example>
+        /// In the following example we convert a UTC populated Coordinate.Celestial object and convert it to Local time.
+        /// <code>
+        /// Coordinate coord = new Coordinate(32,72, DateTime.Now);
+        /// //Convert to Pacific Standard Time (PST) -7 UTC and return new
+        /// //Celestial object that contains values in PST.
+        /// Celestial cel = coord.Celestial_LocalTime(-7);
+        /// </code>
+        /// </example>
+        /// <returns>Celestial</returns>
+        public Celestial Celestial_LocalTime(double hourOffset)
+        {
+            Celestial cel = new Celestial(latitude.ToDouble(), longitude.ToDouble(), geoDate, hourOffset, EagerLoadSettings);
+            return cel;
+        }
+
         /*PROPERTY CHANGE HANDLER*/
         /*NOTIFY NEW COORDINATE SYSTEMS HERE*/
         /// <summary>
@@ -914,7 +937,7 @@ namespace CoordinateSharp
                 case "CelestialInfo":
                     if (!EagerLoadSettings.Celestial) { return; } //Prevent calls while eagerloading is off
                     if(EagerLoadSettings.Celestial && celestialInfo == null) { celestialInfo = new Celestial(false); } //Create object if EagerLoading is on and object is null (EagerLoading turned on later).
-                    celestialInfo.CalculateCelestialTime(latitude.DecimalDegree, longitude.DecimalDegree, geoDate, EagerLoadSettings);
+                    celestialInfo.CalculateCelestialTime(latitude.DecimalDegree, longitude.DecimalDegree, geoDate, EagerLoadSettings, offset);
                     break;
                 case "UTM":
                     if (!EagerLoadSettings.UTM_MGRS) { return; }
