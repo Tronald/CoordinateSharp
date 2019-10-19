@@ -186,12 +186,41 @@ namespace CoordinateSharp_TestProj
             c.EagerLoadSettings.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.MGRS);             
             c.Latitude.DecimalDegree++;
             if (c.MGRS == null || c.CelestialInfo.AstrologicalSigns.MoonName != moonName || c.CelestialInfo.AstrologicalSigns.MoonSign != moonZodiac || c.CelestialInfo.AstrologicalSigns.ZodiacSign != sunZodiac) { pass = false; }
-           
+
+            EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
+            c = new Coordinate(45, 45, DateTime.Now, el);
+            if(!Extensions_Null(c.CelestialInfo, EagerLoad_ExtensionsType.Solar_Cycle)) { pass = false; }
+
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Lunar_Cycle);
+            c = new Coordinate(45, 45, DateTime.Now, el);
+            if (!Extensions_Null(c.CelestialInfo, EagerLoad_ExtensionsType.Lunar_Cycle)) { pass = false; }
+
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Eclipse);
+            c = new Coordinate(45, 45, DateTime.Now, el);
+            if (!Extensions_Null(c.CelestialInfo, EagerLoad_ExtensionsType.Solar_Eclipse)) { pass = false; }
+
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Lunar_Eclipse);
+            c = new Coordinate(45, 45, DateTime.Now, el);
+            if (!Extensions_Null(c.CelestialInfo, EagerLoad_ExtensionsType.Lunar_Eclipse)) { pass = false; }
+
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Zodiac);
+            c = new Coordinate(45, 45, DateTime.Now, el);
+            if (!Extensions_Null(c.CelestialInfo, EagerLoad_ExtensionsType.Zodiac)) { pass = false; }
 
             Pass.Write("Extensions Tests (EagerLoad Extensions)", pass);
 
         }
+        private static bool Extensions_Null(Celestial cel, EagerLoad_ExtensionsType t)
+        {
+            if (cel.SunSet!=null && t != EagerLoad_ExtensionsType.Solar_Cycle) { return false; }
+            if (cel.MoonSet != null && t != EagerLoad_ExtensionsType.Lunar_Cycle) { return false; }
+            if (cel.LunarEclipse.NextEclipse.MidEclipse.Year > 0001 && t != EagerLoad_ExtensionsType.Lunar_Eclipse ){ return false; }
+            if (cel.SolarEclipse.NextEclipse.MaximumEclipse.Year > 0001 && t != EagerLoad_ExtensionsType.Solar_Eclipse ){ return false; }
+            if (cel.AstrologicalSigns.MoonName != null && cel.AstrologicalSigns.ZodiacSign != null && t != EagerLoad_ExtensionsType.Zodiac) { return false; }
 
+            return true;
+        }
         //Tests switching EagerLoading from on to off to see if properties initialize and avoid null exceptions
         private static void Switch_Test()
         {
