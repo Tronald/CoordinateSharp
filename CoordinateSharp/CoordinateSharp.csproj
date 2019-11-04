@@ -59,6 +59,8 @@ For more information, please contact Signature Group, LLC at this address: sales
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
     <DocumentationFile>bin\Release\net40\CoordinateSharp.xml</DocumentationFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard1.3\CoordinateSharp.xml</DocumentationFile>
@@ -122,6 +124,6 @@ For more information, please contact Signature Group, LLC at this address: sales
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-      <None Include="LICENSE.md" Pack="true" PackagePath="LICENSE.md"/>
+      <None Include="LICENSE.md" Pack="true" PackagePath="LICENSE.md" />
   </ItemGroup>
 </Project>
