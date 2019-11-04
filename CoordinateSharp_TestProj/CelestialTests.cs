@@ -639,7 +639,7 @@ namespace CoordinateSharp_TestProj
             if (Math.Abs(lCel.MoonIllum.Angle - bCel.MoonIllum.Angle) > .00001) { return false; }
             if (Math.Abs(lCel.MoonIllum.Fraction - bCel.MoonIllum.Fraction) > .00001) { return false; }
             if (Math.Abs(lCel.MoonIllum.Phase - bCel.MoonIllum.Phase) > .00001) { return false; }
-            if (lCel.MoonIllum.PhaseName != bCel.MoonIllum.PhaseName) { return false; }
+            //if (lCel.MoonIllum.PhaseName != bCel.MoonIllum.PhaseName) { return false; } Test omitted as time's can changes phases between days. Documentation reflects. Issues will be captured at Phase.
             if (lCel.IsMoonUp != bCel.IsMoonUp) { return false; }
             if (lCel.MoonCondition != bCel.MoonCondition) { return false; }
             //ZODIAC
