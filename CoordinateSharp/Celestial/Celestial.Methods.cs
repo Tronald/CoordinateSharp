@@ -232,7 +232,7 @@ namespace CoordinateSharp
             return c;
         }
         /// <summary>
-        /// Calculate celestial data based on latitude, longitude and UTC date at the location.
+        /// Calculate celestial data based on latitude, longitude and UTC date with hours offset at the location.
         /// </summary>
         /// <param name="lat">Decimal format latitude</param>
         /// <param name="longi">Decimal format longitude</param>
@@ -260,7 +260,7 @@ namespace CoordinateSharp
             return c;
         }
         /// <summary>
-        /// Calculate celestial data based on latitude, longitude and UTC date at the location.
+        /// Calculate celestial data based on latitude, longitude and UTC date with hours offset at the location.
         /// </summary>
         /// <param name="lat">Decimal format latitude</param>
         /// <param name="longi">Decimal format longitude</param>
