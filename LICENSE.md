@@ -15,6 +15,7 @@ You can be released from the requirements of the license by purchasing a commerc
 Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request.
 <br />-Department of Defense
 <br />-Department of Homeland Security
+<br />-Open source contributors to this library
 <br />-Scholarly or scientific uses on a case by case basis.
 <br />-Emergency response / management uses on a case by case basis.
 
