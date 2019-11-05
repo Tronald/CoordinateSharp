@@ -527,7 +527,7 @@ namespace CoordinateSharp_TestProj
         }
         private bool Check_Local_Times()
         {
-            DateTime d = DateTime.Now;
+            DateTime d = new DateTime(2019,10,31,14,10,22);
             double offset = -7;
 
             //INSTANCE CHECK
@@ -635,7 +635,7 @@ namespace CoordinateSharp_TestProj
             if (Math.Abs(lCel.Apogee.NextApogee.Distance.Meters - bCel.Apogee.NextApogee.Distance.Meters) > .00001) { return false; }
             if (Math.Abs(lCel.Apogee.LastApogee.HorizontalParallax - bCel.Apogee.LastApogee.HorizontalParallax) > .00001) { return false; }
             if (Math.Abs(lCel.Apogee.NextApogee.HorizontalParallax - bCel.Apogee.NextApogee.HorizontalParallax) > .00001) { return false; }
-            if (Math.Abs(lCel.MoonDistance.Meters - bCel.MoonDistance.Meters) > .1) { return false; }
+            if (Math.Abs(lCel.MoonDistance.Meters - bCel.MoonDistance.Meters) > .2) { return false; }
             if (Math.Abs(lCel.MoonIllum.Angle - bCel.MoonIllum.Angle) > .00001) { return false; }
             if (Math.Abs(lCel.MoonIllum.Fraction - bCel.MoonIllum.Fraction) > .00001) { return false; }
             if (Math.Abs(lCel.MoonIllum.Phase - bCel.MoonIllum.Phase) > .00001) { return false; }
