@@ -44,11 +44,11 @@ For more information, please contact Signature Group, LLC at this address: sales
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2019</Copyright>
-    <Description>A simple .NET standard library that is designed to assist with geographic coordinate conversions, formatting and location based solar and lunar calculations.</Description>
-    <PackageReleaseNotes>Improves local time conversion effeciency and reduces benchmarks.</PackageReleaseNotes>
+    <Description>A simple library designed to assist with geographic coordinate conversions, formatting and location based solar and lunar information.</Description>
+    <PackageReleaseNotes>Adds ability to operate Coordinate in local time. Improves local time conversion efficiency. General parser improvements. Benchmarks reductions.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian ECEF Sunset Sunrise Set Moonset Moonrise</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
     <PackageIconUrl>https://raw.githubusercontent.com/Tronald/CoordinateSharp/master/ICON.png</PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
@@ -64,12 +64,18 @@ For more information, please contact Signature Group, LLC at this address: sales
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard1.3\CoordinateSharp.xml</DocumentationFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.4|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard1.4\CoordinateSharp.xml</DocumentationFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard2.0\CoordinateSharp.xml</DocumentationFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net40|AnyCPU'">
@@ -124,6 +130,6 @@ For more information, please contact Signature Group, LLC at this address: sales
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-      <None Include="LICENSE.md" Pack="true" PackagePath="LICENSE.md" />
+    <None Include="License.txt" Pack="true" PackagePath="License.txt" />
   </ItemGroup>
 </Project>
