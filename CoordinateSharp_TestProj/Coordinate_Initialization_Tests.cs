@@ -304,6 +304,7 @@ namespace CoordinateSharp_TestProj
                 string UTM = coord.UTM.ToString();
                 string ECEF = coord.ECEF.ToString();
                 string Cartesian = coord.Cartesian.ToString();
+                DateTime? cel = coord.CelestialInfo.MoonSet;
 
                 CoordinatePart cpLat = new CoordinatePart(25, CoordinateType.Lat);
                 CoordinatePart cpLng = new CoordinatePart(25, CoordinateType.Long);
@@ -321,6 +322,7 @@ namespace CoordinateSharp_TestProj
                 if (UTM == coord.UTM.ToString()) { pass = false; }
                 if (ECEF == coord.ECEF.ToString()) { pass = false; }
                 if (Cartesian == coord.Cartesian.ToString()) { pass = false; }
+                if (cel == coord.CelestialInfo.MoonSet) { pass = false; }
             }
             catch { pass = false; }
 

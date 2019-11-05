@@ -9,6 +9,8 @@ are referring to this work.
 
 License
 
+CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
+
 Copyright (C) 2019, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
@@ -31,6 +33,13 @@ as soon as you develop commercial activities involving the CoordinateSharp softw
 These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application, 
 or shipping CoordinateSharp with a closed source product.
 
+Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request.
+-Department of Defense
+-Department of Homeland Security
+-Open source contributors to this library
+-Scholarly or scientific uses on a case by case basis.
+-Emergency response / management uses on a case by case basis.
+
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
 using System;
@@ -51,11 +60,15 @@ namespace CoordinateSharp
         /// <param name="lat">Latitude</param>
         /// <param name="lng">Longitude</param>
         /// <param name="c">Celestial</param>
-        public static void GetMoonTimes(DateTime date, double lat, double lng, Celestial c)
+        /// <param name="offset">Offset hours</param>
+        public static void GetMoonTimes(DateTime date, double lat, double lng, Celestial c, double offset)
         {
             //Get current Moon Position to populate passed Alt / Azi for user specified date
-        
-            MoonPosition mp = GetMoonPosition(date, lat, lng, c);
+
+            offset *= -1; //REVERSE OFFSET FOR POSITIONING
+
+            MoonPosition mp = GetMoonPosition(date, lat, lng, c, offset);
+
             double altRad = mp.Altitude / Math.PI*180; //Convert alt to degrees
             c.moonAltitude = (altRad - mp.ParallaxCorection); //Set altitude with adjusted parallax                
             c.moonAzimuth = mp.Azimuth / Math.PI*180 + 180;  //Azimuth in degrees + 180 for E by N.
@@ -68,7 +81,7 @@ namespace CoordinateSharp
             DateTime t = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
 
             //Get start of day Moon Pos
-            MoonPosition moonPos = GetMoonPosition(t, lat, lng, c);
+            MoonPosition moonPos = GetMoonPosition(t, lat, lng, c, offset);
             double alt1 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
 
             DateTime? setTime = null;
@@ -78,7 +91,7 @@ namespace CoordinateSharp
             //Iterate for each hour of the day
             for(int x = 1;x<=24;x++)
             {               
-                moonPos = GetMoonPosition(t.AddHours(x), lat, lng, c);//Get the next hours altitude for comparison
+                moonPos = GetMoonPosition(t.AddHours(x), lat, lng, c, offset);//Get the next hours altitude for comparison
                 double alt2 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
                 //If hour 1 is below horizon and hour 2 is above
                 if(alt1 <hz && alt2 >=hz)
@@ -86,7 +99,7 @@ namespace CoordinateSharp
                     //Moon Rise Occurred
                     moonRise = true;
                     DateTime dt1 = t.AddHours(x - 1);
-                    moonPos = GetMoonPosition(dt1, lat, lng, c);//Get the next hours altitude for comparison
+                    moonPos = GetMoonPosition(dt1, lat, lng, c, offset);//Get the next hours altitude for comparison
                     double altM1 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
                     //Iterate through each minute to determine at which minute the horizon is crossed.
                     //Interpolation is more efficient, but yielded results with deviations up to 5 minutes. 
@@ -94,7 +107,7 @@ namespace CoordinateSharp
                     for (int y = 1;y<=60;y++)
                     {
                         DateTime dt2 = t.AddHours(x-1).AddMinutes(y);
-                        moonPos = GetMoonPosition(dt2, lat, lng, c);//Get the next hours altitude for comparison
+                        moonPos = GetMoonPosition(dt2, lat, lng, c, offset);//Get the next hours altitude for comparison
                         double altM2 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
                         if (altM1<hz && altM2>=hz)
                         {
@@ -110,10 +123,10 @@ namespace CoordinateSharp
                 //if hour 2 is above horizon and hour 1 below
                 if(alt1>=hz && alt2 <hz)
                 {
-                    //Moon Set Occured
+                    //Moon Set Occurred
                     moonSet = true;
                     DateTime dt1 = t.AddHours(x - 1);
-                    moonPos = GetMoonPosition(dt1, lat, lng, c);//Get the next hours altitude for comparison
+                    moonPos = GetMoonPosition(dt1, lat, lng, c, offset);//Get the next hours altitude for comparison
                     double altM1 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
                     //Iterate through each minute to determine at which minute the horizon is crossed.
                     //Interpolation is more efficient, but yielded results with deviations up to 5 minutes. 
@@ -121,7 +134,7 @@ namespace CoordinateSharp
                     for (int y = 1; y <= 60; y++)
                     {
                         DateTime dt2 = t.AddHours(x - 1).AddMinutes(y);
-                        moonPos = GetMoonPosition(dt2, lat, lng, c);//Get the next hours altitude for comparison
+                        moonPos = GetMoonPosition(dt2, lat, lng, c, offset);//Get the next hours altitude for comparison
                         double altM2 = moonPos.Altitude - (moonPos.ParallaxCorection * rad);
                         if (altM1 >= hz && altM2 < hz)
                         {
@@ -153,29 +166,31 @@ namespace CoordinateSharp
             }          
         }
 
-        private static MoonPosition GetMoonPosition(DateTime date, double lat, double lng, Celestial cel)
+        private static MoonPosition GetMoonPosition(DateTime date, double lat, double lng, Celestial cel, double offset)
         {
             //Set UTC date integrity
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-            
-            double d = JulianConversions.GetJulian_Epoch2000(date);
-            
+           
+            double julianOffset = offset * .04166667;
+            double d = JulianConversions.GetJulian_Epoch2000(date) + julianOffset;
+
             //Ch 47
             double JDE = JulianConversions.GetJulian(date);//Get julian 
-       
-            double T = (JDE - 2451545) / 36525; //Get dynamic time.
+            double oJDE = JulianConversions.GetJulian(date) + julianOffset;//Get julian 
+            double T = (oJDE - 2451545) / 36525; //Get dynamic time.
+
             double[] LDMNF = Get_Moon_LDMNF(T);
             CelCoords c = GetMoonCoords(d, cel, LDMNF, T);
-            Distance dist = GetMoonDistance(date);
+            Distance dist = GetMoonDistance(date.AddHours(offset));
             double lw = rad * -lng;
             double phi = rad * lat;
        
-            double H = rad * MeeusFormulas.Get_Sidereal_Time(JDE) - lw - c.ra;
+            double H = rad * MeeusFormulas.Get_Sidereal_Time(oJDE) - lw - c.ra;
             
             double ra = c.ra; //Adjust current RA formula to avoid needless RAD conversions
             double dec = c.dec; //Adjust current RA formula to avoid needless RAD conversions
 
-            //Adjust for parallax (low accuracry increases may not be worth cost)
+            //Adjust for parallax (low accuracy increases may not be worth cost)
             //Investigate
             double pSinE = Get_pSinE(dec, dist.Meters) * Math.PI / 180;
             double pCosE = Get_pCosE(dec, dist.Meters) * Math.PI / 180;
@@ -230,16 +245,18 @@ namespace CoordinateSharp
             return mc;
         }
       
-        public static void GetMoonIllumination(DateTime date, Celestial c, double lat, double lng, EagerLoad el)
+        public static void GetMoonIllumination(DateTime date, Celestial c, double lat, double lng, EagerLoad el, double offset)
         {
+       
             //Moon Illum must be done for both the Moon Name and Phase so either will trigger it to load
             if (el.Extensions.Lunar_Cycle || el.Extensions.Zodiac)
             {
                 date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-
-                double d = JulianConversions.GetJulian_Epoch2000(date);
+                offset *= -1;
+                double julianOffset = offset * .04166667;
+                double d = JulianConversions.GetJulian_Epoch2000(date) + julianOffset;
                 CelCoords s = GetSunCoords(d);
-                double JDE = JulianConversions.GetJulian(date);//Get julian 
+                double JDE = JulianConversions.GetJulian(date) + julianOffset;//Get julian 
                 double T = (JDE - 2451545) / 36525; //Get dynamic time.
                 double[] LDMNF = Get_Moon_LDMNF(T);
 
@@ -270,9 +287,9 @@ namespace CoordinateSharp
                 for (int x = 1; x <= date.Day; x++)
                 {
                     DateTime nDate = new DateTime(dMon.Year, dMon.Month, x, 0, 0, 0, DateTimeKind.Utc);
-                    d = JulianConversions.GetJulian_Epoch2000(nDate);
+                    d = JulianConversions.GetJulian_Epoch2000(nDate) + julianOffset;
                     s = GetSunCoords(d);
-                    JDE = JulianConversions.GetJulian(nDate);//Get julian 
+                    JDE = JulianConversions.GetJulian(nDate) + julianOffset;//Get julian 
                     T = (JDE - 2451545) / 36525; //Get dynamic time.
                     LDMNF = Get_Moon_LDMNF(T);
                     m = GetMoonCoords(d, c, LDMNF, T);
@@ -285,9 +302,9 @@ namespace CoordinateSharp
                     double startPhase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
 
                     nDate = new DateTime(dMon.Year, dMon.Month, x, 23, 59, 59, DateTimeKind.Utc);
-                    d = JulianConversions.GetJulian_Epoch2000(nDate);
+                    d = JulianConversions.GetJulian_Epoch2000(nDate) + julianOffset;
                     s = GetSunCoords(d);
-                    JDE = JulianConversions.GetJulian(nDate);//Get julian 
+                    JDE = JulianConversions.GetJulian(nDate) + julianOffset;//Get julian 
                     T = (JDE - 2451545) / 36525; //Get dynamic time.
                     LDMNF = Get_Moon_LDMNF(T);
                     m = GetMoonCoords(d, c, LDMNF, T);
@@ -431,12 +448,7 @@ namespace CoordinateSharp
                     return "";
             }
         }
-        public static void GetMoonDistance(DateTime date, Celestial c)
-        {
-            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-           
-            c.moonDistance = GetMoonDistance(date);      //Updating distance formula    
-        }
+      
         //Moon Time Functions
         private static CelCoords GetSunCoords(double d)
         {
@@ -710,6 +722,18 @@ namespace CoordinateSharp
 
         }
 
+        public static void GetMoonDistance(DateTime date, Celestial c)
+        {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+
+            c.moonDistance = GetMoonDistance(date);      //Updating distance formula    
+        }
+        public static void GetMoonDistance(DateTime date, Celestial c, double offset)
+        {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+
+            c.moonDistance = GetMoonDistance(date, offset);      //Updating distance formula    
+        }
         /// <summary>
         /// Gets moon distance (Ch 47).
         /// </summary>
@@ -732,8 +756,34 @@ namespace CoordinateSharp
             double dist = 385000.56 + (MeeusTables.Moon_Periodic_Er(D, M, N, F, T) / 1000); 
             return new Distance(dist);
         }
+        /// <summary>
+        /// Gets moon distance (Ch 47).
+        /// </summary>
+        /// <param name="d">DateTime</param>
+        /// <param name="offset">UTC offset in hours</param>
+        /// <returns>Distance</returns>
+        public static Distance GetMoonDistance(DateTime d, double offset)
+        { 
+            //Ch 47
+            offset *= -1;
+            double julianOffset = offset * .04166667;
+            double JDE = JulianConversions.GetJulian(d)+julianOffset;//Get julian 
+            double T = (JDE - 2451545) / 36525; //Get dynamic time.
+          
+            double[] values = Get_Moon_LDMNF(T);
 
-        private static Distance GetMoonDistance(DateTime d, double[] values)
+            double D = values[1];
+            double M = values[2];
+            double N = values[3];
+            double F = values[4];
+
+            //Ch 47 distance formula
+            double dist = 385000.56 + (MeeusTables.Moon_Periodic_Er(D, M, N, F, T) / 1000);
+            return new Distance(dist);
+        }
+
+        //NO LONGER NEEDED, RESEARCH IF CAN BE DELETED.
+        private static Distance GetMoonDistance(DateTime d, double[] values, double offset)
         {
             //Ch 47
             double JDE = JulianConversions.GetJulian(d);//Get julian 

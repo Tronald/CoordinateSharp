@@ -46,6 +46,25 @@ namespace CoordinateSharp_TestProj
             Pass.Write("Perigee: ", ct.Check_Perigee());
             Pass.Write("Apogee: ", ct.Check_Apogee());
             Console.WriteLine();
+            Pass.Write("Local Time Conversions", ct.Check_Local_Times());
+            Console.WriteLine();
+
+            Console.WriteLine();
+           
+            while (true)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine("Base celestial tests are completed. Do you wish to run additional \"IsUp\" tests? (Y/N)...");
+                ConsoleKeyInfo key = Console.ReadKey();
+                Console.ForegroundColor = ConsoleColor.White;
+                if (key.Key == ConsoleKey.Y) { break; }
+                if (key.Key == ConsoleKey.N) { return; }
+                Console.WriteLine();
+
+                Console.WriteLine("INVALID CHOICE!");
+                Console.WriteLine();
+            }
+            Console.WriteLine();
             Console.WriteLine("***Running IsSunUp Test (This will take a minute)****");
             Console.WriteLine();
             Pass.Write("IsSunUp", ct.Check_IsSunUp());
@@ -54,7 +73,9 @@ namespace CoordinateSharp_TestProj
             Console.WriteLine();
             Pass.Write("IsMoonUp", ct.Check_IsMoonUp());
             Console.WriteLine();
+           
         }
+
         private void Populate_CelestialTests()
         {
             //Test will run against N39, W72
@@ -138,7 +159,7 @@ namespace CoordinateSharp_TestProj
         private void Check_Solar_Only_Times()
         {          
             //Check if values populate.
-            Celestial c = Celestial.CalculateSunData(45, 45, DateTime.Now);
+           // Celestial c = Celestial.CalculateSunData(45, 45, DateTime.Now,0);
         }
         private bool Check_Values(object prop, string file)
         {
@@ -501,6 +522,144 @@ namespace CoordinateSharp_TestProj
                     }
                 }
 
+            }
+            return true;
+        }
+        private bool Check_Local_Times()
+        {
+            DateTime d = new DateTime(2019,10,31,14,10,22);
+            double offset = -7;
+
+            //INSTANCE CHECK
+
+            //Coordinate in UTC
+            Coordinate cUTC = new Coordinate(47.60357, -122.32945, d); 
+            //Coordinate in UTC - offset added to account for UTC date differing
+            Coordinate sUTC = new Coordinate(47.60357, -122.32945, d.AddDays(offset/Math.Abs(offset) *-1));  
+            //Coordinate in Local
+            Coordinate lLoc = new Coordinate(47.60357, -122.32945, d);
+            //Coordinate in local + offset (for cel coord comparision)
+            Coordinate simUTC = new Coordinate(47.60357, -122.32945, d.AddHours(-offset));
+            lLoc.Offset = offset;
+
+
+            Celestial cCel = cUTC.CelestialInfo;
+            Celestial sCel = sUTC.CelestialInfo;
+            Celestial lCel = lLoc.CelestialInfo;
+            Celestial bCel = simUTC.CelestialInfo;
+
+            if(!Local_Time_Checker(cCel,lCel,sCel, bCel, offset)) { return false; }
+
+            //STATIC CHECK
+
+            cCel = Celestial.CalculateCelestialTimes(47.60357, -122.32945, d);
+            sCel = Celestial.CalculateCelestialTimes(47.60357, -122.32945, d.AddDays(offset / Math.Abs(offset) * -1));
+            lCel = Celestial.CalculateCelestialTimes(47.60357, -122.32945, d, offset);
+            bCel = Celestial.CalculateCelestialTimes(47.60357, -122.32945, d.AddHours(-offset));
+
+            if (!Local_Time_Checker(cCel, lCel, sCel, bCel, offset)) { return false; }
+
+
+            //With EagerLoad
+            EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+            cCel = Celestial.CalculateCelestialTimes(47.60357, -122.32945, d,el);
+            sCel = Celestial.CalculateCelestialTimes(47.60357, -122.32945, d.AddDays(offset / Math.Abs(offset) * -1),el);
+            lCel = Celestial.CalculateCelestialTimes(47.60357, -122.32945, d, el, offset);
+            bCel = Celestial.CalculateCelestialTimes(47.60357, -122.32945, d.AddHours(-offset), el);
+
+            if (!Local_Time_Checker(cCel, lCel, sCel, bCel, offset)) { return false; }
+
+            //VALIDATIONS
+            //IN RANGE
+            try { cUTC.Offset = -12;  } catch (ArgumentOutOfRangeException) { return false; }
+            try { cUTC.Offset = 12; } catch (ArgumentOutOfRangeException) { return false; }
+            try { cCel = new Celestial(0, 0, DateTime.Now, -12); } catch (ArgumentOutOfRangeException) { return false; }
+            try { cCel = new Celestial(0, 0, DateTime.Now, 12); } catch (ArgumentOutOfRangeException) { return false; }
+            try { cCel = new Celestial(0, 0, DateTime.Now, -12, new EagerLoad()); } catch (ArgumentOutOfRangeException) { return false; }
+            try { cCel = new Celestial(0, 0, DateTime.Now, 12, new EagerLoad()); } catch (ArgumentOutOfRangeException) { return false; }
+            try { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, -12); } catch (ArgumentOutOfRangeException) { return false; }
+            try { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, 12); } catch (ArgumentOutOfRangeException) { return false; }
+            try { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, new EagerLoad(), 12); } catch (ArgumentOutOfRangeException) { return false; }
+            try { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, new EagerLoad(), -12); } catch (ArgumentOutOfRangeException) { return false; }
+            //OUT OF RANGE
+            try { cUTC.Offset = -13; return false; } catch (ArgumentOutOfRangeException) { }
+            try { cUTC.Offset = 13; return false; } catch (ArgumentOutOfRangeException) { }
+            try { cCel = new Celestial(0, 0, DateTime.Now, -13); return false; } catch (ArgumentOutOfRangeException) {  }
+            try { cCel = new Celestial(0, 0, DateTime.Now, 13); return false; } catch (ArgumentOutOfRangeException) { }
+            try { cCel = new Celestial(0, 0, DateTime.Now, -13, new EagerLoad()); return false; } catch (ArgumentOutOfRangeException) { }
+            try { cCel = new Celestial(0, 0, DateTime.Now, 13, new EagerLoad()); return false; } catch (ArgumentOutOfRangeException) { }
+            try { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, -13); return false; } catch (ArgumentOutOfRangeException) { }
+            try { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, 13); return false; } catch (ArgumentOutOfRangeException) { }
+            try { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, new EagerLoad(), -13); return false; } catch (ArgumentOutOfRangeException) { }
+            try { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, new EagerLoad(), 13); return false; } catch (ArgumentOutOfRangeException) { }
+
+
+
+            return true;
+
+        }
+        private bool Local_Time_Checker(Celestial cCel, Celestial lCel, Celestial sCel, Celestial bCel, double offset)
+        {
+            //SOLAR          
+            if (!Time_Compare(cCel.SunRise, lCel.SunRise, sCel.SunRise, offset)) { return false; }
+            if (!Time_Compare(cCel.SunSet, lCel.SunSet, sCel.SunSet, offset)) { return false; }
+            if (!Time_Compare(cCel.AdditionalSolarTimes.CivilDawn, lCel.AdditionalSolarTimes.CivilDawn, sCel.AdditionalSolarTimes.CivilDawn, offset)) { return false; }
+            if (!Time_Compare(cCel.AdditionalSolarTimes.CivilDusk, lCel.AdditionalSolarTimes.CivilDusk, sCel.AdditionalSolarTimes.CivilDusk, offset)) { return false; }
+            if (!Time_Compare(cCel.AdditionalSolarTimes.NauticalDawn, lCel.AdditionalSolarTimes.NauticalDawn, sCel.AdditionalSolarTimes.NauticalDawn, offset)) { return false; }
+            if (!Time_Compare(cCel.AdditionalSolarTimes.NauticalDusk, lCel.AdditionalSolarTimes.NauticalDusk, sCel.AdditionalSolarTimes.NauticalDusk, offset)) { return false; }
+            if (!Time_Compare(cCel.AdditionalSolarTimes.AstronomicalDawn, lCel.AdditionalSolarTimes.AstronomicalDawn, sCel.AdditionalSolarTimes.AstronomicalDawn, offset)) { return false; }
+            if (!Time_Compare(cCel.AdditionalSolarTimes.AstronomicalDusk, lCel.AdditionalSolarTimes.AstronomicalDusk, sCel.AdditionalSolarTimes.AstronomicalDusk, offset)) { return false; }
+            if (!Time_Compare(cCel.SolarEclipse.LastEclipse.MaximumEclipse, lCel.SolarEclipse.LastEclipse.MaximumEclipse, sCel.SolarEclipse.LastEclipse.MaximumEclipse, offset)) { return false; }
+            if (!Time_Compare(cCel.SolarEclipse.NextEclipse.MaximumEclipse, lCel.SolarEclipse.NextEclipse.MaximumEclipse, sCel.SolarEclipse.NextEclipse.MaximumEclipse, offset)) { return false; }
+            if (Math.Abs(lCel.SunAltitude - bCel.SunAltitude) > .00001) { return false; }
+            if (Math.Abs(lCel.SunAzimuth - bCel.SunAzimuth) > .00001) { return false; }
+            if (Math.Abs(lCel.SunAzimuth - bCel.SunAzimuth) > .00001) { return false; }
+            if (lCel.IsSunUp != bCel.IsSunUp) { return false; }
+            if (lCel.SunCondition != bCel.SunCondition) { return false; }
+
+            //LUNAR
+            if (!Time_Compare(cCel.MoonRise, lCel.MoonRise, sCel.MoonRise, offset)) { return false; }
+            if (!Time_Compare(cCel.MoonSet, lCel.MoonSet, sCel.MoonSet, offset)) { return false; }
+            if (!Time_Compare(cCel.LunarEclipse.LastEclipse.MidEclipse, lCel.LunarEclipse.LastEclipse.MidEclipse, sCel.LunarEclipse.LastEclipse.MidEclipse, offset)) { return false; }
+            if (!Time_Compare(cCel.LunarEclipse.NextEclipse.MidEclipse, lCel.LunarEclipse.NextEclipse.MidEclipse, sCel.LunarEclipse.NextEclipse.MidEclipse, offset)) { return false; }
+            if (!Time_Compare(cCel.Perigee.LastPerigee.Date, lCel.Perigee.LastPerigee.Date, sCel.Perigee.LastPerigee.Date, offset)) { return false; }
+            if (!Time_Compare(cCel.Perigee.NextPerigee.Date, lCel.Perigee.NextPerigee.Date, sCel.Perigee.NextPerigee.Date, offset)) { return false; }
+            if (!Time_Compare(cCel.Apogee.LastApogee.Date, lCel.Apogee.LastApogee.Date, sCel.Apogee.LastApogee.Date, offset)) { return false; }
+            if (!Time_Compare(cCel.Apogee.NextApogee.Date, lCel.Apogee.NextApogee.Date, sCel.Apogee.NextApogee.Date, offset)) { return false; }
+
+            if (Math.Abs(lCel.MoonAltitude - bCel.MoonAltitude) > .00001) { return false; }
+            if (Math.Abs(lCel.MoonAzimuth - bCel.MoonAzimuth) > .00001) { return false; }
+            if (Math.Abs(lCel.Perigee.LastPerigee.Distance.Meters - bCel.Perigee.LastPerigee.Distance.Meters) > .00001) { return false; }
+            if (Math.Abs(lCel.Perigee.NextPerigee.Distance.Meters - bCel.Perigee.NextPerigee.Distance.Meters) > .00001) { return false; }
+            if (Math.Abs(lCel.Apogee.LastApogee.Distance.Meters - bCel.Apogee.LastApogee.Distance.Meters) > .00001) { return false; }
+            if (Math.Abs(lCel.Apogee.NextApogee.Distance.Meters - bCel.Apogee.NextApogee.Distance.Meters) > .00001) { return false; }
+            if (Math.Abs(lCel.Apogee.LastApogee.HorizontalParallax - bCel.Apogee.LastApogee.HorizontalParallax) > .00001) { return false; }
+            if (Math.Abs(lCel.Apogee.NextApogee.HorizontalParallax - bCel.Apogee.NextApogee.HorizontalParallax) > .00001) { return false; }
+            if (Math.Abs(lCel.MoonDistance.Meters - bCel.MoonDistance.Meters) > .2) { return false; }
+            if (Math.Abs(lCel.MoonIllum.Angle - bCel.MoonIllum.Angle) > .00001) { return false; }
+            if (Math.Abs(lCel.MoonIllum.Fraction - bCel.MoonIllum.Fraction) > .00001) { return false; }
+            if (Math.Abs(lCel.MoonIllum.Phase - bCel.MoonIllum.Phase) > .00001) { return false; }
+            //if (lCel.MoonIllum.PhaseName != bCel.MoonIllum.PhaseName) { return false; } Test omitted as time's can changes phases between days. Documentation reflects. Issues will be captured at Phase.
+            if (lCel.IsMoonUp != bCel.IsMoonUp) { return false; }
+            if (lCel.MoonCondition != bCel.MoonCondition) { return false; }
+            //ZODIAC
+
+            return true;
+        }
+        private bool Time_Compare(DateTime? utc, DateTime? local, DateTime? backup, double offset)
+        {
+            //Cannot run tests with null dates
+            if(utc == null || local == null || backup==null) { return false; }
+
+            TimeSpan ts = local.Value - utc.Value.AddHours(offset);
+            //5ms float point change account
+            if (Math.Abs(ts.TotalMilliseconds) > 5)
+            {
+                ts = local.Value - backup.Value.AddHours(offset);
+                if (Math.Abs(ts.TotalMilliseconds) > 5)
+                {
+                    return false;
+                }
             }
             return true;
         }

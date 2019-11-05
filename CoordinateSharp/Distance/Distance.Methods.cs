@@ -9,6 +9,8 @@ are referring to this work.
 
 License
 
+CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
+
 Copyright (C) 2019, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
@@ -30,6 +32,13 @@ You can be released from the requirements of the license by purchasing a commerc
 as soon as you develop commercial activities involving the CoordinateSharp software without disclosing the source code of your own applications. 
 These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application, 
 or shipping CoordinateSharp with a closed source product.
+
+Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request.
+-Department of Defense
+-Department of Homeland Security
+-Open source contributors to this library
+-Scholarly or scientific uses on a case by case basis.
+-Emergency response / management uses on a case by case basis.
 
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */

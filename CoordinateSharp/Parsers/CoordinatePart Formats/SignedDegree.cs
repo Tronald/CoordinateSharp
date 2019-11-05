@@ -43,82 +43,58 @@ Organizations or use cases that fall under the following conditions may receive 
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
 using System;
+using System.Text.RegularExpressions;
+using System.Linq;
+using System.Globalization;
 
 namespace CoordinateSharp
 {
-    /// <summary>
-    /// Class used to handle a Coordinate object's eager loading settings for geographic conversions and celestial calculation properties.
-    /// </summary>
-    [Serializable]
-    public partial class EagerLoad
+    internal partial class FormatFinder_CoordPart
     {
-        private bool celestial;
-
-        /// <summary>
-        /// Eager load all celestial information. 
-        /// Setting this will also set all Celestial related extensions.
-        /// </summary>
-        public bool Celestial
+        private static bool TrySignedDegree(string s, int t, out double[] d)
         {
-            get { return celestial; }    
-            set
+            d = null;
+            if (Regex.Matches(s, @"[a-zA-Z]").Count != 0) { return false; } //Should contain no letters
+
+            string[] sA = SpecialSplit(s, false);
+            double deg;
+            double min; //Minutes & MinSeconds
+            double sec;
+
+            int sign = 1;
+            switch (sA.Count())
             {
-                celestial = value;
-                Extensions.Set_Celestial_Items(value);
+                case 1:
+                    if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
+                    { return false; }
+                    d = new double[] { deg };
+                    return true;
+                case 2:
+                    if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
+                    { return false; }
+                    if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out min))
+                    { return false; }
+
+                    if (deg < 0) { sign = -1; }
+                    if (min >= 60 || min < 0) { return false; } //Handle in parser as degree will be incorrect.
+                    d = new double[] { (Math.Abs(deg) + (min / 60.0)) * sign };
+                    return true;
+                case 3:
+                    if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
+                    { return false; }
+                    if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out min))
+                    { return false; }
+                    if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out sec))
+                    { return false; }
+                    if (min >= 60 || min < 0) { return false; } //Handle in parser as degree will be incorrect.
+                    if (sec >= 60 || sec < 0) { return false; } //Handle in parser as degree will be incorrect.
+
+                    if (deg < 0) { sign = -1; }
+                    d = new double[] { (Math.Abs(deg) + (min / 60.0) + (sec / 3600.0)) * sign };
+                    return true;
+                default:
+                    return false;
             }
         }
-        /// <summary>
-        /// Eager load UTM and MGRS information.
-        /// </summary>
-        public bool UTM_MGRS { get; set; }
-        /// <summary>
-        /// Eager load Cartesian information.
-        /// </summary>
-        public bool Cartesian { get; set; }
-        /// <summary>
-        /// Eager load ECEF information.
-        /// </summary>
-        public bool ECEF { get; set; }
-        /// <summary>
-        /// Extensions that allow for more specific EagerLoading specifications.
-        /// </summary>
-        public EagerLoad_Extensions Extensions
-        {
-            get;set;
-        }    
     }
-    /// <summary>
-    /// Extensions to the EagerLoading class which allow for more specific EagerLoading specifications.
-    /// </summary>
-    public partial class EagerLoad_Extensions
-    {
-       
-        /// <summary>
-        /// Eager load solar cycle information.
-        /// Includes rises, sets, dusks, dawns and azimuth / altitude data.
-        /// </summary>
-        public bool Solar_Cycle { get; set; }
-        /// <summary>
-        /// Eager load lunar information.
-        /// Includes rises, sets, phase, distance and azimuth / altitude data.
-        /// </summary>
-        public bool Lunar_Cycle { get; set; }
-        /// <summary>
-        /// Eager load solar eclipse data.
-        /// </summary>
-        public bool Solar_Eclipse { get; set; }
-        /// <summary>
-        /// Eager load lunar eclipse data.
-        /// </summary>
-        public bool Lunar_Eclipse { get; set; }
-        /// <summary>
-        /// Eager load zodiac data.
-        /// </summary>
-        public bool Zodiac { get; set; }
-        /// <summary>
-        /// Eager load MGRS data.
-        /// </summary>
-        public bool MGRS { get; set; }
-    }
-    
 }

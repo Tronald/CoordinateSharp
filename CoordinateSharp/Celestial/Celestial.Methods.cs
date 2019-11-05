@@ -9,6 +9,8 @@ are referring to this work.
 
 License
 
+CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
+
 Copyright (C) 2019, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
@@ -31,6 +33,13 @@ as soon as you develop commercial activities involving the CoordinateSharp softw
 These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application, 
 or shipping CoordinateSharp with a closed source product.
 
+Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request.
+-Department of Defense
+-Department of Homeland Security
+-Open source contributors to this library
+-Scholarly or scientific uses on a case by case basis.
+-Emergency response / management uses on a case by case basis.
+
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
 using System;
@@ -50,22 +59,11 @@ namespace CoordinateSharp
             solarEclipse = new SolarEclipse();
             CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new EagerLoad());                     
         }
-       
-        /// Holdover. Determine if needed.
-        internal Celestial(bool hasCalcs)
-        {
-
-            astrologicalSigns = new AstrologicalSigns();
-            lunarEclipse = new LunarEclipse();
-            solarEclipse = new SolarEclipse();
-            if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new EagerLoad()); }
-        }
-
         /// <summary>
         /// Creates a Celestial object based on a location and specified date.
         /// </summary>
-        /// <param name="lat">latitude</param>
-        /// <param name="longi">longitude</param>
+        /// <param name="lat">Latitude</param>
+        /// <param name="longi">Longitude</param>
         /// <param name="geoDate">DateTime (UTC)</param>
         /// <remarks>
         /// Celestial information is normally populated within the Coordinate classes CelestialInfo property. 
@@ -94,7 +92,90 @@ namespace CoordinateSharp
             solarEclipse = new SolarEclipse();
             CalculateCelestialTime(lat, longi, d, new EagerLoad());
         }
-              
+        /// <summary>
+        /// Creates a Celestial object based on a location and specified date.
+        /// </summary>
+        /// <param name="lat">Latitude</param>
+        /// <param name="longi">Longitude</param>
+        /// <param name="geoDate">DateTime (UTC)</param>
+        /// <param name="offset">UTC offset in hours</param>
+        /// <remarks>
+        /// Celestial information is normally populated within the Coordinate classes CelestialInfo property. 
+        /// However, you may choose to work directly within the Celestial class.
+        /// </remarks>
+        /// <example>
+        /// The following example demonstrates how to get the sunset time at Seattle on 19-Mar-2019
+        /// directly from a Celestial object in local time.
+        /// <code>
+        /// //Create a Celestial object the calculates from Seattle's signed lat/long on
+        /// //19-Mar-2019 (UTC) Date. Seattle is -7 UTC on this date.
+        /// Celestial cel = new Celestial(47.60357, -122.32945, new DateTime(2019, 3, 19), -7);
+        ///
+        /// //Check if a sunset will occur on the specified day.
+        /// if(cel.SunSet.HasValue)
+        /// {
+        ///     Console.WriteLine(cel.SunSet.Value); //3/19/2019 7:20:56 PM
+        /// }
+        /// </code>
+        /// </example>
+        public Celestial(double lat, double longi, DateTime geoDate, double offset)
+        {
+            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
+            astrologicalSigns = new AstrologicalSigns();
+            lunarEclipse = new LunarEclipse();
+            solarEclipse = new SolarEclipse();
+            CalculateCelestialTime(lat, longi, d, new EagerLoad(), offset);
+        }
+        /// <summary>
+        /// Creates a Celestial object based on a location and specified date.
+        /// </summary>
+        /// <param name="lat">Latitude</param>
+        /// <param name="longi">Longitude</param>
+        /// <param name="geoDate">DateTime (UTC)</param>
+        /// <param name="offset">UTC offset in hours</param>
+        /// <param name="el">EagerLoad</param>
+        /// <remarks>
+        /// Celestial information is normally populated within the Coordinate classes CelestialInfo property. 
+        /// However, you may choose to work directly within the Celestial class.
+        /// </remarks>
+        /// <example>
+        /// The following example demonstrates how to get the sunset time at Seattle on 19-Mar-2019
+        /// directly from a Celestial object in local time populated only with solar cycle information.
+        /// <code>
+        /// //Create EagerLoading object to load only solar cycle data for maximum efficiency.
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+        /// el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
+        /// 
+        /// //Create a Celestial object the calculates from Seattle's signed lat/long on
+        /// //19-Mar-2019 (UTC) Date. Seattle is -7 UTC on this date.
+        /// Celestial cel = new Celestial(47.60357, -122.32945, new DateTime(2019, 3, 19), -7, el);
+        ///
+        /// //Check if a sunset will occur on the specified day.
+        /// if(cel.SunSet.HasValue)
+        /// {
+        ///     Console.WriteLine(cel.SunSet.Value); //3/19/2019 7:20:56 PM
+        /// }
+        /// </code>
+        /// </example>
+        public Celestial(double lat, double longi, DateTime geoDate, double offset, EagerLoad el)
+        {
+            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
+            astrologicalSigns = new AstrologicalSigns();
+            lunarEclipse = new LunarEclipse();
+            solarEclipse = new SolarEclipse();
+            CalculateCelestialTime(lat, longi, d, el, offset);
+        }
+
+        /// Used to create empty Celestial objects.
+        internal Celestial(bool hasCalcs)
+        {
+
+            astrologicalSigns = new AstrologicalSigns();
+            lunarEclipse = new LunarEclipse();
+            solarEclipse = new SolarEclipse();
+            if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new EagerLoad()); }
+        }
+
         /// <summary>
         /// Creates a Celestial object based on a Coordinate.
         /// </summary>
@@ -107,379 +188,8 @@ namespace CoordinateSharp
             Celestial cel = new Celestial(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate);
 
             return cel;
-        }
-
-        /// <summary>
-        /// Converts all Celestial values to local time.
-        /// </summary>
-        /// <param name="coord">Coordinate</param>
-        /// <param name="offset">UTC offset</param>
-        /// <returns>Celestial</returns>
-        /// <example>
-        /// The following example demonstrates how to get Celestial values in Local time.
-        /// DateTime offsets are done manually for readability purposes of this example. 
-        /// <code>
-        /// //Local time 
-        ///  DateTime d = new DateTime(2018, 3, 19, 6, 56, 0, 0, DateTimeKind.Local);
-        /// 
-        /// //EST Time is -4 hours from UTC
-        /// double offset = -4;
-        /// 
-        /// //Convert the date to UTC time
-        /// d = d.AddHours(offset*-1);
-        /// 
-        /// //Create a Coordinate with the UTC time		
-        /// Coordinate c = new Coordinate(39.0000, -72.0000, d);
-        /// //Create a new Celestial object by converting the existing one to Local
-        /// Celestial celestial = Celestial.Celestial_LocalTime(c, offset);
-        /// 
-        /// Console.WriteLine(celestial.IsSunUp); //True
-		/// Console.WriteLine(celestial.SunRise); //3/19/2018 6:54:25 AM
-        /// </code>
-        /// </example>        
-        public static Celestial Celestial_LocalTime(Coordinate coord, double offset)
-        {
-            if(offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 12 or less than -12."); }
-            //Probably need to offset initial UTC date so user can op in local
-            //Determine best way to do this.
-            DateTime d = coord.GeoDate.AddHours(offset);
-
-            //Get 3 objects for comparison
-            Celestial cel = new Celestial(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate);
-            Celestial celPre = new Celestial(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(-1));    
-            Celestial celPost = new Celestial(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(1));
-           
-            //Slip objects for comparison. Compare with slipped date. 
-            celPre.Local_Convert(coord, offset, Celestial_EagerLoad.All);
-            cel.Local_Convert(coord, offset, Celestial_EagerLoad.All);
-            celPost.Local_Convert(coord, offset, Celestial_EagerLoad.All);
-
-            //Get SunSet
-            int i = Determine_Slipped_Event_Index(cel.SunSet, celPre.SunSet, celPost.SunSet, d);
-            cel.sunSet = Get_Correct_Slipped_Date(cel.SunSet, celPre.SunSet, celPost.SunSet, i);
-            cel.AdditionalSolarTimes.civilDusk = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.CivilDusk, 
-                celPre.AdditionalSolarTimes.CivilDusk, celPost.AdditionalSolarTimes.CivilDusk, i);
-            cel.AdditionalSolarTimes.nauticalDusk = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.NauticalDusk,
-               celPre.AdditionalSolarTimes.NauticalDusk, celPost.AdditionalSolarTimes.NauticalDusk, i);
-            //Get SunRise
-            i = Determine_Slipped_Event_Index(cel.SunRise, celPre.SunRise, celPost.SunRise, d);
-            cel.sunRise = Get_Correct_Slipped_Date(cel.SunRise, celPre.SunRise, celPost.SunRise, i);
-            cel.AdditionalSolarTimes.civilDawn = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.CivilDawn,
-                celPre.AdditionalSolarTimes.CivilDawn, celPost.AdditionalSolarTimes.CivilDawn, i);
-            cel.AdditionalSolarTimes.nauticalDawn = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.NauticalDawn,
-               celPre.AdditionalSolarTimes.NauticalDawn, celPost.AdditionalSolarTimes.NauticalDawn, i);
-
-            //MoonRise
-            i = Determine_Slipped_Event_Index(cel.MoonRise, celPre.MoonRise, celPost.MoonRise, d);
-            cel.moonRise = Get_Correct_Slipped_Date(cel.MoonRise, celPre.MoonRise, celPost.MoonRise, i);
-        
-            //MoonSet
-            i = Determine_Slipped_Event_Index(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, d);
-            cel.moonSet = Get_Correct_Slipped_Date(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, i);
-
-            //Local Conditions
-            CelestialStatus[] cels = new CelestialStatus[]
-            {
-                celPre.MoonCondition,cel.MoonCondition,celPost.MoonCondition
-            };
-            cel.moonCondition = GetStatus(cel.MoonRise, cel.MoonSet, cels);
-            cels = new CelestialStatus[]
-            {
-                celPre.SunCondition, cel.SunCondition, celPost.SunCondition
-            };
-            cel.sunCondition = GetStatus(cel.SunRise, cel.SunSet, cels);
-
-            //Load IsUp values based on local time with populated Celestial
-            //If EagerLoading Extensions used, this function will handle null values
-            Calculate_Celestial_IsUp_Booleans(d, cel);
-
-            return cel;
-        }
-        /// <summary>
-        /// Converts solar time values to local time. 
-        /// </summary>
-        /// <param name="coord">Coordinate</param>
-        /// <param name="offset">UTC offset</param>
-        /// <returns>Celestial</returns>
-        /// <example>
-        /// The following example demonstrates how to get Celestial, solar time only values in Local time.
-        /// DateTime offsets are done manually for readability purposes of this example. 
-        /// <code>
-        /// //Local time 
-        ///  DateTime d = new DateTime(2018, 3, 19, 6, 56, 0, 0, DateTimeKind.Local);
-        /// 
-        /// //EST Time is -4 hours from UTC
-        /// double offset = -4;
-        /// 
-        /// //Convert the date to UTC time
-        /// d = d.AddHours(offset*-1);
-        /// 
-        /// //Create a Coordinate with the UTC time		
-        /// Coordinate c = new Coordinate(39.0000, -72.0000, d);
-        /// //Create a new Celestial object by converting the existing one to Local
-        /// Celestial celestial = Celestial.Solar_LocalTime(c, offset);
-        /// 
-        /// Console.WriteLine(celestial.IsSunUp); //True
-        /// Console.WriteLine(celestial.SunRise); //3/19/2018 6:54:25 AM
-        /// </code>
-        /// </example>        
-        public static Celestial Solar_LocalTime(Coordinate coord, double offset)
-        {
-            if (offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 12 or less than -12."); }
-            //Probably need to offset initial UTC date so user can op in local
-            //Determine best way to do this.
-            DateTime d = coord.GeoDate.AddHours(offset);
-
-            //Get 3 objects for comparison
-            Celestial cel = CalculateSunData(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate);
-            Celestial celPre = CalculateSunData(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(-1));
-            Celestial celPost = CalculateSunData(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(1));
-
-            //Slip objects for comparison. Compare with slipped date. 
-            celPre.Local_Convert(coord, offset, Celestial_EagerLoad.Solar);
-            cel.Local_Convert(coord, offset, Celestial_EagerLoad.Solar);
-            celPost.Local_Convert(coord, offset, Celestial_EagerLoad.Solar);
-
-            //Get SunSet
-            int i = Determine_Slipped_Event_Index(cel.SunSet, celPre.SunSet, celPost.SunSet, d);
-            cel.sunSet = Get_Correct_Slipped_Date(cel.SunSet, celPre.SunSet, celPost.SunSet, i);
-            cel.AdditionalSolarTimes.civilDusk = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.CivilDusk,
-                celPre.AdditionalSolarTimes.CivilDusk, celPost.AdditionalSolarTimes.CivilDusk, i);
-            cel.AdditionalSolarTimes.nauticalDusk = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.NauticalDusk,
-               celPre.AdditionalSolarTimes.NauticalDusk, celPost.AdditionalSolarTimes.NauticalDusk, i);
-            //Get SunRise
-            i = Determine_Slipped_Event_Index(cel.SunRise, celPre.SunRise, celPost.SunRise, d);
-            cel.sunRise = Get_Correct_Slipped_Date(cel.SunRise, celPre.SunRise, celPost.SunRise, i);
-            cel.AdditionalSolarTimes.civilDawn = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.CivilDawn,
-                celPre.AdditionalSolarTimes.CivilDawn, celPost.AdditionalSolarTimes.CivilDawn, i);
-            cel.AdditionalSolarTimes.nauticalDawn = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.NauticalDawn,
-               celPre.AdditionalSolarTimes.NauticalDawn, celPost.AdditionalSolarTimes.NauticalDawn, i);
-
-         
-
-            //Local Conditions          
-            CelestialStatus[] cels = new CelestialStatus[]
-            {
-                celPre.SunCondition, cel.SunCondition, celPost.SunCondition
-            };
-            cel.sunCondition = Celestial.GetStatus(cel.SunRise, cel.SunSet, cels);
-
-            //Load IsUp values based on local time with populated Celestial
-            Calculate_Celestial_IsUp_Booleans(d, cel);
-
-            return cel;
-        }
-        /// <summary>
-        /// Converts lunar time values to local time. 
-        /// </summary>
-        /// <param name="coord">Coordinate</param>
-        /// <param name="offset">UTC offset</param>
-        /// <returns>Celestial</returns>
-        /// <example>
-        /// The following example demonstrates how to get Celestial, lunar time only values in Local time.
-        /// DateTime offsets are done manually for readability purposes of this example. 
-        /// <code>
-        /// //Local time 
-        ///  DateTime d = new DateTime(2018, 3, 19, 6, 56, 0, 0, DateTimeKind.Local);
-        /// 
-        /// //EST Time is -4 hours from UTC
-        /// double offset = -4;
-        /// 
-        /// //Convert the date to UTC time
-        /// d = d.AddHours(offset*-1);
-        /// 
-        /// //Create a Coordinate with the UTC time		
-        /// Coordinate c = new Coordinate(39.0000, -72.0000, d);
-        /// //Create a new Celestial object by converting the existing one to Local
-        /// Celestial celestial = Celestial.Lunar_LocalTime(c, offset);
-        /// 
-        /// Console.WriteLine(celestial.IsMoonUp); //False
-        /// Console.WriteLine(celestial.SunRise); //3/19/2018 08:17 AM
-        /// </code>
-        /// </example>     
-        public static Celestial Lunar_LocalTime(Coordinate coord, double offset)
-        {
-            if (offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 12 or less than -12."); }
-            //Probably need to offset initial UTC date so user can op in local
-            //Determine best way to do this.
-            DateTime d = coord.GeoDate.AddHours(offset);
-
-            //Get 3 objects for comparison
-            Celestial cel = CalculateMoonData(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate);
-            Celestial celPre = CalculateMoonData(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(-1));
-            Celestial celPost = CalculateMoonData(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(1));
-
-            //Slip objects for comparison. Compare with slipped date. 
-            celPre.Local_Convert(coord, offset, Celestial_EagerLoad.Lunar);
-            cel.Local_Convert(coord, offset, Celestial_EagerLoad.Lunar);
-            celPost.Local_Convert(coord, offset, Celestial_EagerLoad.Lunar);
-
-
-            //MoonRise
-            int i = Determine_Slipped_Event_Index(cel.MoonRise, celPre.MoonRise, celPost.MoonRise, d);
-            cel.moonRise = Get_Correct_Slipped_Date(cel.MoonRise, celPre.MoonRise, celPost.MoonRise, i);
-
-            //MoonSet
-            i = Determine_Slipped_Event_Index(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, d);
-            cel.moonSet = Get_Correct_Slipped_Date(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, i);
-
-            //Local Conditions
-            CelestialStatus[] cels = new CelestialStatus[]
-            {
-                celPre.MoonCondition,cel.MoonCondition,celPost.MoonCondition
-            };
-            cel.moonCondition = Celestial.GetStatus(cel.MoonRise, cel.MoonSet, cels);          
-
-            //Load IsUp values based on local time with populated Celestial
-            Celestial.Calculate_Celestial_IsUp_Booleans(d, cel);
-
-            return cel;
-        }
-
-        private static CelestialStatus GetStatus(DateTime? rise, DateTime? set,  CelestialStatus[] cels)
-        {  
-            if (set.HasValue && rise.HasValue) { return CelestialStatus.RiseAndSet; }
-            if (set.HasValue && !rise.HasValue) { return CelestialStatus.NoRise; }
-            if (!set.HasValue && rise.HasValue) { return CelestialStatus.NoSet; }
-            for (int x=0; x < 3;x++)
-            {
-                if(cels[x] == CelestialStatus.DownAllDay || cels[x] == CelestialStatus.UpAllDay)
-                {
-                    return cels[x];
-                }
-            }
-            return cels[1];
-        }
-
-        /// <summary>
-        /// In place time slip
-        /// </summary>
-        /// <param name="c">Coordinate</param>
-        /// <param name="offset">hour offset</param>
-        /// <param name="el">Celestial EagerLoad Option</param>
-        private void Local_Convert(Coordinate c, double offset, Celestial_EagerLoad el)
-        {
-            //Find new lunar set rise times
-            if (el == Celestial_EagerLoad.All || el == Celestial_EagerLoad.Lunar)
-            {
-                if (MoonSet.HasValue) { moonSet = moonSet.Value.AddHours(offset); }
-                if (MoonRise.HasValue) { moonRise = moonRise.Value.AddHours(offset); }
-
-                Perigee.ConvertTo_Local_Time(offset);
-                Apogee.ConvertTo_Local_Time(offset);
-                LunarEclipse.ConvertTo_LocalTime(offset);
-                MoonCalc.GetMoonSign(c.GeoDate.AddHours(offset), this);
-            }
-
-            ////Solar
-            if (el == Celestial_EagerLoad.All || el == Celestial_EagerLoad.Solar)
-            {
-                if (sunSet.HasValue) { sunSet = sunSet.Value.AddHours(offset); }
-                if (SunRise.HasValue) { sunRise = SunRise.Value.AddHours(offset); }
-                AdditionalSolarTimes.Convert_To_Local_Time(offset);
-
-                //Eclipse
-                SolarEclipse.ConvertTo_LocalTime(offset);
-                SunCalc.CalculateZodiacSign(c.GeoDate.AddHours(offset), this);
-            }                      
-        }
-
-        private PerigeeApogee Get_Correct_Slipped_Date(PerigeeApogee actual, PerigeeApogee pre, PerigeeApogee post, int i)
-        {
-            switch (i)
-            {
-                case 0:
-                    return pre;
-                case 1:
-                    return actual;
-                case 2:
-                    return post;
-                default:
-                    return actual;
-            }
-        }
-        private static DateTime? Get_Correct_Slipped_Date(DateTime? actual, DateTime? pre, DateTime? post, int i)
-        {
-            switch(i)
-            {
-                case 0:
-                    return pre;
-                case 1:
-                    return actual;
-                case 2:
-                    return post;
-                default:
-                    return null;
-            }
-        }
-        private static int Determine_Slipped_Event_Index(DateTime? actual, DateTime? pre, DateTime? post, DateTime d)
-        {
-           
-            if (actual.HasValue)
-            {
-                if (actual.Value.Day != d.Day)
-                {
-                    if (pre.HasValue)
-                    {                        
-                        if (pre.Value.Day == d.Day) { return 0; }
-                    }
-                    if (post.HasValue)
-                    {
-                        if (post.Value.Day == d.Day) { return 2; }
-                    }
-                    return 3;
-                }
-            }
-            else
-            {
-                if (pre.HasValue)
-                {
-                    if (pre.Value.Day == d.Day) { return 0; }
-                }
-                if (post.HasValue)
-                {
-                    if (post.Value.Day == d.Day) { return 2; }
-                }
-            }         
-            return 1;
-        }
-
-
-        /// <summary>
-        /// Calculates all celestial data. Coordinates will notify as changes occur
-        /// </summary>
-        /// <param name="lat">Decimal format latitude</param>
-        /// <param name="longi">Decimal format longitude</param>
-        /// <param name="date">Geographic DateTime</param>
-        /// <param name="el">EagerLoading Info for Auto-Calculations</param>
-        internal void CalculateCelestialTime(double lat, double longi, DateTime date, EagerLoad el)
-        {
-            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-
-            
-            SunCalc.CalculateSunTime(lat, longi, date, this, el);
-
-           
-            if (el.Extensions.Lunar_Cycle)
-            {
-                MoonCalc.GetMoonTimes(date, lat, longi, this);
-                MoonCalc.GetMoonDistance(date, this);
-               
-
-                perigee = MoonCalc.GetPerigeeEvents(date);
-                apogee = MoonCalc.GetApogeeEvents(date);
-            }
-            MoonCalc.GetMoonIllumination(date, this, lat, longi, el);
-
-            if (el.Extensions.Zodiac)
-            {
-                SunCalc.CalculateZodiacSign(date, this);
-                MoonCalc.GetMoonSign(date, this);
-            }
-       
-            Calculate_Celestial_IsUp_Booleans(date, this);
-        }
-
+        }     
+    
         /// <summary>
         /// Calculate celestial data based on latitude, longitude and UTC date at the location.
         /// </summary>
@@ -492,7 +202,7 @@ namespace CoordinateSharp
         /// using static functions.
         /// <code>
         /// //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
-		/// Celestial cel = Celestial.CalculateCelestialTimes(39, -72, new DateTime(2019, 3, 19, 10, 10, 12));
+        /// Celestial cel = Celestial.CalculateCelestialTimes(39, -72, new DateTime(2019, 3, 19, 10, 10, 12));
         /// 
         /// Console.WriteLine(cel.SunRise); //3/19/2019 10:54:50 AM
         /// Console.WriteLine(cel.MoonRise); //3/19/2019 9:27:27 PM
@@ -500,88 +210,161 @@ namespace CoordinateSharp
         /// </example>
         public static Celestial CalculateCelestialTimes(double lat, double longi, DateTime date)
         {
-            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-
-            Celestial c = new Celestial(false);
-
-            SunCalc.CalculateSunTime(lat, longi, date, c, new EagerLoad());
-            MoonCalc.GetMoonTimes(date, lat, longi, c);
-            MoonCalc.GetMoonDistance(date, c);
-            MoonCalc.GetMoonIllumination(date, c, lat, longi, new EagerLoad());
-
-            SunCalc.CalculateZodiacSign(date, c);
-            MoonCalc.GetMoonSign(date, c);
-
-          
-           
-            c.perigee = MoonCalc.GetPerigeeEvents(date);
-            c.apogee = MoonCalc.GetApogeeEvents(date);
-
-            Calculate_Celestial_IsUp_Booleans(date, c);
-
+            Celestial c = new Celestial(lat,longi,date);
             return c;
         }
-
         /// <summary>
-        /// Calculate sun data based on latitude, longitude and UTC date at the location.
+        /// Calculate celestial data based on latitude, longitude and UTC date at the location.
         /// </summary>
-        /// <param name="lat">latitude</param>
-        /// <param name="longi">longitude</param>
-        /// <param name="date">DateTime</param>
-        /// <returns>Celestial (Partially Populated)</returns>
+        /// <param name="lat">Decimal format latitude</param>
+        /// <param name="longi">Decimal format longitude</param>
+        /// <param name="date">Geographic DateTime</param>
+        /// <param name="el">EagerLoad</param>
+        /// <returns>Celestial</returns>
         /// <example>
-        /// The following example demonstrates how to create a partially populated Celestial object 
-        /// that only calculates solar data using static functions. 
+        /// The following example demonstrates how to create a fully populated Celestial object 
+        /// using static functions with EagerLoading solar cycle information only.
         /// <code>
-        /// //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
-        /// Celestial cel = Celestial.CalculateSunData(39, -72, new DateTime(2019, 3, 19, 10, 10, 12));
+        /// //Set EagerLoading parameters to only load solar cycle data for maximum efficiency
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+        /// el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
         /// 
+        /// //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
+        /// Celestial cel = Celestial.CalculateCelestialTimes(39, -72, new DateTime(2019, 3, 19, 10, 10, 12), el);
+        ///
         /// Console.WriteLine(cel.SunRise); //3/19/2019 10:54:50 AM
         /// </code>
         /// </example>
-        public static Celestial CalculateSunData(double lat, double longi, DateTime date)
+        public static Celestial CalculateCelestialTimes(double lat, double longi, DateTime date, EagerLoad el)
         {
-            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-
-            Celestial c = new Celestial(false);
-            SunCalc.CalculateSunTime(lat, longi, date, c, new EagerLoad());
-            SunCalc.CalculateZodiacSign(date, c);
-           
+            Celestial c = new Celestial(lat, longi, date, 0, el);
             return c;
         }
         /// <summary>
-        /// Calculate moon data based on latitude, longitude and UTC date at the location.
+        /// Calculate celestial data based on latitude, longitude and UTC date with hours offset at the location.
         /// </summary>
-        /// <param name="lat">latitude</param>
-        /// <param name="longi">longitude</param>
-        /// <param name="date">DateTime</param>
-        /// <returns>Celestial (Partially Populated)</returns>
+        /// <param name="lat">Decimal format latitude</param>
+        /// <param name="longi">Decimal format longitude</param>
+        /// <param name="date">Geographic DateTime</param>
+        /// <param name="el">EagerLoad</param>
+        /// <param name="offset">Offset hours</param>
+        /// <returns>Celestial</returns>
         /// <example>
-        /// The following example demonstrates how to create a partially populated Celestial object 
-        /// that only calculates lunar data using static functions. 
+        /// The following example demonstrates how to create a fully populated Celestial object in local time
+        /// using static functions using solar cycle only eager loading.
         /// <code>
-        /// //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
-        /// Celestial cel = Celestial.CalculateMoonData(39, -72, new DateTime(2019, 3, 19, 10, 10, 12));
+        /// // Set EagerLoading parameters to only load solar cycle data for maximum efficiency
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+        /// el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
         /// 
-        /// Console.WriteLine(cel.MoonRise); //3/19/2019 9:27:27 PM
+        /// //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 Local using Pacific Standard Time offset in hours (-7)
+        /// Celestial cel = Celestial.CalculateCelestialTimes(39, -72, new DateTime(2019, 3, 19, 10, 10, 12), el, -7);
+        /// Console.WriteLine(cel.SunRise); //03:54:50 AM
+        /// 
         /// </code>
         /// </example>
-        public static Celestial CalculateMoonData(double lat, double longi, DateTime date)
+        public static Celestial CalculateCelestialTimes(double lat, double longi, DateTime date, EagerLoad el, double offset)
         {
-            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
-
-            Celestial c = new Celestial(false);
-
-            MoonCalc.GetMoonTimes(date, lat, longi, c);
-            MoonCalc.GetMoonDistance(date, c);
-            MoonCalc.GetMoonSign(date, c);
-            MoonCalc.GetMoonIllumination(date, c,lat,longi, new EagerLoad());
-
-            c.perigee = MoonCalc.GetPerigeeEvents(date);
-            c.apogee = MoonCalc.GetApogeeEvents(date);
-
+            Celestial c = new Celestial(lat, longi, date, offset, el);
             return c;
         }
+        /// <summary>
+        /// Calculate celestial data based on latitude, longitude and UTC date with hours offset at the location.
+        /// </summary>
+        /// <param name="lat">Decimal format latitude</param>
+        /// <param name="longi">Decimal format longitude</param>
+        /// <param name="date">Geographic DateTime</param>
+        /// <param name="offset">Offset hours</param>
+        /// <returns>Celestial</returns>
+        /// <example>
+        /// The following example demonstrates how to create a fully populated Celestial object in local time
+        /// using static functions.
+        /// <code>
+        /// //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 Local using Pacific Standard Time offset in hours (-7)
+        /// Celestial cel = Celestial.CalculateCelestialTimes(39, -72, new DateTime(2019, 3, 19, 10, 10, 12), -7);
+        /// Console.WriteLine(cel.SunRise); //03:54:50 AM
+        /// 
+        /// </code>
+        /// </example>
+        public static Celestial CalculateCelestialTimes(double lat, double longi, DateTime date, double offset)
+        {
+            Celestial c = new Celestial(lat, longi, date, offset, new EagerLoad());
+            return c;
+        }
+
+        /// <summary>
+        /// Calculates all celestial data. Coordinates will notify as changes occur
+        /// </summary>
+        /// <param name="lat">Decimal format latitude</param>
+        /// <param name="longi">Decimal format longitude</param>
+        /// <param name="date">Geographic DateTime</param>
+        /// <param name="el">EagerLoading Info for Auto-Calculations</param>
+        internal void CalculateCelestialTime(double lat, double longi, DateTime date, EagerLoad el)
+        {
+            CalculateCelestialTime(lat, longi, date, el, 0);
+        }
+        /// <summary>
+        /// Calculates all celestial data. Coordinates will notify as changes occur
+        /// </summary>
+        /// <param name="lat">Decimal format latitude</param>
+        /// <param name="longi">Decimal format longitude</param>
+        /// <param name="date">Geographic DateTime</param>
+        /// <param name="el">EagerLoading Info for Auto-Calculations</param>
+        /// <param name="offset">UTC offset in hours</param>
+        internal void CalculateCelestialTime(double lat, double longi, DateTime date, EagerLoad el, double offset)
+        {
+            if (offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater than 12 or less than -12."); }
+
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+
+            if (el.Extensions.Solar_Cycle || el.Extensions.Solar_Eclipse)
+            {
+                SunCalc.CalculateSunTime(lat, longi, date, this, el, offset);
+            }
+            if (el.Extensions.Lunar_Cycle)
+            {
+                MoonCalc.GetMoonTimes(date, lat, longi, this, offset);
+                MoonCalc.GetMoonDistance(date, this, offset);
+                
+
+                perigee = MoonCalc.GetPerigeeEvents(date);
+                apogee = MoonCalc.GetApogeeEvents(date);
+
+                //Shift perigee / apogee is working outside UTC
+                if (offset != 0)
+                {
+                    perigee.ConvertTo_Local_Time(offset);
+                    apogee.ConvertTo_Local_Time(offset);
+                }
+            }
+
+            if (el.Extensions.Lunar_Cycle || el.Extensions.Zodiac || el.Extensions.Lunar_Eclipse)
+            {
+                MoonCalc.GetMoonIllumination(date, this, lat, longi, el, offset);
+            }
+
+            if (el.Extensions.Zodiac)
+            {
+                SunCalc.CalculateZodiacSign(date, this);
+                MoonCalc.GetMoonSign(date, this);
+            }
+
+            if (el.Extensions.Lunar_Cycle || el.Extensions.Solar_Cycle)
+            {
+                Calculate_Celestial_IsUp_Booleans(date, this);
+            }
+
+            //Shift eclipses if eagerloaded and offset is not 0
+            if (el.Extensions.Lunar_Eclipse && offset!=0)
+            {            
+                lunarEclipse.ConvertTo_LocalTime(offset);
+            }
+            if (el.Extensions.Solar_Eclipse && offset!=0)
+            {
+                solarEclipse.ConvertTo_LocalTime(offset);
+            }
+        }
+
 
         /// <summary>
         /// Returns a List containing solar eclipse data for the century at the specified location.
@@ -811,7 +594,411 @@ namespace CoordinateSharp
         public static Perigee GetPerigees(DateTime d)
         {
             return MoonCalc.GetPerigeeEvents(d);
-        }    
+        }
+
+        #region Obsoletes
+        /// <summary>
+        /// Converts all Celestial values to local time.
+        /// </summary>
+        /// <param name="coord">Coordinate</param>
+        /// <param name="offset">UTC offset</param>
+        /// <returns>Celestial</returns>
+        /// <example>
+        /// The following example demonstrates how to get Celestial values in Local time.
+        /// DateTime offsets are done manually for readability purposes of this example. 
+        /// <code>
+        /// //Local time 
+        ///  DateTime d = new DateTime(2018, 3, 19, 6, 56, 0, 0, DateTimeKind.Local);
+        /// 
+        /// //EST Time is -4 hours from UTC
+        /// double offset = -4;
+        /// 
+        /// //Convert the date to UTC time
+        /// d = d.AddHours(offset*-1);
+        /// 
+        /// //Create a Coordinate with the UTC time		
+        /// Coordinate c = new Coordinate(39.0000, -72.0000, d);
+        /// //Create a new Celestial object by converting the existing one to Local
+        /// Celestial celestial = Celestial.Celestial_LocalTime(c, offset);
+        /// 
+        /// Console.WriteLine(celestial.IsSunUp); //True
+        /// Console.WriteLine(celestial.SunRise); //3/19/2018 6:54:25 AM
+        /// </code>
+        /// </example>        
+        [Obsolete("Use instance method 'Coordinate.Celestial_LocalTime(double hourOffset)'.")]        
+        public static Celestial Celestial_LocalTime(Coordinate coord, double offset)
+        {
+            if (offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 12 or less than -12."); }
+            //Probably need to offset initial UTC date so user can op in local
+            //Determine best way to do this.
+            DateTime d = coord.GeoDate.AddHours(offset);
+
+            //Get 3 objects for comparison
+            Celestial cel = new Celestial(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate);
+            Celestial celPre = new Celestial(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(-1));
+            Celestial celPost = new Celestial(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(1));
+
+            //Slip objects for comparison. Compare with slipped date. 
+            celPre.Local_Convert(coord, offset, Celestial_EagerLoad.All);
+            cel.Local_Convert(coord, offset, Celestial_EagerLoad.All);
+            celPost.Local_Convert(coord, offset, Celestial_EagerLoad.All);
+
+            //Get SunSet
+            int i = Determine_Slipped_Event_Index(cel.SunSet, celPre.SunSet, celPost.SunSet, d);
+            cel.sunSet = Get_Correct_Slipped_Date(cel.SunSet, celPre.SunSet, celPost.SunSet, i);
+            cel.AdditionalSolarTimes.civilDusk = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.CivilDusk,
+                celPre.AdditionalSolarTimes.CivilDusk, celPost.AdditionalSolarTimes.CivilDusk, i);
+            cel.AdditionalSolarTimes.nauticalDusk = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.NauticalDusk,
+               celPre.AdditionalSolarTimes.NauticalDusk, celPost.AdditionalSolarTimes.NauticalDusk, i);
+            //Get SunRise
+            i = Determine_Slipped_Event_Index(cel.SunRise, celPre.SunRise, celPost.SunRise, d);
+            cel.sunRise = Get_Correct_Slipped_Date(cel.SunRise, celPre.SunRise, celPost.SunRise, i);
+            cel.AdditionalSolarTimes.civilDawn = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.CivilDawn,
+                celPre.AdditionalSolarTimes.CivilDawn, celPost.AdditionalSolarTimes.CivilDawn, i);
+            cel.AdditionalSolarTimes.nauticalDawn = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.NauticalDawn,
+               celPre.AdditionalSolarTimes.NauticalDawn, celPost.AdditionalSolarTimes.NauticalDawn, i);
+
+            //MoonRise
+            i = Determine_Slipped_Event_Index(cel.MoonRise, celPre.MoonRise, celPost.MoonRise, d);
+            cel.moonRise = Get_Correct_Slipped_Date(cel.MoonRise, celPre.MoonRise, celPost.MoonRise, i);
+
+            //MoonSet
+            i = Determine_Slipped_Event_Index(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, d);
+            cel.moonSet = Get_Correct_Slipped_Date(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, i);
+
+            //Local Conditions
+            CelestialStatus[] cels = new CelestialStatus[]
+            {
+                celPre.MoonCondition,cel.MoonCondition,celPost.MoonCondition
+            };
+            cel.moonCondition = GetStatus(cel.MoonRise, cel.MoonSet, cels);
+            cels = new CelestialStatus[]
+            {
+                celPre.SunCondition, cel.SunCondition, celPost.SunCondition
+            };
+            cel.sunCondition = GetStatus(cel.SunRise, cel.SunSet, cels);
+
+            //Load IsUp values based on local time with populated Celestial
+            //If EagerLoading Extensions used, this function will handle null values
+            Calculate_Celestial_IsUp_Booleans(d, cel);
+
+            return cel;
+        }
+        /// <summary>
+        /// Converts solar time values to local time. 
+        /// </summary>
+        /// <param name="coord">Coordinate</param>
+        /// <param name="offset">UTC offset</param>
+        /// <returns>Celestial</returns>
+        /// <example>
+        /// The following example demonstrates how to get Celestial, solar time only values in Local time.
+        /// DateTime offsets are done manually for readability purposes of this example. 
+        /// <code>
+        /// //Local time 
+        ///  DateTime d = new DateTime(2018, 3, 19, 6, 56, 0, 0, DateTimeKind.Local);
+        /// 
+        /// //EST Time is -4 hours from UTC
+        /// double offset = -4;
+        /// 
+        /// //Convert the date to UTC time
+        /// d = d.AddHours(offset*-1);
+        /// 
+        /// //Create a Coordinate with the UTC time		
+        /// Coordinate c = new Coordinate(39.0000, -72.0000, d);
+        /// //Create a new Celestial object by converting the existing one to Local
+        /// Celestial celestial = Celestial.Solar_LocalTime(c, offset);
+        /// 
+        /// Console.WriteLine(celestial.IsSunUp); //True
+        /// Console.WriteLine(celestial.SunRise); //3/19/2018 6:54:25 AM
+        /// </code>
+        /// </example>  
+        [Obsolete("Use instance method 'Coordinate.Celestial_LocalTime(double hourOffset)'.")]
+        public static Celestial Solar_LocalTime(Coordinate coord, double offset)
+        {
+            if (offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 12 or less than -12."); }
+            //Probably need to offset initial UTC date so user can op in local
+            //Determine best way to do this.
+            DateTime d = coord.GeoDate.AddHours(offset);
+
+            //Get 3 objects for comparison
+            Celestial cel = CalculateSunData(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate);
+            Celestial celPre = CalculateSunData(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(-1));
+            Celestial celPost = CalculateSunData(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(1));
+
+            //Slip objects for comparison. Compare with slipped date. 
+            celPre.Local_Convert(coord, offset, Celestial_EagerLoad.Solar);
+            cel.Local_Convert(coord, offset, Celestial_EagerLoad.Solar);
+            celPost.Local_Convert(coord, offset, Celestial_EagerLoad.Solar);
+
+            //Get SunSet
+            int i = Determine_Slipped_Event_Index(cel.SunSet, celPre.SunSet, celPost.SunSet, d);
+            cel.sunSet = Get_Correct_Slipped_Date(cel.SunSet, celPre.SunSet, celPost.SunSet, i);
+            cel.AdditionalSolarTimes.civilDusk = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.CivilDusk,
+                celPre.AdditionalSolarTimes.CivilDusk, celPost.AdditionalSolarTimes.CivilDusk, i);
+            cel.AdditionalSolarTimes.nauticalDusk = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.NauticalDusk,
+               celPre.AdditionalSolarTimes.NauticalDusk, celPost.AdditionalSolarTimes.NauticalDusk, i);
+            //Get SunRise
+            i = Determine_Slipped_Event_Index(cel.SunRise, celPre.SunRise, celPost.SunRise, d);
+            cel.sunRise = Get_Correct_Slipped_Date(cel.SunRise, celPre.SunRise, celPost.SunRise, i);
+            cel.AdditionalSolarTimes.civilDawn = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.CivilDawn,
+                celPre.AdditionalSolarTimes.CivilDawn, celPost.AdditionalSolarTimes.CivilDawn, i);
+            cel.AdditionalSolarTimes.nauticalDawn = Get_Correct_Slipped_Date(cel.AdditionalSolarTimes.NauticalDawn,
+               celPre.AdditionalSolarTimes.NauticalDawn, celPost.AdditionalSolarTimes.NauticalDawn, i);
+
+
+
+            //Local Conditions          
+            CelestialStatus[] cels = new CelestialStatus[]
+            {
+                celPre.SunCondition, cel.SunCondition, celPost.SunCondition
+            };
+            cel.sunCondition = Celestial.GetStatus(cel.SunRise, cel.SunSet, cels);
+
+            //Load IsUp values based on local time with populated Celestial
+            Calculate_Celestial_IsUp_Booleans(d, cel);
+
+            return cel;
+        }
+        /// <summary>
+        /// Converts lunar time values to local time. 
+        /// </summary>
+        /// <param name="coord">Coordinate</param>
+        /// <param name="offset">UTC offset</param>
+        /// <returns>Celestial</returns>
+        /// <example>
+        /// The following example demonstrates how to get Celestial, lunar time only values in Local time.
+        /// DateTime offsets are done manually for readability purposes of this example. 
+        /// <code>
+        /// //Local time 
+        ///  DateTime d = new DateTime(2018, 3, 19, 6, 56, 0, 0, DateTimeKind.Local);
+        /// 
+        /// //EST Time is -4 hours from UTC
+        /// double offset = -4;
+        /// 
+        /// //Convert the date to UTC time
+        /// d = d.AddHours(offset*-1);
+        /// 
+        /// //Create a Coordinate with the UTC time		
+        /// Coordinate c = new Coordinate(39.0000, -72.0000, d);
+        /// //Create a new Celestial object by converting the existing one to Local
+        /// Celestial celestial = Celestial.Lunar_LocalTime(c, offset);
+        /// 
+        /// Console.WriteLine(celestial.IsMoonUp); //False
+        /// Console.WriteLine(celestial.SunRise); //3/19/2018 08:17 AM
+        /// </code>
+        /// </example>     
+        [Obsolete("Use instance method 'Coordinate.Celestial_LocalTime(double hourOffset)'.")]
+        public static Celestial Lunar_LocalTime(Coordinate coord, double offset)
+        {
+            if (offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 12 or less than -12."); }
+            //Probably need to offset initial UTC date so user can op in local
+            //Determine best way to do this.
+            DateTime d = coord.GeoDate.AddHours(offset);
+
+            //Get 3 objects for comparison
+            Celestial cel = CalculateMoonData(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate);
+            Celestial celPre = CalculateMoonData(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(-1));
+            Celestial celPost = CalculateMoonData(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate.AddDays(1));
+
+            //Slip objects for comparison. Compare with slipped date. 
+            celPre.Local_Convert(coord, offset, Celestial_EagerLoad.Lunar);
+            cel.Local_Convert(coord, offset, Celestial_EagerLoad.Lunar);
+            celPost.Local_Convert(coord, offset, Celestial_EagerLoad.Lunar);
+
+
+            //MoonRise
+            int i = Determine_Slipped_Event_Index(cel.MoonRise, celPre.MoonRise, celPost.MoonRise, d);
+            cel.moonRise = Get_Correct_Slipped_Date(cel.MoonRise, celPre.MoonRise, celPost.MoonRise, i);
+
+            //MoonSet
+            i = Determine_Slipped_Event_Index(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, d);
+            cel.moonSet = Get_Correct_Slipped_Date(cel.MoonSet, celPre.MoonSet, celPost.MoonSet, i);
+
+            //Local Conditions
+            CelestialStatus[] cels = new CelestialStatus[]
+            {
+                celPre.MoonCondition,cel.MoonCondition,celPost.MoonCondition
+            };
+            cel.moonCondition = Celestial.GetStatus(cel.MoonRise, cel.MoonSet, cels);
+
+            //Load IsUp values based on local time with populated Celestial
+            Celestial.Calculate_Celestial_IsUp_Booleans(d, cel);
+
+            return cel;
+        }
+        /// <summary>
+        /// Calculate sun data based on latitude, longitude and UTC date at the location.
+        /// </summary>
+        /// <param name="lat">latitude</param>
+        /// <param name="longi">longitude</param>
+        /// <param name="date">DateTime</param>
+        /// <returns>Celestial (Partially Populated)</returns>
+        /// <example>
+        /// The following example demonstrates how to create a partially populated Celestial object 
+        /// that only calculates solar data using static functions. 
+        /// <code>
+        /// //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
+        /// Celestial cel = Celestial.CalculateSunData(39, -72, new DateTime(2019, 3, 19, 10, 10, 12));
+        /// 
+        /// Console.WriteLine(cel.SunRise); //3/19/2019 10:54:50 AM
+        /// </code>
+        /// </example>
+        [Obsolete("Use static method 'Celestial.CalculateCelestialTimes(double lat, double longi, DateTime date, EagerLoad el)'.")]
+        public static Celestial CalculateSunData(double lat, double longi, DateTime date)
+        {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+
+            Celestial c = new Celestial(false);
+            SunCalc.CalculateSunTime(lat, longi, date, c, new EagerLoad(), 0);
+            SunCalc.CalculateZodiacSign(date, c);
+
+            return c;
+        }
+        /// <summary>
+        /// Calculate moon data based on latitude, longitude and UTC date at the location.
+        /// </summary>
+        /// <param name="lat">latitude</param>
+        /// <param name="longi">longitude</param>
+        /// <param name="date">DateTime</param>
+        /// <returns>Celestial (Partially Populated)</returns>
+        /// <example>
+        /// The following example demonstrates how to create a partially populated Celestial object 
+        /// that only calculates lunar data using static functions. 
+        /// <code>
+        /// //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
+        /// Celestial cel = Celestial.CalculateMoonData(39, -72, new DateTime(2019, 3, 19, 10, 10, 12));
+        /// 
+        /// Console.WriteLine(cel.MoonRise); //3/19/2019 9:27:27 PM
+        /// </code>
+        /// </example>
+        [Obsolete("Use static method 'Celestial.CalculateCelestialTimes(double lat, double longi, DateTime date, EagerLoad el)'.")]
+        public static Celestial CalculateMoonData(double lat, double longi, DateTime date)
+        {
+            date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
+
+            Celestial c = new Celestial(false);
+
+            MoonCalc.GetMoonTimes(date, lat, longi, c, 0);
+            MoonCalc.GetMoonDistance(date, c);
+            MoonCalc.GetMoonSign(date, c);
+            MoonCalc.GetMoonIllumination(date, c, lat, longi, new EagerLoad(), 0);
+
+            c.perigee = MoonCalc.GetPerigeeEvents(date);
+            c.apogee = MoonCalc.GetApogeeEvents(date);
+
+            return c;
+        }
+
+        //BELOW METHODS NEEDED FOR DEPRECATED FUNCTIONS.
+        //REMOVE AS SCHEDULED WITH ABOVE OBSOLETES.
+        private static CelestialStatus GetStatus(DateTime? rise, DateTime? set, CelestialStatus[] cels)
+        {
+            if (set.HasValue && rise.HasValue) { return CelestialStatus.RiseAndSet; }
+            if (set.HasValue && !rise.HasValue) { return CelestialStatus.NoRise; }
+            if (!set.HasValue && rise.HasValue) { return CelestialStatus.NoSet; }
+            for (int x = 0; x < 3; x++)
+            {
+                if (cels[x] == CelestialStatus.DownAllDay || cels[x] == CelestialStatus.UpAllDay)
+                {
+                    return cels[x];
+                }
+            }
+            return cels[1];
+        }
+
+        /// <summary>
+        /// In place time slip
+        /// </summary>
+        /// <param name="c">Coordinate</param>
+        /// <param name="offset">hour offset</param>
+        /// <param name="el">Celestial EagerLoad Option</param>
+        private void Local_Convert(Coordinate c, double offset, Celestial_EagerLoad el)
+        {
+            //Find new lunar set rise times
+            if (el == Celestial_EagerLoad.All || el == Celestial_EagerLoad.Lunar)
+            {
+                if (MoonSet.HasValue) { moonSet = moonSet.Value.AddHours(offset); }
+                if (MoonRise.HasValue) { moonRise = moonRise.Value.AddHours(offset); }
+
+                Perigee.ConvertTo_Local_Time(offset);
+                Apogee.ConvertTo_Local_Time(offset);
+                LunarEclipse.ConvertTo_LocalTime(offset);
+                MoonCalc.GetMoonSign(c.GeoDate.AddHours(offset), this);
+            }
+
+            ////Solar
+            if (el == Celestial_EagerLoad.All || el == Celestial_EagerLoad.Solar)
+            {
+                if (sunSet.HasValue) { sunSet = sunSet.Value.AddHours(offset); }
+                if (SunRise.HasValue) { sunRise = SunRise.Value.AddHours(offset); }
+                AdditionalSolarTimes.Convert_To_Local_Time(offset);
+
+                //Eclipse
+                SolarEclipse.ConvertTo_LocalTime(offset);
+                SunCalc.CalculateZodiacSign(c.GeoDate.AddHours(offset), this);
+            }
+        }
+
+        private PerigeeApogee Get_Correct_Slipped_Date(PerigeeApogee actual, PerigeeApogee pre, PerigeeApogee post, int i)
+        {
+            switch (i)
+            {
+                case 0:
+                    return pre;
+                case 1:
+                    return actual;
+                case 2:
+                    return post;
+                default:
+                    return actual;
+            }
+        }
+        private static DateTime? Get_Correct_Slipped_Date(DateTime? actual, DateTime? pre, DateTime? post, int i)
+        {
+            switch (i)
+            {
+                case 0:
+                    return pre;
+                case 1:
+                    return actual;
+                case 2:
+                    return post;
+                default:
+                    return null;
+            }
+        }
+        private static int Determine_Slipped_Event_Index(DateTime? actual, DateTime? pre, DateTime? post, DateTime d)
+        {
+
+            if (actual.HasValue)
+            {
+                if (actual.Value.Day != d.Day)
+                {
+                    if (pre.HasValue)
+                    {
+                        if (pre.Value.Day == d.Day) { return 0; }
+                    }
+                    if (post.HasValue)
+                    {
+                        if (post.Value.Day == d.Day) { return 2; }
+                    }
+                    return 3;
+                }
+            }
+            else
+            {
+                if (pre.HasValue)
+                {
+                    if (pre.Value.Day == d.Day) { return 0; }
+                }
+                if (post.HasValue)
+                {
+                    if (post.Value.Day == d.Day) { return 2; }
+                }
+            }
+            return 1;
+        }
+        #endregion
     }
 
 }

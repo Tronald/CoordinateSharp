@@ -46,79 +46,67 @@ using System;
 
 namespace CoordinateSharp
 {
-    /// <summary>
-    /// Class used to handle a Coordinate object's eager loading settings for geographic conversions and celestial calculation properties.
-    /// </summary>
-    [Serializable]
-    public partial class EagerLoad
+    internal struct DirectionFinder
     {
-        private bool celestial;
-
-        /// <summary>
-        /// Eager load all celestial information. 
-        /// Setting this will also set all Celestial related extensions.
-        /// </summary>
-        public bool Celestial
+        public DirectionFinder(string coordinatePartString)
         {
-            get { return celestial; }    
-            set
+            rad = 1;
+            partString = string.Empty;
+            coordinateType = null;
+            position = null;
+            success = false;
+            
+            if (coordinatePartString.ToLower().Contains("n"))
             {
-                celestial = value;
-                Extensions.Set_Celestial_Items(value);
+                partString = coordinatePartString;
+                position = CoordinatesPosition.N;
+                coordinateType = CoordinateSharp.CoordinateType.Lat;
+                success = true;
+            }
+            else if (coordinatePartString.ToLower().Contains("s"))
+            {
+                partString = coordinatePartString;
+                position = CoordinatesPosition.S;
+                coordinateType = CoordinateSharp.CoordinateType.Lat;
+                rad = -1;
+                success = true;
+            }
+            else if (coordinatePartString.ToLower().Contains("e"))
+            {
+                partString = coordinatePartString;
+                position = CoordinatesPosition.E;
+                coordinateType = CoordinateSharp.CoordinateType.Long;
+                success = true;
+            }
+            else if (coordinatePartString.ToLower().Contains("w"))
+            {
+                partString = coordinatePartString;
+                position = CoordinatesPosition.W;
+                coordinateType = CoordinateSharp.CoordinateType.Long;
+                rad = -1;
+                success = true;
             }
         }
-        /// <summary>
-        /// Eager load UTM and MGRS information.
-        /// </summary>
-        public bool UTM_MGRS { get; set; }
-        /// <summary>
-        /// Eager load Cartesian information.
-        /// </summary>
-        public bool Cartesian { get; set; }
-        /// <summary>
-        /// Eager load ECEF information.
-        /// </summary>
-        public bool ECEF { get; set; }
-        /// <summary>
-        /// Extensions that allow for more specific EagerLoading specifications.
-        /// </summary>
-        public EagerLoad_Extensions Extensions
+
+        private Nullable<CoordinateType> coordinateType;
+        private Nullable<CoordinatesPosition> position;
+        private string partString;
+        private int rad;
+        private bool success;
+
+        public Nullable<CoordinateType> CoordinateType { get { return coordinateType; } }
+        public Nullable<CoordinatesPosition> Position { get { return position; } }
+        public string PartString { get { return partString; } }
+        public int Rad { get { return rad; } }
+        public int RadZero
         {
-            get;set;
-        }    
+            get
+            {
+                if (rad == 1) { return 0; }
+                else { return 1; }
+            }
+        }
+        public bool Success { get { return success; } }
     }
-    /// <summary>
-    /// Extensions to the EagerLoading class which allow for more specific EagerLoading specifications.
-    /// </summary>
-    public partial class EagerLoad_Extensions
-    {
-       
-        /// <summary>
-        /// Eager load solar cycle information.
-        /// Includes rises, sets, dusks, dawns and azimuth / altitude data.
-        /// </summary>
-        public bool Solar_Cycle { get; set; }
-        /// <summary>
-        /// Eager load lunar information.
-        /// Includes rises, sets, phase, distance and azimuth / altitude data.
-        /// </summary>
-        public bool Lunar_Cycle { get; set; }
-        /// <summary>
-        /// Eager load solar eclipse data.
-        /// </summary>
-        public bool Solar_Eclipse { get; set; }
-        /// <summary>
-        /// Eager load lunar eclipse data.
-        /// </summary>
-        public bool Lunar_Eclipse { get; set; }
-        /// <summary>
-        /// Eager load zodiac data.
-        /// </summary>
-        public bool Zodiac { get; set; }
-        /// <summary>
-        /// Eager load MGRS data.
-        /// </summary>
-        public bool MGRS { get; set; }
-    }
-    
+   
 }

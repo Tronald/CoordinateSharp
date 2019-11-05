@@ -9,6 +9,8 @@ are referring to this work.
 
 License
 
+CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
+
 Copyright (C) 2019, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
@@ -31,6 +33,13 @@ as soon as you develop commercial activities involving the CoordinateSharp softw
 These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application, 
 or shipping CoordinateSharp with a closed source product.
 
+Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request.
+-Department of Defense
+-Department of Homeland Security
+-Open source contributors to this library
+-Scholarly or scientific uses on a case by case basis.
+-Emergency response / management uses on a case by case basis.
+
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
 using System;
@@ -39,7 +48,7 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 namespace CoordinateSharp
 {
-    internal class FormatFinder_CoordPart
+    internal partial class FormatFinder_CoordPart
     {
         //Add main to Coordinate and tunnel to Format class. Add private methods to format.
         //WHEN PARSING NO EXCPETIONS FOR OUT OF RANGE ARGS WILL BE THROWN
@@ -185,124 +194,6 @@ namespace CoordinateSharp
 
             return false;
         }
-
-        private static bool TrySignedDegree(string s, int t, out double[] d)
-        {
-            d = null;
-            if (Regex.Matches(s, @"[a-zA-Z]").Count != 0) { return false; } //Should contain no letters
-
-            string[] sA = SpecialSplit(s, false);
-            double deg;
-            double min; //Minutes & MinSeconds
-            double sec;
-
-            int sign = 1;
-            switch (sA.Count())
-            {
-                case 1:
-                    if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
-                    { return false; }
-                    d = new double[] { deg };
-                    return true;
-                case 2:
-                    if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
-                    { return false; }
-                    if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out min))
-                    { return false; }
-
-                    if (deg < 0) { sign = -1; }
-                    if (min >= 60 || min < 0) { return false; } //Handle in parser as degree will be incorrect.
-                    d = new double[] { (Math.Abs(deg) + (min / 60.0)) * sign };
-                    return true;
-                case 3:
-                    if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
-                    { return false; }
-                    if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out min))
-                    { return false; }
-                    if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out sec))
-                    { return false; }
-                    if (min >= 60 || min < 0) { return false; } //Handle in parser as degree will be incorrect.
-                    if (sec >= 60 || sec < 0) { return false; } //Handle in parser as degree will be incorrect.
-
-                    if (deg < 0) { sign = -1; }
-                    d = new double[] { (Math.Abs(deg) + (min / 60.0) + (sec / 3600.0)) * sign };
-                    return true;
-                default:
-                    return false;
-            }
-        }
-        private static bool TryDecimalDegree(string s, int direction, out double[] d)
-        {
-            d = null;
-            int sign = 1;
-            //S or W
-            if (direction == 2 || direction == 3)
-            {
-                sign = -1;
-            }
-            double coord;
-
-            string[] sA = SpecialSplit(s, true);
-
-            if (sA.Count() == 1)
-            {
-                if (!double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out coord))
-                { return false; }
-
-                coord *= sign;
-                d = new double[] { coord };
-                return true;
-            }
-
-            return false;
-        }
-        private static bool TryDegreeDecimalMinute(string s, out double[] d)
-        {
-            d = null;
-
-            double deg;
-            double minSec;
-
-
-            string[] sA = SpecialSplit(s,true);
-            if (sA.Count() == 2)
-            {
-                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
-                { return false; }
-                if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out minSec))
-                { return false; }
-
-                d = new double[] { deg, minSec };
-                return true;
-            }
-            return false;
-        }
-        private static bool TryDegreeMinuteSecond(string s, out double[] d)
-        {
-            d = null;
-
-
-            double deg;
-            double min;
-            double sec;
-
-            string[] sA = SpecialSplit(s,true);
-            if (sA.Count() == 3)
-            {
-
-                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out deg))
-                { return false; }
-                if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out min))
-                { return false; }
-                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out sec))
-                { return false; }
-
-                d = new double[] { deg, min, sec };
-                return true;
-            }
-            return false;
-        }
-
         private static int Find_Position(string s)
         {
             //N=0

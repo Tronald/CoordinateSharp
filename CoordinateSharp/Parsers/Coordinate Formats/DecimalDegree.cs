@@ -43,82 +43,73 @@ Organizations or use cases that fall under the following conditions may receive 
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
 using System;
+using System.Text.RegularExpressions;
+using System.Linq;
+using System.Globalization;
 
 namespace CoordinateSharp
 {
-    /// <summary>
-    /// Class used to handle a Coordinate object's eager loading settings for geographic conversions and celestial calculation properties.
-    /// </summary>
-    [Serializable]
-    public partial class EagerLoad
+    internal partial class FormatFinder
     {
-        private bool celestial;
+        private static bool TryDecimalDegree(string s, out double[] d)
+        {
+            d = null;
+            if (Regex.Matches(s, @"[a-zA-Z]").Count != 2) { return false; } //Should only contain 1 letter per part.
 
-        /// <summary>
-        /// Eager load all celestial information. 
-        /// Setting this will also set all Celestial related extensions.
-        /// </summary>
-        public bool Celestial
-        {
-            get { return celestial; }    
-            set
+            string[] sA = SpecialSplit(s, true);
+            if (sA.Count() == 2 || sA.Count() == 4)
             {
-                celestial = value;
-                Extensions.Set_Celestial_Items(value);
+                double lat;
+                double lng;
+
+                int latR = 1; //Sets negative if South
+                int lngR = 1; //Sets negative if West
+
+                //Contact get both directional indicator together with string
+                if (sA.Count() == 4)
+                {
+                    sA[0] += sA[1];
+                    sA[1] = sA[2] + sA[3];
+                }
+
+                string latString = string.Empty;
+                string longString = string.Empty;
+
+                //Find Directions (new struct allows for reverse formatted coordinate)
+                DirectionFinder p1 = new DirectionFinder(sA[0]);
+                DirectionFinder p2 = new DirectionFinder(sA[1]);
+
+                if (p1.Success)
+                {
+                    if (p1.CoordinateType.Value == CoordinateType.Lat) { latString = p1.PartString; latR = p1.Rad; }
+                    else { longString = p1.PartString; lngR = p1.Rad; }
+                }
+                if (p2.Success)
+                {
+                    if (p2.CoordinateType.Value == CoordinateType.Lat) { latString = p2.PartString; latR = p2.Rad; }
+                    else { longString = p2.PartString; lngR = p2.Rad; }
+                }
+
+                //Either lat or long not provided in this case
+                if (string.IsNullOrEmpty(latString) || string.IsNullOrEmpty(longString)) { return false; }
+
+                latString = Regex.Replace(latString, "[^0-9.]", "");
+                longString = Regex.Replace(longString, "[^0-9.]", "");
+
+                if (!double.TryParse(latString, NumberStyles.Any, CultureInfo.InvariantCulture, out lat))
+                { return false; }
+                if (!double.TryParse(longString, NumberStyles.Any, CultureInfo.InvariantCulture, out lng))
+                { return false; }
+
+                lat *= latR;
+                lng *= lngR;
+
+                d = new double[] { lat, lng };
+
+                return true;
             }
+
+            return false;
         }
-        /// <summary>
-        /// Eager load UTM and MGRS information.
-        /// </summary>
-        public bool UTM_MGRS { get; set; }
-        /// <summary>
-        /// Eager load Cartesian information.
-        /// </summary>
-        public bool Cartesian { get; set; }
-        /// <summary>
-        /// Eager load ECEF information.
-        /// </summary>
-        public bool ECEF { get; set; }
-        /// <summary>
-        /// Extensions that allow for more specific EagerLoading specifications.
-        /// </summary>
-        public EagerLoad_Extensions Extensions
-        {
-            get;set;
-        }    
     }
-    /// <summary>
-    /// Extensions to the EagerLoading class which allow for more specific EagerLoading specifications.
-    /// </summary>
-    public partial class EagerLoad_Extensions
-    {
-       
-        /// <summary>
-        /// Eager load solar cycle information.
-        /// Includes rises, sets, dusks, dawns and azimuth / altitude data.
-        /// </summary>
-        public bool Solar_Cycle { get; set; }
-        /// <summary>
-        /// Eager load lunar information.
-        /// Includes rises, sets, phase, distance and azimuth / altitude data.
-        /// </summary>
-        public bool Lunar_Cycle { get; set; }
-        /// <summary>
-        /// Eager load solar eclipse data.
-        /// </summary>
-        public bool Solar_Eclipse { get; set; }
-        /// <summary>
-        /// Eager load lunar eclipse data.
-        /// </summary>
-        public bool Lunar_Eclipse { get; set; }
-        /// <summary>
-        /// Eager load zodiac data.
-        /// </summary>
-        public bool Zodiac { get; set; }
-        /// <summary>
-        /// Eager load MGRS data.
-        /// </summary>
-        public bool MGRS { get; set; }
-    }
-    
 }

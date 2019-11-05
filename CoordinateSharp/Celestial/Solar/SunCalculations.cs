@@ -9,6 +9,8 @@ are referring to this work.
 
 License
 
+CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
+
 Copyright (C) 2019, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
@@ -31,6 +33,13 @@ as soon as you develop commercial activities involving the CoordinateSharp softw
 These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application, 
 or shipping CoordinateSharp with a closed source product.
 
+Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request.
+-Department of Defense
+-Department of Homeland Security
+-Open source contributors to this library
+-Scholarly or scientific uses on a case by case basis.
+-Emergency response / management uses on a case by case basis.
+
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
 using System;
@@ -39,7 +48,7 @@ namespace CoordinateSharp
 {
     internal class SunCalc
     {     
-        public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c, EagerLoad el, double offset = 0)
+        public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c, EagerLoad el, double offset)
         {
             if (date.Year == 0001) { return; } //Return if date value hasn't been established.
             if (el.Extensions.Solar_Cycle)
@@ -53,13 +62,13 @@ namespace CoordinateSharp
                 double phi = rad * lat;
 
                 //Rise Set        
-                DateTime?[] evDate = Get_Event_Time(lw, phi, -.8333, actualDate);
+                DateTime?[] evDate = Get_Event_Time(lw, phi, -.8333, actualDate, offset); //AADED OFFSET TO ALL Get_Event_Time calls.
                 c.sunRise = evDate[0];
                 c.sunSet = evDate[1];
 
                 c.sunCondition = CelestialStatus.RiseAndSet;
                 //Azimuth and Altitude
-                CalculateSunAngle(date, longi, lat, c);
+                CalculateSunAngle(date.AddHours(-offset), longi, lat, c); //ADDED OFFSET TO ADJUST SUN ANGLE DURING LOCAL CALCULATIONS.
                 // neither sunrise nor sunset
                 if ((!c.SunRise.HasValue) && (!c.SunSet.HasValue))
                 {
@@ -91,24 +100,24 @@ namespace CoordinateSharp
                 c.additionalSolarTimes = new AdditionalSolarTimes();
                 //Dusk and Dawn
                 //Civil
-                evDate = Get_Event_Time(lw, phi, -6, actualDate);
+                evDate = Get_Event_Time(lw, phi, -6, actualDate, offset);
                 c.AdditionalSolarTimes.civilDawn = evDate[0];
                 c.AdditionalSolarTimes.civilDusk = evDate[1];
 
 
                 //Nautical
-                evDate = Get_Event_Time(lw, phi, -12, actualDate);
+                evDate = Get_Event_Time(lw, phi, -12, actualDate, offset);
                 c.AdditionalSolarTimes.nauticalDawn = evDate[0];
                 c.AdditionalSolarTimes.nauticalDusk = evDate[1];
 
                 //Astronomical
-                evDate = Get_Event_Time(lw, phi, -18, actualDate);
+                evDate = Get_Event_Time(lw, phi, -18, actualDate, offset);
 
                 c.AdditionalSolarTimes.astronomicalDawn = evDate[0];
                 c.AdditionalSolarTimes.astronomicalDusk = evDate[1];
 
                 //BottomDisc
-                evDate = Get_Event_Time(lw, phi, -.2998, actualDate);
+                evDate = Get_Event_Time(lw, phi, -.2998, actualDate, offset);
                 c.AdditionalSolarTimes.sunriseBottomDisc = evDate[0];
                 c.AdditionalSolarTimes.sunsetBottomDisc = evDate[1];
             }
@@ -122,9 +131,12 @@ namespace CoordinateSharp
         /// <param name="phi">Observer Latitude in radians</param>
         /// <param name="h">Angle in Degrees</param>
         /// <param name="date">Date of Event</param>
+        /// <param name="offset">Offset hours</param>
         /// <returns>DateTime?[]{rise, set}</returns> 
-        private static DateTime?[] Get_Event_Time(double lw, double phi, double h,DateTime date)
+        private static DateTime?[] Get_Event_Time(double lw, double phi, double h, DateTime date, double offset)
         {
+            double julianOffset = offset * .04166667;
+          
             //Create arrays. Index 0 = Day -1, 1 = Day, 2 = Day + 1;
             //These will be used to find exact day event occurs for comparison
             DateTime?[] sets = new DateTime?[] { null, null, null, null, null };
@@ -156,8 +168,8 @@ namespace CoordinateSharp
                 Jset = GetTime(h * rad, lw, phi, dec, n, M, L);
                 Jrise = Jnoon - (Jset - Jnoon);
 
-                DateTime? rise = JulianConversions.GetDate_FromJulian(Jrise); //Adjusting julian for  DT OFFSET MAY HELP WITH LOCAL TIME
-                DateTime? set = JulianConversions.GetDate_FromJulian(Jset); //Adjusting julian for DT OFFSET MAY HELP WITH LOCAL TIME
+                DateTime? rise = JulianConversions.GetDate_FromJulian(Jrise + julianOffset); //Adjusting julian for  DT OFFSET MAY HELP WITH LOCAL TIME
+                DateTime? set = JulianConversions.GetDate_FromJulian(Jset + julianOffset); //Adjusting julian for DT OFFSET MAY HELP WITH LOCAL TIME
 
                 rises[x] = rise;
                 sets[x] = set;

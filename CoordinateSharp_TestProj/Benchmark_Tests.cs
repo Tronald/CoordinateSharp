@@ -38,27 +38,52 @@ namespace CoordinateSharp_TestProj
 
             //Benchmark Celestial Times
             Benchmark(() => { Celestial cel = new Celestial(45, 45, DateTime.Now); }, 100, "Celestial Time Calculations");
-            Benchmark(() => { Celestial cel = Celestial.CalculateSunData(45, 45, DateTime.Now); }, 100, "Solar Time Calculations");
-            Benchmark(() => { Celestial cel = Celestial.CalculateMoonData(45, 45, DateTime.Now); }, 100, "Lunar Time Calculations");
 
+            EagerLoad el = new EagerLoad();
+            Coordinate c = new Coordinate(45, 45, DateTime.Now, el);
             //Benchmark Local Times
-            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now,new EagerLoad(false)); Celestial cel = Celestial.Celestial_LocalTime(c, -7); }, 100, "Local Celestial Times");       
-            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now, new EagerLoad(false)); Celestial cel = Celestial.Solar_LocalTime(c, -7); }, 100, "Local Sun Only Times");
-            Benchmark(() => { Coordinate c = new Coordinate(45, 45, DateTime.Now, new EagerLoad(false)); Celestial cel = Celestial.Lunar_LocalTime(c, -7); }, 100, "Local Moon Only Times");
+            Benchmark(() => {
+               
+                Celestial cel = c.Celestial_LocalTime(-7);
+            }, 100, "Local Celestial Times From Coordinate");
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
+            Benchmark(() => {
+               
+                Celestial cel = c.Celestial_LocalTime(-7);
+            }, 100, "Local Solar Cycle Only Times From Coordinate");
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Lunar_Cycle);
+            Benchmark(() => {              
+                Celestial cel = c.Celestial_LocalTime(-7);
+            }, 100, "Local Lunar Cycle Only Times From Coordinate");
+            el = new EagerLoad();
+            Benchmark(() => {
+               
+                Celestial cel = Celestial.CalculateCelestialTimes(45, 45, DateTime.Now, el, -7);
+            }, 100, "Local Celestial Times From Direct Celestial");
+            el = new EagerLoad(EagerLoadType.Celestial);
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
+            Benchmark(() => {             
+                Celestial cel = Celestial.CalculateCelestialTimes(45, 45, DateTime.Now, el, -7);
+            }, 100, "Local Solar Cycle Only Times From Direct Celestial");
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Lunar_Cycle);
+            Benchmark(() => {
+                Celestial cel = Celestial.CalculateCelestialTimes(45, 45, DateTime.Now, el, -7);              
+            }, 100, "Local Lunar Cycle Only Times From Direct Celestial");
 
-            //Benchmark EagerLoadin Exentsion Times
+
+            //Benchmark EagerLoading Extension Times
+            el = new EagerLoad();
             Benchmark(() => 
             {
-                EagerLoad el = new EagerLoad();
                 el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
-                Coordinate c = new Coordinate(45, 45, DateTime.Now, el); 
+                c = new Coordinate(45, 45, DateTime.Now, el); 
             }, 100, "Coordinate Initialization with Solar Cycle Calculations Only.");
 
             Benchmark(() =>
             {
-                EagerLoad el = new EagerLoad();
+
                 el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Lunar_Cycle);
-                Coordinate c = new Coordinate(45, 45, DateTime.Now, el);
+                c = new Coordinate(45, 45, DateTime.Now, el);
             }, 100, "Coordinate Initialization with Lunar Cycle Calculations Only.");
 
 
