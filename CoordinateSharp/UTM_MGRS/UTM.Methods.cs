@@ -65,18 +65,7 @@ namespace CoordinateSharp
         /// </example>
         public UniversalTransverseMercator(string latz, int longz, double est, double nrt)
         {
-            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
-            if (!Verify_Lat_Zone(latz)) { Debug.WriteLine("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
-            if (est < 160000 || est > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
-            if (nrt < 0 || nrt > 10000000) { Debug.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
-
-            latZone = latz;
-            longZone =longz;
-            easting = est;
-            northing = nrt;
-
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
+            Construct_UTM(latz, longz, est, nrt, 6378137.0, 298.257223563);
         }
         /// <summary>
         /// Creates a UniversalTransverMercator (UTM) object with a custom datum(ellipsoid).
@@ -94,20 +83,8 @@ namespace CoordinateSharp
         /// </example>
         public UniversalTransverseMercator(string latz, int longz, double est, double nrt, double radius, double flaten)
         {
-            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
-            if (!Verify_Lat_Zone(latz)) { Debug.WriteLine("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
-            if (est < 160000 || est > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
-            if (nrt < 0 || nrt > 10000000) { Debug.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
-
-            latZone = latz;
-            longZone = longz;
-            easting = est;
-            northing = nrt;
-
-            equatorial_radius = radius;
-            inverse_flattening = flaten;
+            Construct_UTM(latz, longz, est, nrt, radius, flaten);
         }
-
         /// <summary>
         /// Creates a UniversalTransverMercator (UTM) object with a default WGS84 datum(ellipsoid).
         /// </summary>
@@ -116,36 +93,37 @@ namespace CoordinateSharp
         /// <param name="nrt">Northing</param>
         /// <example>
         /// <code>
-        /// UniversalTransverseMercator utm = new UniversalTransverseMercator("Q", 14, 581943.5, 2111989.8);
+        /// UniversalTransverseMercator utm = new UniversalTransverseMercator("14Q", 581943.5, 2111989.8);
         /// </code>
         /// </example>
         public UniversalTransverseMercator(string gridZone, double est, double nrt)
         {
-            string resultString = Regex.Match(gridZone, @"\d+").Value;
             int longz;
-            if (!int.TryParse(resultString, out longz))
+            string latz;
+            //DETERMINE IF UPS COORD
+            if (gridZone.Count() == 1)
             {
-                throw new FormatException("The MGRS Grid Zone Designator format is invalid.");
+                longz = 0;
+                Regex rg = new Regex("[aAbByYzZ]");
+                Match m = rg.Match(gridZone);
+                if (m.Success) { latz = gridZone; }
+                else { throw new FormatException("The UTM Grid Zone Designator format is invalid."); }          
             }
-            string latz = gridZone.Replace(resultString, "");
-
-            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
-            if (!Verify_Lat_Zone(latz)) { Debug.WriteLine("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
-            if (est < 160000 || est > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
-            if (nrt < 0 || nrt > 10000000) { Debug.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
-
-            latZone = latz;
-            longZone = longz;
-            easting = est;
-            northing = nrt;
-
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
+            else //UTM
+            {
+                string resultString = Regex.Match(gridZone, @"\d+").Value;
+              
+                if (!int.TryParse(resultString, out longz))
+                {
+                    throw new FormatException("The UTM Grid Zone Designator format is invalid.");
+                }
+                latz = gridZone.Replace(resultString, "");             
+            }
+         
+            Construct_UTM(latz, longz, est, nrt, 6378137.0, 298.257223563);
         }
-
-
         /// <summary>
-        /// Creates a UniversalTransverMercator (UTM) object with a default WGS84 datum(ellipsoid).
+        /// Creates a UniversalTransverMercator (UTM) object with a custom WGS84 datum(ellipsoid).
         /// </summary>
         /// <param name="gridZone">UTM Grid Zone Designation</param>
         /// <param name="est">Easting</param>
@@ -154,23 +132,64 @@ namespace CoordinateSharp
         /// <param name="flaten">Inverse Flattening</param>
         /// <example>
         /// <code>
-        /// UniversalTransverseMercator utm = new UniversalTransverseMercator("Q", 14, 581943.5, 2111989.8);
+        /// UniversalTransverseMercator utm = new UniversalTransverseMercator("14Q", 581943.5, 2111989.8, 6378160.000, 298.25);
         /// </code>
         /// </example>
         public UniversalTransverseMercator(string gridZone, double est, double nrt, double radius, double flaten)
         {
-            string resultString = Regex.Match(gridZone, @"\d+").Value;
             int longz;
-            if (!int.TryParse(resultString, out longz))
+            string latz;
+            //DETERMINE IF UPS COORD
+            if (gridZone.Count() == 1)
             {
-                throw new FormatException("The MGRS Grid Zone Designator format is invalid.");
+                longz = 0;
+                Regex rg = new Regex("[aAbByYzZ]");
+                Match m = rg.Match(gridZone);
+                if (m.Success) { latz = gridZone; }
+                else { throw new FormatException("The UTM Grid Zone Designator format is invalid."); }
+              
             }
-            string latz = gridZone.Replace(resultString, "");
+            else //UTM
+            {
+                string resultString = Regex.Match(gridZone, @"\d+").Value;
+               
+                if (!int.TryParse(resultString, out longz))
+                {
+                    throw new FormatException("The UTM Grid Zone Designator format is invalid.");
+                }
+                latz = gridZone.Replace(resultString, "");
+              
+            }
 
-            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            Construct_UTM(latz, longz, est, nrt, radius, flaten);
+        }
+
+        /// <summary>
+        /// Creates a UniversalTransverMercator (UTM) object
+        /// </summary>
+        private void Construct_UTM(string latz, int longz, double est, double nrt, double radius, double flaten)
+        {
+            Regex rg = new Regex("[aAbByYzZ]");
+            Match m = rg.Match(latz);
+          
+            if (m.Success)
+            {
+                systemType = UTM_Type.UPS;
+                if (longz != 0)
+                {
+                    Debug.WriteLine("UPS Longitudinal Zone Invalid", "You passed a UPS coordinate. The longitudinal zone should be set to 0.");
+                }
+            }
+            else if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+
             if (!Verify_Lat_Zone(latz)) { Debug.WriteLine("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
-            if (est < 160000 || est > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
-            if (nrt < 0 || nrt > 10000000) { Debug.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
+
+            if (systemType== UTM_Type.UTM && ( est < 160000 || est > 834000)) { Debug.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
+            if (systemType == UTM_Type.UPS && (est < 887000 || est > 3113000)) { Debug.WriteLine("The Easting value provided is outside the max allowable range. Use with caution."); }
+
+            if (systemType == UTM_Type.UTM && (nrt < 0 || nrt > 10000000)) { Debug.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
+            if (systemType == UTM_Type.UPS && (nrt < 887000 || nrt > 3113000)) { Debug.WriteLine("Northing out of range", "Northing must be between 0-10,000,000."); }
+
 
             latZone = latz;
             longZone = longz;
@@ -180,7 +199,7 @@ namespace CoordinateSharp
             equatorial_radius = radius;
             inverse_flattening = flaten;
         }
-
+        
         /// <summary>
         /// Constructs a UTM object based off DD Lat/Long
         /// </summary>
@@ -232,7 +251,18 @@ namespace CoordinateSharp
         internal UniversalTransverseMercator(string latz, int longz, double e, double n, Coordinate c, double rad, double flt)
         {
             //validate utm
-            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            Regex rg = new Regex("[aAbByYzZ]");
+            Match m = rg.Match(latz);
+
+            if (m.Success)
+            {
+                systemType = UTM_Type.UPS;
+                if (longz != 0)
+                {
+                    Debug.WriteLine("UPS Longitudinal Zone Invalid", "You passed a UPS coordinate. The longitudinal zone should be set to 0.");
+                }
+            }
+            else if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
             if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
             if (e < 160000 || e > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. If this is intentional, use with caution."); }
             if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
@@ -245,8 +275,7 @@ namespace CoordinateSharp
             northing = n;
 
             coordinate = c;
-            if (c.Latitude.DecimalDegree <= -80 || c.Latitude.DecimalDegree >= 84) { withinCoordinateSystemBounds = false; }
-            else { withinCoordinateSystemBounds = true; }
+          
         }
 
         /// <summary>
@@ -274,6 +303,17 @@ namespace CoordinateSharp
         /// <param name="utm">UTM Object to modify</param>
         internal void ToUTM(double lat, double longi, UniversalTransverseMercator utm)
         {
+            //Switch to UPS
+            if(lat < -80 || lat > 84)
+            {
+                UPS ups = new UPS();
+                ups.Geodetic_To_UPS(lat, longi, utm);
+                systemType = UTM_Type.UPS;
+                return;
+            }
+            else { systemType = UTM_Type.UTM; }
+
+            //Within UTM BOUNDS
             string letter = "";
             double easting = 0;
             double northing = 0;
@@ -366,6 +406,8 @@ namespace CoordinateSharp
                 y = 10000000 + y;   // add in false northing if south of the equator
             }
 
+            //Last zone is 60, but will hit 61 at 180 degrees exactly. Reset to 1.
+            if (zone == 61) { zone = 1; }
 
             easting = x;
             northing = y; 
@@ -374,9 +416,7 @@ namespace CoordinateSharp
             utm.longZone = zone;
             utm.easting = easting;
             utm.northing = northing;
-            
-            if(lat<=-80 || lat >= 84) { withinCoordinateSystemBounds = false; }
-            else { withinCoordinateSystemBounds = true; }
+            utm.systemType = systemType;
         }
        
         /// <summary>
@@ -385,11 +425,11 @@ namespace CoordinateSharp
         /// <returns>UTM Formatted Coordinate String</returns>
         public override string ToString()
         {
-            if (!withinCoordinateSystemBounds) { return ""; }//MGRS Coordinate is outside its reliable boundaries. Return empty.
+            if (systemType== UTM_Type.UPS) { return LatZone + " " + (int)easting + "mE " + (int)northing + "mN"; }
             return longZone.ToString() + LatZone + " " + (int)easting + "mE " + (int)northing + "mN";
         }
        
-        private static Coordinate UTMtoLatLong(double x, double y, double zone, double equatorialRadius, double flattening)
+        private static Coordinate UTMtoLatLong(double x, double y, double zone, double equatorialRadius, double flattening, EagerLoad el)
         {
             //x easting
             //y northing
@@ -486,15 +526,11 @@ namespace CoordinateSharp
             if (dLong > 180) { dLong = 180; }
             if (dLong < -180) { dLong = -180; }
 
-            Coordinate c = new Coordinate(equatorialRadius,flattening, true);
-            CoordinatePart cLat = new CoordinatePart(dLat, CoordinateType.Lat);
-            CoordinatePart cLng = new CoordinatePart(dLong, CoordinateType.Long);
-
-            c.Latitude = cLat;
-            c.Longitude = cLng;
+            Coordinate c = new Coordinate(dLat,dLong, el, equatorialRadius,flattening);
            
             return c;
         }
+
         private static double[] UTMtoSigned(double x, double y, double zone, double equatorialRadius, double flattening)
         {
             //x easting
@@ -667,14 +703,37 @@ namespace CoordinateSharp
         /// </example>
         public static Coordinate ConvertUTMtoLatLong(UniversalTransverseMercator utm)
         {
+            return ConvertUTMtoLatLong(utm, new EagerLoad());
+        }
+        /// <summary>
+        /// Converts UTM coordinate to Lat/Long
+        /// </summary>
+        /// <param name="utm">utm</param>
+        /// <param name="eagerLoad">EagerLoad</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on a UTM object. 
+        /// Performance is maximized by turning off EagerLoading.
+        /// <code>
+        /// EagerLoad el = new EagerLoad(false);
+        /// UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 233434, 234234);
+        /// Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm, el);
+        /// Console.WriteLine(c); //N 2º 7' 2.332" E 6º 36' 12.653"
+        /// </code>
+        /// </example>
+        public static Coordinate ConvertUTMtoLatLong(UniversalTransverseMercator utm, EagerLoad eagerLoad)
+        {
 
             bool southhemi = false;
-            if (utm.latZone == "A" || utm.latZone == "B" || utm.latZone == "C" || utm.latZone == "D" || utm.latZone == "E" || utm.latZone == "F" || utm.latZone == "G" || utm.latZone == "H" || utm.latZone == "J" ||
-                   utm.latZone == "K" || utm.latZone == "L" || utm.latZone == "M")
-            {
-                southhemi = true;
+            Regex upsCheck = new Regex("[AaBbYyZz]");
+            if(upsCheck.IsMatch(utm.latZone))
+            {               
+                return UPS.UPS_To_Geodetic(utm, eagerLoad);         
             }
-     
+
+            Regex regex = new Regex("[CcDdEeFfGgHhJjKkLlMm]");
+            if (regex.IsMatch(utm.latZone)) { southhemi = true; }          
+
             double cmeridian;
 
             double x = utm.Easting - 500000.0;
@@ -691,17 +750,12 @@ namespace CoordinateSharp
             y /= UTMScaleFactor;
 
             cmeridian = UTMCentralMeridian(utm.LongZone);
-           
-            Coordinate c = UTMtoLatLong(x, y, cmeridian, utm.equatorial_radius, utm.inverse_flattening);
 
-            if (c.Latitude.ToDouble() > 85 || c.Latitude.ToDouble() < -85)
-            {
-                Debug.WriteLine("UTM conversions greater than 85 degrees or less than -85 degree latitude contain major deviations and should be used with caution.");
-            }
+            Coordinate c = UTMtoLatLong(x, y, cmeridian, utm.equatorial_radius, utm.inverse_flattening, eagerLoad);
+         
             return c;
-
-
         }
+
         /// <summary>
         /// Converts UTM coordinate to Signed Degree Lat/Long
         /// </summary>
@@ -720,6 +774,14 @@ namespace CoordinateSharp
         {
 
             bool southhemi = false;
+
+            Regex upsCheck = new Regex("[AaBbYyZz]");
+            if (upsCheck.IsMatch(utm.latZone))
+            {
+                Coordinate c = UPS.UPS_To_Geodetic(utm, new EagerLoad(false));
+                return new double[] { c.Latitude.ToDouble(), c.Longitude.ToDouble() };
+            }
+
             if (utm.latZone == "A" || utm.latZone == "B" || utm.latZone == "C" || utm.latZone == "D" || utm.latZone == "E" || utm.latZone == "F" || utm.latZone == "G" || utm.latZone == "H" || utm.latZone == "J" ||
                    utm.latZone == "K" || utm.latZone == "L" || utm.latZone == "M")
             {
@@ -745,14 +807,12 @@ namespace CoordinateSharp
 
             double[] signed = UTMtoSigned(x, y, cmeridian, utm.equatorial_radius, utm.inverse_flattening);
 
-            if (signed[0] > 85 || signed[1] < -85)
-            {
-                Debug.WriteLine("UTM conversions greater than 85 degrees or less than -85 degree latitude contain major deviations and should be used with caution.");
-            }
+           
             return signed;
 
 
         }
+
         private static double UTMCentralMeridian(double zone)
         {
             double cmeridian;

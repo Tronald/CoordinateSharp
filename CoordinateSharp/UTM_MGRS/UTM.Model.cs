@@ -59,10 +59,10 @@ namespace CoordinateSharp
         internal double inverse_flattening;
         private string latZone;
         private int longZone;
-
         private double easting;
         private double northing;
 
+        private UTM_Type systemType = UTM_Type.UTM;
         private bool withinCoordinateSystemBounds = true;
 
         /// <summary>
@@ -71,6 +71,7 @@ namespace CoordinateSharp
         public string LatZone
         {
             get { return latZone; }
+            internal set { latZone = value; }
         }
         /// <summary>
         /// UTM Longitude Band Grid Zone Designation
@@ -78,6 +79,7 @@ namespace CoordinateSharp
         public int LongZone
         {
             get { return longZone; }
+            internal set { longZone = value; }
         }
         /// <summary>
         /// UTM Easting
@@ -85,6 +87,7 @@ namespace CoordinateSharp
         public double Easting
         {
             get { return easting; }
+            internal set { easting = value; }
         }
         /// <summary>
         /// UTM Northing
@@ -92,6 +95,7 @@ namespace CoordinateSharp
         public double Northing
         {
             get { return northing; }
+            internal set { northing = value; }
         }
 
         /// <summary>
@@ -112,9 +116,18 @@ namespace CoordinateSharp
         /// <summary>
         /// Determine if the UTM conversion within the coordinate system's accurate boundaries after conversion from Lat/Long.
         /// </summary>
+        [Obsolete("UTM coordinates may now work within the Universal Polar Stereographic. Coordinates will always be within bounds.")]
         public bool WithinCoordinateSystemBounds
         {
             get { return withinCoordinateSystemBounds; }
-        }     
+        }   
+        
+        /// <summary>
+        /// Coordinate system that the UTM coordinate is working in.
+        /// </summary>
+        public UTM_Type SystemType
+        {
+            get { return systemType; }
+        }
     }
 }
