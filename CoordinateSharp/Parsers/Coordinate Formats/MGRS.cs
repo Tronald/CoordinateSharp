@@ -135,8 +135,7 @@ namespace CoordinateSharp
             Regex regex = new Regex("[0-9]{1,2}[a,b,y,z,A,B,Y,Z]{1}[a-z,A-Z]{2}\\d+");
             Match match = regex.Match(s);
             if (match.Success)
-            {
-                Console.WriteLine("MATCH");
+            {            
                 //Extract Numbers for one string MGRS
                 regex = new Regex("\\d+");
                 MatchCollection matches = regex.Matches(s);
