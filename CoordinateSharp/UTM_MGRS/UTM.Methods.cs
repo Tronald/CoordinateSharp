@@ -157,8 +157,7 @@ namespace CoordinateSharp
                 {
                     throw new FormatException("The UTM Grid Zone Designator format is invalid.");
                 }
-                latz = gridZone.Replace(resultString, "");
-              
+                latz = gridZone.Replace(resultString, "");             
             }
 
             Construct_UTM(latz, longz, est, nrt, radius, flaten);
@@ -207,14 +206,7 @@ namespace CoordinateSharp
         /// <param name="longi">DD Longitide</param>
         /// <param name="c">Parent Coordinate Object</param>
         internal UniversalTransverseMercator(double lat, double longi, Coordinate c)
-        {
-            //validate coords
-
-            //if (lat > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be greater than 180."); }
-            //if (lat < -180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be less than 180."); }
-
-            //if (longi > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be greater than 90."); }
-            //if (longi < -90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be less than 90."); }
+        {       
             equatorial_radius = 6378137.0;
             inverse_flattening = 298.257223563;
             ToUTM(lat, longi, this);
@@ -266,6 +258,7 @@ namespace CoordinateSharp
             if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
             if (e < 160000 || e > 834000) { Debug.WriteLine("The Easting value provided is outside the max allowable range. If this is intentional, use with caution."); }
             if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
+
             equatorial_radius = rad;
             inverse_flattening = flt;
             latZone = latz;

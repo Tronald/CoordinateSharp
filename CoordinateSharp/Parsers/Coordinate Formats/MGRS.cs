@@ -121,5 +121,83 @@ namespace CoordinateSharp
             }
             return false;
         }
+        private static bool TryMGRS_Polar(string s, out string[] mgrs)
+        {
+            mgrs = null;
+
+            int i;
+            if (!int.TryParse(s.Trim()[0].ToString(), out i))
+            {
+                s = "0" + s;
+            }
+           
+            //Attempt Regex Match
+            Regex regex = new Regex("[0-9]{1,2}[a,b,y,z,A,B,Y,Z]{1}[a-z,A-Z]{2}\\d+");
+            Match match = regex.Match(s);
+            if (match.Success)
+            {
+                Console.WriteLine("MATCH");
+                //Extract Numbers for one string MGRS
+                regex = new Regex("\\d+");
+                MatchCollection matches = regex.Matches(s);
+
+                //IF character count of Easting Northing aren't even return false as precisions is unknown.
+                int splitSpot = matches[1].Value.Count();
+                if (splitSpot % 2 == 0)
+                {
+
+                    string longZone = matches[0].Value;
+                    string eastingNorthing = matches[1].Value;
+
+                    //Extract Letters
+
+                    regex = new Regex("[a-z,A-Z]");
+                    matches = regex.Matches(s);
+                    string latZone = matches[0].Value;
+                    string identifier = matches[1].Value + matches[2].Value;
+
+                    //Split Easting and Northing Values
+                    string easting = eastingNorthing.Substring(0, (int)(eastingNorthing.Length / 2));
+                    string northing = eastingNorthing.Substring((int)(eastingNorthing.Length / 2), (int)(eastingNorthing.Length / 2));
+
+                    mgrs = new string[] { longZone, latZone, identifier, easting, northing };
+                    return true;
+                }
+
+            }
+            string[] sA = SpecialSplit(s, false);
+
+            if (sA.Count() == 4 || sA.Count() == 5)
+            {
+                double zone;
+                string zoneL;
+                string diagraph;
+                double easting;
+                double northing;
+
+                if (sA.Count() == 5)
+                {
+                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; sA[3] = sA[4]; }
+                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; ; sA[3] = sA[4]; }
+                    else { return false; }
+                }
+                zoneL = new string(sA[0].Where(Char.IsLetter).ToArray());
+                if (zoneL == string.Empty) { return false; }
+                if (zoneL.Count() != 1) { return false; }
+                sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
+                diagraph = sA[1];
+                if (diagraph.Count() != 2) { return false; }
+                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out zone))
+                { return false; }
+                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out easting))
+                { return false; }
+                if (!double.TryParse(sA[3], NumberStyles.Any, CultureInfo.InvariantCulture, out northing))
+                { return false; }
+
+                mgrs = new string[] { zone.ToString(), zoneL, diagraph, easting.ToString(), northing.ToString() };
+                return true;
+            }
+            return false;
+        }
     }
 }

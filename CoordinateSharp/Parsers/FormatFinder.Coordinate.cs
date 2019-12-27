@@ -149,7 +149,7 @@ namespace CoordinateSharp
 
             string[] um;
             //Try MGRS
-            if (TryMGRS(s, out um))
+            if (TryMGRS(s, out um) || TryMGRS_Polar(s, out um))
             {
                 try
                 {               
@@ -166,7 +166,7 @@ namespace CoordinateSharp
                 }
             }
             //Try UTM
-            if (TryUTM(s, out um))
+            if (TryUTM(s, out um) || TryUPS(s, out um))
             {
                 try
                 {
@@ -182,6 +182,7 @@ namespace CoordinateSharp
                 {//Parser failed try next method 
                 }
             }
+           
             //Try Cartesian
             if (TryCartesian(s.ToUpper().Replace("KM", "").Replace("X", "").Replace("Y", "").Replace("Z", ""), out d))
             {
@@ -227,6 +228,12 @@ namespace CoordinateSharp
             s = s.Replace(",", " ");
             s = s.Replace("mE", " ");
             s = s.Replace("mN", " ");
+            s = s.Replace("me", " ");
+            s = s.Replace("mn", " ");
+            s = s.Replace("ME", " ");
+            s = s.Replace("MN", " ");
+            s = s.Replace("Me", " ");
+            s = s.Replace("Mn", " ");
             if (removeDashes)
             {
                 s = s.Replace("-", " ");

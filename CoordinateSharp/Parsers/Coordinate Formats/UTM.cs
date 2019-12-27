@@ -53,7 +53,7 @@ namespace CoordinateSharp
     {
         private static bool TryUTM(string s, out string[] utm)
         {
-            utm = null;
+            utm = null;       
 
             //Attempt Regex Match
             Regex regex = new Regex("[0-9]{1,2}[a-z,A-Z]{1}\\d+");
@@ -82,6 +82,86 @@ namespace CoordinateSharp
                     string northing = eastingNorthing.Substring((int)(eastingNorthing.Length / 2), (int)(eastingNorthing.Length / 2) + 1);
 
                     utm = new string[] { longZone, latZone, easting, northing };
+                    return true;
+                }
+
+            }
+
+            string[] sA = SpecialSplit(s, false);
+            if (sA.Count() == 3 || sA.Count() == 4)
+            {
+                double zone;
+                string zoneL;
+                double easting;
+                double northing;
+
+                if (sA.Count() == 4)
+                {
+
+                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
+                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; }
+                    else { return false; }
+                }
+
+                zoneL = new string(sA[0].Where(Char.IsLetter).ToArray());
+                if (zoneL == string.Empty) { return false; }
+                if (zoneL.Count() != 1) { return false; }
+                sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
+
+                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out zone))
+                { return false; }
+                if (!double.TryParse(sA[1], NumberStyles.Any, CultureInfo.InvariantCulture, out easting))
+                { return false; }
+                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out northing))
+                { return false; }
+
+                utm = new string[] { zone.ToString(), zoneL, easting.ToString(), northing.ToString() };
+                return true;
+            }
+          
+            return false;
+        }
+        private static bool TryUPS(string s, out string[] utm)
+        {
+            utm = null;
+
+            int i;
+            if(!int.TryParse(s.Trim()[0].ToString(), out i))
+            {
+                s = "0" + s;
+            }
+
+            //Attempt Regex Match
+            Regex regex = new Regex("[0]{1,2}[a,b,y,z,A,B,Y,Z]{1}\\d+");
+        
+            Match match = regex.Match(s);
+            if (match.Success)
+            {
+                
+                //Extract Numbers for one string UTM
+                regex = new Regex("\\d+");
+                MatchCollection matches = regex.Matches(s);
+  
+                //IF character count of Easting Northing aren't even return false as precisions is unknown.
+                int splitSpot = matches[1].Value.Count();
+   
+                if (splitSpot % 2 == 0)
+                {
+         
+                    string longZone = "0";
+                    string eastingNorthing = matches[1].Value;
+
+                    //Extract Letters
+                    regex = new Regex("[a-z,A-Z]");
+                    matches = regex.Matches(s);
+                    string latZone = matches[0].Value;
+
+                    //Split Easting and Northing Values
+                    string easting = eastingNorthing.Substring(0, (int)(eastingNorthing.Length / 2));
+                    string northing = eastingNorthing.Substring((int)(eastingNorthing.Length / 2), (int)(eastingNorthing.Length / 2));
+
+                    utm = new string[] { longZone, latZone, easting, northing };
+         
                     return true;
                 }
 
