@@ -63,6 +63,7 @@ namespace CoordinateSharp
         private double northing;
         private string digraph;
 
+        private MGRS_Type systemType = MGRS_Type.MGRS;
         private bool withinCoordinateSystemBounds = true;
      
 
@@ -111,9 +112,18 @@ namespace CoordinateSharp
         /// <summary>
         /// Determine if the MGRS conversion within the coordinate system's accurate boundaries after conversion from Lat/Long.
         /// </summary>
+        [Obsolete("MGRS coordinates may now work within the MGRS Polar system. Coordinates will always be within bounds.")]
         public bool WithinCoordinateSystemBounds
         {
             get { return withinCoordinateSystemBounds; }
+        }
+
+        /// <summary>
+        /// Coordinate system that the MGRS coordinate is working in.
+        /// </summary>
+        public MGRS_Type SystemType
+        {
+            get { return systemType; }
         }
     }
 }

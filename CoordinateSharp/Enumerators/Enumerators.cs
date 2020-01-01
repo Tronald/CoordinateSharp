@@ -123,7 +123,36 @@ namespace CoordinateSharp
         /// </summary>
         ECEF,
     }
-
+    /// <summary>
+    /// UTM Coordinate Type
+    /// </summary>
+    [Serializable]
+    public enum UTM_Type
+    {
+        /// <summary>
+        /// Universal Transverse Mercator
+        /// </summary>
+        UTM,
+        /// <summary>
+        /// Universal Polar Stereographic
+        /// </summary>
+        UPS
+    }
+    /// <summary>
+    /// MGRS Coordinate Type
+    /// </summary>
+    [Serializable]   
+    public enum MGRS_Type
+    {
+        /// <summary>
+        /// Military Grid Reference System
+        /// </summary>
+        MGRS,
+        /// <summary>
+        /// Military Grid Reference System Polar Region
+        /// </summary>
+        MGRS_Polar
+    }
     /// <summary>
     /// Earth Shape for Calculations.
     /// </summary>

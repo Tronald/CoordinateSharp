@@ -177,7 +177,23 @@ namespace CoordinateSharp
         {
             Coordinate_Builder(lat, longi, date, eagerLoad);
         }
+       
+        /// <summary>
+        /// Creates a populated Coordinate object with specified eager load options, assigned GeoDate and Earth Shape. Should only be called when Coordinate 
+        /// is create from another system.
+        /// </summary>
+        /// <param name="lat">signed latitude</param>
+        /// <param name="longi">signed longitude</param>      
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="equatorialRadius">Semi Major Axis or Equatorial Radius of the Earth</param>
+        /// <param name="inverseFlattening">Inverse of Flattening of the Earth</param>              
+        internal Coordinate(double lat, double longi,  EagerLoad eagerLoad, double equatorialRadius, double inverseFlattening)
+        {
+            Coordinate_Builder(lat, longi, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), eagerLoad);
+            equatorial_radius = equatorialRadius;
+            inverse_flattening = inverseFlattening;
 
+        }
 
         /// <summary>
         /// Coordinate build logic goes here.
@@ -237,32 +253,7 @@ namespace CoordinateSharp
             //Set Ellipsoid
             equatorial_radius = 6378137.0;
             inverse_flattening = 298.257223563;
-        }
-
-        /// <summary>
-        /// Creates a Coordinate object with default values and a custom datum.
-        /// </summary>
-        /// <remarks>
-        /// Default Coordinate objects will initialize with a latitude and longitude of 0 degrees, 
-        /// a GeoDate of 1900-1-1 00:00:00. All properties will be set to EagerLoaded.
-        /// </remarks>     
-        internal Coordinate(double equatorialRadius, double inverseFlattening, bool t)
-        {          
-            FormatOptions = new CoordinateFormatOptions();
-            geoDate = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            latitude = new CoordinatePart(CoordinateType.Lat);
-            longitude = new CoordinatePart(CoordinateType.Long);
-            latitude.parent = this;
-            longitude.parent = this;
-            celestialInfo = new Celestial();
-            utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, equatorialRadius, inverseFlattening);
-            mgrs = new MilitaryGridReferenceSystem(utm);
-            cartesian = new Cartesian(this);
-            ecef = new ECEF(this);
-
-            EagerLoadSettings = new EagerLoad();
-            Set_Datum(equatorialRadius, inverseFlattening);
-        }
+        }     
 
         /*DATA LOADERS*/
         /*LOAD NEW COORDINATE SYSTEMS HERE*/
