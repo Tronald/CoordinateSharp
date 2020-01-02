@@ -186,6 +186,11 @@ namespace CoordinateSharp_TestProj
         {
             bool pass = true;
             EagerLoad el = new EagerLoad(EagerLoadType.UTM_MGRS);
+
+            Console.WriteLine();
+            Console.WriteLine("...Checking Polar Regions (this may take a minute)");
+            Console.WriteLine();
+
             using (StreamReader sr = new StreamReader("CoordinateData\\UPS.csv"))
             {
                 string currentLine;
@@ -196,7 +201,7 @@ namespace CoordinateSharp_TestProj
 
                     double lat = Convert.ToDouble(parts[5]);
                     double lng = Convert.ToDouble(parts[6]);
-
+                  
                     string utm = parts[0];
                     string mgrs = parts[4];
                     string zone = parts[1];
@@ -207,10 +212,38 @@ namespace CoordinateSharp_TestProj
 
                     //skip 80-84 due to Earthpoint using different UTM zone returns. Both methods are accurate and test against EarthPoint, but will cause test to fail.
                     if(lat>=80 && lat <= 84) { continue; }
-                  
-                    if (string.Format("{0}{1}",c.UTM.LongZone, c.UTM.LatZone) != zone) { pass = false; }
-                    if (Math.Abs(c.UTM.Easting-easting)>1) { pass = false; }
-                    if (Math.Abs(c.UTM.Northing - northing) > 1) { pass = false; }
+                    if (Math.Abs(lat) >= 89.99999) { continue; }//Dont test as long doesn't exist at pole.
+                    if (string.Format("{0}{1}",c.UTM.LongZone, c.UTM.LatZone) != zone) { pass = false; break; }
+                    if (Math.Abs(c.UTM.Easting-easting)>1) { pass = false; break; }
+                    if (Math.Abs(c.UTM.Northing - northing) > 1) { pass = false; break; }
+                    string nMgrs = c.MGRS.ToString().Replace(" ", "");
+                    if (nMgrs!= mgrs) { pass = false; break; }
+                    if (Math.Abs(c.UTM.Easting - easting) > 1) { pass = false; break; }
+                    if (Math.Abs(c.UTM.Northing - northing) > 1) { pass = false; break; }
+
+                    //CONVERT BACK TEST
+                    double precision = .0000001; //1.1 CM Convert Back Precision
+                    
+                    Coordinate bc = UniversalTransverseMercator.ConvertUTMtoLatLong(c.UTM, new EagerLoad(false));
+                    double l = c.Latitude.ToDouble();
+                    double bL = bc.Latitude.ToDouble();
+                    //IGNORE 360 values as that equals 0 degrees
+                    if (Math.Abs(bL - l) > precision && Math.Abs(bL - l) != 360) { pass = false; break; }
+                    l = c.Longitude.ToDouble();
+                    bL = bc.Longitude.ToDouble();
+                    if (Math.Abs(bL - l) > precision && Math.Abs(bL - l) != 360) { pass = false; break; }
+
+                    precision = .0003;
+                    if (Math.Abs(c.Latitude.ToDouble()) > 89) { precision = .002; }
+                    else if (Math.Abs(c.Latitude.ToDouble()) > 88) { precision = .0006; }
+
+                    bc = MilitaryGridReferenceSystem.MGRStoLatLong(c.MGRS, new EagerLoad(false));
+                    l = c.Latitude.ToDouble();
+                    bL = bc.Latitude.ToDouble();
+                    if (Math.Abs(bL - l) > precision && Math.Abs(bL - l) != 360) { pass = false; break; }
+                    l = c.Longitude.ToDouble();
+                    bL = bc.Longitude.ToDouble();
+                    if (Math.Abs(bL - l) > precision && Math.Abs(bL - l) != 360) { pass = false; break; }
                 }
             }
 
