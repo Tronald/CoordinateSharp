@@ -47,6 +47,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+//REFERENCE TEC-SR-7 US ARMY 1996
 namespace CoordinateSharp
 {
     /// <summary>
@@ -55,7 +56,8 @@ namespace CoordinateSharp
     internal class UPS
     {
         public void Geodetic_To_UPS(double lat, double longi, UniversalTransverseMercator utm)
-        {                    
+        {
+            if (longi == -180) { longi = 180; }//RESET FOR CALCS
             //LAT LONG TO UPS
             //TEC-SR-7 US ARMY Corps of Engineers CONVERSIONS TEXT PAGE 99 STEP 0
             double latRad = lat * Math.PI / 180;
@@ -121,12 +123,17 @@ namespace CoordinateSharp
 
             //CONVERT BACK
             double x = utm.Easting;
-            double y = utm.Northing;
+            double y = utm.Northing;          
 
             //STEP 1          
-            double Xps = (x - 2000000) / .994;
-            double Yps = (y - 2000000) / .994;
+            double Xps =(x - 2000000) / .994;
 
+            double Yps = (y - 2000000) / .994; // 001116144;
+            
+            double tPS = Yps; //Used for true longi calcs.
+
+            if (Yps == 0) { Yps = 1;  }
+            
             //STEP 2
             //ATAN = ARCTAN
 
@@ -134,20 +141,17 @@ namespace CoordinateSharp
             if (utm.LatZone.ToUpper() == "Z" || utm.LatZone.ToUpper() == "Y") { southernHemi = false; }
 
             double longRad;
+            double longRadForCalcs; //USED FOR LAT CALCS. LongRad is will LongRad. This is needed to due exact 90 issues.
             if (southernHemi)
             {
-                longRad = Math.PI + Math.Atan(Xps / Yps);             
+                longRad = Math.PI + Math.Atan(Xps / tPS);
+                longRadForCalcs = Math.PI + Math.Atan(Xps / Yps);
             }
             else
             {
-                longRad = Math.PI - Math.Atan(Xps / Yps);
-            }
-
-            //AVOID NaN Errors
-            if(Yps==0)
-            {
-                Yps = .0000000000000001 / .994;
-            }
+                longRad = Math.PI - Math.Atan(Xps / tPS);
+                longRadForCalcs = Math.PI - Math.Atan(Xps / Yps);
+            }          
 
             //STEP 3
             double K = (2 * Math.Pow(a, 2) / b) * Math.Pow(((1 - E) / (1 + E)), (E / 2));
@@ -155,7 +159,7 @@ namespace CoordinateSharp
 
             //STEP 4
             double absYps = Math.Abs(Yps);
-            double kCos = K * Math.Abs(Math.Cos(longRad));
+            double kCos = K * Math.Abs(Math.Cos(longRadForCalcs));
             double q = Math.Log(absYps / kCos) / Math.Log(Math.E) * -1;
            
             //STEP 5
@@ -191,29 +195,32 @@ namespace CoordinateSharp
             {
                 latDeg = lat * (180 / Math.PI); //Radians to Degrees                
             }
-            if (southernHemi) { latDeg *= -1; } 
-
+            if (southernHemi) { latDeg *= -1; }
+          
 
             double longDeg;
             if (double.IsNaN(longRad)) { longDeg = 0; }
             else
             {
-                longDeg = longRad * (180 / Math.PI);
+                longDeg = (longRad) * (180 / Math.PI);
             }
             if (utm.Easting<2000000)
             {
                 longDeg = 180 - longDeg % 180; //Normalize to 180 degrees
                 longDeg *= -1; //Set Western Hemi
             }
-            if (longDeg == 180) { longDeg = 0; }
-            if (longDeg > 180)
+           
+            else if (longDeg > 180)
             {
                 longDeg -= 180;
             }
-            if (longDeg < -180)
+            else if (longDeg < -180)
             {
                 longDeg += 180;
             }
+
+            if(utm.Northing >= 2000000 && Xps == 0 && southernHemi ) { longDeg = 0; } // SET TO 0 or it will equate to 180
+            if(utm.Northing < 2000000 && Xps == 0 && !southernHemi) { longDeg = 0; } // SET TO 0 or it will equate to 180
             return new Coordinate(latDeg, longDeg, el);
           
         }

@@ -63,8 +63,8 @@ namespace CoordinateSharp
     [Serializable]
     internal class Digraphs
     {
-        private List<Digraph> digraph1;
-        private List<Digraph> digraph2;
+        public List<Digraph> digraph1;
+        public List<Digraph> digraph2;
 
         private String[] digraph1Array = { "A", "B", "C", "D", "E", "F", "G", "H",
         "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
@@ -240,9 +240,9 @@ namespace CoordinateSharp
 
 
 
-            digraph2.Add(new Digraph() { Zone = 0, Letter = "E" });
-            digraph2.Add(new Digraph() { Zone = 1, Letter = "F" });
-            digraph2.Add(new Digraph() { Zone = 2, Letter = "G" });
+            digraph2.Add(new Digraph() { Zone = 0, Letter = "F" });
+            digraph2.Add(new Digraph() { Zone = 1, Letter = "G" });
+            digraph2.Add(new Digraph() { Zone = 2, Letter = "H" });
             digraph2.Add(new Digraph() { Zone = 3, Letter = "J" });
             digraph2.Add(new Digraph() { Zone = 4, Letter = "K" });
             digraph2.Add(new Digraph() { Zone = 5, Letter = "L" });

@@ -156,7 +156,7 @@ namespace CoordinateSharp
         private void Construct_MGRS(string latz, int longz, string d, double e, double n, double rad, double flt)
         {
             Regex rg = new Regex("[aAbByYzZ]");
-            Match m = rg.Match(latz);
+            Match m = rg.Match(latz);                    
 
             if (m.Success)
             {
@@ -167,14 +167,14 @@ namespace CoordinateSharp
                 }
             }
 
-            string digraphLettersE = "ABCDEFGHJKLMNPQRSTUVWXYZ";
-            string digraphLettersN = "ABCDEFGHJKLMNPQRSTUV";
+            Digraphs ds = new Digraphs(systemType, latz);
+
             if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
             if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
             if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
             if (d.Count() < 2 || d.Count() > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
-            if (digraphLettersE.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
-            if (digraphLettersN.ToCharArray().ToList().Where(x => x.ToString() == d.ToUpper()[1].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (ds.digraph1.Where(x => x.Letter == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (ds.digraph2.Where(x => x.Letter == d.ToUpper()[1].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             latZone = latz;
             longZone = longz;
             digraph = d;
@@ -392,27 +392,33 @@ namespace CoordinateSharp
 
 
             string digraphLettersE;
-            if (!isNorth) { digraphLettersE = "KLPQRSTUXYZABCFGHJKLPQ"; }
+            if (!isNorth) 
+            {
+               digraphLettersE = "KLPQRSTUXYZABCFGH"; 
+            }
             else { digraphLettersE = "RSTUXYZABCFGHJ"; }
 
             string digraphLettersN;
-            if (!isNorth) { digraphLettersN = "VWXYBCDEFGHJKLMNPQRSTUV"; }
+            if (!isNorth) { digraphLettersN = "VWXYBCDEFGHJKLMNPQRSTUVWXYZ"; }
             else { digraphLettersN = "ABCDEFGHJKLMNP"; }
 
 
             string digraphLettersAll = "";
 
-            for (int lt = 1; lt < 30; lt++)
+            for (int lt = 1; lt < 31; lt++)
             {
                 digraphLettersAll += digraphLettersN;
             }
 
             var eidx = digraphLettersE.IndexOf(eltr);
-
+         
             //Offsets are set due to less Easting Identifiers.
             //North has 4 less than S
             double offset = 9;
             if (isNorth) { offset = 13; }
+
+            if (mgrs.latZone == "B" && eidx < offset && mgrs.easting!=0) { eidx += 18; }
+     
 
             double subbase = eidx + offset;
 
@@ -436,8 +442,9 @@ namespace CoordinateSharp
             var highLetter = Math.Round(100 + 1.11 * latBandHigh);
 
             string latBandLetters = null;
-            int l = Convert.ToInt32(lowLetter);
-            int h = Convert.ToInt32(highLetter);
+            int l = Convert.ToInt32(lowLetter);          
+            int h = Convert.ToInt32(highLetter+7);
+
             if (mgrs.LongZone / 2.0 == Math.Floor(mgrs.LongZone / 2.0))
             {
                 latBandLetters = digraphLettersAll.Substring(l + 5, h + 5).ToString();
@@ -448,11 +455,17 @@ namespace CoordinateSharp
             }
 
             //North offset + 4 due to lower band count.
-            double nOffset = 15;
+            double nOffset = 13;
             if (!isNorth) { nOffset = 10; }
+            else { latBandLetters = digraphLettersN; }
+            int index = latBandLetters.IndexOf(nltr);
+           
+            if (index == -1 && nltr=='A') { index -=1; } //ALPHA PATCH
 
-            var nbase = 100000 * (latBandLetters.IndexOf(nltr)+nOffset);
-        
+            //int subset = 0;
+            //if ((latz == "Y" || latz == "Z") && (nOffset+index)>25 && (ebase> 2100000 || ebase<2000000) && ebase!= 2000000) { subset = -14; }
+            var nbase = 100000 * (index+nOffset);
+            
             var x = ebase + mgrs.Easting;
             var y = nbase + mgrs.Northing;
 
@@ -468,7 +481,7 @@ namespace CoordinateSharp
                 }
             }
 
-
+           // Debug.WriteLine("MGRS {0} {1}", x, y);
             UniversalTransverseMercator utm = new UniversalTransverseMercator(mgrs.LatZone, mgrs.LongZone, x, y);
             utm.equatorial_radius = mgrs.equatorialRadius;
             utm.inverse_flattening = mgrs.inverseFlattening;
