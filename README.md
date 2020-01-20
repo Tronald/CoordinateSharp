@@ -21,6 +21,10 @@ CoordinateSharp is available as a nuget package from [nuget.org](https://www.nug
 
 Alternatively, you may download the library directly [on our website](https://www.coordinatesharp.com/Download)
 
+### Licensing
+
+CoordinateSharp is split licensed. You may use CoordinateSharp under the AGPL3.0 or a Commercial Use License that absolves you of the AGPL3.0 requirements. Details as well as pricing may be viewed [on our website](https://coordinatesharp.com/Licensing)
+
 ### Usage Example
 
 
