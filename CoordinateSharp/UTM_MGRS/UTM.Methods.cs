@@ -294,7 +294,7 @@ namespace CoordinateSharp
         /// <param name="lat">DD Latitude</param>
         /// <param name="longi">DD longitude</param>
         /// <param name="utm">UTM Object to modify</param>
-        internal void ToUTM(double lat, double longi, UniversalTransverseMercator utm)
+        internal void ToUTM(double lat, double longi, UniversalTransverseMercator utm, int? szone=null)
         {
             //Switch to UPS
             if(lat < -80 || lat > 84)
@@ -310,7 +310,12 @@ namespace CoordinateSharp
             string letter = "";
             double easting = 0;
             double northing = 0;
-            int zone = (int)Math.Floor(longi / 6 + 31);
+            int zone;
+            if (szone == null)
+            {  
+                zone = (int)Math.Floor(longi / 6 + 31);
+            }
+            else { zone = szone.Value; }
             if (lat < -72)
                 letter = "C";
             else if (lat < -64)
@@ -364,7 +369,13 @@ namespace CoordinateSharp
 
             double phi = lat * drad;                              // convert latitude to radians
             double lng = longi * drad;                             // convert longitude to radians
-            double utmz = 1 + Math.Floor((longi + 180) / 6.0);            // longitude to utm zone
+            double utmz;
+            if (szone == null)
+            {
+                utmz = 1 + Math.Floor((longi + 180) / 6.0);
+            }
+            else { utmz = szone.Value; }
+            // longitude to utm zone
             double zcm = 3 + 6.0 * (utmz - 1) - 180;                     // central meridian of a zone
                                                      // this gives us zone A-B for below 80S
             double esq = (1 - (b / a) * (b / a));

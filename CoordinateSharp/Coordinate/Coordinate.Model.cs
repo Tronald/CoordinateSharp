@@ -60,11 +60,13 @@ namespace CoordinateSharp
         private CoordinatePart longitude;
         private DateTime geoDate;
         private double offset=0;
+        private int? utm_mgrs_LongitudeZone_Override = null;
 
         private UniversalTransverseMercator utm;
         private MilitaryGridReferenceSystem mgrs;
         private Cartesian cartesian;
         private ECEF ecef;
+        
 
         private Celestial celestialInfo;
 
@@ -186,8 +188,7 @@ namespace CoordinateSharp
                     NotifyPropertyChanged("Offset");
                 }
             }
-        }
-
+        }       
 
         /// <summary>
         /// Universal Transverse Mercator values.
