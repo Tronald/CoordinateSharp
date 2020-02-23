@@ -29,7 +29,8 @@ namespace CoordinateSharp_TestProj
 
             Run_Conversion_Passes(Conversions);
             Check_ECEF_Height_Conversions();
-            Check_UPS_MGRS_Polar(); 
+            Check_UPS_MGRS_Polar();
+            Check_UTM_MGRS_Grid_Zone_Lock();
         }
         private static void Run_Conversion_Passes(List<List<string>> Conversions)
         {
@@ -249,6 +250,55 @@ namespace CoordinateSharp_TestProj
 
 
             Pass.Write("UPS MGRS Polar Conversions: ", pass);
+        }
+        private static void Check_UTM_MGRS_Grid_Zone_Lock()
+        {
+            bool pass = true;
+            Coordinate coord1 = new Coordinate(51.5074, 1);
+            Coordinate coord2 = new Coordinate(51.5074, 1);
+            coord1.Lock_UTM_MGRS_Zone(30); //Lock first coord to zone 30
+
+            //2 degree change tested at 1.1 Meter precision
+            //Try UTM
+            Coordinate coordVal;
+            if(!Coordinate.TryParse(coord1.UTM.ToString(), out coordVal))
+            {
+                pass = false; return;
+            }
+            if(Math.Abs(coordVal.Latitude.ToDouble() - coord2.Latitude.ToDouble()) > .00001) { pass = false; }
+            if(Math.Abs(coordVal.Longitude.ToDouble() - coord2.Longitude.ToDouble()) > .00001) { pass = false; }
+
+            //TRY MGRS
+            if (!Coordinate.TryParse(coord1.MGRS.ToString(), out coordVal))
+            {
+                pass = false; return;
+            }
+            if (Math.Abs(coordVal.Latitude.ToDouble() - coord2.Latitude.ToDouble()) > .00001) { pass = false; }
+            if (Math.Abs(coordVal.Longitude.ToDouble() - coord2.Longitude.ToDouble()) > .00001) { pass = false; }
+
+            coord1.Unlock_UTM_MGRS_Zone();
+            if(coord1.UTM.LongZone!=31 || coord1.MGRS.LongZone != 31) { pass = false; }
+
+            //Test Validation
+            try
+            {
+                coord1.Lock_UTM_MGRS_Zone(0);
+                pass = false;
+            }
+            catch {//Intentional fail 
+            }
+            try
+            {
+                coord1.Lock_UTM_MGRS_Zone(61);
+                pass = false;
+            }
+            catch
+            {//Intentional fail 
+            }
+
+
+
+            Pass.Write("UTM MGRS Zone Lock Test", pass);
         }
     }
 }
