@@ -898,6 +898,203 @@ namespace CoordinateSharp
             }
             return false;
         }
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// The following example parses a decimal degree formatted geodetic coordinate string.
+        /// Eager loading is turned off for improved efficiency.
+        /// <code>
+        /// Coordinate c;
+        /// EagerLoad el = new EagerLoad(false);
+        /// if(Coordinate.TryParse("N 32.891º W 64.872º", el, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, EagerLoad eagerLoad, out Coordinate coordinate)
+        {
+            coordinate = null;
+            if (FormatFinder.TryParse(value, CartesianType.Cartesian, out coordinate))
+            {
+                Parse_Format_Type pft = coordinate.Parse_Format;
+                coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), eagerLoad); //Reset with specified eager load options.
+                coordinate.parse_Format = pft;
+                coordinate.parse_Format = pft;
+
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate with specified DateTime
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="geoDate">GeoDate</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// The following example parses a decimal degree formatted geodetic coordinate string, with a provided GeoDate. 
+        /// Eager loading is set to load celestial calculations only.
+        /// <code>
+        /// Coordinate c;
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+        /// if(Coordinate.TryParse("N 32.891º W 64.872º", new DateTime(2018,7,7), el, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, DateTime geoDate, EagerLoad eagerLoad, out Coordinate coordinate)
+        {
+            coordinate = null;
+            if (FormatFinder.TryParse(value, CartesianType.Cartesian, out coordinate))
+            {
+                Parse_Format_Type pft = coordinate.Parse_Format;
+                coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate, eagerLoad); //Reset with specified eager load options.
+                coordinate.parse_Format = pft;
+
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>    
+        /// <param name="cartesianType">Cartesian Type</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// The following example parses an ECEF formatted coordinate string. 
+        /// Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type.
+        /// Eager loading options have been specified for efficiency.
+        /// <code>
+        /// Coordinate c;
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Cartesian);
+        /// if(Coordinate.TryParse("5242.097 km, 2444.43 km, 2679.074 km", CartesianType.Cartesian, el, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 24º 59' 59.987" E 25º 0' 0.001"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, CartesianType cartesianType, EagerLoad eagerLoad, out Coordinate coordinate)
+        {
+            coordinate = null;
+            if (FormatFinder.TryParse(value, cartesianType, out coordinate))
+            {
+                Parse_Format_Type pft = coordinate.Parse_Format;
+                if (cartesianType == CartesianType.ECEF)
+                {
+                    Distance h = coordinate.ecef.GeoDetic_Height;
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), eagerLoad); //Reset with eager load options specified.
+                    coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                }
+                else
+                {
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), eagerLoad); //Reset with eager load options specified.
+                }
+                coordinate.parse_Format = pft;
+
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate with specified DateTime
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="geoDate">GeoDate</param>
+        /// <param name="cartesianType">Cartesian Type</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// The following example parses an ECEF formatted coordinate string, with an included GeoDate. 
+        /// Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type.
+        /// Eager loading options have been specified for efficiency.
+        /// <code>
+        /// Coordinate c;
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Cartesian);
+        /// if(Coordinate.TryParse("5242.097 km, 2444.43 km, 2679.074 km", new DateTime(2018,7,7), CartesianType.ECEF, el, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 24º 59' 59.987" E 25º 0' 0.001"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, DateTime geoDate, CartesianType cartesianType, EagerLoad eagerLoad, out Coordinate coordinate)
+        {
+            coordinate = null;
+            if (FormatFinder.TryParse(value, cartesianType, out coordinate))
+            {
+                Parse_Format_Type pft = coordinate.Parse_Format;
+                if (cartesianType == CartesianType.ECEF)
+                {
+                    Distance h = coordinate.ecef.GeoDetic_Height;
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate, eagerLoad); //Reset with eager load options specified.
+                    coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                }
+                else
+                {
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate, eagerLoad); //Reset with eager load options specified.
+                }
+                coordinate.parse_Format = pft;
+
+                return true;
+            }
+            return false;
+        }
+
+        /*UTM MGRS LAT ZONE LOCK*/
+
+        /// <summary>
+        /// Locks converted UTM and MGRS longitudinal grid zones to the specified zone number. This will allow over-projection and allow users to remain in a single desired zone.
+        /// This should be used with caution as precision loss will occur. 
+        /// </summary>
+        /// <example>
+        /// The following example locks a Coordinate that would normal project into grid zone 31, into grid zone 30 for over-projection.
+        /// <code> 
+        /// Coordinate coord = new Coordinate(51.5074,1);   
+        /// 
+        /// //Normal projection at this Coordinate below
+        /// //UTM:  31U 361203mE 5708148mN
+        /// //MGRS: 31U CT 61203 08148
+        /// 
+        /// //Lock UTM and MGRS zones to 30 for over-projection.
+        /// coord.Lock_UTM_MGRS_Zone(30);
+        /// 
+        /// //Over-projected coordinates
+        /// Console.WriteLine(coord.UTM);  //30U 777555mE 5713840mN
+        /// Console.WriteLine(coord.MGRS); //30U YC 77555 13840
+        /// </code>
+        /// </example>
+        /// <param name="zone">UTM longitudinal grid zone</param>
+        public void Lock_UTM_MGRS_Zone(int zone)
+        {
+            //Ensure zone limits are not exceeded
+            if(zone<1 || zone>60) {throw new ArgumentOutOfRangeException("UTM and MGRS latitudinal zone is out of range."); }
+            utm_mgrs_LongitudeZone_Override = zone;
+            NotifyPropertyChanged("UTM");
+            NotifyPropertyChanged("MGRS");
+        }
+
+        /// <summary>
+        /// Unlocks converted UTM and MRGS longitudinal grid zones from the specified zone number. 
+        /// This will return UTM and MGRS conversions to normal projection.
+        /// </summary>
+        public void Unlock_UTM_MGRS_Zone()
+        {
+            utm_mgrs_LongitudeZone_Override = null;
+            NotifyPropertyChanged("UTM");
+            NotifyPropertyChanged("MGRS");
+        }
 
         //LOCAL TIME METHOD
         /// <summary>
@@ -942,7 +1139,7 @@ namespace CoordinateSharp
                 case "UTM":
                     if (!EagerLoadSettings.UTM_MGRS) { return; }
                     else if (EagerLoadSettings.UTM_MGRS && utm == null) { utm = new UniversalTransverseMercator(latitude.ToDouble(), longitude.ToDouble(), this, equatorial_radius, inverse_flattening); }
-                    else { utm.ToUTM(latitude.ToDouble(), longitude.ToDouble(), utm); }
+                    else { utm.ToUTM(latitude.ToDouble(), longitude.ToDouble(), utm, utm_mgrs_LongitudeZone_Override); }
                     break;
                 case "utm":
                     //Adjust case and notify of change. 

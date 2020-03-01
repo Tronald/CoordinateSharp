@@ -17,8 +17,9 @@ namespace CoordinateSharp_TestProj
             Console.WriteLine("*****PARSING WITH US CULTURE*****");
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine();
-            Coordinate_Parses_Test();
+            Coordinate_Parses_Test();         
             CoordinatePart_Parses_Test();
+            Coordinate_Parses_EagerLoad_Test();
             ECEF_Parse_Options_Test();
             Parse_Type_Enumerator_Test();
 
@@ -28,8 +29,9 @@ namespace CoordinateSharp_TestProj
             Console.WriteLine("*****PARSING WITH DUTCH CULTURE*****");
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine();
-            Coordinate_Parses_Test();
+            Coordinate_Parses_Test();            
             CoordinatePart_Parses_Test();
+            Coordinate_Parses_EagerLoad_Test();
             ECEF_Parse_Options_Test();
             Parse_Type_Enumerator_Test();
 
@@ -72,6 +74,7 @@ namespace CoordinateSharp_TestProj
                             pass = false;
                         }
                     }
+                    
                 }
             }
             if (lastType != "")
@@ -195,6 +198,39 @@ namespace CoordinateSharp_TestProj
 
             Console.WriteLine();
             Pass.Write("PARSE FORMAT ENUM", pass);
+        }
+        private static void Coordinate_Parses_EagerLoad_Test()
+        {
+            Coordinate coordinate;
+            //Parse Coordinate Formats
+            string[] coordStrings = File.ReadAllLines("CoordinateData\\Coordinates.txt");
+            bool pass = true;
+          
+            foreach (string c in coordStrings)
+            {
+                EagerLoad el = new EagerLoad(false);
+                if(!Coordinate.TryParse("12,12", el, out coordinate)){ pass = false; }
+                if(coordinate.CelestialInfo != null) { pass = false; } //Simple check to see if eager loading is off.
+
+                el = new EagerLoad(EagerLoadType.Celestial);
+                if (!Coordinate.TryParse("12,12", DateTime.Now, el, out coordinate)) { pass = false; }
+                if (coordinate.CelestialInfo == null || coordinate.ECEF != null) { pass = false; } //Simple check to see if eager loading is specified
+
+                el = new EagerLoad(EagerLoadType.ECEF);
+                if (!Coordinate.TryParse("12,12", CartesianType.ECEF, el, out coordinate)) { pass = false; }
+                if (coordinate.ECEF == null || coordinate.CelestialInfo != null) { pass = false; } //Simple check to see if eager loading is off.
+
+                el = new EagerLoad(EagerLoadType.ECEF | EagerLoadType.Celestial);
+                if (!Coordinate.TryParse("12,12", DateTime.Now, CartesianType.ECEF, el, out coordinate)) { pass = false; }
+                if (coordinate.CelestialInfo == null || coordinate.ECEF == null) { pass = false; } //Simple check to see if eager loading is off.
+
+
+            }
+
+            Pass.Write("Coordinate Eager Load Parses", pass);
+           
+            Console.WriteLine();
+            
         }
     }
 }

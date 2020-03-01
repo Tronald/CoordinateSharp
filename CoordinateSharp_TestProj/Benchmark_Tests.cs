@@ -24,6 +24,9 @@ namespace CoordinateSharp_TestProj
             //Benchmark TryParse Object Initialization
             Benchmark(() => { Coordinate.TryParse("39.891219, -74.872435", new DateTime(2010, 7, 26, 15, 49, 0), out tc); }, 100, "TryParse() Initialization");
 
+            //Benchmark TryParse Object Initialization
+            Benchmark(() => { Coordinate.TryParse("39.891219, -74.872435", new DateTime(2010, 7, 26, 15, 49, 0), new EagerLoad(false), out tc); }, 100, "TryParse() Eager Load Initialization");
+
             //Benchmark with EagerLoad fully off
             Benchmark(() => {
                 EagerLoad eg = new EagerLoad(false);
