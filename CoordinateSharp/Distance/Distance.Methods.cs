@@ -124,7 +124,6 @@ namespace CoordinateSharp
             feet = meters * 3.28084;
             miles = meters * 0.000621371;
             nauticalMiles = meters * 0.0005399565;
-            bearing = 0;//None specified
         }
 
         /// <summary>
@@ -231,9 +230,10 @@ namespace CoordinateSharp
             double long1 = coord1.Longitude.ToRadians();
             double lat2 = coord2.Latitude.ToRadians();
             double long2 = coord2.Longitude.ToRadians();
-           
+
             //Distance Calcs
-            double R = 6371000; //6378137.0;//6371e3; //meters
+            double R = 6371000; //6378137.0;
+               
             double latRad = coord2.Latitude.ToRadians() - coord1.Latitude.ToRadians(); 
             double longRad = coord2.Longitude.ToRadians() - coord1.Longitude.ToRadians(); 
 

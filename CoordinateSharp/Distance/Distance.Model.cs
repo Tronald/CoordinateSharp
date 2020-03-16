@@ -56,8 +56,9 @@ namespace CoordinateSharp
         private double miles;
         private double feet;
         private double meters;
-        private double bearing;
-        private double nauticalMiles;       
+        private double bearing=0;
+        private double nauticalMiles;
+        private double finalBearing=0;
       
         /// <summary>
         /// Distance in Kilometers
@@ -100,6 +101,6 @@ namespace CoordinateSharp
         public double Bearing
         {
             get { return bearing; }
-        }
+        }       
     }
 }
