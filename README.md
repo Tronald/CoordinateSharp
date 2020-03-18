@@ -88,5 +88,9 @@ Check out the [CoordinateSharp Developer Guide](https://www.coordinatesharp.com/
 You may also view the [Documentation](https://www.coordinatesharp.com/Help/index.html) for a more in depth look at CoordinateSharp's structure.
 
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes).
+
+### Questions
+
+Have a technical question, but don't feel like creating an issue? Email us at support@signatgroup.com
    
 <p align="center"><img src="https://s8.postimg.cc/wvf5cfpqt/LOGO_COORDINATE_SHARP_1.jpg"></p>
