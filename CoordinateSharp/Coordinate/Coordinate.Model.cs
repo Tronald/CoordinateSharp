@@ -259,7 +259,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Coordinate string formatting options.
         /// </summary>
-        public CoordinateFormatOptions FormatOptions { get; set; }
+        public CoordinateFormatOptions FormatOptions { get; set; } = GlobalSettings.Default_CoordinateFormatOptions;
         /// <summary>
         /// Eagerloading settings.
         /// </summary>
