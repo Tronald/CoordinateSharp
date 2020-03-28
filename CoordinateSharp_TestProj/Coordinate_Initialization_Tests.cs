@@ -17,6 +17,7 @@ namespace CoordinateSharp_TestProj
             MGRS_Init_Error_Checks();
             Cartesian_Init_Error_Checks();
             ECEF_Init_Error_Checks();
+            Global_Settings_Check();
             Console.WriteLine();
 
             //Check to ensure coordinate/coordinate part ranges throw exceptions if outside bounds
@@ -327,6 +328,30 @@ namespace CoordinateSharp_TestProj
             catch { pass = false; }
 
             Pass.Write("CoordinatePart Constructor Property Change Checks: ", pass);
+        }
+
+        private static void Global_Settings_Check()
+        {
+            //Check for errors with initialization as most calculations occur on load
+            bool pass = true;
+            try
+            {
+                GlobalSettings.Default_CoordinateFormatOptions = new CoordinateFormatOptions() { Format = CoordinateFormatType.Decimal };
+                GlobalSettings.Default_EagerLoad = new EagerLoad(false);
+
+                Coordinate c = new Coordinate(25,25);
+
+                //Ensure setting took
+                if(c.ToString()!= "25 25") { pass = false; } 
+                if(c.CelestialInfo != null) { pass = false; }
+
+                //Reset to continue tests
+                GlobalSettings.Default_CoordinateFormatOptions = new CoordinateFormatOptions() { Format = CoordinateFormatType.Degree_Minutes_Seconds };
+                GlobalSettings.Default_EagerLoad = new EagerLoad(true);
+
+            }
+            catch { pass = false; }
+            Pass.Write("Global Settings Check", pass);
         }
     }
 }
