@@ -267,7 +267,7 @@ namespace CoordinateSharp
         /// </example>
         public static Coordinate MGRStoLatLong(MilitaryGridReferenceSystem mgrs)
         {
-            return MGRStoLatLong(mgrs, new EagerLoad());
+            return MGRStoLatLong(mgrs, GlobalSettings.Default_EagerLoad);
         }
        
         /// <summary>

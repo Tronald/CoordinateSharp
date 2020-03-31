@@ -42,6 +42,7 @@ Organizations or use cases that fall under the following conditions may receive 
 
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
+
 using System;
 
 namespace CoordinateSharp

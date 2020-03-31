@@ -707,7 +707,7 @@ namespace CoordinateSharp
         /// </example>
         public static Coordinate ConvertUTMtoLatLong(UniversalTransverseMercator utm)
         {
-            return ConvertUTMtoLatLong(utm, new EagerLoad());
+            return ConvertUTMtoLatLong(utm, GlobalSettings.Default_EagerLoad);
         }
         /// <summary>
         /// Converts UTM coordinate to Lat/Long

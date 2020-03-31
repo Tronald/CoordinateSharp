@@ -66,8 +66,11 @@ namespace CoordinateSharp
         private MilitaryGridReferenceSystem mgrs;
         private Cartesian cartesian;
         private ECEF ecef;
-        
 
+        //Used to store movement/drawing information
+        private Coordinate drawingStartPoint;
+        private Coordinate previousDrawingCoordinate;
+        
         private Celestial celestialInfo;
 
         internal double equatorial_radius;
@@ -256,7 +259,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Coordinate string formatting options.
         /// </summary>
-        public CoordinateFormatOptions FormatOptions { get; set; }
+        public CoordinateFormatOptions FormatOptions { get; set; } = GlobalSettings.Default_CoordinateFormatOptions;
         /// <summary>
         /// Eagerloading settings.
         /// </summary>

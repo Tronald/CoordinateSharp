@@ -67,7 +67,7 @@ namespace CoordinateSharp
         /// </example>
         public Coordinate()
         {
-            Coordinate_Builder(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new EagerLoad());
+            Coordinate_Builder(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), GlobalSettings.Default_EagerLoad);
         }      
         /// <summary>
         /// Creates a populated Coordinate based on signed degrees formated latitude and longitude.
@@ -86,7 +86,7 @@ namespace CoordinateSharp
         /// </example>
         public Coordinate(double lat, double longi)
         {
-            Coordinate_Builder(lat, longi, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new EagerLoad());
+            Coordinate_Builder(lat, longi, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), GlobalSettings.Default_EagerLoad);
         }
         /// <summary>
         /// Creates a populated Coordinate object with an assigned GeoDate.
@@ -105,7 +105,7 @@ namespace CoordinateSharp
         /// </example>
         public Coordinate(double lat, double longi, DateTime date)
         {
-            Coordinate_Builder(lat, longi, date, new EagerLoad());
+            Coordinate_Builder(lat, longi, date, GlobalSettings.Default_EagerLoad);
         }
         /// <summary>
         /// Creates an empty Coordinates object with specified eager loading options.
@@ -206,9 +206,7 @@ namespace CoordinateSharp
         {
             //SET EagerLoading Setting
             EagerLoadSettings = eagerLoad;
-
-            FormatOptions = new CoordinateFormatOptions();
-
+          
             //Use default constructor if signed degree is 0 for performance.
             if (lat == 0) { latitude = new CoordinatePart(CoordinateType.Lat); }
             else { latitude = new CoordinatePart(lat, CoordinateType.Lat); }
@@ -780,7 +778,7 @@ namespace CoordinateSharp
             if (FormatFinder.TryParse(value, CartesianType.Cartesian, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
-                coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad back on.
+                coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad default settings
                 coordinate.parse_Format = pft;
                
                 return true;
@@ -810,7 +808,7 @@ namespace CoordinateSharp
             if (FormatFinder.TryParse(value, CartesianType.Cartesian, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
-                coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad back on.
+                coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad default settings
                 coordinate.parse_Format = pft;
               
                 return true;
@@ -844,12 +842,12 @@ namespace CoordinateSharp
                 if (cartesianType == CartesianType.ECEF)
                 {
                     Distance h = coordinate.ecef.GeoDetic_Height;
-                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad back on.
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad default settings
                     coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
                 }
                 else
                 {
-                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad back on.
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad default settings
                 }
                 coordinate.parse_Format = pft;
                
@@ -885,12 +883,12 @@ namespace CoordinateSharp
                 if (cartesianType == CartesianType.ECEF)
                 {
                     Distance h = coordinate.ecef.GeoDetic_Height;
-                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad back on.
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad default settings
                     coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
                 }            
                 else
                 {
-                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad back on.
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad default setting
                 }
                 coordinate.parse_Format = pft;
              

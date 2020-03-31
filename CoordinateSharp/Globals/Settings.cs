@@ -42,64 +42,28 @@ Organizations or use cases that fall under the following conditions may receive 
 
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
+
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Class for handling distance conversions and distance/bearing values between two coordinates.
+    /// Application wide, global settings for CoordinateSharp. Should be used with caution and only during times where the specified
+    /// setting will not have varying changes throughout the application.
     /// </summary>
-    [Serializable]
-    public partial class Distance
+    public static class GlobalSettings
     {
-        private double kilometers;
-        private double miles;
-        private double feet;
-        private double meters;
-        private double bearing=0;
-        private double nauticalMiles;
-      
         /// <summary>
-        /// Distance in Kilometers
+        /// Application wide, default EagerLoad settings for CoordinateSharp.
         /// </summary>
-        public double Kilometers
-        {
-            get { return kilometers; }
-        }
+        public static EagerLoad Default_EagerLoad { get; set; } = new EagerLoad(true);
+        
         /// <summary>
-        /// Distance in Statute Miles
+        /// Application wide, default coordinate formatting output options.
         /// </summary>
-        public double Miles
-        {
-            get { return miles; }
-        }
-        /// <summary>
-        /// Distance in Nautical Miles
-        /// </summary>
-        public double NauticalMiles
-        {
-            get { return nauticalMiles; }
-        }
-        /// <summary>
-        /// Distance in Meters
-        /// </summary>
-        public double Meters
-        {
-            get { return meters; }
-        }
-        /// <summary>
-        /// Distance in Feet
-        /// </summary>
-        public double Feet
-        {
-            get { return feet; }
-        }
-        /// <summary>
-        /// Initial Bearing from Coordinate 1 to Coordinate 2
-        /// </summary>
-        public double Bearing
-        {
-            get { return bearing; }
-        }       
+        public static CoordinateFormatOptions Default_CoordinateFormatOptions { get; set; } = new CoordinateFormatOptions();
     }
 }
