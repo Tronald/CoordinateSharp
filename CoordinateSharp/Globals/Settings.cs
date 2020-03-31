@@ -64,6 +64,6 @@ namespace CoordinateSharp
         /// <summary>
         /// Application wide, default coordinate formatting output options.
         /// </summary>
-        public static CoordinateFormatOptions Default_CoordinateFormatOptions = new CoordinateFormatOptions();
+        public static CoordinateFormatOptions Default_CoordinateFormatOptions { get; set; } = new CoordinateFormatOptions();
     }
 }
