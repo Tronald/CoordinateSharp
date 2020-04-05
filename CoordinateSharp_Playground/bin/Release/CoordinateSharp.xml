@@ -1,0 +1,4020 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CoordinateSharp</name>
+    </assembly>
+    <members>
+        <member name="T:CoordinateSharp.Cartesian">
+            <summary>
+            Spherical Cartesian (X, Y, Z) Coordinate.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.Cartesian.#ctor(CoordinateSharp.Coordinate)">
+            <summary>
+            Create a spherical Cartesian coordinate.        
+            </summary>
+            <remarks>
+            Cartesian values will be populated by converting from the passed geodetic Coordinate object.
+            </remarks>
+            <param name="coordinate">Geodetic coordinate</param>
+            <example>
+            The following example demonstrates how to create a populated spherical Cartesian coordinate
+            based on a converted geodetic coordinate.
+            <code>
+            //Create a geodetic coordinate at N25, E45
+            Coordinate c = new Coordinate(25,45);
+            
+            //Create and convert geodetic to spherical Cartesian
+            Cartesian cart = new Cartesian(c);
+            
+            Console.WriteLine(cart); //0.64085638 0.64085638 0.42261826
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Cartesian.#ctor(System.Double,System.Double,System.Double)">
+            <summary>
+            Create a spherical Cartesian coordinate.
+            </summary>
+            <param name="xc">X</param>
+            <param name="yc">Y</param>
+            <param name="zc">Z</param>
+            <example>
+            <code>
+            Cartesian cart = new Cartesian(0.64085638, 0.64085638, 0.42261826);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Cartesian.ToCartesian(CoordinateSharp.Coordinate)">
+            <summary>
+            Updates Cartesian values when eagerloading is used.
+            </summary>       
+            <param name="coordinate">Geodetic coordinate</param>
+        </member>
+        <member name="M:CoordinateSharp.Cartesian.CartesianToLatLong(System.Double,System.Double,System.Double)">
+            <summary>
+            Returns a geodetic Coordinate object based on the provided Cartesian coordinate X, Y, Z values.
+            </summary>
+            <param name="x">X</param>
+            <param name="y">Y</param>
+            <param name="z">Z</param>
+            <returns>Coordinate</returns>
+            <example>
+            The following example creates (converts to) a geodetic Coordinate object based on spherical Cartesian X, Y, Z values.
+            <code>
+            Coordinate c = Cartesian.CartesianToLatLong(0.64085638, 0.64085638, 0.42261826);	    
+            Console.WriteLine(c); //N 24º 59' 60" E 45º 0' 0"
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Cartesian.CartesianToLatLong(CoordinateSharp.Cartesian)">
+            <summary>
+            Returns a geodetic Coordinate object based on the provided Cartesian coordinate.
+            </summary>
+            <param name="cart">Cartesian Coordinate</param>
+            <returns>Coordinate</returns>
+            <example>
+            The following example creates (converts to) a geodetic Coordinate object based on a spherical Cartesian object.
+            <code>
+            Cartesian cart = new Cartesian(0.64085638, 0.64085638, 0.42261826);
+            Coordinate c = Cartesian.CartesianToLatLong(cart);
+            Console.WriteLine(c); //N 24º 59' 60" E 45º 0' 0"
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Cartesian.ToString">
+            <summary>
+            Default formatted Cartesian string.
+            </summary>
+            <remarks>
+            X, Y, Z values are rounded to the 8th place.
+            </remarks>
+            <returns>Cartesian Formatted Coordinate String</returns>
+        </member>
+        <member name="P:CoordinateSharp.Cartesian.X">
+            <summary>
+            X Coordinate
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Cartesian.Y">
+            <summary>
+            y Coordinate
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Cartesian.Z">
+            <summary>
+            Z Coordinate
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.ECEF">
+            <summary>
+            Earth Centered - Earth Fixed (X,Y,Z) Coordinate 
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.#ctor(CoordinateSharp.Coordinate)">
+            <summary>
+            Creates an ECEF coordinate.
+            </summary>
+            <remarks>
+            ECEF values will be populated by converting from the passed geodetic Coordinate object.
+            </remarks>
+            <param name="coordinate">Coordinate</param>
+            <example>
+            The following example demonstrates how to create a populated ECEF coordinate
+            based on a converted geodetic coordinate.
+            <code>
+            //Create a geodetic coordinate at N25, E45
+            Coordinate c = new Coordinate(25,45);
+            
+            //Create and convert geodetic to ECEF
+            ECEF ecef = new ECEF(c);
+            
+            Console.WriteLine(ecef); 4089.916 km, 4089.916 km, 2679.074 km
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.#ctor(CoordinateSharp.Coordinate,CoordinateSharp.Distance)">
+            <summary>
+            Creates an ECEF coordinate.
+            </summary>
+            <remarks>
+            ECEF values will be populated by converting from the passed geodetic Coordinate object and height (above mean sea level).
+            </remarks>
+            <param name="coordinate">Coordinate</param>
+            <param name="height">Height above Mean Sea Level</param>
+            <example>
+            The following example demonstrates how to create a populated ECEF coordinate
+            based on a converted geodetic coordinate and height above mean sea level.
+            <code>
+            //Create a geodetic coordinate at N25, E45
+            Coordinate c = new Coordinate(25,45);
+            
+            //Create a distance object set at 450 meters.
+            //This will be used to signal the ECEF coordinate is 450 meters above MSL.
+            Distance height = new Distance(450, DistanceType.Meters);
+            
+            //Create and convert geodetic to ECEF
+            ECEF ecef = new ECEF(c, height);
+            
+            Console.WriteLine(ecef); 4090.204 km, 4090.204 km, 2679.265 km
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.#ctor(System.Double,System.Double,System.Double)">
+            <summary>
+            Create an ECEF coordinate.
+            </summary>
+            <param name="xc">X coordinate in KM</param>
+            <param name="yc">Y coordinate in KM</param>
+            <param name="zc">Z coordinate in KM</param>
+            <remarks>
+            ECEF values will be populated from the provided X, Y, Z coordinates.
+            </remarks>        
+            <example>
+            The following example demonstrates how to create a populated ECEF coordinate.
+            <code>
+            //Create an ECEF coordinate
+            ECEF ecef = new ECEF(4089.916, 4089.916, 2679.074);
+            
+            Console.WriteLine(ecef); 4089.916 km, 4089.916 km, 2679.074 km
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.ToECEF(CoordinateSharp.Coordinate)">
+            <summary>
+            Updates ECEF values when eagerloading is used.
+            </summary>
+            <param name="coordinate">Geodetic coordinate</param>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.Set_GeoDetic_Height(CoordinateSharp.Coordinate,CoordinateSharp.Distance)">
+             <summary>
+             Sets Geodetic height for ECEF conversion.
+             </summary>
+             <remarks>
+             Setting the height will trigger ECEF values to recalculate.
+             </remarks>
+             <param name="coordinate">Geodetic coordinate</param>
+             <param name="distance">Height above Mean Sea Level</param>
+             <example>
+             The following example demonstrates how to set the height above MSL at the geodetic coordinate. 
+             The provided height is used in the conversion from geodetic to ECEF.
+             <code>
+             //Create a geodetic coordinate at N25, E45 at 0 MSL.
+             Coordinate c = new Coordinate(25, 45);
+            
+             //Display converted ECEF values.        
+             Console.WriteLine(c.ECEF); //4089.916 km, 4089.916 km, 2679.074 km
+            
+             //Set geodetic coordinate height to 1500 meters above MSL
+             c.ECEF.Set_GeoDetic_Height(c, new Distance(1500, DistanceType.Meters));						
+             
+             //Display new ECEF values.        
+             Console.WriteLine(c.ECEF); //4090.877 km, 4090.877 km, 2679.708 km
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.ECEFToLatLong(System.Double,System.Double,System.Double)">
+            <summary>
+            Returns a Geodetic Coordinate object based on the provided ECEF coordinate X, Y, Z values.
+            </summary>
+            <param name="x">X</param>
+            <param name="y">Y</param>
+            <param name="z">Z</param>
+            <returns>Coordinate</returns>
+            <example>
+            The following example creates (converts to) a geodetic Coordinate object based on ECEF X, Y, Z values.
+            <code>
+            Coordinate c = ECEF.ECEFToLatLong(4090.877, 4090.877, 2679.708);   
+            
+            Console.WriteLine(c); //N 24º 59' 59.986" E 45º 0' 0"
+            Console.WriteLine(c.ECEF.GeoDetic_Height.Meters); //1499.97912820436
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.ECEFToLatLong(CoordinateSharp.ECEF)">
+            <summary>
+            Returns a Geodetic Coordinate object based on the provided ECEF coordinate.
+            </summary>
+            <param name="ecef">ECEF Coordinate</param>
+            <returns>Coordinate</returns>
+            <example>
+            The following example creates (converts to) a geodetic Coordinate object based on an ECEF object.
+            <code>
+            ECEF ecef = new ECEF(4090.877, 4090.877, 2679.708);
+            Coordinate c = ECEF.ECEFToLatLong(ecef);
+            
+            Console.WriteLine(c); //N 24º 59' 59.986" E 45º 0' 0"
+            Console.WriteLine(c.ECEF.GeoDetic_Height.Meters); //1499.97912820436
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.ToString">
+            <summary>
+            Default formatted ECEF string.
+            </summary>
+            <remarks>
+            X, Y, Z values are rounded to the 3rd place.
+            </remarks>
+            <returns>ECEF Formatted Coordinate String</returns>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.WGS84">
+            <summary>
+            Initialize EARTH global variables based on the Datum.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.EarthCon(System.Double,System.Double)">
+            <summary>
+            Sets Earth Constants as Globals
+            </summary>
+            <param name="a">a</param>
+            <param name="b">b</param>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.radcur(System.Double)">
+            <summary>
+            Compute the radii at the geodetic latitude (degrees).
+            </summary>
+            <param name="lat">Latitude in degrees</param>
+            <returns>double[]</returns>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.rearth(System.Double)">
+            <summary>
+            Physical radius of the Earth.
+            </summary>
+            <param name="lat">Latitude in degrees</param>
+            <returns>double</returns>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.gc2gd(System.Double,System.Double)">
+            <summary>
+            Converts geocentric latitude to geodetic latitude
+            </summary>
+            <param name="flatgc">Geocentric latitude</param>
+            <param name="altkm">Altitude in KM</param>
+            <returns>double</returns>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.gd2gc(System.Double,System.Double)">
+            <summary>
+            Converts geodetic latitude to geocentric latitude.
+            </summary>
+            <param name="flatgd">Geodetic latitude to geocentric latitude</param>
+            <param name="altkm">Altitude in KM</param>
+            <returns>double</returns>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.llenu(System.Double,System.Double)">
+            <summary>
+            Converts lat / long to east, north, up vectors.
+            </summary>
+            <param name="flat">Latitude</param>
+            <param name="flon">Longitude</param>
+            <returns>Array[] of double[]</returns>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.LatLong_To_ECEF(System.Double,System.Double,System.Double)">
+            <summary>
+            Gets ECEF vector in KM.
+            </summary>
+            <param name="lat">Latitude</param>
+            <param name="longi">Longitude</param>
+            <param name="altkm">Altitude in KM</param>
+            <returns>double[]</returns>
+        </member>
+        <member name="M:CoordinateSharp.ECEF.ECEF_To_LatLong(System.Double,System.Double,System.Double)">
+            <summary>
+            Converts ECEF X, Y, Z to GeoDetic Lat / Long and Height in KM.
+            </summary>
+            <param name="x">X coordinate part</param>
+            <param name="y">Y coordinate part</param>
+            <param name="z">Z coordinate part</param>
+            <returns>double[]</returns>
+        </member>
+        <member name="P:CoordinateSharp.ECEF.Equatorial_Radius">
+            <summary>
+            Datums Equatorial Radius / Semi Major Axis (Ellipsoid)
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.ECEF.Inverse_Flattening">
+            <summary>
+            Datums Flattening (Ellipsoid)
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.ECEF.X">
+            <summary>
+            X Coordinate
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.ECEF.Y">
+            <summary>
+            y Coordinate
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.ECEF.Z">
+            <summary>
+            Z Coordinate
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.ECEF.GeoDetic_Height">
+            <summary>
+            GeoDetic Height from Mean Sea Level.
+            Used for converting Lat Long / ECEF.
+            </summary>
+            <remarks>
+            Default value is 0 MSL. Adjust as needed for conversions.
+            </remarks>
+        </member>
+        <member name="T:CoordinateSharp.Celestial">
+            <summary>
+            The main class for handling location based celestial information.
+            </summary>
+            <remarks>
+            This class can calculate various pieces of solar and lunar data, based on location and date
+            </remarks>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.#ctor">
+            <summary>
+            Creates an empty Celestial.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.#ctor(System.Double,System.Double,System.DateTime)">
+             <summary>
+             Creates a Celestial object based on a location and specified date.
+             </summary>
+             <param name="lat">Latitude</param>
+             <param name="longi">Longitude</param>
+             <param name="geoDate">DateTime (UTC)</param>
+             <remarks>
+             Celestial information is normally populated within the Coordinate classes CelestialInfo property. 
+             However, you may choose to work directly within the Celestial class.
+             </remarks>
+             <example>
+             The following example demonstrates how to get the sunset time at Seattle on 19-Mar-2019
+             directly from a Celestial object.
+             <code>
+             //Create a Celestial object the calculates from Seattle's signed lat/long on
+             //19-Mar-2019 (UTC) Date
+             Celestial cel = new Celestial(47.60357, -122.32945, new DateTime(2019, 3, 19));
+            
+             //Check if a sunset will occur on the specified day.
+             if(cel.SunSet.HasValue)
+             {
+                 Console.WriteLine(cel.SunSet.Value); //3/19/2019 2:19:31 AM
+             }
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.#ctor(System.Double,System.Double,System.DateTime,System.Double)">
+             <summary>
+             Creates a Celestial object based on a location and specified date.
+             </summary>
+             <param name="lat">Latitude</param>
+             <param name="longi">Longitude</param>
+             <param name="geoDate">DateTime (UTC)</param>
+             <param name="offset">UTC offset in hours</param>
+             <remarks>
+             Celestial information is normally populated within the Coordinate classes CelestialInfo property. 
+             However, you may choose to work directly within the Celestial class.
+             </remarks>
+             <example>
+             The following example demonstrates how to get the sunset time at Seattle on 19-Mar-2019
+             directly from a Celestial object in local time.
+             <code>
+             //Create a Celestial object the calculates from Seattle's signed lat/long on
+             //19-Mar-2019 (UTC) Date. Seattle is -7 UTC on this date.
+             Celestial cel = new Celestial(47.60357, -122.32945, new DateTime(2019, 3, 19), -7);
+            
+             //Check if a sunset will occur on the specified day.
+             if(cel.SunSet.HasValue)
+             {
+                 Console.WriteLine(cel.SunSet.Value); //3/19/2019 7:20:56 PM
+             }
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.#ctor(System.Double,System.Double,System.DateTime,System.Double,CoordinateSharp.EagerLoad)">
+             <summary>
+             Creates a Celestial object based on a location and specified date.
+             </summary>
+             <param name="lat">Latitude</param>
+             <param name="longi">Longitude</param>
+             <param name="geoDate">DateTime (UTC)</param>
+             <param name="offset">UTC offset in hours</param>
+             <param name="el">EagerLoad</param>
+             <remarks>
+             Celestial information is normally populated within the Coordinate classes CelestialInfo property. 
+             However, you may choose to work directly within the Celestial class.
+             </remarks>
+             <example>
+             The following example demonstrates how to get the sunset time at Seattle on 19-Mar-2019
+             directly from a Celestial object in local time populated only with solar cycle information.
+             <code>
+             //Create EagerLoading object to load only solar cycle data for maximum efficiency.
+             EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+             el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
+             
+             //Create a Celestial object the calculates from Seattle's signed lat/long on
+             //19-Mar-2019 (UTC) Date. Seattle is -7 UTC on this date.
+             Celestial cel = new Celestial(47.60357, -122.32945, new DateTime(2019, 3, 19), -7, el);
+            
+             //Check if a sunset will occur on the specified day.
+             if(cel.SunSet.HasValue)
+             {
+                 Console.WriteLine(cel.SunSet.Value); //3/19/2019 7:20:56 PM
+             }
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.#ctor(System.Boolean)">
+            Used to create empty Celestial objects.
+        </member>
+        <member name="M:CoordinateSharp.Celestial.LoadCelestial(CoordinateSharp.Coordinate)">
+            <summary>
+            Creates a Celestial object based on a Coordinate.
+            </summary>
+            <param name="coord">Coordinate</param>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.CalculateCelestialTimes(System.Double,System.Double,System.DateTime)">
+            <summary>
+            Calculate celestial data based on latitude, longitude and UTC date at the location.
+            </summary>
+            <param name="lat">Decimal format latitude</param>
+            <param name="longi">Decimal format longitude</param>
+            <param name="date">Geographic DateTime</param>
+            <returns>Celestial (Fully Populated)</returns>
+            <example>
+            The following example demonstrates how to create a fully populated Celestial object 
+            using static functions.
+            <code>
+            //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
+            Celestial cel = Celestial.CalculateCelestialTimes(39, -72, new DateTime(2019, 3, 19, 10, 10, 12));
+            
+            Console.WriteLine(cel.SunRise); //3/19/2019 10:54:50 AM
+            Console.WriteLine(cel.MoonRise); //3/19/2019 9:27:27 PM
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.CalculateCelestialTimes(System.Double,System.Double,System.DateTime,CoordinateSharp.EagerLoad)">
+             <summary>
+             Calculate celestial data based on latitude, longitude and UTC date at the location.
+             </summary>
+             <param name="lat">Decimal format latitude</param>
+             <param name="longi">Decimal format longitude</param>
+             <param name="date">Geographic DateTime</param>
+             <param name="el">EagerLoad</param>
+             <returns>Celestial</returns>
+             <example>
+             The following example demonstrates how to create a fully populated Celestial object 
+             using static functions with EagerLoading solar cycle information only.
+             <code>
+             //Set EagerLoading parameters to only load solar cycle data for maximum efficiency
+             EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+             el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
+             
+             //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
+             Celestial cel = Celestial.CalculateCelestialTimes(39, -72, new DateTime(2019, 3, 19, 10, 10, 12), el);
+            
+             Console.WriteLine(cel.SunRise); //3/19/2019 10:54:50 AM
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.CalculateCelestialTimes(System.Double,System.Double,System.DateTime,CoordinateSharp.EagerLoad,System.Double)">
+            <summary>
+            Calculate celestial data based on latitude, longitude and UTC date with hours offset at the location.
+            </summary>
+            <param name="lat">Decimal format latitude</param>
+            <param name="longi">Decimal format longitude</param>
+            <param name="date">Geographic DateTime</param>
+            <param name="el">EagerLoad</param>
+            <param name="offset">Offset hours</param>
+            <returns>Celestial</returns>
+            <example>
+            The following example demonstrates how to create a fully populated Celestial object in local time
+            using static functions using solar cycle only eager loading.
+            <code>
+            // Set EagerLoading parameters to only load solar cycle data for maximum efficiency
+            EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
+            
+            //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 Local using Pacific Standard Time offset in hours (-7)
+            Celestial cel = Celestial.CalculateCelestialTimes(39, -72, new DateTime(2019, 3, 19, 10, 10, 12), el, -7);
+            Console.WriteLine(cel.SunRise); //03:54:50 AM
+            
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.CalculateCelestialTimes(System.Double,System.Double,System.DateTime,System.Double)">
+            <summary>
+            Calculate celestial data based on latitude, longitude and UTC date with hours offset at the location.
+            </summary>
+            <param name="lat">Decimal format latitude</param>
+            <param name="longi">Decimal format longitude</param>
+            <param name="date">Geographic DateTime</param>
+            <param name="offset">Offset hours</param>
+            <returns>Celestial</returns>
+            <example>
+            The following example demonstrates how to create a fully populated Celestial object in local time
+            using static functions.
+            <code>
+            //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 Local using Pacific Standard Time offset in hours (-7)
+            Celestial cel = Celestial.CalculateCelestialTimes(39, -72, new DateTime(2019, 3, 19, 10, 10, 12), -7);
+            Console.WriteLine(cel.SunRise); //03:54:50 AM
+            
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.CalculateCelestialTime(System.Double,System.Double,System.DateTime,CoordinateSharp.EagerLoad)">
+            <summary>
+            Calculates all celestial data. Coordinates will notify as changes occur
+            </summary>
+            <param name="lat">Decimal format latitude</param>
+            <param name="longi">Decimal format longitude</param>
+            <param name="date">Geographic DateTime</param>
+            <param name="el">EagerLoading Info for Auto-Calculations</param>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.CalculateCelestialTime(System.Double,System.Double,System.DateTime,CoordinateSharp.EagerLoad,System.Double)">
+            <summary>
+            Calculates all celestial data. Coordinates will notify as changes occur
+            </summary>
+            <param name="lat">Decimal format latitude</param>
+            <param name="longi">Decimal format longitude</param>
+            <param name="date">Geographic DateTime</param>
+            <param name="el">EagerLoading Info for Auto-Calculations</param>
+            <param name="offset">UTC offset in hours</param>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.Get_Solar_Eclipse_Table(System.Double,System.Double,System.DateTime)">
+             <summary>
+             Returns a List containing solar eclipse data for the century at the specified location.
+             Century returned is based on the date passed.
+             </summary>
+             <param name="lat">latitude</param>
+             <param name="longi">longitude</param>
+             <param name="date">DateTime</param>
+             <returns>List&gt;SolarEclipseDetails&gt;</returns>
+             <example>
+             The following example gets a Solar Eclipse table for the 20th century at N 39, W 72
+             and displays each type of eclipse and occurrence date in that century.
+             <code>
+             List&gt;SolarEclipseDetails&gt; seList = Celestial.Get_Solar_Eclipse_Table(39, -72, new DateTime(1950, 1, 1));
+            
+             foreach(SolarEclipseDetails sd in seList)
+             {
+            	    Console.WriteLine(sd.Type + " " + sd.Date.ToShortDateString());
+             }
+             
+             //Partial 8/30/1905
+             //Partial 6/28/1908
+             //Partial 6/18/1909
+             //Partial 4/17/1912
+             //Partial 2/3/1916
+             //Partial 6/7/1918
+             //Partial 11/22/1919
+             ...      
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.Get_Lunar_Eclipse_Table(System.Double,System.Double,System.DateTime)">
+             <summary>
+             Returns a List containing solar eclipse data for the century at the specified location.
+             Century return is based on the date passed.
+             </summary>
+             <param name="lat">latitude</param>
+             <param name="longi">longitude</param>
+             <param name="date">DateTime</param>
+             <returns>List&gt;LunarEclipseDetails&gt;</returns>
+              /// <example>
+             The following example gets a Lunar Eclipse table for the 20th century at N 39, W 72
+             and displays each type of eclipse and occurrence date in that century.
+             <code>
+             List&gt;LunarEclipseDetails&gt; leList = Celestial.Get_Lunar_Eclipse_Table(39, -72, new DateTime(1950, 1, 1));
+            
+             foreach(LunarEclipseDetails ld in leList)
+             {
+            	    Console.WriteLine(ld.Type + " " + ld.Date.ToShortDateString());
+             }
+             
+             //Total 10/17/1902
+             //Partial 4/11/1903
+             //Penumbral 3/2/1904
+             //Partial 8/15/1905
+             //Total 2/9/1906
+             //Partial 1/29/1907
+             //Partial 7/25/1907
+             ...      
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.Calculate_Celestial_IsUp_Booleans(System.DateTime,CoordinateSharp.Celestial)">
+            <summary>
+            Set boolean SunIsUp and MoonIsUp values
+            </summary>
+            <param name="date">Coordinate GeoDate</param>
+            <param name="cel">Celestial Object</param>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.GetApogees(System.DateTime)">
+             <summary>
+             Returns Apogee object containing last and next apogees based on the specified UTC date.
+             </summary>
+             <param name="d">DateTime</param>
+             <returns>Apogee</returns>
+             <example>
+             The following example gets the last and next lunar apogees from the specified date
+             and display's their DateTime and Distance.
+             <code>
+             Apogee apogee = Celestial.GetApogees(new DateTime(2019,3,1));
+            
+             Console.WriteLine(apogee.LastApogee.Date + " " + apogee.LastApogee.Distance.Kilometers); //2/5/2019 9:27:28 AM 406551.526207563
+             Console.WriteLine(apogee.NextApogee.Date + " " + apogee.NextApogee.Distance.Kilometers); //3/4/2019 11:26:35 AM 406387.933655865
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.GetPerigees(System.DateTime)">
+             <summary>
+             Returns Perigee object containing last and next perigees based on the specified UTC date.
+             </summary>
+             <param name="d">DateTime</param>
+             <returns>Perigee</returns>
+             <example>
+             The following example gets the last and next lunar perigees from the specified date
+             and display's their DateTime and Distance.
+             <code>
+             Perigee perigee = Celestial.GetPerigees(new DateTime(2019, 3, 1));
+            
+             Console.WriteLine(perigee.LastPerigee.Date + " " + perigee.LastPerigee.Distance.Kilometers); //2/19/2019 9:06:55 AM 356762.812526435
+             Console.WriteLine(perigee.NextPerigee.Date + " " + perigee.NextPerigee.Distance.Kilometers); //3/19/2019 7:48:22 PM 359378.005775414
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.Celestial_LocalTime(CoordinateSharp.Coordinate,System.Double)">
+            <summary>
+            Converts all Celestial values to local time.
+            </summary>
+            <param name="coord">Coordinate</param>
+            <param name="offset">UTC offset</param>
+            <returns>Celestial</returns>
+            <example>
+            The following example demonstrates how to get Celestial values in Local time.
+            DateTime offsets are done manually for readability purposes of this example. 
+            <code>
+            //Local time 
+             DateTime d = new DateTime(2018, 3, 19, 6, 56, 0, 0, DateTimeKind.Local);
+            
+            //EST Time is -4 hours from UTC
+            double offset = -4;
+            
+            //Convert the date to UTC time
+            d = d.AddHours(offset*-1);
+            
+            //Create a Coordinate with the UTC time		
+            Coordinate c = new Coordinate(39.0000, -72.0000, d);
+            //Create a new Celestial object by converting the existing one to Local
+            Celestial celestial = Celestial.Celestial_LocalTime(c, offset);
+            
+            Console.WriteLine(celestial.IsSunUp); //True
+            Console.WriteLine(celestial.SunRise); //3/19/2018 6:54:25 AM
+            </code>
+            </example>        
+        </member>
+        <member name="M:CoordinateSharp.Celestial.Solar_LocalTime(CoordinateSharp.Coordinate,System.Double)">
+            <summary>
+            Converts solar time values to local time. 
+            </summary>
+            <param name="coord">Coordinate</param>
+            <param name="offset">UTC offset</param>
+            <returns>Celestial</returns>
+            <example>
+            The following example demonstrates how to get Celestial, solar time only values in Local time.
+            DateTime offsets are done manually for readability purposes of this example. 
+            <code>
+            //Local time 
+             DateTime d = new DateTime(2018, 3, 19, 6, 56, 0, 0, DateTimeKind.Local);
+            
+            //EST Time is -4 hours from UTC
+            double offset = -4;
+            
+            //Convert the date to UTC time
+            d = d.AddHours(offset*-1);
+            
+            //Create a Coordinate with the UTC time		
+            Coordinate c = new Coordinate(39.0000, -72.0000, d);
+            //Create a new Celestial object by converting the existing one to Local
+            Celestial celestial = Celestial.Solar_LocalTime(c, offset);
+            
+            Console.WriteLine(celestial.IsSunUp); //True
+            Console.WriteLine(celestial.SunRise); //3/19/2018 6:54:25 AM
+            </code>
+            </example>  
+        </member>
+        <member name="M:CoordinateSharp.Celestial.Lunar_LocalTime(CoordinateSharp.Coordinate,System.Double)">
+            <summary>
+            Converts lunar time values to local time. 
+            </summary>
+            <param name="coord">Coordinate</param>
+            <param name="offset">UTC offset</param>
+            <returns>Celestial</returns>
+            <example>
+            The following example demonstrates how to get Celestial, lunar time only values in Local time.
+            DateTime offsets are done manually for readability purposes of this example. 
+            <code>
+            //Local time 
+             DateTime d = new DateTime(2018, 3, 19, 6, 56, 0, 0, DateTimeKind.Local);
+            
+            //EST Time is -4 hours from UTC
+            double offset = -4;
+            
+            //Convert the date to UTC time
+            d = d.AddHours(offset*-1);
+            
+            //Create a Coordinate with the UTC time		
+            Coordinate c = new Coordinate(39.0000, -72.0000, d);
+            //Create a new Celestial object by converting the existing one to Local
+            Celestial celestial = Celestial.Lunar_LocalTime(c, offset);
+            
+            Console.WriteLine(celestial.IsMoonUp); //False
+            Console.WriteLine(celestial.SunRise); //3/19/2018 08:17 AM
+            </code>
+            </example>     
+        </member>
+        <member name="M:CoordinateSharp.Celestial.CalculateSunData(System.Double,System.Double,System.DateTime)">
+            <summary>
+            Calculate sun data based on latitude, longitude and UTC date at the location.
+            </summary>
+            <param name="lat">latitude</param>
+            <param name="longi">longitude</param>
+            <param name="date">DateTime</param>
+            <returns>Celestial (Partially Populated)</returns>
+            <example>
+            The following example demonstrates how to create a partially populated Celestial object 
+            that only calculates solar data using static functions. 
+            <code>
+            //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
+            Celestial cel = Celestial.CalculateSunData(39, -72, new DateTime(2019, 3, 19, 10, 10, 12));
+            
+            Console.WriteLine(cel.SunRise); //3/19/2019 10:54:50 AM
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.CalculateMoonData(System.Double,System.Double,System.DateTime)">
+            <summary>
+            Calculate moon data based on latitude, longitude and UTC date at the location.
+            </summary>
+            <param name="lat">latitude</param>
+            <param name="longi">longitude</param>
+            <param name="date">DateTime</param>
+            <returns>Celestial (Partially Populated)</returns>
+            <example>
+            The following example demonstrates how to create a partially populated Celestial object 
+            that only calculates lunar data using static functions. 
+            <code>
+            //Get Celestial data at N 39, W 72 on 19-Mar-2019 10:10:12 UTC
+            Celestial cel = Celestial.CalculateMoonData(39, -72, new DateTime(2019, 3, 19, 10, 10, 12));
+            
+            Console.WriteLine(cel.MoonRise); //3/19/2019 9:27:27 PM
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Celestial.Local_Convert(CoordinateSharp.Coordinate,System.Double,CoordinateSharp.Celestial_EagerLoad)">
+            <summary>
+            In place time slip
+            </summary>
+            <param name="c">Coordinate</param>
+            <param name="offset">hour offset</param>
+            <param name="el">Celestial EagerLoad Option</param>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.SunSet">
+            <summary>
+            Sunset time.
+            </summary>
+            <remarks>If DateTime is null, check the SunCondition property</remarks>
+            <example>
+            The following example gets the sunset time in UTC at N 39, W 72 on 1-March-2018
+            <code>
+            Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
+            Console.WriteLine(coordinate.CelestialInfo.SunSet); //3/1/2018 10:41:34 PM (UTC)
+            </code>
+            </example>
+            The following example demonstrates a returned null SunSet value as the sun does not set at N 39, W 72 on 1-March-2018. 
+            You can see why there is no value returned by checking the SunCondition property to see that the sun is down all day
+            at the specified location.
+            <code>
+            Coordinate coordinate = new Coordinate(85,-72, new DateTime(2018,3,1));
+            Console.WriteLine(coordinate.CelestialInfo.SunSet); //Returns Null
+            Console.WriteLine(coordinate.CelestialInfo.SunCondition); //DownAllDay
+            </code>
+            <example>
+            </example>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.SunRise">
+            <summary>
+            Sunrise time.
+            </summary>
+            <remarks>If DateTime is null, check the SunCondition property</remarks>
+            <example>
+            The following example gets the sunrise time in UTC at N 39, W 72 on 1-March-2018
+            <code>
+            Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
+            Console.WriteLine(coordinate.CelestialInfo.SunRise); 3/1/2018 11:22:04 AM (UTC)
+            </code>
+            </example>
+            The following example demonstrates a returned null SunRise value as the sun does not rise at N 39, W 72 on 1-March-2018. 
+            You can see why there is no value returned by checking the SunCondition property to see that the sun is down all day
+            at the specified location.
+            <code>
+            Coordinate coordinate = new Coordinate(85,-72, new DateTime(2018,3,1));
+            Console.WriteLine(coordinate.CelestialInfo.SunSet); //Returns Null
+            Console.WriteLine(coordinate.CelestialInfo.SunCondition); //DownAllDay
+            </code>
+            <example>
+            </example>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.MoonSet">
+            <summary>
+            Moon set time.
+            </summary>
+            <remarks>If DateTime is null, check the MoonCondition property</remarks>
+            <example>
+            The following example gets the moon set time in UTC at N 39, W 72 on 1-March-2018
+            <code>
+            Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
+            Console.WriteLine(coordinate.CelestialInfo.MoonSet); 3/1/2018 11:12:08 AM (UTC)
+            </code>
+            </example>
+            The following example demonstrates a returned null MoonSet value as the moon does not set at N 39, W 72 on 1-March-2018. 
+            You can see why there is no value returned by checking the MoonCondition property to see that the moon is up all day
+            at the specified location.
+            <code>
+            Coordinate coordinate = new Coordinate(85,-72, new DateTime(2018,3,1));
+            Console.WriteLine(coordinate.CelestialInfo.MoonSet); //Returns Null
+            Console.WriteLine(coordinate.CelestialInfo.MoonCondition); //UpAllDay
+            </code>
+            <example>
+            </example>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.MoonRise">
+            <summary>
+            Moon rise time.
+            </summary>
+            <remarks>If DateTime is null, check the MoonCondition property</remarks>
+            <example>
+            The following example gets the moon rise time in UTC at N 39, W 72 on 1-March-2018
+            <code>
+            Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
+            Console.WriteLine(coordinate.CelestialInfo.MoonRise); 3/1/2018 10:27:07 PM (UTC)
+            </code>
+            </example>
+            The following example demonstrates a returned null MoonRise value as the moon does not rise at N 39, W 72 on 1-March-2018. 
+            You can see why there is no value returned by checking the MoonCondition property to see that the moon is up all day
+            at the specified location.
+            <code>
+            Coordinate coordinate = new Coordinate(85,-72, new DateTime(2018,3,1));
+            Console.WriteLine(coordinate.CelestialInfo.MoonRise); //Returns Null
+            Console.WriteLine(coordinate.CelestialInfo.MoonCondition); //UpAllDay
+            </code>
+            <example>
+            </example>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.SunAltitude">
+            <summary>
+            Sun altitude in degrees (E of N).
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.SunAzimuth">
+            <summary>
+            Sun azimuth in degrees (E of N).
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.MoonAltitude">
+            <summary>
+            Moon altitude in degrees (E of N) (corrected for parallax and refraction).
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.MoonAzimuth">
+            <summary>
+            Moon azimuth in degrees (E of N).
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.MoonDistance">
+            <summary>
+            Estimated moon distance from the earth.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.SunCondition">
+            <summary>
+            Sun's Condition based on the provided date.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.MoonCondition">
+            <summary>
+            Moon's condition based on the provided date.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.IsSunUp">
+            <summary>
+            Determine if the sun is currently up, based on sunset and sunrise time at the provided location and date.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.IsMoonUp">
+            <summary>
+            Determine if the moon is currently up, based on moon set and moon rise time at the provided location and date.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.MoonIllum">
+            <summary>
+            Moon illumination details based on the provided date.
+            </summary>
+            <remarks>
+            Contains phase, phase name, fraction and angle
+            </remarks>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.Perigee">
+            <summary>
+            Moons perigee details based on the provided date.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.Apogee">
+            <summary>
+            Moons apogee details based on the provided date.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.AdditionalSolarTimes">
+            <summary>
+            Additional solar event times based on the provided date and location.
+            </summary>
+            <remarks>Contains dawn, dusk and twilight times.</remarks>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.AstrologicalSigns">
+            <summary>
+            Astrological signs based on the provided date.
+            </summary>
+            <remarks>
+            Contains zodiac, moon sign and moon name during full moon events
+            </remarks>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.SolarEclipse">
+            <summary>
+            Solar eclipse details.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Celestial.LunarEclipse">
+            <summary>
+            Lunar eclipse details.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.MeeusTables.Moon_Periodic_Er(System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Returns Moon Periodic Value Er
+            </summary>
+            <param name="D">Moon's mean elongation</param>
+            <param name="M">Sun's mean anomaly</param>
+            <param name="N">Moon's mean anomaly</param>
+            <param name="F">Moon's argument of latitude</param>
+            <param name="T">Dynamic time</param>
+            <returns>Er</returns>
+        </member>
+        <member name="M:CoordinateSharp.MeeusTables.Moon_Periodic_El(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Returns Moon Periodic Value El
+            </summary>
+            <param name="L">Moon's mean longitude</param>
+            <param name="D">Moon's mean elongation</param>
+            <param name="M">Sun's mean anomaly</param>
+            <param name="N">Moon's mean anomaly</param>
+            <param name="F">Moon's argument of latitude</param>
+            <param name="T">Dynamic time</param>
+            <returns>El</returns>
+        </member>
+        <member name="M:CoordinateSharp.MeeusTables.Moon_Periodic_Eb(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Returns Moon Periodic Value Eb
+            </summary>
+            <param name="L">Moon's mean longitude</param>
+            <param name="D">Moon's mean elongation</param>
+            <param name="M">Sun's mean anomaly</param>
+            <param name="N">Moon's mean anomaly</param>
+            <param name="F">Moon's argument of latitude</param>
+            <param name="T">Dynamic time</param>
+            <returns>Eb</returns>
+        </member>
+        <member name="M:CoordinateSharp.MeeusTables.ApogeeTermsA(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Sum of Apogee Terms from Jean Meeus Astronomical Algorithms Table 50.A
+            </summary>
+            <param name="D">Moom's mean elongation at time JDE</param>
+            <param name="M">Sun's mean anomaly</param>
+            <param name="F">Moon's arguement f latitude</param>
+            <param name="T">Time in Julian centuries since epoch 2000</param>
+            <returns>double</returns>
+        </member>
+        <member name="M:CoordinateSharp.MeeusTables.PerigeeTermsA(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Sum of Perigee Terms from Jean Meeus Astronomical Algorithms Table 50.A
+            </summary>
+            <param name="D">Moom's mean elongation at time JDE</param>
+            <param name="M">Sun's mean anomaly</param>
+            <param name="F">Moon's arguement f latitude</param>
+            <param name="T">Time in Julian centuries since epoch 2000</param>
+            <returns>double</returns>
+        </member>
+        <member name="M:CoordinateSharp.MeeusTables.ApogeeTermsB(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Sum of Apogee Terms from Jean Meeus Astronomical Algorithms Table 50.B
+            </summary>
+            <param name="D">Moom's mean elongation at time JDE</param>
+            <param name="M">Sun's mean anomaly</param>
+            <param name="F">Moon's arguement f latitude</param>
+            <param name="T">Time in Julian centuries since epoch 2000</param>
+            <returns>double</returns>
+        </member>
+        <member name="M:CoordinateSharp.MeeusTables.PerigeeTermsB(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Sum of Perigee Terms from Jean Meeus Astronomical Algorithms Table 50.B
+            </summary>
+            <param name="D">Moom's mean elongation at time JDE</param>
+            <param name="M">Sun's mean anomaly</param>
+            <param name="F">Moon's arguement f latitude</param>
+            <param name="T">Time in Julian centuries since epoch 2000</param>
+            <returns>double</returns>
+        </member>
+        <member name="T:CoordinateSharp.MoonIllum">
+            <summary>
+            Class for storing moon illumination Information.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.MoonIllum.Fraction">
+            <summary>
+            Moon's fraction
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.MoonIllum.Angle">
+            <summary>
+            Moon's Angle
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.MoonIllum.Phase">
+            <summary>
+            Moon's phase
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.MoonIllum.PhaseName">
+            <summary>
+            Moon's phase name for the specified day
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.PerigeeApogee">
+            <summary>
+            Class for storing perigee and apogee details.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.PerigeeApogee.#ctor(System.DateTime,System.Double,CoordinateSharp.Distance)">
+            <summary>
+            Initializes a Perigee or Apogee object
+            </summary>
+            <param name="d">Date of Event</param>
+            <param name="p">Horizontal Parallax</param>
+            <param name="dist">Distance</param>
+        </member>
+        <member name="P:CoordinateSharp.PerigeeApogee.Date">
+            <summary>
+            Date of event.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.PerigeeApogee.HorizontalParallax">
+            <summary>
+            Horizontal Parallax.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.PerigeeApogee.Distance">
+            <summary>
+            Moon's distance at event.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.Perigee">
+            <summary>
+            Class for storing last and next perigee information for a specified DateTime.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.Perigee.#ctor(CoordinateSharp.PerigeeApogee,CoordinateSharp.PerigeeApogee)">
+            <summary>
+            Initializes an Perigee object.
+            </summary>
+            <param name="last">Last perigee</param>
+            <param name="next">Next perigee</param>
+        </member>
+        <member name="P:CoordinateSharp.Perigee.LastPerigee">
+            <summary>
+            Last perigee
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Perigee.NextPerigee">
+            <summary>
+            Next perigee
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.Apogee">
+            <summary>
+            Class for storing last and next apogee information for a specified DateTime.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.Apogee.#ctor(CoordinateSharp.PerigeeApogee,CoordinateSharp.PerigeeApogee)">
+            <summary>
+            Initializes an Apogee object.
+            </summary>
+            <param name="last">Last apogee</param>
+            <param name="next">Next apogee</param>
+        </member>
+        <member name="P:CoordinateSharp.Apogee.LastApogee">
+            <summary>
+            Last apogee
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Apogee.NextApogee">
+            <summary>
+            Next apogee
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.LunarEclipse">
+            <summary>
+            Class for storing last and next lunar eclipse information at a specified DateTime and Coordinate.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.LunarEclipse.#ctor">
+            <summary>
+            Initialize a LunarEclipse object
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.LunarEclipse.LastEclipse">
+            <summary>
+            Details about the previous lunar eclipse at the specified DateTime and Coordinate.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.LunarEclipse.NextEclipse">
+            <summary>
+            Details about the next lunar eclipse at the specified DateTime and Coordinate.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.AstrologicalSigns">
+            <summary>
+            Class for storing astrological sign information.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.AstrologicalSigns.MoonName">
+            <summary>
+            Astrological Zodiac Sign.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.AstrologicalSigns.MoonSign">
+            <summary>
+            Astrological Moon Sign.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.AstrologicalSigns.ZodiacSign">
+            <summary>
+            Astrological Zodiac Sign.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.LunarEclipseDetails">
+            <summary>
+            Class containing detailed lunar eclipse information.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.LunarEclipseDetails.#ctor(System.Collections.Generic.List{System.String})">
+            <summary>
+            Initialize a LunarEclipseDetails object.
+            </summary>
+            <param name="values">Lunar Eclipse String Values.</param>
+        </member>
+        <member name="M:CoordinateSharp.LunarEclipseDetails.#ctor">
+            <summary>
+            Initialize a default LunarEclipseDetails object.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.LunarEclipseDetails.Adjust_Dates">
+            <summary>
+            JS Eclipse Calc formulas didn't account for Z time calculation.
+            Iterate through and adjust Z dates where eclipse is passed midnight.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.LunarEclipseDetails.HasEclipseData">
+            <summary>
+            Determine if the LunarEclipseDetails object has been populated.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.LunarEclipseDetails.Date">
+            <summary>
+            Date of lunar eclipse.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.LunarEclipseDetails.Type">
+            <summary>
+            Lunar eclipse type.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.LunarEclipseDetails.PenumbralEclipseBegin">
+            <summary>
+            DateTime when the penumbral eclipse begins.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.LunarEclipseDetails.PartialEclispeBegin">
+            <summary>
+            DateTime when the partial eclipse begins (if applicable).
+            </summary>
+            <remarks>returns 0001/01/01 if event did not occur.</remarks>
+        </member>
+        <member name="P:CoordinateSharp.LunarEclipseDetails.TotalEclipseBegin">
+            <summary>
+            DateTime when Total eclipse begins (if applicable).
+            </summary>
+            <remarks>returns 0001/01/01 if event did not occur.</remarks>
+        </member>
+        <member name="P:CoordinateSharp.LunarEclipseDetails.MidEclipse">
+            <summary>
+            DateTime when eclipse is at Mid.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.LunarEclipseDetails.TotalEclipseEnd">
+            <summary>
+            DateTime when total eclipse ends (if applicable).
+            </summary>
+            <remarks>returns 0001/01/01 if event did not occur.</remarks>
+        </member>
+        <member name="P:CoordinateSharp.LunarEclipseDetails.PartialEclispeEnd">
+            <summary>
+            DateTime when the partial eclipse ends (if applicable).
+            </summary>
+            <remarks>returns 0001/01/01 if event did not occur.</remarks>
+        </member>
+        <member name="P:CoordinateSharp.LunarEclipseDetails.PenumbralEclispeEnd">
+            <summary>
+            DateTime when the penumbral eclipse ends.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.LunarEclipseDetails.ToString">
+            <summary>
+            Lunar eclipse default string.
+            </summary>
+            <returns>Lunar eclipse base date string.</returns>
+        </member>
+        <member name="M:CoordinateSharp.MoonCalc.GetMoonTimes(System.DateTime,System.Double,System.Double,CoordinateSharp.Celestial,System.Double)">
+            <summary>
+            Gets Moon Times, Altitude and Azimuth
+            </summary>
+            <param name="date">Date</param>
+            <param name="lat">Latitude</param>
+            <param name="lng">Longitude</param>
+            <param name="c">Celestial</param>
+            <param name="offset">Offset hours</param>
+        </member>
+        <member name="M:CoordinateSharp.MoonCalc.MoonPerigeeOrApogee(System.DateTime,CoordinateSharp.MoonDistanceType)">
+            <summary>
+            Grabs Perigee or Apogee of Moon based on specified time.
+            Results will return event just before, or just after specified DateTime
+            </summary>
+            <param name="d">DateTime</param>
+            <param name="md">Event Type</param>
+            <returns>PerigeeApogee</returns>
+        </member>
+        <member name="M:CoordinateSharp.MoonCalc.GetMoonDistance(System.DateTime)">
+            <summary>
+            Gets moon distance (Ch 47).
+            </summary>
+            <param name="d">DateTime</param>
+            <returns>Distance</returns>
+        </member>
+        <member name="M:CoordinateSharp.MoonCalc.GetMoonDistance(System.DateTime,System.Double)">
+            <summary>
+            Gets moon distance (Ch 47).
+            </summary>
+            <param name="d">DateTime</param>
+            <param name="offset">UTC offset in hours</param>
+            <returns>Distance</returns>
+        </member>
+        <member name="M:CoordinateSharp.MoonCalc.Get_Moon_LDMNF(System.Double)">
+            <summary>
+            Gets Moon L, D, M, N, F values
+            Ch. 47 
+            </summary>
+            <param name="T">Dynamic Time</param>
+            <returns>double[] containing L,D,M,N,F</returns>
+        </member>
+        <member name="M:CoordinateSharp.MoonCalc.Get_Moon_Coordinates(System.Double[],System.Double)">
+            <summary>
+            Get moons lat/long in radians (Ch 47).
+            </summary>
+            <param name="LDMNF">L,D,M,N,F</param>
+            <param name="T">Dynamic Time</param>
+            <returns>Lat[0], Long[1]</returns>
+        </member>
+        <member name="M:CoordinateSharp.MoonCalc.rightAscension(System.Double,System.Double)">
+            <summary>
+            Gets right Ascension of celestial object (Ch 13 Fig 13.3)
+            </summary>
+            <param name="l">latitude in radians</param>
+            <param name="b">longitude in radian</param>
+            <returns>Right Ascension</returns>
+        </member>
+        <member name="M:CoordinateSharp.MoonCalc.declination(System.Double,System.Double)">
+            <summary>
+            Gets declination of celestial object (Ch 13 Fig 13.4)
+            </summary>
+            <param name="l">latitude in radians</param>
+            <param name="b">longitude in radian</param>
+            <returns>Declination</returns>
+        </member>
+        <member name="T:CoordinateSharp.AdditionalSolarTimes">
+            <summary>
+            Class for storing additional solar time information.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.AdditionalSolarTimes.#ctor">
+            <summary>
+            Create a default AdditionalSolarTimes object.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.AdditionalSolarTimes.CivilDawn">
+            <summary>
+            Civil Dawn Time.
+            </summary>
+            <remarks>
+            DateTime will be null if event does not occur.
+            </remarks>
+        </member>
+        <member name="P:CoordinateSharp.AdditionalSolarTimes.CivilDusk">
+            <summary>
+            Civil Dusk Time.
+            </summary>
+            <remarks>
+            DateTime will be null if event does not occur.
+            </remarks>
+        </member>
+        <member name="P:CoordinateSharp.AdditionalSolarTimes.NauticalDawn">
+            <summary>
+            Nautical Dawn Time.
+            </summary>
+            <remarks>
+            DateTime will be null if event does not occur.
+            </remarks>
+        </member>
+        <member name="P:CoordinateSharp.AdditionalSolarTimes.NauticalDusk">
+            <summary>
+            Nautical Dusk Time.
+            </summary>
+            <remarks>
+            DateTime will be null if event does not occur.
+            </remarks>
+        </member>
+        <member name="P:CoordinateSharp.AdditionalSolarTimes.AstronomicalDawn">
+            <summary>
+            Astronomical Dawn Time.
+            </summary>
+            <remarks>
+            DateTime will be null if event does not occur.
+            </remarks>
+        </member>
+        <member name="P:CoordinateSharp.AdditionalSolarTimes.AstronomicalDusk">
+            <summary>
+            Astronomical Dusk Time.
+            </summary>
+            <remarks>
+            DateTime will be null if event does not occur.
+            </remarks>
+        </member>
+        <member name="P:CoordinateSharp.AdditionalSolarTimes.SunriseBottomDisc">
+            <summary>
+            DateTime when the bottom of the solar disc touches the horizon after a sunrise event.
+            </summary>
+            <remarks>
+            DateTime will be null if event does not occur.
+            </remarks>
+        </member>
+        <member name="P:CoordinateSharp.AdditionalSolarTimes.SunsetBottomDisc">
+            <summary>
+            DateTime when the bottom of the solar disc touches the horizon before sunset
+            </summary>
+            <remarks>
+            DateTime will be null if event does not occur.
+            </remarks>
+        </member>
+        <member name="T:CoordinateSharp.SolarEclipse">
+            <summary>
+            Class for storing last and next solar eclipse information at a specified DateTime and Coordinate.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.SolarEclipse.#ctor">
+            <summary>
+            Initialize a SolarEclipse object.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.SolarEclipse.LastEclipse">
+            <summary>
+            Details about the previous solar eclipse at the specified DateTime and Coordinate.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.SolarEclipse.NextEclipse">
+            <summary>
+            Details about the next solar eclipse at the specified DateTime and Coordinate.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.SolarEclipseDetails">
+            <summary>
+            Class containing detailed solar eclipse information.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.SolarEclipseDetails.#ctor(System.Collections.Generic.List{System.String})">
+            <summary>
+            Initialize a SolarEclipseDetails object.
+            </summary>
+            <param name="values">Solar Eclipse String Values</param>
+        </member>
+        <member name="M:CoordinateSharp.SolarEclipseDetails.#ctor">
+            <summary>
+            Initialize an empty SolarEclipseDetails object
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.SolarEclipseDetails.Adjust_Dates">
+            <summary>
+            JS Eclipse Calc formulas didn't account for Z time calculation.
+            Iterate through and adjust Z dates where eclipse is passed midnight.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.SolarEclipseDetails.HasEclipseData">
+            <summary>
+            Has SolarEclipseDetails object has been populated.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.SolarEclipseDetails.Date">
+            <summary>
+            Date of solar eclipse.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.SolarEclipseDetails.Type">
+            <summary>
+            Solar eclipse type.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.SolarEclipseDetails.PartialEclispeBegin">
+            <summary>
+            DateTime when the partial eclipse begins.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.SolarEclipseDetails.AorTEclipseBegin">
+            <summary>
+            DateTime when an Annular or Total eclipse begins (if applicable).
+            </summary>
+            <remarks>returns 0001/01/01 if event did not occur</remarks>
+        </member>
+        <member name="P:CoordinateSharp.SolarEclipseDetails.MaximumEclipse">
+            <summary>
+            DateTime when eclipse is at Maximum.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.SolarEclipseDetails.AorTEclipseEnd">
+            <summary>
+            DateTime when the Annular or Total eclipse ends (if applicable).
+            </summary>
+            <remarks>returns 0001/01/01 if event did not occur</remarks>
+        </member>
+        <member name="P:CoordinateSharp.SolarEclipseDetails.PartialEclispeEnd">
+            <summary>
+            DateTime when the partial eclipse ends.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.SolarEclipseDetails.AorTDuration">
+            <summary>
+            Duration of Annular or Total eclipse (if applicable).
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.SolarEclipseDetails.ToString">
+            <summary>
+            Solar eclipse default string.
+            </summary>
+            <returns>Solar eclipse base date string</returns>
+        </member>
+        <member name="M:CoordinateSharp.SunCalc.Get_Event_Time(System.Double,System.Double,System.Double,System.DateTime,System.Double)">
+            <summary>
+            Gets time of event based on specified degree below horizon
+            </summary>
+            <param name="lw">Observer Longitude in radians</param>
+            <param name="phi">Observer Latitude in radians</param>
+            <param name="h">Angle in Degrees</param>
+            <param name="date">Date of Event</param>
+            <param name="offset">Offset hours</param>
+            <returns>DateTime?[]{rise, set}</returns> 
+        </member>
+        <member name="T:CoordinateSharp.CoordinateFormatOptions">
+            <summary>
+            Coordinate formatting options for Coordinate objects.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.CoordinateFormatOptions.#ctor">
+            <summary>
+            Creates a new CoordinateFormatOptions object with default values.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinateFormatOptions.Format">
+            <summary>
+            Coordinate format type.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinateFormatOptions.Round">
+            <summary>
+            Specifies at what decimal place the coordinate values will round when converted to a string.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinateFormatOptions.Display_Leading_Zeros">
+            <summary>
+            Display leading zeros.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinateFormatOptions.Display_Trailing_Zeros">
+            <summary>
+            Display trailing zeros.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinateFormatOptions.Display_Symbols">
+            <summary>
+            Display all symbols.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinateFormatOptions.Display_Degree_Symbol">
+            <summary>
+            Display degree symbols.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinateFormatOptions.Display_Minute_Symbol">
+            <summary>
+            Display minute symbols.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinateFormatOptions.Display_Seconds_Symbol">
+            <summary>
+            Display seconds symbol.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinateFormatOptions.Display_Hyphens">
+            <summary>
+            Display hyphens between values.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinateFormatOptions.Position_First">
+            <summary>
+            Show coordinate position first.
+            </summary>
+            <remarks>
+            Will show last if set 'false'.
+            </remarks>
+        </member>
+        <member name="T:CoordinateSharp.Coordinate">
+            <summary>
+            Class for handling all location based information.
+            This is the main class of CoordinateSharp. It will contain all coordinate conversions and celestial information once populated. 
+            Most everything you need in the library will be contained in the Coordinate class.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.#ctor">
+            <summary>
+            Creates a Coordinate object with default values.
+            </summary>
+            <remarks>       
+            Coordinate will initialize with a latitude and longitude of 0 degrees and 
+            a GeoDate of 1900-1-1. All properties will be set to EagerLoaded.
+            </remarks>
+            <example>
+            The following example demonstrates how to create a default Coordinate.
+            <code>
+            Coordinate c = new Coordinate();
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.#ctor(System.Double,System.Double)">
+            <summary>
+            Creates a populated Coordinate based on signed degrees formated latitude and longitude.
+            </summary>
+            <param name="lat">signed latitude</param>
+            <param name="longi">signed longitude</param>
+            <remarks>
+            GeoDate will default to 1900-01-01.
+            All properties will be set to EagerLoaded.
+            </remarks>
+            <example>
+            The following example demonstrates how to create a defined Coordinate.
+            <code>
+            Coordinate c = new Coordinate(25, 25);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.#ctor(System.Double,System.Double,System.DateTime)">
+            <summary>
+            Creates a populated Coordinate object with an assigned GeoDate.
+            </summary>
+            <param name="lat">signed latitude</param>
+            <param name="longi">signed longitude</param>
+            <param name="date">DateTime (UTC)</param>
+            <remarks>
+            All properties will be set to EagerLoaded.
+            </remarks>
+            <example>
+            The following example demonstrates how to create a defined Coordinate object with a defined GeoDate.
+            <code>
+            Coordinate c = new Coordinate(25, 25, new DateTime(2018, 2, 5, 10, 38, 22));
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.#ctor(CoordinateSharp.EagerLoad)">
+            <summary>
+            Creates an empty Coordinates object with specified eager loading options.
+            </summary>
+            <remarks>
+            Coordinate will initialize with a latitude and longitude of 0 degrees and
+            a GeoDate of 1900-1-1.
+            </remarks>
+            <param name="eagerLoad">Eager loading options</param>
+            <example>
+            The following example demonstrates how to create a default Coordinate object with defined
+            eager loading options
+            <code>
+            //Create a new EagerLoading object set to only
+            //eager load celestial calculations.
+            EagerLoading el = new EagerLoading(EagerLoadType.Celestial);
+            
+            Coordinate c = new Coordinate(el);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.#ctor(System.Double,System.Double,CoordinateSharp.EagerLoad)">
+            <summary>
+            Creates a populated Coordinate object with specified eager loading options.
+            </summary>
+            <remarks>
+            Geodate will default to 1900-01-01.
+            </remarks>
+            <param name="lat">signed latitude</param>
+            <param name="longi">signed longitude</param>
+            <param name="eagerLoad">Eager loading options</param>
+            <example>
+            The following example demonstrates how to create a defined Coordinate object with defined 
+            eager loading options.
+            <code>
+            //Create a new EagerLoading object set to only
+            //eager load celestial calculations.
+            EagerLoading el = new EagerLoading(EagerLoadType.Celestial);
+            
+            Coordinate c = new Coordinate(25, 25, el);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.#ctor(System.Double,System.Double,System.DateTime,CoordinateSharp.EagerLoad)">
+            <summary>
+            Creates a populated Coordinate object with specified eager load options and an assigned GeoDate.
+            </summary>
+            <param name="lat">signed latitude</param>
+            <param name="longi">signed longitude</param>
+            <param name="date">DateTime you wish to use for celestial calculation</param>
+            <param name="eagerLoad">Eager loading options</param>
+            <example>
+            The following example demonstrates how to create a defined Coordinate object with defined 
+            eager loading options and a GeoDate.
+            <code>
+            //Create a new EagerLoading object set to only
+            //eager load celestial calculations.
+            EagerLoading el = new EagerLoading(EagerLoadType.Celestial);
+            DateTime geoDate = new DateTime(2018, 2, 5, 10, 38, 22);
+            
+            Coordinate c = new Coordinate(25, 25, geoDate, el);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.#ctor(System.Double,System.Double,CoordinateSharp.EagerLoad,System.Double,System.Double)">
+            <summary>
+            Creates a populated Coordinate object with specified eager load options, assigned GeoDate and Earth Shape. Should only be called when Coordinate 
+            is create from another system.
+            </summary>
+            <param name="lat">signed latitude</param>
+            <param name="longi">signed longitude</param>      
+            <param name="eagerLoad">Eager loading options</param>
+            <param name="equatorialRadius">Semi Major Axis or Equatorial Radius of the Earth</param>
+            <param name="inverseFlattening">Inverse of Flattening of the Earth</param>              
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.Coordinate_Builder(System.Double,System.Double,System.DateTime,CoordinateSharp.EagerLoad)">
+            <summary>
+            Coordinate build logic goes here.
+            </summary>
+            <param name="lat">Signed latitude</param>
+            <param name="longi">Signed longitude</param>
+            <param name="date">Date at location</param>
+            <param name="eagerLoad">Eagerloading settings</param>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.LoadCelestialInfo">
+             <summary>
+             Load celestial information (required if eager loading is turned off).
+             </summary>
+             <example>
+             The following example shows how to Load Celestial information when eager loading is turned off.
+             <code>
+             EagerLoad eagerLoad = new EagerLoad();
+             eagerLoad.Celestial = false;
+             Coordinate c = new Coordinate(40.0352, -74.5844, DateTime.Now, eagerLoad);
+            
+             //To load Celestial information when ready
+             c.LoadCelestialInfo;           
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.LoadUTM_MGRS_Info">
+             <summary>
+             Load UTM and MGRS information (required if eager loading is turned off).
+             </summary>
+             <example>
+             The following example shows how to Load UTM and MGRS information when eager loading is turned off.
+             <code>
+             EagerLoad eagerLoad = new EagerLoad();
+             eagerLoad.UTM_MGRS = false;
+             Coordinate c = new Coordinate(40.0352, -74.5844, DateTime.Now, eagerLoad);
+            
+             //To load UTM_MGRS information when ready
+             c.LoadUTM_MGRSInfo;           
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.LoadCartesianInfo">
+             <summary>
+             Load Cartesian information (required if eager loading is turned off).
+             </summary>
+             <example>
+             The following example shows how to Load Cartesian information when eager loading is turned off.
+             <code>
+             EagerLoad eagerLoad = new EagerLoad();
+             eagerLoad.Cartesian = false;
+             Coordinate c = new Coordinate(40.0352, -74.5844, DateTime.Now, eagerLoad);
+            
+             //To load Cartesian information when ready
+             c.LoadCartesianInfo;           
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.LoadECEFInfo">
+             <summary>
+             Load ECEF information (required if eager loading is turned off).
+             </summary>
+             <example>
+             The following example shows how to Load ECEF information when eager loading is turned off.
+             <code>
+             EagerLoad eagerLoad = new EagerLoad();
+             eagerLoad.ECEF = false;
+             Coordinate c = new Coordinate(40.0352, -74.5844, DateTime.Now, eagerLoad);
+            
+             //To load ECEF information when ready
+             c.LoadECEFInfo;           
+             </code>
+             </example>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.Display">
+            <summary>
+            Bindable formatted coordinate string.
+            </summary>
+            <remarks>Bind to this property when MVVM patterns are being used</remarks>
+            <example>
+            The following example shows how to bind to a formatted Coordinate in XAML
+            <code language="XAML">
+            <TextBlock Text="{Binding Latitude.Display, UpdateSourceTrigger=PropertyChanged}"/>
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.ToString">
+            <summary>
+            A string formatted and represented coordinate.
+            </summary>
+            <returns>Formatted Coordinate string</returns>
+            <example>
+            <code>
+            Coordinate c = new Coordinate(25, 25);
+            Console.WriteLine(c.ToString()); //N 25º 0' 0" E 25º 0' 0"
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.ToString(CoordinateSharp.CoordinateFormatOptions)">
+             <summary>
+             A string formatted and represented coordinate.
+             </summary>
+             <param name="options">CoordinateFormatOptions</param>
+             <returns>Formatted Coordinate string</returns>
+             <example>
+             The following example will demonstrate how to output a custom formatted 
+             string representation of a Coordinate.
+             <code>
+             Coordinate c = new Coordinate(25, 25);
+            
+             //Create the formatting object to pass to the ToString() overload.
+             CoordinateFormatOptions cfo = new CoordinateFormatOptions();
+            
+             cfo.Format = CoordinateFormatType.Degree_Decimal_Minutes; //Set string format to DDM
+             cfo.Display_Leading_Zeros = true; //Display leading zeros
+             cfo.Round = 2; //Round to the 2nd decimal place
+            
+             Console.WriteLine(c.ToString(cfo)); //N 25º 00' E 025º 00'
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.Set_Datum(System.Double,System.Double)">
+            <summary>
+            Set a custom datum for coordinate conversions and distance calculation.
+            Objects must be loaded prior to setting if EagerLoading is turned off or else the items Datum won't be set.
+            Use overload if EagerLoading options are used.
+            </summary>
+            <param name="radius">Equatorial Radius</param>
+            <param name="flattening">Inverse Flattening</param>
+            <example>   
+            The following example demonstrates how to set the earths ellipsoid values for UTM/MGRS and ECEF conversion as well as Distance calculations
+            that use ellipsoidal earth values.
+            <code>
+            //Initialize a coordinate with the default WGS84 Ellipsoid.
+            Coordinate c = new Coordinate(25,25);
+            
+            //Change Ellipsoid to GRS80 Datum
+            c.Set_Datum(6378160.000, 298.25);      
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.Set_Datum(System.Double,System.Double,CoordinateSharp.Coordinate_Datum)">
+            <summary>
+            Set a custom datum for coordinate conversions and distance calculation for specified coordinate formats only.
+            Objects must be loaded prior to setting if EagerLoading is turned off.
+            </summary>
+            <param name="radius">Equatorial Radius</param>
+            <param name="flattening">Inverse Flattening</param>
+            <param name="datum">Coordinate_Datum</param>
+            <example>
+            The following example demonstrates how to set the earths ellipsoid values for UTM/MGRS conversions only.
+            <code>
+            //Initialize a coordinate with the default WGS84 Ellipsoid that eagerloads UTM/MGRS only.
+            EagerLoadType et = EagerLoadType.UTM_MGRS;
+            EagerLoad eagerLoad = new EagerLoad(et);
+            Coordinate c = new Coordinate(25, 25, et);
+            
+            //Change Ellipsoid to GRS80 Datum for UTM_MGRS calculations only.
+            c.Set_Datum(6378160.000, 298.25, Coordinate_Datum.UTM_MGRS);      
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.Get_Distance_From_Coordinate(CoordinateSharp.Coordinate)">
+            <summary>
+            Returns the distance from a target coordinate using spherical earth calculations.
+            Use overload if ellipsoidal calculations are desired.
+            </summary>
+            <param name="target">Coordinate</param>
+            <returns>Distance</returns>
+            <example>
+            The following example demonstrates how to obtain the distance from a target coordinate
+            using default spherical earth calculations.
+            <code>
+            Coordinate coord = new Coordinate(25, 25);
+            Coordinate target = new Coordinate(28, 30);
+            
+            //Get distance from target using default spherical calculations
+            Distance d = coord.Get_Distance_From_Coordinate(target);
+            
+            Console.Writeline(d.Kilometers); //598.928622714691
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.Get_Distance_From_Coordinate(CoordinateSharp.Coordinate,CoordinateSharp.Shape)">
+            <summary>
+            Returns the distance from a target coordinate.
+            </summary>
+            <param name="target">Target coordinate</param>
+            <param name="shape">Earth shape</param>
+            <returns>Distance</returns>
+            <example>     
+            The following example demonstrates how to obtain the distance from a target coordinate
+            using ellipsoidal earth calculations.
+            <code>
+            Coordinate coord = new Coordinate(25,25);
+            Coordinate target = new Coordinate(28, 30);
+            
+            //Get distance from target using ellipsoidal calculations
+            Distance d = coord.Get_Distance_From_Coordinate(target, Shape.Ellipsoid);
+            
+            Console.Writeline(d.Kilometers); //599.002436777727
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.Move(System.Double,System.Double,CoordinateSharp.Shape)">
+            <summary>
+            Move coordinate based on provided bearing and distance (in meters).
+            </summary>
+            <param name="distance">Distance in meters</param>
+            <param name="bearing">Bearing</param>
+            <param name="shape">Shape of earth</param>
+            <example>
+            The following example moves a coordinate 10km in the direction of 
+            the specified bearing using ellipsoidal earth calculations.
+            <code>
+            //N 25º 0' 0" E 25º 0' 0"
+            Coordinate c = Coordinate(25,25);
+            
+            double meters = 10000;
+            double bearing = 25;
+            
+            //Move coordinate the specified meters
+            //and direction using ellipsoidal calculations
+            c.Move(meters, bearing, Shape.Ellipsoid);
+            
+            //New Coordinate - N 25º 4' 54.517" E 24º 57' 29.189"
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.Move(CoordinateSharp.Coordinate,System.Double,CoordinateSharp.Shape)">
+            <summary>
+            Move a coordinate a specified distance (in meters) towards a target coordinate.
+            </summary>
+            <param name="target">Target coordinate</param>
+            <param name="distance">Distance toward target in meters</param>
+            <param name="shape">Shape of earth</param>
+            <example>
+            The following example moves a coordinate 10km towards a target coordinate using
+            ellipsoidal earth calculations.
+            <code>
+            //N 25º 0' 0" E 25º 0' 0"
+            Coordinate coord = Coordinate(25,25);
+            
+            //Target Coordinate
+            Coordinate target = new Coordinate(26.5, 23.2);
+            
+            double meters = 10000;
+            
+            //Move coordinate the specified meters
+            //towards target using ellipsoidal calculations
+            coord.Move(target, meters, Shape.Ellipsoid);
+            
+            //New Coordinate - N 24º 56' 21.526" E 25º 4' 23.944"
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.Move(CoordinateSharp.Distance,System.Double,CoordinateSharp.Shape)">
+            <summary>
+            Move coordinate based on provided bearing and distance (in meters).
+            </summary>
+            <param name="distance">Distance</param>
+            <param name="bearing">Bearing</param>
+            <param name="shape">Shape of earth</param>
+            <example>
+            The following example moves a coordinate 10km in the direction of 
+            the specified bearing using ellipsoidal earth calculations.
+            <code>
+            //N 25º 0' 0" E 25º 0' 0"
+            Coordinate c = Coordinate(25,25);
+            
+            Distance distance = new Distance(10, DistanceType.Kilometers);
+            double bearing = 25;
+            
+            //Move coordinate the specified distance
+            //and direction using ellipsoidal calculations
+            c.Move(distance, bearing, Shape.Ellipsoid);
+            
+            //New Coordinate - N 25º 4' 54.517" E 24º 57' 29.189"
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.Move(CoordinateSharp.Coordinate,CoordinateSharp.Distance,CoordinateSharp.Shape)">
+            <summary>
+            Move a coordinate a specified distance towards a target coordinate.
+            </summary>
+            <param name="target">Target coordinate</param>
+            <param name="distance">Distance toward target</param>
+            <param name="shape">Shape of earth</param>
+            <example>
+            The following example moves a coordinate 10km towards a target coordinate using
+            ellipsoidal earth calculations.
+            <code>
+            //N 25º 0' 0" E 25º 0' 0"
+            Coordinate coord = Coordinate(25,25);
+            
+            //Target Coordinate
+            Coordinate target = new Coordinate(26.5, 23.2);
+            
+            Distance distance = new Distance(10, DistanceType.Kilometers);
+            
+            //Move coordinate the specified distance
+            //towards target using ellipsoidal calculations
+            coord.Move(target, distance, Shape.Ellipsoid);
+            
+            //New Coordinate - N 24º 56' 21.526" E 25º 4' 23.944"
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.TryParse(System.String,CoordinateSharp.Coordinate@)">
+            <summary>
+            Attempts to parse a string into a Coordinate.
+            </summary>
+            <param name="value">Coordinate string</param>
+            <param name="coordinate">Coordinate</param>
+            <returns>boolean</returns>
+            <example>
+            The following example parses a decimal degree formatted geodetic coordinate string.
+            <code>
+            Coordinate c;
+            if(Coordinate.TryParse("N 32.891º W 64.872º", out c))
+            {
+                Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.TryParse(System.String,System.DateTime,CoordinateSharp.Coordinate@)">
+            <summary>
+            Attempts to parse a string into a Coordinate with specified DateTime
+            </summary>
+            <param name="value">Coordinate string</param>
+            <param name="geoDate">GeoDate</param>
+            <param name="coordinate">Coordinate</param>
+            <returns>boolean</returns>
+            <example>
+            The following example parses a decimal degree formatted geodetic coordinate string, with a provided GeoDate. 
+            <code>
+            Coordinate c;
+            if(Coordinate.TryParse("N 32.891º W 64.872º", new DateTime(2018,7,7), out c))
+            {
+                Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.TryParse(System.String,CoordinateSharp.CartesianType,CoordinateSharp.Coordinate@)">
+            <summary>
+            Attempts to parse a string into a Coordinate.
+            </summary>
+            <param name="value">Coordinate string</param>
+            <param name="coordinate">Coordinate</param>
+            <param name="cartesianType">Cartesian Type</param>
+            <returns>boolean</returns>
+            <example>
+            The following example parses an ECEF formatted coordinate string. 
+            Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type.
+            <code>
+            Coordinate c;
+            if(Coordinate.TryParse("5242.097 km, 2444.43 km, 2679.074 km", CartesianType.Cartesian, out c))
+            {
+                Console.WriteLine(c); //N 24º 59' 59.987" E 25º 0' 0.001"
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.TryParse(System.String,System.DateTime,CoordinateSharp.CartesianType,CoordinateSharp.Coordinate@)">
+            <summary>
+            Attempts to parse a string into a Coordinate with specified DateTime
+            </summary>
+            <param name="value">Coordinate string</param>
+            <param name="geoDate">GeoDate</param>
+            <param name="coordinate">Coordinate</param>
+            <param name="cartesianType">Cartesian Type</param>
+            <returns>boolean</returns>
+            <example>
+            The following example parses an ECEF formatted coordinate string, with an included GeoDate. 
+            Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type.
+            <code>
+            Coordinate c;
+            if(Coordinate.TryParse("5242.097 km, 2444.43 km, 2679.074 km", new DateTime(2018,7,7), CartesianType.ECEF, out c))
+            {
+                Console.WriteLine(c); //N 24º 59' 59.987" E 25º 0' 0.001"
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.TryParse(System.String,CoordinateSharp.EagerLoad,CoordinateSharp.Coordinate@)">
+            <summary>
+            Attempts to parse a string into a Coordinate.
+            </summary>
+            <param name="value">Coordinate string</param>
+            <param name="eagerLoad">Eager loading options</param>
+            <param name="coordinate">Coordinate</param>
+            <returns>boolean</returns>
+            <example>
+            The following example parses a decimal degree formatted geodetic coordinate string.
+            Eager loading is turned off for improved efficiency.
+            <code>
+            Coordinate c;
+            EagerLoad el = new EagerLoad(false);
+            if(Coordinate.TryParse("N 32.891º W 64.872º", el, out c))
+            {
+                Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.TryParse(System.String,System.DateTime,CoordinateSharp.EagerLoad,CoordinateSharp.Coordinate@)">
+            <summary>
+            Attempts to parse a string into a Coordinate with specified DateTime
+            </summary>
+            <param name="value">Coordinate string</param>
+            <param name="geoDate">GeoDate</param>
+            <param name="eagerLoad">Eager loading options</param>
+            <param name="coordinate">Coordinate</param>
+            <returns>boolean</returns>
+            <example>
+            The following example parses a decimal degree formatted geodetic coordinate string, with a provided GeoDate. 
+            Eager loading is set to load celestial calculations only.
+            <code>
+            Coordinate c;
+            EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+            if(Coordinate.TryParse("N 32.891º W 64.872º", new DateTime(2018,7,7), el, out c))
+            {
+                Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.TryParse(System.String,CoordinateSharp.CartesianType,CoordinateSharp.EagerLoad,CoordinateSharp.Coordinate@)">
+            <summary>
+            Attempts to parse a string into a Coordinate.
+            </summary>
+            <param name="value">Coordinate string</param>    
+            <param name="cartesianType">Cartesian Type</param>
+            <param name="eagerLoad">Eager loading options</param>
+            <param name="coordinate">Coordinate</param>
+            <returns>boolean</returns>
+            <example>
+            The following example parses an ECEF formatted coordinate string. 
+            Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type.
+            Eager loading options have been specified for efficiency.
+            <code>
+            Coordinate c;
+            EagerLoad el = new EagerLoad(EagerLoadType.Cartesian);
+            if(Coordinate.TryParse("5242.097 km, 2444.43 km, 2679.074 km", CartesianType.Cartesian, el, out c))
+            {
+                Console.WriteLine(c); //N 24º 59' 59.987" E 25º 0' 0.001"
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.TryParse(System.String,System.DateTime,CoordinateSharp.CartesianType,CoordinateSharp.EagerLoad,CoordinateSharp.Coordinate@)">
+            <summary>
+            Attempts to parse a string into a Coordinate with specified DateTime
+            </summary>
+            <param name="value">Coordinate string</param>
+            <param name="geoDate">GeoDate</param>
+            <param name="cartesianType">Cartesian Type</param>
+            <param name="eagerLoad">Eager loading options</param>
+            <param name="coordinate">Coordinate</param>
+            <returns>boolean</returns>
+            <example>
+            The following example parses an ECEF formatted coordinate string, with an included GeoDate. 
+            Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type.
+            Eager loading options have been specified for efficiency.
+            <code>
+            Coordinate c;
+            EagerLoad el = new EagerLoad(EagerLoadType.Cartesian);
+            if(Coordinate.TryParse("5242.097 km, 2444.43 km, 2679.074 km", new DateTime(2018,7,7), CartesianType.ECEF, el, out c))
+            {
+                Console.WriteLine(c); //N 24º 59' 59.987" E 25º 0' 0.001"
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.Lock_UTM_MGRS_Zone(System.Int32)">
+            <summary>
+            Locks converted UTM and MGRS longitudinal grid zones to the specified zone number. This will allow over-projection and allow users to remain in a single desired zone.
+            This should be used with caution as precision loss will occur. 
+            </summary>
+            <example>
+            The following example locks a Coordinate that would normal project into grid zone 31, into grid zone 30 for over-projection.
+            <code> 
+            Coordinate coord = new Coordinate(51.5074,1);   
+            
+            //Normal projection at this Coordinate below
+            //UTM:  31U 361203mE 5708148mN
+            //MGRS: 31U CT 61203 08148
+            
+            //Lock UTM and MGRS zones to 30 for over-projection.
+            coord.Lock_UTM_MGRS_Zone(30);
+            
+            //Over-projected coordinates
+            Console.WriteLine(coord.UTM);  //30U 777555mE 5713840mN
+            Console.WriteLine(coord.MGRS); //30U YC 77555 13840
+            </code>
+            </example>
+            <param name="zone">UTM longitudinal grid zone</param>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.Unlock_UTM_MGRS_Zone">
+            <summary>
+            Unlocks converted UTM and MRGS longitudinal grid zones from the specified zone number. 
+            This will return UTM and MGRS conversions to normal projection.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.Celestial_LocalTime(System.Double)">
+            <summary>
+            Returns a new Celestial object in local time, based on the Coordinate objects values.
+            </summary>
+            <param name="hourOffset">Offset hours</param>
+            <example>
+            In the following example we convert a UTC populated Coordinate.Celestial object and convert it to Local time.
+            <code>
+            Coordinate coord = new Coordinate(32,72, DateTime.Now);
+            //Convert to Pacific Standard Time (PST) -7 UTC and return new
+            //Celestial object that contains values in PST.
+            Celestial cel = coord.Celestial_LocalTime(-7);
+            </code>
+            </example>
+            <returns>Celestial</returns>
+        </member>
+        <member name="E:CoordinateSharp.Coordinate.PropertyChanged">
+            <summary>
+            Property changed event
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.Coordinate.NotifyPropertyChanged(System.String)">
+            <summary>
+            Notify property changed
+            </summary>
+            <param name="propName">Property Name</param>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.Latitude">
+            <summary>
+            Latitudinal Coordinate Part.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.Longitude">
+            <summary>
+            Longitudinal Coordinate Part.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.GeoDate">
+            <summary>
+            Date at coordinate used to calculate celestial information.
+            </summary>
+            <remarks>
+            Assumes all times are in UTC, regardless of DateTimeKind value.
+            </remarks>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.Offset">
+            <summary>
+            GeoDate UTC Offset. This must be set if working / eager loading in local time.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.UTM">
+            <summary>
+            Universal Transverse Mercator values.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.MGRS">
+            <summary>
+            Military Grid Reference System (NATO UTM) values.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.Cartesian">
+            <summary>
+            Cartesian (based on spherical earth).
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.ECEF">
+            <summary>
+            Earth Centered Earth Fixed Coordinate. 
+            Uses Ellipsoidal height with no geoid model included.
+            <remarks>
+            GeoHeight at 0 = Mean Sea Level based on the provided Datum.
+            </remarks>
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.CelestialInfo">
+            <summary>
+            Celestial information based on the objects location and geographic UTC date.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.FormatOptions">
+            <summary>
+            Coordinate string formatting options.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.EagerLoadSettings">
+            <summary>
+            Eagerloading settings.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Coordinate.Parse_Format">
+            <summary>
+            Used to determine what format the coordinate was parsed from.
+            Will equal "None" if Coordinate was not initialized via a TryParse() method.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.CoordinatePart">
+            <summary>
+            Observable class for handling geodetic (latitudinal and longitudinal) coordinate parts.
+            </summary>
+            <remarks>
+            Values can be passed to Coordinate object Latitude and Longitude properties.
+            </remarks>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.#ctor(CoordinateSharp.CoordinateType)">
+            <summary>
+            Creates a default CoordinatePart.
+            </summary>
+            <param name="cType">Coordinate part type</param>
+            <remarks>
+            Defaults coordinate part value to 0 degrees.
+            </remarks>
+            <example>
+            The following example creates a default latitudinal coordinate part and assigns it to a Coordinate object
+            <code>
+            Coordinate c = new Coordinate();
+            CoordinatePart cp = new CoordinatePart(CoordinateType.Lat);
+            c.Latitude = cp;
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.#ctor(System.Double,CoordinateSharp.CoordinateType)">
+            <summary>
+            Creates a populated CoordinatePart from a signed degree value.
+            </summary>
+            <param name="value">Coordinate part signed value</param>
+            <param name="cType">Coordinate part type</param>       
+            <example>
+            The following example creates a populated latitudinal coordinate part from a signed value and assigns it to a Coordinate object.
+            <code>
+            //Create a new default coordinate
+            Coordinate c = new Coordinate();
+            
+            //Create a coordinate part using a the signed latitude 25.6°.
+            CoordinatePart cp = new CoordinatePart(25.6, CoordinateType.Lat);
+            
+            //Assign the latitudinal value to the coordinate.
+            c.Latitude = cp;
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.#ctor(System.Int32,System.Int32,System.Double,CoordinateSharp.CoordinatesPosition)">
+            <summary>
+            Creates a populated CoordinatePart from a Degrees Minutes Seconds value.
+            </summary>
+            <param name="deg">Degrees</param>
+            <param name="min">Minutes</param>
+            <param name="sec">Seconds</param>
+            <param name="pos">Coordinate part position</param>
+            <example>
+            The following example creates a populated latitudinal coordinate part from Degrees Minutes Seconds values and assigns it to a Coordinate object.
+            <code>
+            //Create a new default coordinate
+            Coordinate c = new Coordinate();
+            
+            //Create a coordinate part using the Degrees Minutes Seconds latitude N25 36 24.657°.
+            CoordinatePart cp = new CoordinatePart(25, 36, 24.657, CoordinatesPosition.N);
+            
+            //Assign the latitudinal value to the coordinate.
+            c.Latitude = cp;
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.#ctor(System.Int32,System.Double,CoordinateSharp.CoordinatesPosition)">
+            <summary>
+            Creates a populated CoordinatePart from a Degrees Minutes Seconds part.
+            </summary>
+            <param name="deg">Degrees</param>
+            <param name="minSec">Decimal Minutes</param> 
+            <param name="pos">Coordinate part position</param>
+            <example>
+            The following example creates a populated latitudinal coordinate part from Decimal Degree Minute values and assigns it to a Coordinate object.
+            <code>
+            //Create a new default coordinate
+            Coordinate c = new Coordinate();
+            
+            //Create a coordinate part using the Decimal Degree latitude N25 36.24854°.
+            CoordinatePart cp = new CoordinatePart(25, 36.24854, CoordinatesPosition.N);
+            
+            //Assign the latitudinal value to the coordinate.
+            c.Latitude = cp;
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.ToDouble">
+            <summary>
+            Signed degrees coordinate part.
+            </summary>
+            <returns>double</returns>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.ToString">
+            <summary>
+            Formatted coordinate part string.
+            </summary>
+            <returns>string</returns>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.ToString(CoordinateSharp.CoordinateFormatOptions)">
+            <summary>
+            Formatted coordinate part string.
+            </summary>
+            <param name="options">CoordinateFormatOptions</param>
+            <returns>string</returns>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.FormatString(CoordinateSharp.CoordinateFormatOptions)">
+            <summary>
+            String format settings.
+            </summary>
+            <param name="options">CoordinateFormatOptions</param>
+            <returns>Formatted coordinate part string</returns>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.ToRadians">
+            <summary>
+            Returns Coordinate part in radians.
+            </summary>
+            <example>
+            The following example demonstrates how to get the radian values of the geodetic coordinate parts.
+            <code>
+            //Create a new coordinate at N25, E45
+            Coordinate c = new Coordinate(25,45);
+            
+            //Get the radian values of each part
+            Console.WriteLine(c.Latitude.ToRadians()); //0.436332312998582
+            Console.WriteLine(c.Longitude.ToRadians()); //0.785398163397448
+            </code>
+            </example>
+            <returns>double</returns>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.TryParse(System.String,CoordinateSharp.CoordinatePart@)">
+            <summary>
+            Attempts to parse a string into a CoordinatePart.
+            </summary>
+            <param name="value">CoordinatePart string</param>
+            <param name="coordinatePart">CoordinatePart object to populate</param>
+            <returns>boolean</returns>
+            <example>
+            The following example demonstrates how to parse a latitude from a string.
+            <code>
+            CoordinatePart cp;
+            if(CoordinatePart.TryParse("N 32.891º", out cp))
+            {
+                Console.WriteLine(cp); //N 32º 53' 28.212"
+            }
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.TryParse(System.String,CoordinateSharp.CoordinateType,CoordinateSharp.CoordinatePart@)">
+            <summary>
+            Attempts to parse a string into a CoordinatePart. 
+            </summary>
+            <param name="value">CoordinatePart string</param>
+            <param name="cType">CoordinateType</param>
+            <param name="coordinatePart">CoordinatePart object to populate</param>
+            <returns>boolean</returns>
+            <example>
+            The following example demonstrates how to parse a latitude from a string.
+            <code>
+            CoordinatePart cp;
+            if(CoordinatePart.TryParse("-32.891º", CoordinateType.Long, out cp))
+            {
+                Console.WriteLine(cp); //W 32º 53' 27.6"
+            }
+            </code>
+            </example>
+        </member>
+        <member name="E:CoordinateSharp.CoordinatePart.PropertyChanged">
+            <summary>
+            Property changed event
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.NotifyProperties(CoordinateSharp.CoordinatePart.PropertyTypes)">
+            <summary>
+            Notifies the correct properties and parent properties.
+            </summary>
+            <param name="props">Property Type</param>
+        </member>
+        <member name="M:CoordinateSharp.CoordinatePart.NotifyPropertyChanged(System.String)">
+            <summary>
+            Notify property changes
+            </summary>        
+            <param name="propName">Property name</param>
+        </member>
+        <member name="P:CoordinateSharp.CoordinatePart.Parent">
+            <summary>
+            CoordinatePart's parent Coordinate object.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinatePart.DecimalDegree">
+            <summary>
+            Decimal Degree format coordinate.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinatePart.DecimalMinute">
+            <summary>
+            Decimal formatted minute.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinatePart.Degrees">
+            <summary>
+            Coordinate part degrees.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinatePart.Minutes">
+            <summary>
+            Coordinate part minutes.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinatePart.Seconds">
+            <summary>
+            Coordinate part seconds.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinatePart.Display">
+            <summary>
+            Formatted coordinate part string.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.CoordinatePart.Position">
+            <summary>
+            Coordinate part position.
+            </summary>
+            <remarks>
+            Used to determine what hemisphere the coordinate part lies in.
+            </remarks>
+        </member>
+        <member name="T:CoordinateSharp.CoordinatePart.PropertyTypes">
+            <summary>
+            Used for notify the correct properties.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.CoordinatePart.ToStringType">
+            <summary>
+            Used to determine the set coordinate part string format.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.Distance_Assistant.Direct_Ell(System.Double,System.Double,System.Double,System.Double,System.Double[])">
+            <summary>
+            Returns new geodetic coordinate in radians
+            </summary>
+            <param name="glat1">Latitude in Radians</param>
+            <param name="glon1">Longitude in Radians</param>
+            <param name="faz">Bearing</param>
+            <param name="s">Distance</param>
+            <param name="ellipse">Earth Ellipse Values</param>
+            <returns>double[]</returns>
+        </member>
+        <member name="M:CoordinateSharp.Distance_Assistant.Direct(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Returns new geodetic coordinate in radians
+            </summary>
+            <param name="lat1">Latitude in radians</param>
+            <param name="lon1">Longitude in radians</param>
+            <param name="crs12">Bearing</param>
+            <param name="d12">Distance</param>
+            <returns>double[]</returns>
+        </member>
+        <member name="T:CoordinateSharp.ModM">
+            <summary>
+            Used for easy read math functions
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.Distance">
+            <summary>
+            Class for handling distance conversions and distance/bearing values between two coordinates.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.Distance.#ctor(CoordinateSharp.Coordinate,CoordinateSharp.Coordinate)">
+            <summary>
+            Initializes a Distance object based on the distance between 2 coordinates using the default distance formula.
+            </summary>
+            <remarks>
+            Default distance formula uses Haversine (Spherical Earth) calculations.
+            </remarks>
+            <param name="coord1">Coordinate 1</param>
+            <param name="coord2">Coordinate 2</param>
+            <example>
+            The following example grabs the distance in KM and bearing between 2 coordinates
+            using the default Haversine calculations.
+            <code>
+            Coordinate coordinate1 = new Coordinate(25, 65);
+            Coordinate coordinate2 = new Coordinate(27.6, 63);
+            
+            Distance distance = new Distance(coordinate1, coordinate2);
+            
+            Console.WriteLine(distance.Kilometers); //351.167091506772
+            Console.WriteLine(distance.Bearing); //214.152133893015
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Distance.#ctor(CoordinateSharp.Coordinate,CoordinateSharp.Coordinate,CoordinateSharp.Shape)">
+            <summary>
+            Initializes a Distance object based on the distance between 2 coordinates.
+            </summary>
+            <remarks>
+            Distance formula may either be Haversine (Spherical Earth) or Vincenty (Ellipsoidal Earth) calculations.
+            </remarks>
+            <param name="coord1">Coordinate 1</param>
+            <param name="coord2">Coordinate 2</param>
+            <param name="shape">Shape of earth</param>
+            /// <example>
+            The following example grabs the distance in KM and bearing between 2 coordinates
+            using Vincenty (ellipsoidal earth) calculations.
+            <code>
+            Coordinate coordinate1 = new Coordinate(25, 65);
+            Coordinate coordinate2 = new Coordinate(27.6, 63);
+            
+            Distance distance = new Distance(coordinate1, coordinate2, Shape.Ellipsoid);
+            
+            Console.WriteLine(distance.Kilometers); //350.50857212259
+            Console.WriteLine(distance.Bearing); //215.183316089463
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Distance.#ctor(System.Double)">
+            <summary>
+            Initializes Distance object based on distance in KM
+            </summary>
+            <param name="km">Kilometers</param>
+            <example>
+            The following example converts kilometers into miles.
+            <code>
+            Distance distance = new Distance(10.36);
+            Console.WriteLine(distance.Miles); //6.43740356
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.Distance.#ctor(System.Double,CoordinateSharp.DistanceType)">
+            <summary>
+            Initializes a Distance object based on a specified distance and measurement type.
+            </summary>
+            <param name="distance">Distance</param>
+            <param name="type">Measurement type</param>
+            <example>
+            The following example converts meters into miles.
+            <code>
+            Distance distance = new Distance(1000.36, DistanceType.Meters);
+            Console.WriteLine(distance.Miles); //0.62159469356
+            </code>
+            </example>
+        </member>
+        <member name="P:CoordinateSharp.Distance.Kilometers">
+            <summary>
+            Distance in Kilometers
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Distance.Miles">
+            <summary>
+            Distance in Statute Miles
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Distance.NauticalMiles">
+            <summary>
+            Distance in Nautical Miles
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Distance.Meters">
+            <summary>
+            Distance in Meters
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Distance.Feet">
+            <summary>
+            Distance in Feet
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.Distance.Bearing">
+            <summary>
+            Initial Bearing from Coordinate 1 to Coordinate 2
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.EagerLoad">
+            <summary>
+            Class used to handle a Coordinate object's eager loading settings for geographic conversions and celestial calculation properties.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.EagerLoad.#ctor">
+             <summary>
+             Creates a default EagerLoad object.
+             </summary>
+             <remarks>
+             All properties are set with eager loading turned on.
+             </remarks>
+             <example>
+             The following example turns off eager loading for a Coordinate objects CelestialInfo property.
+             <code>
+             //Create a default EagerLoading object.
+             EagerLoad el = new EagerLoad();
+            
+             //Turn of eagerloading of celestial information.
+             el.Celestial = false;
+             
+             //Create coordinate with defined eager loading settings.
+             Coordinate coord = new Coordinate(25, 25, new DateTime(2018, 3, 2), el);
+             
+             //Load celestial information when ready.
+             //Failure to do this will cause NullReference Exceptions in the Coordinate objects CelestialInfo Property.
+             coord.LoadCelestialInfo();
+             
+             //Display UTC sunset time at the location.
+             Console.WriteLine(coord.CelestialInfo.SunSet); //3/2/2018 4:23:46 PM
+             </code>
+             </example>
+        </member>
+        <member name="M:CoordinateSharp.EagerLoad.#ctor(System.Boolean)">
+            <summary>
+            Create an EagerLoad object with all options on or off
+            </summary>
+            <param name="isOn">Turns EagerLoad on or off</param>
+            <example>
+            The following example turns off eagerloading for a Coordinate objects UTM/MGRS, Cartesian/ECEF and CelestialInfo properties.
+            <code>
+            //Create an EagerLoading object with all properties turned off.
+            //(All properties will now be set to lazy load).
+            EagerLoad el = new EagerLoad(false);
+            
+            //Create coordinate with defined eager loading settings.
+            Coordinate coord = new Coordinate(25, 25, new DateTime(2018, 3, 2), el);
+            
+            //Load celestial information when ready.
+            //Failure to do this will cause NullReference Exceptions in the Coordinate objects CelestialInfo Property.
+            coord.LoadCelestialInfo();
+            
+            //Display UTC sunset time at the location.
+            Console.WriteLine(coord.CelestialInfo.SunSet); //3/2/2018 4:23:46 PM
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.EagerLoad.#ctor(CoordinateSharp.EagerLoadType)">
+            <summary>
+            Creates an EagerLoad object. Only the specified flags will be set to eager load.
+            </summary>
+            <param name="et">EagerLoadType</param>
+            <example>
+            The following example sets CelestialInfo and Cartesian properties to eager load. Other conversions will be lazy loaded.
+            <code>
+            //Create an EagerLoading object with only CelestialInfo and Cartesian properties set to eager load.
+            EagerLoad el = new EagerLoad(EagerLoadType.Celestial | EagerLoadType.Cartesian);
+            
+            //Create coordinate with defined eagerloading settings.
+            Coordinate coord = new Coordinate(25, 25, new DateTime(2018, 3, 2), el);
+            
+            //Display UTC sunset time at the location.
+            Console.WriteLine(coord.CelestialInfo.SunSet); //3/2/2018 4:23:46 PM
+            Console.WriteLine(coord.Cartesian); //0.8213938 0.38302222 0.42261826
+            
+            //Load UTM_MGRS when ready.
+            coord.LoadUTM_MGRS_Info();
+            Console.WriteLine(coord.UTM); //35R 298154mE 2766437mN
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.EagerLoad.Create(CoordinateSharp.EagerLoadType)">
+            <summary>
+            Creates an EagerLoad object. Only the specified flags will be set to eager load.
+            </summary>
+            <param name="et">EagerLoadType</param>
+            <returns>EagerLoad</returns>
+            <example>
+            The following example sets CelestialInfo and Cartesian properties to eager load using a static method. Other conversions will be lazy loaded.
+            <code>
+            //Create coordinate with defined eagerloading settings.
+            Coordinate coord = new Coordinate(25, 25, new DateTime(2018, 3, 2), EagerLoad.Create(EagerLoadType.Celestial | EagerLoadType.Cartesian));
+            
+            //Display UTC sunset time at the location.
+            Console.WriteLine(coord.CelestialInfo.SunSet); //3/2/2018 4:23:46 PM
+            Console.WriteLine(coord.Cartesian); //0.8213938 0.38302222 0.42261826
+            
+            //Load UTM_MGRS when ready.
+            coord.LoadUTM_MGRS_Info();
+            Console.WriteLine(coord.UTM); //35R 298154mE 2766437mN
+            </code>
+            </example>
+        </member>
+        <member name="P:CoordinateSharp.EagerLoad.Celestial">
+            <summary>
+            Eager load all celestial information. 
+            Setting this will also set all Celestial related extensions.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.EagerLoad.UTM_MGRS">
+            <summary>
+            Eager load UTM and MGRS information.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.EagerLoad.Cartesian">
+            <summary>
+            Eager load Cartesian information.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.EagerLoad.ECEF">
+            <summary>
+            Eager load ECEF information.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.EagerLoad.Extensions">
+            <summary>
+            Extensions that allow for more specific EagerLoading specifications.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.EagerLoad_Extensions">
+            <summary>
+            Extensions to the EagerLoading class which allow for more specific EagerLoading specifications.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.EagerLoad_Extensions.#ctor">
+            <summary>
+            Create a new EagerLoad_Extensions object. 
+            All values will be set to true.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.EagerLoad_Extensions.#ctor(System.Boolean)">
+            <summary>
+            Create a new EagerLoad_Extensions object. 
+            All values will be set to the pass parameter.
+            </summary>
+            <param name="eagerLoad">bool</param>
+        </member>
+        <member name="M:CoordinateSharp.EagerLoad_Extensions.#ctor(CoordinateSharp.EagerLoad_ExtensionsType)">
+            <summary>
+            Create a new EagerLoad_Extensions object.
+            Extension values can be specified with enum flags.
+            </summary>
+            <param name="et">EagerLoad_ExtensionsType flag</param>
+        </member>
+        <member name="M:CoordinateSharp.EagerLoad_Extensions.Set_Celestial_Items(System.Boolean)">
+            <summary>
+            Sets all celestial related extensions 
+            </summary>
+            <param name="option">bool</param>
+        </member>
+        <member name="P:CoordinateSharp.EagerLoad_Extensions.Solar_Cycle">
+            <summary>
+            Eager load solar cycle information.
+            Includes rises, sets, dusks, dawns and azimuth / altitude data.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.EagerLoad_Extensions.Lunar_Cycle">
+            <summary>
+            Eager load lunar information.
+            Includes rises, sets, phase, distance and azimuth / altitude data.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.EagerLoad_Extensions.Solar_Eclipse">
+            <summary>
+            Eager load solar eclipse data.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.EagerLoad_Extensions.Lunar_Eclipse">
+            <summary>
+            Eager load lunar eclipse data.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.EagerLoad_Extensions.Zodiac">
+            <summary>
+            Eager load zodiac data.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.EagerLoad_Extensions.MGRS">
+            <summary>
+            Eager load MGRS data.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.CoordinateType">
+            <summary>
+            Used to specify whether a CoordinatePart object is latitudinal or longitudinal.
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CoordinateType.Lat">
+            <summary>
+            Latitude
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CoordinateType.Long">
+            <summary>
+            Longitude
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.CoordinatesPosition">
+            <summary>
+            Used to set a CoordinatePart object's position.
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CoordinatesPosition.N">
+            <summary>
+            North
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CoordinatesPosition.E">
+            <summary>
+            East
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CoordinatesPosition.S">
+            <summary>
+            South
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CoordinatesPosition.W">
+            <summary>
+            West
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.Coordinate_Datum">
+            <summary>
+            Coordinate type datum specification
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Coordinate_Datum.LAT_LONG">
+            <summary>
+            Lat Long GeoDetic
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Coordinate_Datum.UTM_MGRS">
+            <summary>
+            UTM and MGRS
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Coordinate_Datum.ECEF">
+            <summary>
+            ECEF
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.CartesianType">
+            <summary>
+            Cartesian Coordinate Type
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CartesianType.Cartesian">
+            <summary>
+            Spherical Cartesian
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CartesianType.ECEF">
+            <summary>
+            Earth Centered Earth Fixed
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.UTM_Type">
+            <summary>
+            UTM Coordinate Type
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.UTM_Type.UTM">
+            <summary>
+            Universal Transverse Mercator
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.UTM_Type.UPS">
+            <summary>
+            Universal Polar Stereographic
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.MGRS_Type">
+            <summary>
+            MGRS Coordinate Type
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.MGRS_Type.MGRS">
+            <summary>
+            Military Grid Reference System
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.MGRS_Type.MGRS_Polar">
+            <summary>
+            Military Grid Reference System Polar Region
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.Shape">
+            <summary>
+            Earth Shape for Calculations.
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Shape.Sphere">
+            <summary>
+            Calculate as sphere (less accurate, more efficient).
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Shape.Ellipsoid">
+            <summary>
+            Calculate as ellipsoid (more accurate, less efficient).
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.DistanceType">
+            <summary>
+            Distance measurement type
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.DistanceType.Meters">
+            <summary>
+            Distance in Meters
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.DistanceType.Kilometers">
+            <summary>
+            Distance in Kilometers
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.DistanceType.Feet">
+            <summary>
+            Distance in Feet
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.DistanceType.Miles">
+            <summary>
+            Distance in Statute Miles
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.DistanceType.NauticalMiles">
+            <summary>
+            Distance in Nautical Miles
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.EagerLoadType">
+            <summary>
+            EagerLoad property type enumerator
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.EagerLoadType.UTM_MGRS">
+            <summary>
+            UTM and MGRS
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.EagerLoadType.Celestial">
+            <summary>
+            Celestial
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.EagerLoadType.Cartesian">
+            <summary>
+            Cartesian
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.EagerLoadType.ECEF">
+            <summary>
+            ECEF
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.EagerLoad_ExtensionsType">
+            <summary>
+            EagerLoad extensions property type enumerator
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.EagerLoad_ExtensionsType.Solar_Cycle">
+            <summary>
+            Eager load solar cycle information.
+            Includes rises, sets, dusks, dawns and azimuth / altitude data.
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.EagerLoad_ExtensionsType.Lunar_Cycle">
+            <summary>
+            Eager load lunar information.
+            Includes rises, sets, phase, distance and azimuth / altitude data.
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.EagerLoad_ExtensionsType.Solar_Eclipse">
+            <summary>
+            Eager load solar eclipse data.
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.EagerLoad_ExtensionsType.Lunar_Eclipse">
+            <summary>
+            Eager load lunar eclipse data.
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.EagerLoad_ExtensionsType.Zodiac">
+            <summary>
+            Eager load zodiac data.
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.EagerLoad_ExtensionsType.MGRS">
+            <summary>
+            Eager load MGRS data.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.CoordinateFormatType">
+            <summary>
+            Coordinate format types.
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CoordinateFormatType.Decimal_Degree">
+            <summary>
+            Decimal Degree Format
+            </summary>
+            <remarks>
+            Example: N 40.456 W 75.456
+            </remarks>
+        </member>
+        <member name="F:CoordinateSharp.CoordinateFormatType.Degree_Decimal_Minutes">
+            <summary>
+            Decimal Degree Minutes Format
+            </summary>
+            <remarks>
+            Example: N 40º 34.552' W 70º 45.408'
+            </remarks>
+        </member>
+        <member name="F:CoordinateSharp.CoordinateFormatType.Degree_Minutes_Seconds">
+            <summary>
+            Decimal Degree Minutes Format
+            </summary>
+            <remarks>
+            Example: N 40º 34" 36.552' W 70º 45" 24.408'
+            </remarks>
+        </member>
+        <member name="F:CoordinateSharp.CoordinateFormatType.Decimal">
+            <summary>
+            Decimal Format
+            </summary>
+            <remarks>
+            Example: 40.57674 -70.46574
+            </remarks>
+        </member>
+        <member name="T:CoordinateSharp.Parse_Format_Type">
+            <summary>
+            Type of format a Coordinate is parsed from. 
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Parse_Format_Type.None">
+            <summary>
+            Coordinate was not initialized from a parser method.
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Parse_Format_Type.Signed_Degree">
+            <summary>
+            Signed Degree
+            DD.dddd
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Parse_Format_Type.Decimal_Degree">
+            <summary>
+            Decimal Degree
+            P DD.dddd
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Parse_Format_Type.Degree_Decimal_Minute">
+            <summary>
+            Degree Decimal Minute
+            P DD MM.sss
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Parse_Format_Type.Degree_Minute_Second">
+            <summary>
+            Degree Minute Second
+            P DD MM SS.sss
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Parse_Format_Type.UTM">
+            <summary>
+            Universal Transverse Mercator
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Parse_Format_Type.MGRS">
+            <summary>
+            Military Grid Reference System
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Parse_Format_Type.Cartesian_Spherical">
+            <summary>
+            Spherical Cartesian
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.Parse_Format_Type.Cartesian_ECEF">
+            <summary>
+            Earth Centered Earth Fixed
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.CelestialStatus">
+            <summary>
+            Used to display a celestial condition for a specified date.
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CelestialStatus.RiseAndSet">
+            <summary>
+            Celestial body rises and sets on the set day.
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CelestialStatus.DownAllDay">
+            <summary>
+            Celestial body is down all day
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CelestialStatus.UpAllDay">
+            <summary>
+            Celestial body is up all day
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CelestialStatus.NoRise">
+            <summary>
+            Celestial body rises, but does not set on the set day
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.CelestialStatus.NoSet">
+            <summary>
+            Celestial body sets, but does not rise on the set day
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.MoonDistanceType">
+            <summary>
+            Moon perigee or apogee indicator
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.MoonDistanceType.Perigee">
+            <summary>
+            Moon's perigee
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.MoonDistanceType.Apogee">
+            <summary>
+            Moon's apogee
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.SolarEclipseType">
+            <summary>
+            Solar eclipse type
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.SolarEclipseType.Partial">
+            <summary>
+            Partial Eclipse
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.SolarEclipseType.Annular">
+            <summary>
+            Annular Eclipse
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.SolarEclipseType.Total">
+            <summary>
+            Total Eclipse...of the heart...
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.LunarEclipseType">
+            <summary>
+            Lunar eclipse type
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.LunarEclipseType.Penumbral">
+            <summary>
+            Penumbral Eclipse
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.LunarEclipseType.Partial">
+            <summary>
+            Partial Eclipse
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.LunarEclipseType.Total">
+            <summary>
+            Total Eclipse...of the heart...
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.Celestial_EagerLoad">
+            <summary>
+            For static local time conversions.
+            Used internally during local time calls.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.GeoFence">
+            <summary>
+            The GeoFence class is used to help check if points/coordinates are inside or near a specified polygon/polyline, 
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.GeoFence.#ctor(System.Collections.Generic.List{CoordinateSharp.GeoFence.Point})">
+            <summary>
+            Create a GeoFence using a list of points. 
+            A GeoFence can be either a series of lines or polygons.
+            </summary>
+            <param name="points">List of points</param>
+            <example>
+            The following example creates a square in the USA using lat/long points.
+            <code>
+            List&lt;GeoFence.Point&gt; points = new List&lt;GeoFence.Point&gt;();
+            
+            //Points specified manually to create a square in the USA.
+            //First and last points should be identical if creating a polygon boundary.
+            points.Add(new GeoFence.Point(31.65, -106.52));
+            points.Add(new GeoFence.Point(31.65, -84.02));
+            points.Add(new GeoFence.Point(42.03, -84.02));
+            points.Add(new GeoFence.Point(42.03, -106.52));
+            points.Add(new GeoFence.Point(31.65, -106.52));
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.GeoFence.#ctor(System.Collections.Generic.List{CoordinateSharp.Coordinate})">
+            <summary>
+            Create a GeoFence using a list of coordinates
+            A GeoFence can be either a series of lines or polygons.
+            </summary>
+            <param name="coordinates">List of coordinates</param>
+            <example>
+            The following example creates a polyline base on coordinates.
+            <code>
+            List&lt;Coordinate&gt; coords = new List&lt;Coordinate&gt;();
+             
+            coords.Add(new Coordinate(25,63));
+            coords.Add(new Coordinate(26,63));
+            coords.Add(new Coordinate(27,63));
+             
+            GeoFence gf = new GeoFence(coords); 
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.GeoFence.IsPointInPolygon(CoordinateSharp.Coordinate)">
+            <summary>
+            Determine if the coordinate is inside the polygon.     
+            </summary>
+            <param name="point">Point to test</param>
+            <remarks>
+            Points sitting on the edge of a polygon may return true or false.
+            </remarks>
+            <returns>bool</returns>
+            <example>
+            The following example shows how to determine if a coordinate is inside of a specified polygon.
+            <code>
+            List&lt;GeoFence.Point&gt; points = new List&lt;GeoFence.Point&gt;();
+            
+            //Points specified manually to create a square in the USA.
+            //First and last points should be identical if creating a polygon boundary.
+            points.Add(new GeoFence.Point(31.65, -106.52));
+            points.Add(new GeoFence.Point(31.65, -84.02));
+            points.Add(new GeoFence.Point(42.03, -84.02));
+            points.Add(new GeoFence.Point(42.03, -106.52));
+            points.Add(new GeoFence.Point(31.65, -106.52));
+            
+            GeoFence gf = new GeoFence(points);
+            
+            Coordinate c = new Coordinate(36.67, -101.51);
+            
+            //Determine if Coordinate is within polygon
+            Console.WriteLine(gf.IsPointInPolygon(c)); //True (coordinate is within the polygon)
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.GeoFence.IsPointInRangeOfLine(CoordinateSharp.Coordinate,System.Double)">
+            <summary>
+            Determine if a coordinate is next to the given range (in meters) of the polyline.
+            </summary>
+            <param name="point">Point to test</param>
+            <param name="range">Range in meters</param>
+            <returns>bool</returns>
+            <example>
+            The following example shows how to determine if a coordinate is within 1000 meters of
+            the edge of the specified polygon.
+            <code>
+            List&lt;GeoFence.Point&gt; points = new List&lt;GeoFence.Point&gt;();
+            
+            //Points specified manually to create a square in the USA.
+            //First and last points should be identical if creating a polygon boundary.
+            points.Add(new GeoFence.Point(31.65, -106.52));
+            points.Add(new GeoFence.Point(31.65, -84.02));
+            points.Add(new GeoFence.Point(42.03, -84.02));
+            points.Add(new GeoFence.Point(42.03, -106.52));
+            points.Add(new GeoFence.Point(31.65, -106.52));
+            
+            GeoFence gf = new GeoFence(points);
+            
+            Coordinate c = new Coordinate(36.67, -101.51);
+             
+            //Determine if Coordinate is within specific range of shapes line.
+            Console.WriteLine(gf.IsPointInRangeOfLine(c, 1000)); //False (coordinate is not within 1000 meters of the edge of the polygon)
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.GeoFence.IsPointInRangeOfLine(CoordinateSharp.Coordinate,CoordinateSharp.Distance)">
+            <summary>
+            Determine if the coordinate is next the given range of the polyline.
+            </summary>
+            <param name="point">Point to test</param>
+            <param name="range">Range is a distance object</param>
+            <returns>bool</returns>
+            <example>
+            The following example shows how to determine if a coordinate is within 1 km of
+            the edge of the specified polygon.
+            <code>
+            List&lt;GeoFence.Point&gt; points = new List&lt;GeoFence.Point&gt;();
+            
+            //Points specified manually to create a square in the USA.
+            //First and last points should be identical if creating a polygon boundary.
+            points.Add(new GeoFence.Point(31.65, -106.52));
+            points.Add(new GeoFence.Point(31.65, -84.02));
+            points.Add(new GeoFence.Point(42.03, -84.02));
+            points.Add(new GeoFence.Point(42.03, -106.52));
+            points.Add(new GeoFence.Point(31.65, -106.52));
+            
+            GeoFence gf = new GeoFence(points);
+            
+            Coordinate c = new Coordinate(36.67, -101.51);
+            
+            Distance d = new Distance(1, DistanceType.Kilometers);
+            Console.WriteLine(gf.IsPointInRangeOfLine(c, d)); //False (coordinate is not within 1 km of the edge of the polygon)
+            </code>
+            </example>
+        </member>
+        <member name="T:CoordinateSharp.GeoFence.Drawer">
+            <summary>
+            GenFence subclass used for continuous shape drawing
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.GeoFence.Drawer.#ctor(CoordinateSharp.Coordinate,CoordinateSharp.Shape,System.Double)">
+            <summary>
+            Initializes the GeoFence Drawer with an initial point a bearing/facing direction.
+            </summary>
+            <param name="coordinate">Starting Coordinate</param>
+            <param name="earthShape">Earth Shape for calculations</param>
+            <param name="initialBearing">Initial bearing or direction facing</param>
+            <example>
+            The following example creates a GeoFence Drawer.
+            <code>
+            //Create a coordinate with EagerLoading off for efficiency during drawing.
+            Coordinate c = new Coordinate(31.65, -84.02, new EagerLoad(false));
+            
+            //Create the GeoFence Drawer, specifying an ellipsoidal earth
+            //shape with a start bearing / direction faced of 0 degrees.
+            GeoFence.Drawer gd = new GeoFence.Drawer(c, Shape.Ellipsoid, 0);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.GeoFence.Drawer.Draw(CoordinateSharp.Distance,System.Double)">
+            <summary>
+            Draws line from the initial or last drawn point.
+            </summary>
+            <param name="d">Distance</param>
+            <param name="bearingChange">Bearing change in degrees</param>
+            <example>
+            The following example draws a 5 km square in the USA.
+            <code>
+            //Create a coordinate with EagerLoading off for efficiency during drawing.
+            Coordinate c = new Coordinate(31.65, -84.02, new EagerLoad(false));
+            
+            //Create the GeoFence Drawer, specifying an ellipsoidal earth
+            //shape with a start bearing / direction faced of 0 degrees.
+            GeoFence.Drawer gd = new GeoFence.Drawer(c, Shape.Ellipsoid, 0);
+            
+            //Draw the first line using the initial bearing (0 means no change in heading)
+            gd.Draw(new Distance(5), 0);
+            //Draw the next to line by changing 90 degrees at each point.
+            gd.Draw(new Distance(5), 90);
+            gd.Draw(new Distance(5), 90);
+            //Close the shape by drawing from the line end point to the initial coordinate.
+            gd.Close();
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.GeoFence.Drawer.Close">
+            <summary>
+            Draws a line to the Drawer start point (closes the shape).
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.GeoFence.Drawer.Last">
+            <summary>
+            Get's the last point's ending Coordinate.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.GeoFence.Drawer.Points">
+            <summary>
+            Gets all drawn points (the shape drawn).
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.GeoFence.Point">
+            <summary>
+            This class is a help sub class to simplify GeoFence calculus
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.GeoFence.Point.#ctor">
+            <summary>
+            Initialize empty point
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.GeoFence.Point.#ctor(System.Double,System.Double)">
+            <summary>
+            Initialize point with defined Latitude and Longitude
+            </summary>
+            <param name="lat">Latitude (signed)</param>
+            <param name="lng">Longitude (signed)</param>
+        </member>
+        <member name="F:CoordinateSharp.GeoFence.Point.Longitude">
+            <summary>
+            The longitude in degrees
+            </summary>
+        </member>
+        <member name="F:CoordinateSharp.GeoFence.Point.Latitude">
+            <summary>
+            The latitude in degrees
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.GlobalSettings">
+            <summary>
+            Application wide, global settings for CoordinateSharp. Should be used with caution and only during times where the specified
+            setting will not have varying changes throughout the application.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.GlobalSettings.Default_EagerLoad">
+            <summary>
+            Application wide, default EagerLoad settings for CoordinateSharp.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.GlobalSettings.Default_CoordinateFormatOptions">
+            <summary>
+            Application wide, default coordinate formatting output options.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.JulianConversions">
+            <summary>
+            Julian date conversions
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.JulianConversions.GetJulian(System.DateTime)">
+            <summary>
+            Returns JD.
+            Meeus Ch 7.
+            </summary>
+            <param name="d">DateTime</param>
+            <returns>Julian date</returns>
+            <example>
+            <code>
+            DateTime date = new DateTime(2019,1,1);
+            double jul = JulianConversions.GetJulian(date);
+            Console.WriteLine(jul); //2458484.5
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.JulianConversions.GetJulian_Epoch2000(System.DateTime)">
+            <summary>
+            Returns JD from epoch 2000.
+            Meeus Ch 7.
+            </summary>
+            <param name="d">DateTime</param>
+            <returns>Julian date from epoch 2000</returns>
+            <example>
+            <code>
+            DateTime date = new DateTime(2019,1,1);
+            double jul = JulianConversions.GetJulian_Epoch2000(date);
+            Console.WriteLine(jul); //6939.5
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.JulianConversions.GetJulian_Epoch1970(System.DateTime)">
+            <summary>
+            Returns JD from epoch 1970.
+            Meeus Ch 7.
+            </summary>
+            <param name="d">DateTime</param>
+            <returns>Julian date from epoch 1970</returns>
+            <example>
+            <code>
+            DateTime date = new DateTime(2019,1,1);
+            double jul = JulianConversions.GetJulian_Epoch1970(date);
+            Console.WriteLine(jul); //17896.5
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.JulianConversions.GetDate_FromJulian(System.Double)">
+            <summary>
+            Returns date from Julian
+            Meeus ch. 7
+            </summary>
+            <param name="j">Julian date</param>
+            <returns>DateTime</returns>
+            <example>
+            <code>
+            double jul = 2458484.5;
+            DateTime? date = JulianConversions.GetDate_FromJulian(jul);
+            Console.WriteLine(date); //1/1/2019 12:00:00 AM
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.JulianConversions.GetDate_FromJulian_Epoch2000(System.Double)">
+            <summary>
+            Returns date from Julian based on epoch 2000
+            Meeus ch. 7
+            </summary>
+            <param name="j">Julian date (epoch 2000)</param>
+            <returns>DateTime</returns>
+            <example>
+            <code>
+            double jul = 6939.5;
+            DateTime? date = JulianConversions.GetDate_FromJulian_Epoch2000(jul);
+            Console.WriteLine(date); //1/1/2019 12:00:00 AM
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.JulianConversions.GetDate_FromJulian_Epoch1970(System.Double)">
+            <summary>
+            Returns date from Julian based on epoch 1970
+            Meeus ch. 7
+            </summary>
+            <param name="j">Julian date (epoch 1970)</param>
+            <returns>DateTime</returns>
+            <example>
+            <code>
+            double jul = 17896.5;
+            DateTime? date = JulianConversions.GetDate_FromJulian_Epoch1970(jul);
+            Console.WriteLine(date); //1/1/2019 12:00:00 AM
+            </code>
+            </example>
+        </member>
+        <member name="T:CoordinateSharp.MilitaryGridReferenceSystem">
+            <summary>
+            Military Grid Reference System (MGRS). Uses the WGS 84 datum by default.
+            Relies upon values from the UniversalTransverseMercator class
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.MilitaryGridReferenceSystem.#ctor(System.String,System.Int32,System.String,System.Double,System.Double)">
+            <summary>
+            Creates an MilitaryGridReferenceSystem (MGRS) object with a default WGS84 datum(ellipsoid).
+            </summary>
+            <param name="latz">MGRS Latitude Band Grid Zone Designation (Letter)</param>
+            <param name="longz">MGRS Longitude Band Grid Zone Designation (Number)</param>
+            <param name="d">MGRS 100,000 Meter Square Identifier (2 Letter)</param>
+            <param name="e">Easting</param>
+            <param name="n">Northing</param>
+            <example>
+            <code>
+            MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.MilitaryGridReferenceSystem.#ctor(System.String,System.Int32,System.String,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Creates an MilitaryGridReferenceSystem (MGRS) object with a custom datum(ellipsoid).
+            </summary>
+            <param name="latz">MGRS Latitude Band Grid Zone Designation (Letter)</param>
+            <param name="longz">MGRS Longitude Band Grid Zone Designation (Number)</param>
+            <param name="d">MGRS 100,000 Meter Square Identifier (2 Letter)</param>
+            <param name="e">Easting</param>
+            <param name="n">Northing</param>
+            <param name="rad">Equatorial Radius</param>
+            <param name="flt">Inverse Flattening</param>
+            <example>
+            <code>
+            MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982, 6378160.000, 298.25);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.MilitaryGridReferenceSystem.#ctor(System.String,System.String,System.Double,System.Double)">
+            <summary>
+            Creates an MilitaryGridReferenceSystem (MGRS) object with a default WGS84 datum(ellipsoid).
+            </summary>
+            <param name="gridZone">MGRS Grid Zone Designation</param>
+            <param name="d">MGRS 100,000 Meter Square Identifier (2 Letter)</param>
+            <param name="e">Easting</param>
+            <param name="n">Northing</param>
+            <example>
+            <code>
+            MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("21N", "SA", 66037, 61982);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.MilitaryGridReferenceSystem.#ctor(System.String,System.String,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Creates an MilitaryGridReferenceSystem (MGRS) object with a default WGS84 datum(ellipsoid).
+            </summary>
+            <param name="gridZone">MGRS Grid Zone Designation</param>
+            <param name="d">MGRS 100,000 Meter Square Identifier (2 Letter)</param>
+            <param name="e">Easting</param>
+            <param name="n">Northing</param>
+            <param name="rad">Equatorial Radius</param>
+            <param name="flt">Inverse Flattening</param>
+            <example>
+            <code>
+            MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("21N", "SA", 66037, 61982);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.MilitaryGridReferenceSystem.Construct_MGRS(System.String,System.Int32,System.String,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Construct MGRS
+            </summary>       
+        </member>
+        <member name="M:CoordinateSharp.MilitaryGridReferenceSystem.MGRStoLatLong(CoordinateSharp.MilitaryGridReferenceSystem)">
+            <summary>
+            Creates a Coordinate object from an MGRS/NATO UTM Coordinate
+            </summary>
+            <param name="mgrs">MilitaryGridReferenceSystem</param>
+            <returns>Coordinate object</returns>
+            <example>
+            The following example creates (converts to) a geodetic Coordinate object based on a MGRS object.
+            <code>
+            MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
+            Coordinate c = MilitaryGridReferenceSystem.MGRStoLatLong(mgrs);
+            Console.WriteLine(c); //N 0º 33' 35.988" W 60º 0' 0.01"
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.MilitaryGridReferenceSystem.MGRStoLatLong(CoordinateSharp.MilitaryGridReferenceSystem,CoordinateSharp.EagerLoad)">
+            <summary>
+            Creates a Coordinate object from an MGRS/NATO UTM Coordinate
+            </summary>
+            <param name="mgrs">MilitaryGridReferenceSystem</param>
+            <param name="eagerLoad">EagerLoad</param>
+            <returns>Coordinate object</returns>
+            <example>
+            The following example creates (converts to) a geodetic Coordinate object based on a MGRS object.
+            <code>
+            MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
+            Coordinate c = MilitaryGridReferenceSystem.MGRStoLatLong(mgrs, new EagerLoad(false));
+            Console.WriteLine(c); //N 0º 33' 35.988" W 60º 0' 0.01"
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.MilitaryGridReferenceSystem.MGRStoSignedDegree(CoordinateSharp.MilitaryGridReferenceSystem)">
+            <summary>
+            Creates a Signed Degree double[] object from an MGRS/NATO UTM Coordinate
+            </summary>
+            <param name="mgrs">MilitaryGridReferenceSystem</param>
+            <returns>Coordinate object</returns>
+            <example>
+            The following example creates (converts to) a geodetic Coordinate object based on a MGRS object.
+            <code>
+            MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
+            double[] sd = MilitaryGridReferenceSystem.MGRStoSignedDegree(mgrs);
+            Coordinate c = new Coordinate(sd[0],sd[1], new EagerLoad(false));
+            Console.WriteLine(c); //N 0º 33' 35.988" W 60º 0' 0.01"
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.MilitaryGridReferenceSystem.ToString">
+            <summary>
+            Default formatted MGRS string
+            </summary>
+            <returns>MGRS Formatted Coordinate String</returns>
+        </member>
+        <member name="P:CoordinateSharp.MilitaryGridReferenceSystem.LatZone">
+            <summary>
+            MGRS Latitude Band Grid Zone Designation
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.MilitaryGridReferenceSystem.LongZone">
+            <summary>
+            MGRS Longitude Band Grid Zone Designation
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.MilitaryGridReferenceSystem.Easting">
+            <summary>
+            MGRS Easting
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.MilitaryGridReferenceSystem.Northing">
+            <summary>
+            MGRS Northing
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.MilitaryGridReferenceSystem.Digraph">
+            <summary>
+            MGRS 100,000 Meter Square Identifier
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.MilitaryGridReferenceSystem.WithinCoordinateSystemBounds">
+            <summary>
+            Determine if the MGRS conversion within the coordinate system's accurate boundaries after conversion from Lat/Long.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.MilitaryGridReferenceSystem.SystemType">
+            <summary>
+            Coordinate system that the MGRS coordinate is working in.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.UPS">
+            <summary>
+            Universal Polar Stereographic (FOR UTM POLAR REGION)
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.UniversalTransverseMercator">
+            <summary>
+            Universal Transverse Mercator (UTM) coordinate system. Uses the WGS 84 Datum by default.
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.#ctor(System.String,System.Int32,System.Double,System.Double)">
+            <summary>
+            Creates a UniversalTransverMercator (UTM) object with a default WGS84 datum(ellipsoid).
+            </summary>
+            <param name="latz">Latitude Band Grid Zone Designation (Letter)</param>
+            <param name="longz">Longitude Band Grid Zone Designation (Number)</param>
+            <param name="est">Easting</param>
+            <param name="nrt">Northing</param>
+            <example>
+            <code>
+            UniversalTransverseMercator utm = new UniversalTransverseMercator("Q", 14, 581943.5, 2111989.8);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.#ctor(System.String,System.Int32,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Creates a UniversalTransverMercator (UTM) object with a custom datum(ellipsoid).
+            </summary>
+            <param name="latz">Latitude Band Grid Zone Designation (Letter)</param>
+            <param name="longz">Longitude Band Grid Zone Designation (Number)</param>
+            <param name="est">Easting</param>
+            <param name="nrt">Northing</param>
+            <param name="radius">Equatorial Radius</param>
+            <param name="flaten">Inverse Flattening</param>
+            <example>
+            <code>
+            UniversalTransverseMercator utm = new UniversalTransverseMercator("Q", 14, 581943.5, 2111989.8, 6378160.000, 298.25);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.#ctor(System.String,System.Double,System.Double)">
+            <summary>
+            Creates a UniversalTransverMercator (UTM) object with a default WGS84 datum(ellipsoid).
+            </summary>
+            <param name="gridZone">UTM Grid Zone Designation</param>
+            <param name="est">Easting</param>
+            <param name="nrt">Northing</param>
+            <example>
+            <code>
+            UniversalTransverseMercator utm = new UniversalTransverseMercator("14Q", 581943.5, 2111989.8);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.#ctor(System.String,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Creates a UniversalTransverMercator (UTM) object with a custom WGS84 datum(ellipsoid).
+            </summary>
+            <param name="gridZone">UTM Grid Zone Designation</param>
+            <param name="est">Easting</param>
+            <param name="nrt">Northing</param>
+            <param name="radius">Equatorial Radius</param>
+            <param name="flaten">Inverse Flattening</param>
+            <example>
+            <code>
+            UniversalTransverseMercator utm = new UniversalTransverseMercator("14Q", 581943.5, 2111989.8, 6378160.000, 298.25);
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.Construct_UTM(System.String,System.Int32,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Creates a UniversalTransverMercator (UTM) object
+            </summary>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.#ctor(System.Double,System.Double,CoordinateSharp.Coordinate)">
+            <summary>
+            Constructs a UTM object based off DD Lat/Long
+            </summary>
+            <param name="lat">DD Latitude</param>
+            <param name="longi">DD Longitide</param>
+            <param name="c">Parent Coordinate Object</param>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.#ctor(System.Double,System.Double,CoordinateSharp.Coordinate,System.Double,System.Double)">
+            <summary>
+            Constructs a UTM object based off DD Lat/Long
+            </summary>
+            <param name="lat">DD Latitude</param>
+            <param name="longi">DD Longitide</param>
+            <param name="c">Parent Coordinate Object</param>
+            <param name="rad">Equatorial Radius</param>
+            <param name="flt">Flattening</param>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.#ctor(System.String,System.Int32,System.Double,System.Double,CoordinateSharp.Coordinate,System.Double,System.Double)">
+            <summary>
+            Constructs a UTM object based off a UTM coordinate
+            Not yet implemented
+            </summary>
+            <param name="latz">Zone Letter</param>
+            <param name="longz">Zone Number</param>
+            <param name="e">Easting</param>
+            <param name="n">Northing</param>
+            <param name="c">Parent Coordinate Object</param>
+            <param name="rad">Equatorial Radius</param>
+            <param name="flt">Inverse Flattening</param>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.Verify_Lat_Zone(System.String)">
+            <summary>
+            Verifies Lat zone when convert from UTM to DD Lat/Long
+            </summary>
+            <param name="l">Zone Letter</param>
+            <returns>boolean</returns>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.ToUTM(System.Double,System.Double,CoordinateSharp.UniversalTransverseMercator,System.Nullable{System.Int32})">
+            <summary>
+            Assigns UTM values based of Lat/Long
+            </summary>
+            <param name="lat">DD Latitude</param>
+            <param name="longi">DD longitude</param>
+            <param name="utm">UTM Object to modify</param>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.ToString">
+            <summary>
+            Default formatted UTM string
+            </summary>
+            <returns>UTM Formatted Coordinate String</returns>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.ConvertUTMtoLatLong(CoordinateSharp.UniversalTransverseMercator)">
+            <summary>
+            Converts UTM coordinate to Lat/Long
+            </summary>
+            <param name="utm">utm</param>
+            <returns>Coordinate</returns>
+            <example>
+            The following example creates (converts to) a geodetic Coordinate object based on a UTM object.
+            <code>
+            UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 233434, 234234);
+            Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
+            Console.WriteLine(c); //N 2º 7' 2.332" E 6º 36' 12.653"
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.ConvertUTMtoLatLong(CoordinateSharp.UniversalTransverseMercator,CoordinateSharp.EagerLoad)">
+            <summary>
+            Converts UTM coordinate to Lat/Long
+            </summary>
+            <param name="utm">utm</param>
+            <param name="eagerLoad">EagerLoad</param>
+            <returns>Coordinate</returns>
+            <example>
+            The following example creates (converts to) a geodetic Coordinate object based on a UTM object. 
+            Performance is maximized by turning off EagerLoading.
+            <code>
+            EagerLoad el = new EagerLoad(false);
+            UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 233434, 234234);
+            Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm, el);
+            Console.WriteLine(c); //N 2º 7' 2.332" E 6º 36' 12.653"
+            </code>
+            </example>
+        </member>
+        <member name="M:CoordinateSharp.UniversalTransverseMercator.ConvertUTMtoSignedDegree(CoordinateSharp.UniversalTransverseMercator)">
+            <summary>
+            Converts UTM coordinate to Signed Degree Lat/Long
+            </summary>
+            <param name="utm">utm</param>
+            <returns>Coordinate</returns>
+            <example>
+            The following example creates (converts to) a signed degree lat long based on a UTM object.
+            <code>
+            UniversalTransverseMercator utm = new UniversalTransverseMercator("T", 32, 233434, 234234);
+            double[] signed = UniversalTransverseMercator.ConvertUTMtoSignedDegree(utm);
+            Coordinate c = new Coordinate(signed[0], signed[1], new EagerLoad(false));
+            Console.WriteLine(c); //N 2º 7' 2.332" E 6º 36' 12.653"
+            </code>
+            </example>
+        </member>
+        <member name="P:CoordinateSharp.UniversalTransverseMercator.LatZone">
+            <summary>
+            UTM Latitude Band Grid Zone Designation
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.UniversalTransverseMercator.LongZone">
+            <summary>
+            UTM Longitude Band Grid Zone Designation
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.UniversalTransverseMercator.Easting">
+            <summary>
+            UTM Easting
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.UniversalTransverseMercator.Northing">
+            <summary>
+            UTM Northing
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.UniversalTransverseMercator.Equatorial_Radius">
+            <summary>
+            Datum Equatorial Radius / Semi Major Axis
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.UniversalTransverseMercator.Inverse_Flattening">
+            <summary>
+            Datum Flattening
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.UniversalTransverseMercator.WithinCoordinateSystemBounds">
+            <summary>
+            Determine if the UTM conversion within the coordinate system's accurate boundaries after conversion from Lat/Long.
+            </summary>
+        </member>
+        <member name="P:CoordinateSharp.UniversalTransverseMercator.SystemType">
+            <summary>
+            Coordinate system that the UTM coordinate is working in.
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.LatZones">
+            <summary>
+            Used for UTM/MGRS Conversions
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.Digraphs">
+            <summary>
+            Used for handling digraph determination
+            </summary>
+        </member>
+        <member name="T:CoordinateSharp.Digraph">
+            <summary>
+            Digraph model
+            </summary>
+        </member>
+    </members>
+</doc>
