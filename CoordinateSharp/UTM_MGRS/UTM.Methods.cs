@@ -294,6 +294,7 @@ namespace CoordinateSharp
         /// <param name="lat">DD Latitude</param>
         /// <param name="longi">DD longitude</param>
         /// <param name="utm">UTM Object to modify</param>
+        /// <param name="szone">specified zone (for under/over projection</param>
         internal void ToUTM(double lat, double longi, UniversalTransverseMercator utm, int? szone=null)
         {
             //Switch to UPS
