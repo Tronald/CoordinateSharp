@@ -106,6 +106,7 @@ namespace CoordinateSharp
         /// <example>
         /// </example>
         public DateTime? SunSet { get { return sunSet; } }
+
         /// <summary>
         /// Sunrise time.
         /// </summary>
