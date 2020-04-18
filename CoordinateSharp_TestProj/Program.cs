@@ -33,14 +33,14 @@ namespace CoordinateSharp_TestProj
                 Console.WriteLine("*********************");
                 Console.WriteLine();
 
-                if (t.Key == ConsoleKey.D1) { Coordinate_Initialization.Run_Test(); }
-                else if (t.Key == ConsoleKey.D2) { Coordinate_Conversion_Tests.Run_Test(); }
-                else if (t.Key == ConsoleKey.D3) { Coordinate_Parser_Tests.Run_Test(); }
-                else if (t.Key == ConsoleKey.D4) { CelestialTests.Run_Test(); }
-                else if (t.Key == ConsoleKey.D5) { Distance_Tests.Run_Test(); }
-                else if (t.Key == ConsoleKey.D6) { Benchmark_Tests.Run_Test(); }
-                else if (t.Key == ConsoleKey.D7) { GeoFence_Tests.Run_Test(); }
-                else if (t.Key == ConsoleKey.D8) { EagerLoading_Tests.Run_Tests(); }
+                if (t.Key == ConsoleKey.D1 || t.Key == ConsoleKey.NumPad1) { Coordinate_Initialization.Run_Test(); }
+                else if (t.Key == ConsoleKey.D2 || t.Key == ConsoleKey.NumPad2) { Coordinate_Conversion_Tests.Run_Test(); }
+                else if (t.Key == ConsoleKey.D3 || t.Key == ConsoleKey.NumPad3) { Coordinate_Parser_Tests.Run_Test(); }
+                else if (t.Key == ConsoleKey.D4 || t.Key == ConsoleKey.NumPad4) { CelestialTests.Run_Test(); }
+                else if (t.Key == ConsoleKey.D5 || t.Key == ConsoleKey.NumPad5) { Distance_Tests.Run_Test(); }
+                else if (t.Key == ConsoleKey.D6 || t.Key == ConsoleKey.NumPad6) { Benchmark_Tests.Run_Test(); }
+                else if (t.Key == ConsoleKey.D7 || t.Key == ConsoleKey.NumPad7) { GeoFence_Tests.Run_Test(); }
+                else if (t.Key == ConsoleKey.D8 || t.Key == ConsoleKey.NumPad8) { EagerLoading_Tests.Run_Tests(); }
                 else if (t.Key == ConsoleKey.Escape) { return; }
                 else
                 {

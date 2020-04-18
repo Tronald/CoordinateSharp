@@ -48,6 +48,8 @@ namespace CoordinateSharp_TestProj
             Console.WriteLine();
             Pass.Write("Local Time Conversions", ct.Check_Local_Times());
             Console.WriteLine();
+            Pass.Write("Static_Last_Next_Rise_Set_Checks", ct.Check_Static_Last_Next_Times());
+            Console.WriteLine();
 
             Console.WriteLine();
            
@@ -156,11 +158,7 @@ namespace CoordinateSharp_TestProj
             Perigee = c.CelestialInfo.Perigee;
             Apogee = c.CelestialInfo.Apogee;          
         }
-        private void Check_Solar_Only_Times()
-        {          
-            //Check if values populate.
-           // Celestial c = Celestial.CalculateSunData(45, 45, DateTime.Now,0);
-        }
+       
         private bool Check_Values(object prop, string file)
         {
             string[] lines = File.ReadAllLines(file);
@@ -661,6 +659,90 @@ namespace CoordinateSharp_TestProj
                     return false;
                 }
             }
+            return true;
+        }
+
+        private bool Check_Static_Last_Next_Times()
+        {
+            DateTime d = new DateTime(2019, 2, 6);
+            Coordinate c = new Coordinate(40.0352, -74.5844, d);
+            DateTime val;
+
+            //Method 1 UTC
+            val = Celestial.Get_Next_SunRise(c);
+            if(val.ToString() != "2/6/2019 12:03:33 PM") { return false; }
+
+            val = Celestial.Get_Last_SunRise(c);
+            if (val.ToString() != "2/5/2019 12:04:35 PM") { return false; }
+
+            val = Celestial.Get_Next_SunSet(c);
+            if (val.ToString() != "2/6/2019 10:23:54 PM") { return false; }
+            
+            val = Celestial.Get_Last_SunSet(c);
+            if (val.ToString() != "2/5/2019 10:22:41 PM") { return false; }
+
+            val = Celestial.Get_Next_MoonRise(c);
+            if (val.ToString() != "2/6/2019 1:10:32 PM") { return false; }
+            
+            val = Celestial.Get_Last_MoonRise(c);
+            if (val.ToString() != "2/5/2019 12:39:02 PM") { return false; }
+
+            val = Celestial.Get_Next_MoonSet(c);
+            if (val.ToString() != "2/7/2019 12:08:33 AM") { return false; }
+
+            val = Celestial.Get_Last_MoonSet(c);
+            if (val.ToString() != "2/5/2019 11:11:09 PM") { return false; }
+
+            //Method 2 UTC
+            val = Celestial.Get_Next_SunRise(40.0352, -74.5844, d);
+            if (val.ToString() != "2/6/2019 12:03:33 PM") { return false; }
+
+            val = Celestial.Get_Last_SunRise(40.0352, -74.5844, d);
+            if (val.ToString() != "2/5/2019 12:04:35 PM") { return false; }
+
+            val = Celestial.Get_Next_SunSet(40.0352, -74.5844, d);
+            if (val.ToString() != "2/6/2019 10:23:54 PM") { return false; }
+
+            val = Celestial.Get_Last_SunSet(40.0352, -74.5844, d);
+            if (val.ToString() != "2/5/2019 10:22:41 PM") { return false; }
+
+            val = Celestial.Get_Next_MoonRise(40.0352, -74.5844, d);
+            if (val.ToString() != "2/6/2019 1:10:32 PM") { return false; }
+
+            val = Celestial.Get_Last_MoonRise(40.0352, -74.5844, d);
+            if (val.ToString() != "2/5/2019 12:39:02 PM") { return false; }
+
+            val = Celestial.Get_Next_MoonSet(40.0352, -74.5844, d);
+            if (val.ToString() != "2/7/2019 12:08:33 AM") { return false; }
+
+            val = Celestial.Get_Last_MoonSet(40.0352, -74.5844, d);
+            if (val.ToString() != "2/5/2019 11:11:09 PM") { return false; }
+
+            //Method 3 LOCAL TIMES
+            val = Celestial.Get_Next_SunRise(40.0352, -74.5844, d, -4);
+            if (val.ToString() != "2/6/2019 8:03:33 AM") { return false; }
+
+            val = Celestial.Get_Last_SunRise(40.0352, -74.5844, d, -4);
+            if (val.ToString() != "2/5/2019 8:04:35 AM") { return false; }
+
+            val = Celestial.Get_Next_SunSet(40.0352, -74.5844, d, -4);
+            if (val.ToString() != "2/6/2019 6:23:54 PM") { return false; }
+
+            val = Celestial.Get_Last_SunSet(40.0352, -74.5844, d, -4);
+            if (val.ToString() != "2/5/2019 6:22:41 PM") { return false; }
+
+            val = Celestial.Get_Next_MoonRise(40.0352, -74.5844, d, -4);
+            if (val.ToString() != "2/6/2019 9:10:32 AM") { return false; }
+
+            val = Celestial.Get_Last_MoonRise(40.0352, -74.5844, d, -4);
+            if (val.ToString() != "2/5/2019 8:39:02 AM") { return false; }
+
+            val = Celestial.Get_Next_MoonSet(40.0352, -74.5844, d, -4);
+            if (val.ToString() != "2/6/2019 8:08:33 PM") { return false; }
+
+            val = Celestial.Get_Last_MoonSet(40.0352, -74.5844, d, -4);
+            if (val.ToString() != "2/5/2019 7:11:09 PM") { return false; }
+
             return true;
         }
 
