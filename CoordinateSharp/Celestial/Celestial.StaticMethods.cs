@@ -414,7 +414,7 @@ namespace CoordinateSharp
         /// </example>
         public static DateTime Get_Next_SunSet(Coordinate coordinate)
         {
-            return Get_Next_SunSet(coordinate.Longitude.ToDouble(), coordinate.Latitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
+            return Get_Next_SunSet(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
         }
         /// <summary>
         /// Gets the next sunset from the provided point in time at the passed location. 
@@ -493,7 +493,7 @@ namespace CoordinateSharp
         /// </example>
         public static DateTime Get_Last_SunSet(Coordinate coordinate)
         {
-            return Get_Last_SunSet(coordinate.Longitude.ToDouble(), coordinate.Latitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
+            return Get_Last_SunSet(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
         }
         /// <summary>
         /// Gets the last sunset from the provided point in time at the passed location. 
@@ -572,7 +572,7 @@ namespace CoordinateSharp
         /// </example>
         public static DateTime Get_Next_SunRise(Coordinate coordinate)
         {
-            return Get_Next_SunRise(coordinate.Longitude.ToDouble(), coordinate.Latitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
+            return Get_Next_SunRise(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
         }
         /// <summary>
         /// Gets the next sunrise from the provided point in time at the passed location. 
@@ -651,7 +651,7 @@ namespace CoordinateSharp
         /// </example>
         public static DateTime Get_Last_SunRise(Coordinate coordinate)
         {
-            return Get_Last_SunRise(coordinate.Longitude.ToDouble(), coordinate.Latitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
+            return Get_Last_SunRise(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
         }
         /// <summary>
         /// Gets the last sunrise from the provided point in time at the passed location. 
@@ -730,7 +730,7 @@ namespace CoordinateSharp
         /// </example>
         public static DateTime Get_Next_MoonSet(Coordinate coordinate)
         {
-            return Get_Next_MoonSet(coordinate.Longitude.ToDouble(), coordinate.Latitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
+            return Get_Next_MoonSet(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
         }
         /// <summary>
         /// Gets the next moon set from the provided point in time at the passed location. 
@@ -809,7 +809,7 @@ namespace CoordinateSharp
         /// </example>
         public static DateTime Get_Last_MoonSet(Coordinate coordinate)
         {
-            return Get_Last_MoonSet(coordinate.Longitude.ToDouble(), coordinate.Latitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
+            return Get_Last_MoonSet(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
         }
         /// <summary>
         /// Gets the last moon set from the provided point in time at the passed location. 
@@ -888,7 +888,7 @@ namespace CoordinateSharp
         /// </example>
         public static DateTime Get_Next_MoonRise(Coordinate coordinate)
         {
-            return Get_Next_MoonRise(coordinate.Longitude.ToDouble(), coordinate.Latitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
+            return Get_Next_MoonRise(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
         }
         /// <summary>
         /// Gets the next moon rise from the provided point in time at the passed location. 
@@ -967,7 +967,7 @@ namespace CoordinateSharp
         /// </example>
         public static DateTime Get_Last_MoonRise(Coordinate coordinate)
         {
-            return Get_Last_MoonRise(coordinate.Longitude.ToDouble(), coordinate.Latitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
+            return Get_Last_MoonRise(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), coordinate.GeoDate, coordinate.Offset);
         }
         /// <summary>
         /// Gets the last moon rise from the provided point in time at the passed location. 
