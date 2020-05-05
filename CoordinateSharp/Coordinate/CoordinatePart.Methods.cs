@@ -527,62 +527,7 @@ namespace CoordinateSharp
         {
             return decimalDegree * Math.PI / 180;
         }
-        /// <summary>
-        /// Attempts to parse a string into a CoordinatePart.
-        /// </summary>
-        /// <param name="value">CoordinatePart string</param>
-        /// <param name="coordinatePart">CoordinatePart object to populate</param>
-        /// <returns>boolean</returns>
-        /// <example>
-        /// The following example demonstrates how to parse a latitude from a string.
-        /// <code>
-        /// CoordinatePart cp;
-        /// if(CoordinatePart.TryParse("N 32.891º", out cp))
-        /// {
-        ///     Console.WriteLine(cp); //N 32º 53' 28.212"
-        /// }
-        /// </code>
-        /// </example>
-        public static bool TryParse(string value, out CoordinatePart coordinatePart)
-        {
-            coordinatePart = null;
-
-            if (FormatFinder_CoordPart.TryParse(value, out coordinatePart))
-            {
-                return true;
-            }
-            return false;
-        }
-        /// <summary>
-        /// Attempts to parse a string into a CoordinatePart. 
-        /// </summary>
-        /// <param name="value">CoordinatePart string</param>
-        /// <param name="cType">CoordinateType</param>
-        /// <param name="coordinatePart">CoordinatePart object to populate</param>
-        /// <returns>boolean</returns>
-        /// <example>
-        /// The following example demonstrates how to parse a latitude from a string.
-        /// <code>
-        /// CoordinatePart cp;
-        /// if(CoordinatePart.TryParse("-32.891º", CoordinateType.Long, out cp))
-        /// {
-        ///     Console.WriteLine(cp); //W 32º 53' 27.6"
-        /// }
-        /// </code>
-        /// </example>
-        public static bool TryParse(string value, CoordinateType cType, out CoordinatePart coordinatePart)
-        {
-            coordinatePart = null;
-            //Comma at beginning parses to long
-            //Asterisk forces lat
-            if (cType == CoordinateType.Long) { value = "," + value; }
-            else { value = "*" + value; }
-            if (FormatFinder_CoordPart.TryParse(value, out coordinatePart))
-            {
-                return true;
-            }
-            return false;
-        }
+     
 
         /// <summary>
         /// Property changed event

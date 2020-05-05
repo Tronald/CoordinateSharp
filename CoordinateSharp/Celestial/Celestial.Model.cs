@@ -87,14 +87,14 @@ namespace CoordinateSharp
         /// <summary>
         /// Sunset time.
         /// </summary>
-        /// <remarks>If DateTime is null, check the SunCondition property</remarks>
+        /// <remarks>If DateTime is null, check the SunCondition property.</remarks>
         /// <example>
         /// The following example gets the sunset time in UTC at N 39, W 72 on 1-March-2018
         /// <code>
         /// Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
 		/// Console.WriteLine(coordinate.CelestialInfo.SunSet); //3/1/2018 10:41:34 PM (UTC)
         /// </code>
-        /// </example>
+        /// 
         /// The following example demonstrates a returned null SunSet value as the sun does not set at N 39, W 72 on 1-March-2018. 
         /// You can see why there is no value returned by checking the SunCondition property to see that the sun is down all day
         /// at the specified location.
@@ -103,20 +103,20 @@ namespace CoordinateSharp
 		/// Console.WriteLine(coordinate.CelestialInfo.SunSet); //Returns Null
         /// Console.WriteLine(coordinate.CelestialInfo.SunCondition); //DownAllDay
         /// </code>
-        /// <example>
+        /// 
         /// </example>
         public DateTime? SunSet { get { return sunSet; } }
+
         /// <summary>
         /// Sunrise time.
         /// </summary>
-        /// <remarks>If DateTime is null, check the SunCondition property</remarks>
+        /// <remarks>If DateTime is null, check the SunCondition property.</remarks>
         /// <example>
         /// The following example gets the sunrise time in UTC at N 39, W 72 on 1-March-2018
         /// <code>
         /// Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
 		/// Console.WriteLine(coordinate.CelestialInfo.SunRise); 3/1/2018 11:22:04 AM (UTC)
         /// </code>
-        /// </example>
         /// The following example demonstrates a returned null SunRise value as the sun does not rise at N 39, W 72 on 1-March-2018. 
         /// You can see why there is no value returned by checking the SunCondition property to see that the sun is down all day
         /// at the specified location.
@@ -125,20 +125,18 @@ namespace CoordinateSharp
 		/// Console.WriteLine(coordinate.CelestialInfo.SunSet); //Returns Null
         /// Console.WriteLine(coordinate.CelestialInfo.SunCondition); //DownAllDay
         /// </code>
-        /// <example>
         /// </example>
         public DateTime? SunRise { get { return sunRise; } }
         /// <summary>
         /// Moon set time.
         /// </summary>
-        /// <remarks>If DateTime is null, check the MoonCondition property</remarks>
+        /// <remarks>If DateTime is null, check the MoonCondition property.</remarks>
         /// <example>
         /// The following example gets the moon set time in UTC at N 39, W 72 on 1-March-2018
         /// <code>
         /// Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
 		/// Console.WriteLine(coordinate.CelestialInfo.MoonSet); 3/1/2018 11:12:08 AM (UTC)
         /// </code>
-        /// </example>
         /// The following example demonstrates a returned null MoonSet value as the moon does not set at N 39, W 72 on 1-March-2018. 
         /// You can see why there is no value returned by checking the MoonCondition property to see that the moon is up all day
         /// at the specified location.
@@ -147,20 +145,18 @@ namespace CoordinateSharp
 		/// Console.WriteLine(coordinate.CelestialInfo.MoonSet); //Returns Null
         /// Console.WriteLine(coordinate.CelestialInfo.MoonCondition); //UpAllDay
         /// </code>
-        /// <example>
         /// </example>
         public DateTime? MoonSet { get { return moonSet; } }
         /// <summary>
         /// Moon rise time.
         /// </summary>
-        /// <remarks>If DateTime is null, check the MoonCondition property</remarks>
+        /// <remarks>If DateTime is null, check the MoonCondition property.</remarks>
         /// <example>
         /// The following example gets the moon rise time in UTC at N 39, W 72 on 1-March-2018
         /// <code>
         /// Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
 	    /// Console.WriteLine(coordinate.CelestialInfo.MoonRise); 3/1/2018 10:27:07 PM (UTC)
         /// </code>
-        /// </example>
         /// The following example demonstrates a returned null MoonRise value as the moon does not rise at N 39, W 72 on 1-March-2018. 
         /// You can see why there is no value returned by checking the MoonCondition property to see that the moon is up all day
         /// at the specified location.
@@ -169,7 +165,6 @@ namespace CoordinateSharp
 		/// Console.WriteLine(coordinate.CelestialInfo.MoonRise); //Returns Null
         /// Console.WriteLine(coordinate.CelestialInfo.MoonCondition); //UpAllDay
         /// </code>
-        /// <example>
         /// </example>
         public DateTime? MoonRise { get { return moonRise; } }
 

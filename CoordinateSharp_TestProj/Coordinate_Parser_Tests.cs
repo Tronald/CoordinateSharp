@@ -20,6 +20,7 @@ namespace CoordinateSharp_TestProj
             Coordinate_Parses_Test();         
             CoordinatePart_Parses_Test();
             Coordinate_Parses_EagerLoad_Test();
+            Parse_Wrap_Tests();
             ECEF_Parse_Options_Test();
             Parse_Type_Enumerator_Test();
 
@@ -32,6 +33,7 @@ namespace CoordinateSharp_TestProj
             Coordinate_Parses_Test();            
             CoordinatePart_Parses_Test();
             Coordinate_Parses_EagerLoad_Test();
+            Parse_Wrap_Tests();
             ECEF_Parse_Options_Test();
             Parse_Type_Enumerator_Test();
 
@@ -86,12 +88,14 @@ namespace CoordinateSharp_TestProj
             pass = true;
             try
             {
+                //Parse wraps TryParse, so Parse does not need to be added to tests unless this structure changes.
 
                 if (Coordinate.TryParse("95F, 54", out coordinate)) { pass = false; }//Intentional Fail
                 if (Coordinate.TryParse("E 181 30, 56 76", out coordinate)) { pass = false; } //Intentional Fail
                 if (Coordinate.TryParse("N 95 45, E 45", out coordinate)) { pass = false; } //Intentional Fail
                 if (Coordinate.TryParse("95 87 46 78 D", out coordinate)) { pass = false; } //Intentional Fail
                 if (Coordinate.TryParse("W24 45, W45", out coordinate)) { pass = false; } //Intentional Fail
+             
             }
             catch { pass = false; }
             Console.WriteLine();
@@ -231,6 +235,77 @@ namespace CoordinateSharp_TestProj
            
             Console.WriteLine();
             
+        }
+        //Verifies that Parse is wrapping Try_Parse correctly
+        private static void Parse_Wrap_Tests()
+        {
+            bool pass = true;
+
+            string coord = "45.6, 22.4";
+            EagerLoad el = new EagerLoad(EagerLoadType.Celestial | EagerLoadType.Cartesian | EagerLoadType.ECEF);
+            CartesianType cType = CartesianType.ECEF;
+            DateTime geoDate = new DateTime(2020, 3, 10, 10, 10, 12);
+
+            Coordinate parseCoord;
+            Coordinate tryParseCoord;
+
+            parseCoord = Coordinate.Parse(coord);
+            Coordinate.TryParse(coord, out tryParseCoord);
+            if(!Parse_Wrap_Check(parseCoord, tryParseCoord, false)) { pass = false; }
+
+            parseCoord = Coordinate.Parse(coord, geoDate);
+            Coordinate.TryParse(coord, geoDate, out tryParseCoord);
+            if (!Parse_Wrap_Check(parseCoord, tryParseCoord, false)) { pass = false; }
+
+            parseCoord = Coordinate.Parse(coord, cType);
+            Coordinate.TryParse(coord, cType, out tryParseCoord);
+            if (!Parse_Wrap_Check(parseCoord, tryParseCoord, false)) { pass = false; }
+
+            parseCoord = Coordinate.Parse(coord, geoDate, cType);
+            Coordinate.TryParse(coord, geoDate, cType, out tryParseCoord);
+            if (!Parse_Wrap_Check(parseCoord, tryParseCoord, false)) { pass = false; }
+
+            parseCoord = Coordinate.Parse(coord, el);
+            Coordinate.TryParse(coord, el, out tryParseCoord);
+            if (!Parse_Wrap_Check(parseCoord, tryParseCoord, false)) { pass = false; }
+
+            parseCoord = Coordinate.Parse(coord, geoDate, el);
+            Coordinate.TryParse(coord, geoDate, el, out tryParseCoord);
+            if (!Parse_Wrap_Check(parseCoord, tryParseCoord, false)) { pass = false; }
+
+            parseCoord = Coordinate.Parse(coord, cType, el);
+            Coordinate.TryParse(coord, cType, el, out tryParseCoord);
+            if (!Parse_Wrap_Check(parseCoord, tryParseCoord, false)) { pass = false; }
+
+            parseCoord = Coordinate.Parse(coord, geoDate, cType, el);
+            Coordinate.TryParse(coord, geoDate, cType, el, out tryParseCoord);
+            if (!Parse_Wrap_Check(parseCoord, tryParseCoord, false)) { pass = false; }
+
+            //CoordinatePart Check
+
+            CoordinatePart cp = CoordinatePart.Parse("45");
+            if(cp.ToDouble()!= 45 || cp.Position != CoordinatesPosition.N) { pass = false; }
+
+            cp = CoordinatePart.Parse("45", CoordinateType.Long);
+            if (cp.ToDouble() != 45 || cp.Position != CoordinatesPosition.E) { pass = false; }
+
+            Pass.Write("Parse Wrapper Test", pass);
+        }
+        private static bool Parse_Wrap_Check(Coordinate parseCoord, Coordinate tryParseCoord, bool eagerLoadCheck)
+        {
+            bool pass = true;
+
+            if (parseCoord.Latitude.ToDouble() != tryParseCoord.Latitude.ToDouble()) { pass = false; }
+            if (parseCoord.Longitude.ToDouble() != tryParseCoord.Longitude.ToDouble()) { pass = false; }
+            if (parseCoord.GeoDate != tryParseCoord.GeoDate) { pass = false; }
+            if (parseCoord.EagerLoadSettings != tryParseCoord.EagerLoadSettings) { pass = false; }
+            if (parseCoord.Cartesian.X != tryParseCoord.Cartesian.X) { pass = false; }
+            if (parseCoord.Cartesian.Y != tryParseCoord.Cartesian.Y) { pass = false; }
+            if (parseCoord.Cartesian.Z != tryParseCoord.Cartesian.Z) { pass = false; }
+            if (parseCoord.MGRS != null && eagerLoadCheck == true) { pass = false; }
+            if (parseCoord.Parse_Format != tryParseCoord.Parse_Format) { pass = false; }
+
+            return pass;
         }
     }
 }
