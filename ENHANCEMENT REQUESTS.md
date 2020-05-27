@@ -6,3 +6,4 @@ The following items are requests that are on hold until time & resources can be 
 * NMEA Sentences
 * Planetary Calculations
 * Tidal Calculations
+* Magnectic Declination
