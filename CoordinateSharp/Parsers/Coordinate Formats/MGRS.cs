@@ -46,6 +46,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace CoordinateSharp
 {
@@ -82,7 +83,7 @@ namespace CoordinateSharp
                     string easting = eastingNorthing.Substring(0, (int)(eastingNorthing.Length / 2));
                     string northing = eastingNorthing.Substring((int)(eastingNorthing.Length / 2), (int)(eastingNorthing.Length / 2));
 
-                    mgrs = new string[] { longZone, latZone, identifier, easting, northing };
+                    mgrs = new string[] { longZone, latZone, identifier, easting.PadRight(5, '0'), northing.PadRight(5, '0') };
                     return true;
                 }
 
@@ -116,7 +117,9 @@ namespace CoordinateSharp
                 if (!double.TryParse(sA[3], NumberStyles.Any, CultureInfo.InvariantCulture, out northing))
                 { return false; }
 
-                mgrs = new string[] { zone.ToString(), zoneL, diagraph, easting.ToString(), northing.ToString() };
+                
+
+                mgrs = new string[] { zone.ToString(), zoneL, diagraph, sA[2].PadRight(5,'0'), sA[3].PadRight(5, '0') };
                 return true;
             }
             return false;
@@ -159,7 +162,8 @@ namespace CoordinateSharp
                     string easting = eastingNorthing.Substring(0, (int)(eastingNorthing.Length / 2));
                     string northing = eastingNorthing.Substring((int)(eastingNorthing.Length / 2), (int)(eastingNorthing.Length / 2));
 
-                    mgrs = new string[] { longZone, latZone, identifier, easting, northing };
+                    mgrs = new string[] { longZone, latZone, identifier, easting.PadRight(5, '0'), northing.PadRight(5, '0') };
+                
                     return true;
                 }
 
@@ -193,7 +197,8 @@ namespace CoordinateSharp
                 if (!double.TryParse(sA[3], NumberStyles.Any, CultureInfo.InvariantCulture, out northing))
                 { return false; }
 
-                mgrs = new string[] { zone.ToString(), zoneL, diagraph, easting.ToString(), northing.ToString() };
+                mgrs = new string[] { zone.ToString(), zoneL, diagraph, sA[2].PadRight(5, '0'), sA[3].PadRight(5, '0') };
+               
                 return true;
             }
             return false;

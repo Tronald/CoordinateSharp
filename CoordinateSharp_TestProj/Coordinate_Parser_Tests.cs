@@ -83,7 +83,14 @@ namespace CoordinateSharp_TestProj
             {
                 Pass.Write(lastType.Split(',')[0], pass);
             }
-
+            //MGRS LESS PRECISE PARSE
+            Console.WriteLine();
+            pass = true;
+            var precise = Coordinate.Parse("16REU6070");
+            if(precise.MGRS.ToString() != "16R EU 60000 70000") { pass = false; }
+            precise = Coordinate.Parse("ZBE6611");
+            if (precise.MGRS.ToString() != "Z BE 65999 11000") { pass = false; Debug.WriteLine(precise.MGRS); }
+            Pass.Write("\\MGRS Less Precise Parse", pass);
             //Attempt Forces Param
             pass = true;
             try
