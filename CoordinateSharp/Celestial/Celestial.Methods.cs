@@ -53,10 +53,7 @@ namespace CoordinateSharp
         /// Creates an empty Celestial.
         /// </summary>
         public Celestial()
-        {
-            astrologicalSigns = new AstrologicalSigns();
-            lunarEclipse = new LunarEclipse();
-            solarEclipse = new SolarEclipse();
+        {        
             CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new EagerLoad());                     
         }
         /// <summary>
@@ -86,10 +83,7 @@ namespace CoordinateSharp
         /// </example>
         public Celestial(double lat, double longi, DateTime geoDate)
         {
-            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
-            astrologicalSigns = new AstrologicalSigns();
-            lunarEclipse = new LunarEclipse();
-            solarEclipse = new SolarEclipse();
+            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);          
             CalculateCelestialTime(lat, longi, d, new EagerLoad());
         }
         /// <summary>
@@ -120,10 +114,7 @@ namespace CoordinateSharp
         /// </example>
         public Celestial(double lat, double longi, DateTime geoDate, double offset)
         {
-            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
-            astrologicalSigns = new AstrologicalSigns();
-            lunarEclipse = new LunarEclipse();
-            solarEclipse = new SolarEclipse();
+            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);      
             CalculateCelestialTime(lat, longi, d, new EagerLoad(), offset);
         }
         /// <summary>
@@ -159,20 +150,13 @@ namespace CoordinateSharp
         /// </example>
         public Celestial(double lat, double longi, DateTime geoDate, double offset, EagerLoad el)
         {
-            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
-            astrologicalSigns = new AstrologicalSigns();
-            lunarEclipse = new LunarEclipse();
-            solarEclipse = new SolarEclipse();
+            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);         
             CalculateCelestialTime(lat, longi, d, el, offset);
         }
 
         /// Used to create empty Celestial objects.
         internal Celestial(bool hasCalcs)
-        {
-
-            astrologicalSigns = new AstrologicalSigns();
-            lunarEclipse = new LunarEclipse();
-            solarEclipse = new SolarEclipse();
+        {       
             if (hasCalcs) { CalculateCelestialTime(0, 0, new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc), new EagerLoad()); }
         }
 
@@ -198,6 +182,12 @@ namespace CoordinateSharp
         /// <param name="offset">UTC offset in hours</param>
         internal void CalculateCelestialTime(double lat, double longi, DateTime date, EagerLoad el, double offset)
         {
+            astrologicalSigns = new AstrologicalSigns();
+            lunarEclipse = new LunarEclipse();
+            solarEclipse = new SolarEclipse();
+            solstices = new Solstices();
+            equinoxes = new Equinoxes();
+
             if (offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater than 12 or less than -12."); }
 
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);

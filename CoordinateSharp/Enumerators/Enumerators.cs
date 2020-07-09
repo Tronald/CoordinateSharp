@@ -254,9 +254,11 @@ namespace CoordinateSharp
         /// <summary>
         /// Eager load MGRS data.
         /// </summary>
-        MGRS = 32
-
-
+        MGRS = 32,
+        /// <summary>
+        /// Eager load solstice and equinox data.
+        /// </summary>
+        Solstice_Equinox=64
     }
 
     /// <summary>

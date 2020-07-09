@@ -166,7 +166,15 @@ namespace CoordinateSharp
         /// <returns>Cartesian Formatted Coordinate String</returns>
         public override string ToString()
         {
-            return Math.Round(x,8).ToString() + " " + Math.Round(y, 8).ToString() + " " + Math.Round(z, 8).ToString();
+            double xD = Math.Round(x, 8);
+            double yD = Math.Round(y, 8);
+            double zD = Math.Round(z, 8);
+
+            if (xD == -0) { xD = 0; }
+            if (yD == -0) { yD = 0; }
+            if (zD == -0) { zD = 0; }
+
+            return xD.ToString() + " " + yD.ToString() + " " + zD.ToString();
         }
     }
 }

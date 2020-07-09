@@ -83,6 +83,8 @@ namespace CoordinateSharp
         internal AstrologicalSigns astrologicalSigns;
         internal SolarEclipse solarEclipse;
         internal LunarEclipse lunarEclipse;
+        internal Solstices solstices;
+        internal Equinoxes equinoxes;
 
         /// <summary>
         /// Sunset time.
@@ -245,5 +247,15 @@ namespace CoordinateSharp
         /// Lunar eclipse details.
         /// </summary>
         public LunarEclipse LunarEclipse { get { return lunarEclipse; } }
+
+        /// <summary>
+        /// Get solstice values based on provided year
+        /// </summary>
+        public Solstices Solstices { get { return solstices; } }
+       
+        /// <summary>
+        /// Get equinox values based on provided year
+        /// </summary>
+        public Equinoxes Equinoxes { get { return equinoxes; } }
     }
 }

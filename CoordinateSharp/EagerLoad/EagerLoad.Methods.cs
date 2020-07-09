@@ -197,6 +197,7 @@ namespace CoordinateSharp
         public EagerLoad_Extensions()
         {
             Solar_Cycle = true;
+            Solstice_Equinox = true;
             Lunar_Cycle = true;
             Solar_Eclipse = true;
             Lunar_Eclipse = true;
@@ -211,6 +212,7 @@ namespace CoordinateSharp
         public EagerLoad_Extensions(bool eagerLoad)
         {
             Solar_Cycle = eagerLoad;
+            Solstice_Equinox = eagerLoad;
             Lunar_Cycle = eagerLoad;
             Solar_Eclipse = eagerLoad;
             Lunar_Eclipse = eagerLoad;
@@ -227,6 +229,7 @@ namespace CoordinateSharp
         {
 
             Solar_Cycle = false;
+            Solstice_Equinox = false;
             Lunar_Cycle = false;
             Solar_Eclipse = false;
             Lunar_Eclipse = false;
@@ -236,6 +239,10 @@ namespace CoordinateSharp
             if (et.HasFlag(EagerLoad_ExtensionsType.Solar_Cycle))
             {
                 Solar_Cycle = true;
+            }
+            if (et.HasFlag(EagerLoad_ExtensionsType.Solstice_Equinox))
+            {
+                Solstice_Equinox = true;
             }
             if (et.HasFlag(EagerLoad_ExtensionsType.Lunar_Cycle))
             {
@@ -266,6 +273,7 @@ namespace CoordinateSharp
         internal void Set_Celestial_Items(bool option)
         {
             Solar_Cycle = option;
+            Solstice_Equinox = option;
             Lunar_Cycle = option;
             Solar_Eclipse = option;
             Lunar_Eclipse = option;

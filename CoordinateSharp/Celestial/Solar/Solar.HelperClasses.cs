@@ -400,6 +400,37 @@ namespace CoordinateSharp
         }
     }
 
+    /// <summary>
+    /// Solstice values
+    /// </summary>
+    [Serializable]
+    public class Solstices
+    {
+        /// <summary>
+        /// Summer solstice DateTime
+        /// </summary>
+        public DateTime Summer { get; set; }
+        /// <summary>
+        /// Winter solstice DateTime
+        /// </summary>
+        public DateTime Winter { get; set; }
+    }
+    /// <summary>
+    /// Equinox values
+    /// </summary>
+    [Serializable]
+    public class Equinoxes
+    {
+        /// <summary>
+        /// Spring equinox DateTime
+        /// </summary>
+        public DateTime Spring { get; set; }
+        /// <summary>
+        /// Fall equinox DateTime
+        /// </summary>
+        public DateTime Fall{ get; set; }
+    }
+
     internal class CelCoords
     {
         public double ra { get; set; }

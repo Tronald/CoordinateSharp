@@ -390,6 +390,26 @@ namespace CoordinateSharp
             return sum;
         }
 
+        /// <summary>
+        /// Sum of S from Jean Meeus Astronomical Algorithms Table 27.C
+        /// </summary>
+        /// <param name="T">T</param>
+        /// <returns>double</returns>
+        public static double Equinox_Solstice_Sum_of_S(double T)
+        {
+            double sum = 0;
+
+            for (int x = 0; x < Table27C_Arguements.Count(); x += 3)
+            {
+                double a = Table27C_Arguements[x];
+                double b = Table27C_Arguements[x + 1];
+                double c = Table27C_Arguements[x + 2];
+                sum += a * Math.Cos(b + c * T);
+            }
+
+            return sum;
+        }
+
     }
     internal class MeeusFormulas
     {

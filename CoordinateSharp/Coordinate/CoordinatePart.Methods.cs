@@ -125,6 +125,8 @@ namespace CoordinateSharp
             minutes = Convert.ToInt32(dmFloor);
             decimalMinute = Convert.ToDouble(dm);
             seconds = Convert.ToDouble(sec);
+
+            Roundtripping_Correction();
         }
         /// <summary>
         /// Creates a populated CoordinatePart from a Degrees Minutes Seconds value.
@@ -183,6 +185,8 @@ namespace CoordinateSharp
                 dd *= -1;
             }
             decimalDegree = Convert.ToDouble(dd);
+
+            Roundtripping_Correction();
         }
         /// <summary>
         /// Creates a populated CoordinatePart from a Degrees Minutes Seconds part.
@@ -239,6 +243,8 @@ namespace CoordinateSharp
                 dd *= -1;
             }
             decimalDegree = Convert.ToDouble(dd);
+
+            Roundtripping_Correction();
         }
 
         /// <summary>

@@ -286,7 +286,7 @@ namespace CoordinateSharp
         /// </example>
         public static Coordinate MGRStoLatLong(MilitaryGridReferenceSystem mgrs, EagerLoad eagerLoad)
         {
-            if (mgrs.systemType == MGRS_Type.MGRS_Polar) { return MGRS_Polar_ToLatLong(mgrs); }
+            if (mgrs.systemType == MGRS_Type.MGRS_Polar) { return MGRS_Polar_ToLatLong(mgrs, eagerLoad); }
 
             string latz = mgrs.LatZone;
             string digraph = mgrs.Digraph;
@@ -378,7 +378,7 @@ namespace CoordinateSharp
 
             return c;
         }
-        private static Coordinate MGRS_Polar_ToLatLong(MilitaryGridReferenceSystem mgrs)
+        private static Coordinate MGRS_Polar_ToLatLong(MilitaryGridReferenceSystem mgrs, EagerLoad el)
         {
             //WORKING
             bool isNorth = true;
@@ -485,7 +485,7 @@ namespace CoordinateSharp
             UniversalTransverseMercator utm = new UniversalTransverseMercator(mgrs.LatZone, mgrs.LongZone, x, y);
             utm.equatorial_radius = mgrs.equatorialRadius;
             utm.inverse_flattening = mgrs.inverseFlattening;
-            Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
+            Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm, el);
 
             c.Set_Datum(mgrs.equatorialRadius, mgrs.inverseFlattening);
 

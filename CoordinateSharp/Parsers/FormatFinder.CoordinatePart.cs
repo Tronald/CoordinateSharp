@@ -43,9 +43,9 @@ Organizations or use cases that fall under the following conditions may receive 
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
 using System;
-using System.Linq;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
-using System.Globalization;
+
 namespace CoordinateSharp
 {
     internal partial class FormatFinder_CoordPart
@@ -54,144 +54,154 @@ namespace CoordinateSharp
         //WHEN PARSING NO EXCPETIONS FOR OUT OF RANGE ARGS WILL BE THROWN
         public static bool TryParse(string coordString, out CoordinatePart cp)
         {
-            //Turn of eagerload for efficiency
-            EagerLoad eg = new EagerLoad();
-            int type = 0; //0 = unspecifed, 1 = lat, 2 = long;
-            eg.Cartesian = false;
-            eg.Celestial = false;
-            eg.UTM_MGRS = false;
-            cp = null;
-            Coordinate c = new Coordinate(eg);
-            string s = coordString;
-            s = s.Trim(); //Trim all spaces before and after string
-            double[] d;
+            try
+            {
+                //Turn of eagerload for efficiency
+                EagerLoad eg = new EagerLoad();
+                int type = 0; //0 = unspecifed, 1 = lat, 2 = long;
+                eg.Cartesian = false;
+                eg.Celestial = false;
+                eg.UTM_MGRS = false;
+                cp = null;
+                Coordinate c = new Coordinate(eg);
+                if (string.IsNullOrEmpty(coordString)) { return false; }
 
-            if (s[0] == ',')
-            {
-                type = 2;
-                s = s.Replace(",", "");
-                s = s.Trim();
-            }
-            if (s[0] == '*')
-            {
-                type = 1;
-                s = s.Replace("*", "");
-                s = s.Trim();
-            }
+                string s = coordString;
+                s = s.Trim(); //Trim all spaces before and after string
+                double[] d;
 
-            if (TrySignedDegree(s, type, out d))
-            {
-                try
+                if (s[0] == ',')
                 {
-                    switch (type)
+                    type = 2;
+                    s = s.Replace(",", "");
+                    s = s.Trim();
+                }
+                if (s[0] == '*')
+                {
+                    type = 1;
+                    s = s.Replace("*", "");
+                    s = s.Trim();
+                }
+
+                if (TrySignedDegree(s, type, out d))
+                {
+                    try
                     {
-                        case 0:
-                            //Attempt Lat first (default for signed)
-                            try
-                            {
+                        switch (type)
+                        {
+                            case 0:
+                                //Attempt Lat first (default for signed)
+                                try
+                                {
+                                    cp = new CoordinatePart(d[0], CoordinateType.Lat);
+                                    c.Parse_Format = Parse_Format_Type.Signed_Degree;
+                                    return true;
+                                }
+                                catch
+                                {
+                                    cp = new CoordinatePart(d[0], CoordinateType.Long);
+                                    c.Parse_Format = Parse_Format_Type.Signed_Degree;
+                                    return true;
+                                }
+                            case 1:
+                                //Attempt Lat
                                 cp = new CoordinatePart(d[0], CoordinateType.Lat);
                                 c.Parse_Format = Parse_Format_Type.Signed_Degree;
                                 return true;
-                            }
-                            catch
-                            {
+                            case 2:
+                                //Attempt long
                                 cp = new CoordinatePart(d[0], CoordinateType.Long);
                                 c.Parse_Format = Parse_Format_Type.Signed_Degree;
                                 return true;
-                            }
-                        case 1:
-                            //Attempt Lat
-                            cp = new CoordinatePart(d[0], CoordinateType.Lat);
-                            c.Parse_Format = Parse_Format_Type.Signed_Degree;
-                            return true;
-                        case 2:
-                            //Attempt long
-                            cp = new CoordinatePart(d[0], CoordinateType.Long);
-                            c.Parse_Format = Parse_Format_Type.Signed_Degree;
-                            return true;
+                        }
+                    }
+                    catch
+                    {
+                        //silent fail
                     }
                 }
-                catch
-                {
-                    //silent fail
-                }
-            }
-            //SIGNED DEGREE FAILED, REMOVE DASHES FOR OTHER FORMATS
-            s = s.Replace("-", " ");
+                //SIGNED DEGREE FAILED, REMOVE DASHES FOR OTHER FORMATS
+                s = s.Replace("-", " ");
 
-            //All other formats should contain 1 letter.
-            if (Regex.Matches(s, @"[a-zA-Z]").Count != 1) { return false; } //Should only contain 1 letter.
-            //Get Coord Direction
-            int direction = Find_Position(s);
+                //All other formats should contain 1 letter.
+                if (Regex.Matches(s, @"[a-zA-Z]").Count != 1) { return false; } //Should only contain 1 letter.
+                                                                                //Get Coord Direction
+                int direction = Find_Position(s);
 
-            if (direction == -1)
-            {
-                return false; //No direction found
-            }
-            //If Coordinate type int specified, look for mismatch
-            if (type == 1 && (direction == 1 || direction == 3))
-            {
-                return false; //mismatch
-            }
-            if (type == 2 && (direction == 0 || direction == 2))
-            {
-                return false; //mismatch
-            }
-            CoordinateType t;
-            if (direction == 0 || direction == 2) { t = CoordinateType.Lat; }
-            else { t = CoordinateType.Long; }
+                if (direction == -1)
+                {
+                    return false; //No direction found
+                }
+                //If Coordinate type int specified, look for mismatch
+                if (type == 1 && (direction == 1 || direction == 3))
+                {
+                    return false; //mismatch
+                }
+                if (type == 2 && (direction == 0 || direction == 2))
+                {
+                    return false; //mismatch
+                }
+                CoordinateType t;
+                if (direction == 0 || direction == 2) { t = CoordinateType.Lat; }
+                else { t = CoordinateType.Long; }
 
-            s = Regex.Replace(s, "[^0-9. ]", ""); //Remove directional character
-            s = s.Trim(); //Trim all spaces before and after string
+                s = Regex.Replace(s, "[^0-9. ]", ""); //Remove directional character
+                s = s.Trim(); //Trim all spaces before and after string
 
-            //Try Decimal Degree with Direction
-            if (TryDecimalDegree(s, direction, out d))
-            {
-                try
+                //Try Decimal Degree with Direction
+                if (TryDecimalDegree(s, direction, out d))
                 {
-                    cp = new CoordinatePart(d[0], t);
-                    c.Parse_Format = Parse_Format_Type.Decimal_Degree;
-                    return true;
+                    try
+                    {
+                        cp = new CoordinatePart(d[0], t);
+                        c.Parse_Format = Parse_Format_Type.Decimal_Degree;
+                        return true;
+                    }
+                    catch
+                    {//Parser failed try next method 
+                    }
                 }
-                catch
-                {//Parser failed try next method 
+                //Try DDM
+                if (TryDegreeDecimalMinute(s, out d))
+                {
+                    try
+                    {
+                        //0  Degree
+                        //1  Minute
+                        //2  Direction (0 = N, 1 = E, 2 = S, 3 = W)                          
+                        cp = new CoordinatePart((int)d[0], d[1], (CoordinatesPosition)direction);
+                        c.Parse_Format = Parse_Format_Type.Degree_Decimal_Minute;
+                        return true;
+                    }
+                    catch
+                    {
+                        //Parser failed try next method 
+                    }
+                }
+                //Try DMS
+                if (TryDegreeMinuteSecond(s, out d))
+                {
+                    try
+                    {
+                        //0 Degree
+                        //1 Minute
+                        //2 Second
+                        //3 Direction (0 = N, 1 = E, 2 = S, 3 = W)                                     
+                        cp = new CoordinatePart((int)d[0], (int)d[1], d[2], (CoordinatesPosition)direction);
+                        c.Parse_Format = Parse_Format_Type.Degree_Minute_Second;
+                        return true;
+                    }
+                    catch
+                    {//Parser failed try next method 
+                    }
                 }
             }
-            //Try DDM
-            if (TryDegreeDecimalMinute(s, out d))
+            catch (Exception ex)
             {
-                try
-                {
-                    //0  Degree
-                    //1  Minute
-                    //2  Direction (0 = N, 1 = E, 2 = S, 3 = W)                          
-                    cp = new CoordinatePart((int)d[0], d[1], (CoordinatesPosition)direction);
-                    c.Parse_Format = Parse_Format_Type.Degree_Decimal_Minute;
-                    return true;
-                }
-                catch
-                {
-                    //Parser failed try next method 
-                }
+                //Parser exception has occurred
+                Debug.WriteLine("PARSER EXCEPTION HANDLED: " + ex.ToString());
             }
-            //Try DMS
-            if (TryDegreeMinuteSecond(s, out d))
-            {
-                try
-                {
-                    //0 Degree
-                    //1 Minute
-                    //2 Second
-                    //3 Direction (0 = N, 1 = E, 2 = S, 3 = W)                                     
-                    cp = new CoordinatePart((int)d[0], (int)d[1], d[2], (CoordinatesPosition)direction);
-                    c.Parse_Format = Parse_Format_Type.Degree_Minute_Second;
-                    return true;
-                }
-                catch
-                {//Parser failed try next method 
-                }
-            }
-
+            cp = null;
             return false;
         }
         private static int Find_Position(string s)
