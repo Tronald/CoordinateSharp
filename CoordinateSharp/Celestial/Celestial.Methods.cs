@@ -192,7 +192,7 @@ namespace CoordinateSharp
 
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
 
-            if (el.Extensions.Solar_Cycle || el.Extensions.Solar_Eclipse)
+            if (el.Extensions.Solar_Cycle || el.Extensions.Solar_Eclipse || el.Extensions.Solstice_Equinox)
             {
                 SunCalc.CalculateSunTime(lat, longi, date, this, el, offset);
             }

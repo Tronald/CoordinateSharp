@@ -44,12 +44,15 @@ For more information, please contact Signature Group, LLC at this address: sales
 */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+
 namespace CoordinateSharp
 {
     internal class SunCalc
     {     
         public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c, EagerLoad el, double offset)
         {
+           
             if (date.Year == 0001) { return; } //Return if date value hasn't been established.
             if (el.Extensions.Solar_Cycle)
             {
@@ -119,13 +122,9 @@ namespace CoordinateSharp
                 //BottomDisc
                 evDate = Get_Event_Time(lw, phi, -.2998, actualDate, offset);
                 c.AdditionalSolarTimes.sunriseBottomDisc = evDate[0];
-                c.AdditionalSolarTimes.sunsetBottomDisc = evDate[1];
-
-                if (el.Extensions.Solstice_Equinox)
-                {
-                    Calculate_Soltices_Equinoxes(date, c, offset);
-                }
+                c.AdditionalSolarTimes.sunsetBottomDisc = evDate[1];             
             }
+            if (el.Extensions.Solstice_Equinox){ Calculate_Soltices_Equinoxes(date, c, offset); }         
             if (el.Extensions.Solar_Eclipse) { CalculateSolarEclipse(date, lat, longi, c); }
 
         }  
@@ -337,8 +336,6 @@ namespace CoordinateSharp
                 summerSolsticeJDE = 1721233.25401 + 365241.72562 * Y + 0.05323 * Math.Pow(Y, 2) + 0.00907 * Math.Pow(Y, 3) - 0.00025 * Math.Pow(Y, 4);
                 winterSolsticeJDE = 1721414.39987 + 365242.88257 * Y + 0.00769 * Math.Pow(Y, 2) + 0.00933 * Math.Pow(Y, 3) - 0.00006 * Math.Pow(Y, 4);
             }
-
-
             //Table 27B
             else
             {

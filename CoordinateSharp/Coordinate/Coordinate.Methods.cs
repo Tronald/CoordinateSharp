@@ -233,7 +233,10 @@ namespace CoordinateSharp
             if (eagerLoad.UTM_MGRS)
             {
                 utm = new UniversalTransverseMercator(lat, longi, this);
-                mgrs = new MilitaryGridReferenceSystem(utm);
+                if (eagerLoad.Extensions.MGRS)
+                {
+                    mgrs = new MilitaryGridReferenceSystem(utm);
+                }
             }
             //Load CARTESIAN
             if (eagerLoad.Cartesian)
