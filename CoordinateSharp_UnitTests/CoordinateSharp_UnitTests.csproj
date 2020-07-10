@@ -1,0 +1,146 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="CelestialData\Apogee.txt" />
+    <None Remove="CelestialData\AstroDawn.txt" />
+    <None Remove="CelestialData\AstroDusk.txt" />
+    <None Remove="CelestialData\BottomDiscRise.txt" />
+    <None Remove="CelestialData\BottomDiscSet.txt" />
+    <None Remove="CelestialData\CivilDawn.txt" />
+    <None Remove="CelestialData\CivilDusk.txt" />
+    <None Remove="CelestialData\IsMoonUp.txt" />
+    <None Remove="CelestialData\IsSunUp.txt" />
+    <None Remove="CelestialData\LunarEclipse.txt" />
+    <None Remove="CelestialData\MoonAlts.txt" />
+    <None Remove="CelestialData\MoonAzs.txt" />
+    <None Remove="CelestialData\MoonDistance.txt" />
+    <None Remove="CelestialData\MoonFraction.txt" />
+    <None Remove="CelestialData\MoonPhase.txt" />
+    <None Remove="CelestialData\MoonPhaseName.txt" />
+    <None Remove="CelestialData\MoonRise.txt" />
+    <None Remove="CelestialData\MoonSet.txt" />
+    <None Remove="CelestialData\NauticalDawn.txt" />
+    <None Remove="CelestialData\NauticalDusk.txt" />
+    <None Remove="CelestialData\Perigee.txt" />
+    <None Remove="CelestialData\SolarEclipse.txt" />
+    <None Remove="CelestialData\SunAlts.txt" />
+    <None Remove="CelestialData\SunAzs.txt" />
+    <None Remove="CelestialData\SunRise.txt" />
+    <None Remove="CelestialData\SunSet.txt" />
+    <None Remove="CoordinateData\CoordinateParts.txt" />
+    <None Remove="CoordinateData\Coordinates.txt" />
+    <None Remove="CoordinateData\MoveCoords.txt" />
+    <None Remove="CoordinateData\UPS.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="CelestialData\Apogee.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\AstroDawn.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\AstroDusk.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\BottomDiscRise.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\BottomDiscSet.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\CivilDawn.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\CivilDusk.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\IsMoonUp.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\IsSunUp.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\LunarEclipse.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\MoonAlts.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\MoonAzs.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\MoonDistance.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\MoonFraction.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\MoonPhase.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\MoonPhaseName.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\MoonRise.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\MoonSet.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\NauticalDawn.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\NauticalDusk.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Perigee.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\SolarEclipse.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\SunAlts.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\SunAzs.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\SunRise.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\SunSet.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinateData\CoordinateParts.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinateData\Coordinates.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinateData\MoveCoords.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinateData\UPS.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
+    <PackageReference Include="coverlet.collector" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoordinateSharp\CoordinateSharp.csproj" />
+  </ItemGroup>
+
+</Project>
