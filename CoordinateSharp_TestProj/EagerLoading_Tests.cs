@@ -89,6 +89,7 @@ namespace CoordinateSharp_TestProj
             }
 
         }
+     
         private static void Flags_Test()
         {
             EagerLoad eg = new EagerLoad(EagerLoadType.Cartesian | EagerLoadType.Celestial | EagerLoadType.UTM_MGRS | EagerLoadType.ECEF);
@@ -136,7 +137,7 @@ namespace CoordinateSharp_TestProj
             cel = c.CelestialInfo;
             c.Latitude.DecimalDegree++;
 
-            //EagerLoading was turned on but exentsions were turned off
+            //EagerLoading was turned on but extensions were turned off
             //CelestialInfo should no longer be null but, properties will still be empty
             if (c.CelestialInfo == null || c.CelestialInfo.SunSet != null ) { pass = false; } 
 

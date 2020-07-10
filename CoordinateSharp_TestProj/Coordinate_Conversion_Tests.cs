@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using CoordinateSharp;
 using System.Diagnostics;
+
 namespace CoordinateSharp_TestProj
 {
     public class Coordinate_Conversion_Tests
