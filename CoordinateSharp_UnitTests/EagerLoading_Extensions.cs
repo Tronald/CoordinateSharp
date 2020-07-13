@@ -208,5 +208,65 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(new DateTime(), c.CelestialInfo.Solstices.Summer);//Solstice Equinox
                          
         }
+
+        /// <summary>
+        /// Ensures values do not change once eager loading is turned off
+        /// </summary>
+        [TestMethod]
+        public void Values_Remain()
+        {
+            Coordinate c = new Coordinate(45, 75, new DateTime(2008, 1, 2));
+            var sunset = c.CelestialInfo.SunSet;
+            var moonset = c.CelestialInfo.MoonSet;
+            var solarEclipse = c.CelestialInfo.SolarEclipse.LastEclipse.Date;
+            var lunarEclipse = c.CelestialInfo.LunarEclipse.LastEclipse.Date;
+            var solstice = c.CelestialInfo.Solstices.Summer;
+            var zodiac = c.CelestialInfo.AstrologicalSigns.MoonSign;
+
+            c.EagerLoadSettings.Extensions = new EagerLoad_Extensions(false);
+            c.Latitude.DecimalDegree = 47;
+            c.GeoDate = new DateTime(2025, 1, 1);
+
+            Assert.AreEqual(sunset, c.CelestialInfo.SunSet);
+            Assert.AreEqual(moonset, c.CelestialInfo.MoonSet);
+            Assert.AreEqual(solarEclipse, c.CelestialInfo.SolarEclipse.LastEclipse.Date);
+            Assert.AreEqual(lunarEclipse, c.CelestialInfo.LunarEclipse.LastEclipse.Date);
+            Assert.AreEqual(solstice, c.CelestialInfo.Solstices.Summer);
+            Assert.AreEqual(zodiac, c.CelestialInfo.AstrologicalSigns.MoonSign);
+
+        }
+        /// <summary>
+        /// Ensures values change once eager loading is turned back on
+        /// </summary>
+        [TestMethod]
+        public void Values_Change()
+        {
+            Coordinate c = new Coordinate(45, 75, new DateTime(2008, 1, 2));
+           
+            var sunset = c.CelestialInfo.SunSet;
+            var moonset = c.CelestialInfo.MoonSet;
+            var solarEclipse = c.CelestialInfo.SolarEclipse.LastEclipse.Date;
+            var lunarEclipse = c.CelestialInfo.LunarEclipse.LastEclipse.Date;
+            var solstice = c.CelestialInfo.Solstices.Summer;
+            var zodiac = c.CelestialInfo.AstrologicalSigns.MoonSign;
+
+            //Change properties with extensions off
+            c.EagerLoadSettings.Extensions = new EagerLoad_Extensions(false);
+            c.Latitude.DecimalDegree = 47;
+            c.GeoDate = new DateTime(2025, 1, 1);
+
+            //Turn back on
+            c.EagerLoadSettings.Extensions = new EagerLoad_Extensions(true);
+            c.Latitude.DecimalDegree = 48;
+            c.GeoDate = new DateTime(2025, 1, 1);
+
+            Assert.AreNotEqual(sunset, c.CelestialInfo.SunSet);
+            Assert.AreNotEqual(moonset, c.CelestialInfo.MoonSet);
+            Assert.AreNotEqual(solarEclipse, c.CelestialInfo.SolarEclipse.LastEclipse.Date);
+            Assert.AreNotEqual(lunarEclipse, c.CelestialInfo.LunarEclipse.LastEclipse.Date);
+            Assert.AreNotEqual(solstice, c.CelestialInfo.Solstices.Summer);
+            Assert.AreNotEqual(zodiac, c.CelestialInfo.AstrologicalSigns.MoonSign);
+
+        }
     }
 }

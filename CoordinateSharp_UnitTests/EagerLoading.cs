@@ -116,7 +116,7 @@ namespace CoordinateSharp_UnitTests
             c.EagerLoadSettings = new EagerLoad(false); //Turn off eager loading
             c.Latitude.DecimalDegree = 44;
             c.Longitude.DecimalDegree = 74;
-            Assert.IsTrue(ReflectiveEquals(val, c.CelestialInfo));
+            Assert.IsTrue(Helpers.ReflectiveEquals(val, c.CelestialInfo));
         }
         /// <summary>
         /// Ensures UTM values do not change with coordinate when eagerloading is off.
@@ -130,7 +130,7 @@ namespace CoordinateSharp_UnitTests
             c.EagerLoadSettings = new EagerLoad(false); //Turn off eager loading
             c.Latitude.DecimalDegree = 44;
             c.Longitude.DecimalDegree = 74;
-            Assert.IsTrue(ReflectiveEquals(val, c.UTM));
+            Assert.IsTrue(Helpers.ReflectiveEquals(val, c.UTM));
         }
         /// <summary>
         /// Ensures MGRS values do not change with coordinate when eagerloading is off.
@@ -144,7 +144,7 @@ namespace CoordinateSharp_UnitTests
             c.EagerLoadSettings = new EagerLoad(false); //Turn off eager loading
             c.Latitude.DecimalDegree = 44;
             c.Longitude.DecimalDegree = 74;
-            Assert.IsTrue(ReflectiveEquals(val, c.MGRS));
+            Assert.IsTrue(Helpers.ReflectiveEquals(val, c.MGRS));
         }
         /// <summary>
         /// Ensures ECEFvalues do not change with coordinate when eagerloading is off.
@@ -158,7 +158,7 @@ namespace CoordinateSharp_UnitTests
             c.EagerLoadSettings = new EagerLoad(false); //Turn off eager loading
             c.Latitude.DecimalDegree = 44;
             c.Longitude.DecimalDegree = 74;
-            Assert.IsTrue(ReflectiveEquals(val, c.ECEF));
+            Assert.IsTrue(Helpers.ReflectiveEquals(val, c.ECEF));
         }
         /// <summary>
         /// Ensures Cartesian values do not change with coordinate when eagerloading is off.
@@ -172,7 +172,7 @@ namespace CoordinateSharp_UnitTests
             c.EagerLoadSettings = new EagerLoad(false); //Turn off eager loading
             c.Latitude.DecimalDegree = 44;
             c.Longitude.DecimalDegree = 74;
-            Assert.IsTrue(ReflectiveEquals(val, c.Cartesian));
+            Assert.IsTrue(Helpers.ReflectiveEquals(val, c.Cartesian));
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace CoordinateSharp_UnitTests
             c.EagerLoadSettings = new EagerLoad(true); //Turn on eager loading      
             c.Latitude.DecimalDegree = 44;
             c.Longitude.DecimalDegree = 74;
-            Assert.IsFalse(ReflectiveEquals(val, c.CelestialInfo));
+            Assert.IsFalse(Helpers.ReflectiveEquals(val, c.CelestialInfo));
         }
         /// <summary>
         /// Ensures UTM values change with coordinate when eagerloading is turned back on.
@@ -201,7 +201,7 @@ namespace CoordinateSharp_UnitTests
             c.EagerLoadSettings = new EagerLoad(true); //Turn on eager loading          
             c.Latitude.DecimalDegree = 44;
             c.Longitude.DecimalDegree = 74;
-            Assert.IsFalse(ReflectiveEquals(val, c.UTM));
+            Assert.IsFalse(Helpers.ReflectiveEquals(val, c.UTM));
         }
         /// <summary>
         /// Ensures MGRS values change with coordinate when eagerloading is turned back on.
@@ -216,7 +216,7 @@ namespace CoordinateSharp_UnitTests
             c.EagerLoadSettings = new EagerLoad(true); //Turn on eager loading      
             c.Latitude.DecimalDegree = 44;
             c.Longitude.DecimalDegree = 74;
-            Assert.IsFalse(ReflectiveEquals(val, c.MGRS));
+            Assert.IsFalse(Helpers.ReflectiveEquals(val, c.MGRS));
         }
         /// <summary>
         /// Ensures ECEF values change with coordinate when eagerloading turned back on.
@@ -231,7 +231,7 @@ namespace CoordinateSharp_UnitTests
             c.EagerLoadSettings = new EagerLoad(true); //Turn on eager loading      
             c.Latitude.DecimalDegree = 44;
             c.Longitude.DecimalDegree = 74;
-            Assert.IsFalse(ReflectiveEquals(val, c.ECEF));
+            Assert.IsFalse(Helpers.ReflectiveEquals(val, c.ECEF));
         }
         /// <summary>
         /// Ensures Cartesian values change with coordinate when eagerloading is turned back on.
@@ -246,7 +246,7 @@ namespace CoordinateSharp_UnitTests
             c.EagerLoadSettings = new EagerLoad(true); //Turn on eager loading      
             c.Latitude.DecimalDegree = 44;
             c.Longitude.DecimalDegree = 74;
-            Assert.IsFalse(ReflectiveEquals(val, c.Cartesian));
+            Assert.IsFalse(Helpers.ReflectiveEquals(val, c.Cartesian));
         }
 
         /// <summary>
@@ -291,35 +291,5 @@ namespace CoordinateSharp_UnitTests
             c.Latitude.DecimalDegree++;
         }
 
-        private bool ReflectiveEquals(object first, object second)
-        {
-            if (first == null && second == null)
-            {
-                return true;
-            }
-            if (first == null || second == null)
-            {
-                return false;
-            }
-            Type firstType = first.GetType();
-            if (second.GetType() != firstType)
-            {
-                return false; // Or throw an exception
-            }
-            // This will only use public properties. Is that enough?
-            foreach (PropertyInfo propertyInfo in firstType.GetProperties())
-            {
-                if (propertyInfo.CanRead)
-                {
-                    object firstValue = propertyInfo.GetValue(first, null);
-                    object secondValue = propertyInfo.GetValue(second, null);
-                    if (!object.Equals(firstValue, secondValue))
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
     }
 }
