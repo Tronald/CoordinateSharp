@@ -1029,6 +1029,52 @@ namespace CoordinateSharp
             return d.Value;
         }
 
+        /// <summary>
+        /// Get solstice events in UTC based on provided DateTime.
+        /// </summary>
+        /// <param name="d">DateTime</param>
+        /// <returns>Solstices</returns>
+        public static Solstices Get_Solstices(DateTime d)
+        {
+            return Get_Solstices(d, 0);   
+        }
+
+        /// <summary>
+        /// Get solstice events in local based on provided DateTime and UTC offset.
+        /// </summary>
+        /// <param name="d">DateTime</param>
+        /// <param name="offset">UTC Offset</param>
+        /// <returns>Solstices</returns>
+        public static Solstices Get_Solstices(DateTime d, double offset)
+        {
+            Celestial c = new Celestial();
+            SunCalc.Calculate_Soltices_Equinoxes(d, c, offset);
+            return c.Solstices;
+        }
+
+
+        /// <summary>
+        /// Get equinox events in UTC based on provided DateTime.
+        /// </summary>
+        /// <param name="d">DateTime</param>
+        /// <returns>Equinoxes</returns>
+        public static Equinoxes Get_Equinoxes(DateTime d)
+        {
+            return Get_Equinoxes(d, 0);
+        }
+
+        /// <summary>
+        /// Get equinoxe events in local based on provided DateTime and UTC offset.
+        /// </summary>
+        /// <param name="d">DateTime</param>
+        /// <param name="offset">UTC Offset</param>
+        /// <returns>Solstices</returns>
+        public static Equinoxes Get_Equinoxes(DateTime d, double offset)
+        {
+            Celestial c = new Celestial();
+            SunCalc.Calculate_Soltices_Equinoxes(d, c, offset);
+            return c.Equinoxes;
+        }
 
         //Time Slips
         private static DateTime? Get_Correct_Slipped_Date(DateTime? actual, DateTime? pre, DateTime? post, int i)

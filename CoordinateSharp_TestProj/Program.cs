@@ -15,16 +15,16 @@ namespace CoordinateSharp_TestProj
           
             while (true)
             {
-                Console.WriteLine("Select Test Module to Run (Enter Test Number):");
+                Console.WriteLine("Select Test Module to Run (Enter Test Number). Options marked DEPRECATED have been moved to the CoordinateSharp_UnitTests project:");
                 Console.WriteLine();
-                Console.WriteLine("1. Coordinate Initializations");
-                Console.WriteLine("2. Coordinate Conversions");
+                Console.WriteLine("1. Coordinate Initializations (DEPRECATED)");
+                Console.WriteLine("2. Coordinate Conversions (DEPRECATED)");
                 Console.WriteLine("3. Coordinate Parsers");
                 Console.WriteLine("4. Celestial");
                 Console.WriteLine("5. Distance Initialization / Move Tests");
                 Console.WriteLine("6. Benchmarks");
                 Console.WriteLine("7. GeoFence Tests");
-                Console.WriteLine("8. EagerLoading Tests");
+                Console.WriteLine("8. EagerLoading Tests (DEPRECATED)");
                 Console.WriteLine("ESC. Exit");
                 Console.WriteLine();
                 Console.Write("Select a Test Number: ");

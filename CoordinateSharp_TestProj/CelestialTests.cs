@@ -49,9 +49,7 @@ namespace CoordinateSharp_TestProj
             Pass.Write("Local Time Conversions", ct.Check_Local_Times());
             Console.WriteLine();
             Pass.Write("Static_Last_Next_Rise_Set_Checks", ct.Check_Static_Last_Next_Times());
-            Console.WriteLine();
-
-            Console.WriteLine();
+            Console.WriteLine();          
            
             while (true)
             {

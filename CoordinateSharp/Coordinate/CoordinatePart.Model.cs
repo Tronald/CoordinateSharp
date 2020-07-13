@@ -168,6 +168,9 @@ namespace CoordinateSharp
                     {
                         seconds = secs;
                     }
+
+                    Roundtripping_Correction();
+
                     NotifyProperties(PropertyTypes.DecimalDegree);
                 }
             }
@@ -214,10 +217,12 @@ namespace CoordinateSharp
 
                     decimalDegree = Convert.ToDouble(newDD);  //Convert back to double for storage                      
 
-
                     minutes = Convert.ToInt32(dmFloor); //Convert minutes to int for storage
 
                     seconds = Convert.ToDouble(secs); //Convert seconds to double for storage 
+
+                    Roundtripping_Correction();
+
                     NotifyProperties(PropertyTypes.DecimalMinute);
                 }
             }
@@ -266,6 +271,9 @@ namespace CoordinateSharp
                     if (decimalDegree < 0) { newDD *= -1; } //Set negative as required
 
                     decimalDegree = Convert.ToDouble(newDD); // Convert decimalDegree to double for storage
+                   
+                    Roundtripping_Correction();
+
                     NotifyProperties(PropertyTypes.Degree);
                 }
             }
@@ -322,6 +330,9 @@ namespace CoordinateSharp
                     decimal newDeg = f + newDM; //Add value to degree for decimalDegree
                     if (decimalDegree < 0) { newDeg *= -1; }// Set to negative as required.
                     decimalDegree = Convert.ToDouble(newDeg);//Convert to double and round to correct precision for storage
+                 
+                    Roundtripping_Correction();
+
                     NotifyProperties(PropertyTypes.Minute);
                 }
             }
@@ -377,7 +388,10 @@ namespace CoordinateSharp
                     decimal nm = Convert.ToDecimal(decimalMinute) / 60;//Convert decimalMinute to decimal and divide by 60 to get storage format decimalMinute
                     double newDeg = degrees + Convert.ToDouble(nm);//Convert to double and add to degree for storage decimalDegree
                     if (decimalDegree < 0) { newDeg *= -1; }//Make negative as needed
-                    decimalDegree = newDeg;//Update decimalDegree and round to proper precision    
+                    decimalDegree = newDeg;//Update decimalDegree and round to proper precision   
+
+                    Roundtripping_Correction();
+
                     NotifyProperties(PropertyTypes.Second);
                 }
             }
@@ -425,6 +439,17 @@ namespace CoordinateSharp
                     NotifyProperties(PropertyTypes.Position);
                 }
             }
+        }
+
+        /// <summary>
+        /// Adjust for roundtripping added in .NET Core 3.0
+        /// Effect floating points only
+        /// </summary>
+        private void Roundtripping_Correction()
+        {
+            if (decimalDegree == -0) { decimalDegree = 0; }
+            if (decimalMinute == -0) { decimalMinute = 0; }          
+            if (seconds == -0) { seconds = 0; } 
         }
 
         /// <summary>

@@ -44,12 +44,15 @@ For more information, please contact Signature Group, LLC at this address: sales
 */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+
 namespace CoordinateSharp
 {
     internal class SunCalc
     {     
         public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c, EagerLoad el, double offset)
         {
+           
             if (date.Year == 0001) { return; } //Return if date value hasn't been established.
             if (el.Extensions.Solar_Cycle)
             {
@@ -119,8 +122,9 @@ namespace CoordinateSharp
                 //BottomDisc
                 evDate = Get_Event_Time(lw, phi, -.2998, actualDate, offset);
                 c.AdditionalSolarTimes.sunriseBottomDisc = evDate[0];
-                c.AdditionalSolarTimes.sunsetBottomDisc = evDate[1];
+                c.AdditionalSolarTimes.sunsetBottomDisc = evDate[1];             
             }
+            if (el.Extensions.Solstice_Equinox){ Calculate_Soltices_Equinoxes(date, c, offset); }         
             if (el.Extensions.Solar_Eclipse) { CalculateSolarEclipse(date, lat, longi, c); }
 
         }  
@@ -315,6 +319,52 @@ namespace CoordinateSharp
             {
                 c.SolarEclipse.nextEclipse = new SolarEclipseDetails(se[nextE]);
             }
+        }
+
+        public static void Calculate_Soltices_Equinoxes(DateTime d, Celestial c, double offset)
+        {
+            double springEquinoxJDE;
+            double fallEquinoxJDE;
+            double summerSolsticeJDE;
+            double winterSolsticeJDE;
+            //Table 27A
+            if (d.Year <= 1000)
+            {
+                double Y = d.Year / 1000.0; //Determine if actual int
+                springEquinoxJDE = 1721139.29189 + 365242.13740 * Y + 0.06134 * Math.Pow(Y, 2) + 0.00111 * Math.Pow(Y, 3) - 0.00071 * Math.Pow(Y, 4);
+                fallEquinoxJDE = 1721325.70455 + 365242.49558 * Y + 0.11677 * Math.Pow(Y, 2) + 0.00297 * Math.Pow(Y, 3) - 0.00074 * Math.Pow(Y, 4);
+                summerSolsticeJDE = 1721233.25401 + 365241.72562 * Y + 0.05323 * Math.Pow(Y, 2) + 0.00907 * Math.Pow(Y, 3) - 0.00025 * Math.Pow(Y, 4);
+                winterSolsticeJDE = 1721414.39987 + 365242.88257 * Y + 0.00769 * Math.Pow(Y, 2) + 0.00933 * Math.Pow(Y, 3) - 0.00006 * Math.Pow(Y, 4);
+            }
+            //Table 27B
+            else
+            {
+                double Y = (d.Year - 2000) / 1000.0; //Determine if actual in
+                springEquinoxJDE = 2451623.80984 + 365242.37404* Y + 0.05169 * Math.Pow(Y, 2) + 0.00411 * Math.Pow(Y, 3) - 0.00057 * Math.Pow(Y, 4);
+                fallEquinoxJDE = 2451810.21715 + 365242.01767 * Y + 0.11575 * Math.Pow(Y, 2) + 0.00337 * Math.Pow(Y, 3) - 0.00078 * Math.Pow(Y, 4);
+                summerSolsticeJDE = 2451716.56767 + 365241.62603* Y + 0.00325 * Math.Pow(Y, 2) + 0.00888 * Math.Pow(Y, 3) - 0.00030 * Math.Pow(Y, 4);
+                winterSolsticeJDE = 2451900.05952+ 365242.74049 * Y + 0.06233 * Math.Pow(Y, 2) + 0.00823 * Math.Pow(Y, 3) - 0.00032 * Math.Pow(Y, 4);
+            }
+
+            c.Solstices.Summer = Get_Soltice_Equinox_From_JDE0(summerSolsticeJDE, offset);
+            c.Solstices.Winter = Get_Soltice_Equinox_From_JDE0(winterSolsticeJDE, offset);
+            c.Equinoxes.Spring = Get_Soltice_Equinox_From_JDE0(springEquinoxJDE, offset);
+            c.Equinoxes.Fall = Get_Soltice_Equinox_From_JDE0(fallEquinoxJDE, offset);
+        }
+        private static DateTime Get_Soltice_Equinox_From_JDE0(double JDE0, double offset)
+        {
+            //Get Event Ch 27.
+            double T = (JDE0 - 2451545.0) / 36525;
+            double W = (35999.373 * Math.PI / 180) * T - (2.47 * Math.PI / 180);
+            double ang = 1 + .0334 * Math.Cos(W) + .0007 * Math.Cos(2 * W);
+            double sum = MeeusTables.Equinox_Solstice_Sum_of_S(T);
+            double JDE = JDE0 + ((.00001) * sum / ang);
+            DateTime? d = JulianConversions.GetDate_FromJulian(JDE);
+            if (d.HasValue)
+            {
+                return JulianConversions.GetDate_FromJulian(JDE).Value.AddHours(offset);
+            }
+            return new DateTime(); //Julian limit exceeded, return empty DateTime
         }
 
         #region Private Suntime Members

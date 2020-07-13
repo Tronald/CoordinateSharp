@@ -256,7 +256,15 @@ namespace CoordinateSharp
         /// <returns>ECEF Formatted Coordinate String</returns>
         public override string ToString()
         {
-            return Math.Round(x, 3).ToString() + " km, " + Math.Round(y, 3).ToString() + " km, " + Math.Round(z, 3).ToString() + " km";
+            double xD = Math.Round(x, 3);
+            double yD = Math.Round(y, 3);
+            double zD = Math.Round(z, 3);
+
+            if (xD == -0) { xD = 0; }
+            if (yD == -0) { yD = 0; }
+            if (zD == -0) { zD = 0; }
+
+            return xD.ToString() + " km, " + yD.ToString() + " km, " + zD.ToString() + " km";
         }
   
         /*CONVERSION LOGIC*/

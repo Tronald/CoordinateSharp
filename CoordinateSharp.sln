@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoordinateSharp_TestProj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoordinateSharp_Playground", "CoordinateSharp_Playground\CoordinateSharp_Playground.csproj", "{F81EBED4-1B80-4987-A499-F669F345E7BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoordinateSharp_UnitTests", "CoordinateSharp_UnitTests\CoordinateSharp_UnitTests.csproj", "{081621EE-78D3-4F86-8669-A42081B87A60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F81EBED4-1B80-4987-A499-F669F345E7BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F81EBED4-1B80-4987-A499-F669F345E7BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F81EBED4-1B80-4987-A499-F669F345E7BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{081621EE-78D3-4F86-8669-A42081B87A60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{081621EE-78D3-4F86-8669-A42081B87A60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{081621EE-78D3-4F86-8669-A42081B87A60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{081621EE-78D3-4F86-8669-A42081B87A60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -98,6 +98,12 @@ namespace CoordinateSharp
         /// Includes rises, sets, dusks, dawns and azimuth / altitude data.
         /// </summary>
         public bool Solar_Cycle { get; set; }
+
+        /// <summary>
+        /// Eager load solstice and equinox information
+        /// </summary>
+        public bool Solstice_Equinox { get; set; }
+
         /// <summary>
         /// Eager load lunar information.
         /// Includes rises, sets, phase, distance and azimuth / altitude data.
