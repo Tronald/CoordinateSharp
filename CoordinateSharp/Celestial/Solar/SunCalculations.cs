@@ -65,9 +65,11 @@ namespace CoordinateSharp
                 double phi = rad * lat;
 
                 //Rise Set        
-                DateTime?[] evDate = Get_Event_Time(lw, phi, -.8333, actualDate, offset); //AADED OFFSET TO ALL Get_Event_Time calls.
+                DateTime?[] evDate = Get_Event_Time(lw, phi, -.8333, actualDate, offset,true); //ADDED OFFSET TO ALL Get_Event_Time calls.
+               
                 c.sunRise = evDate[0];
                 c.sunSet = evDate[1];
+                c.solarNoon = evDate[2];
 
                 c.sunCondition = CelestialStatus.RiseAndSet;
                 //Azimuth and Altitude
@@ -103,41 +105,42 @@ namespace CoordinateSharp
                 c.additionalSolarTimes = new AdditionalSolarTimes();
                 //Dusk and Dawn
                 //Civil
-                evDate = Get_Event_Time(lw, phi, -6, actualDate, offset);
+                evDate = Get_Event_Time(lw, phi, -6, actualDate, offset,false);
                 c.AdditionalSolarTimes.civilDawn = evDate[0];
                 c.AdditionalSolarTimes.civilDusk = evDate[1];
 
 
                 //Nautical
-                evDate = Get_Event_Time(lw, phi, -12, actualDate, offset);
+                evDate = Get_Event_Time(lw, phi, -12, actualDate, offset, false);
                 c.AdditionalSolarTimes.nauticalDawn = evDate[0];
                 c.AdditionalSolarTimes.nauticalDusk = evDate[1];
 
                 //Astronomical
-                evDate = Get_Event_Time(lw, phi, -18, actualDate, offset);
+                evDate = Get_Event_Time(lw, phi, -18, actualDate, offset, false);
 
                 c.AdditionalSolarTimes.astronomicalDawn = evDate[0];
                 c.AdditionalSolarTimes.astronomicalDusk = evDate[1];
 
                 //BottomDisc
-                evDate = Get_Event_Time(lw, phi, -.2998, actualDate, offset);
+                evDate = Get_Event_Time(lw, phi, -.2998, actualDate, offset, false);
                 c.AdditionalSolarTimes.sunriseBottomDisc = evDate[0];
                 c.AdditionalSolarTimes.sunsetBottomDisc = evDate[1];             
             }
             if (el.Extensions.Solstice_Equinox){ Calculate_Soltices_Equinoxes(date, c, offset); }         
             if (el.Extensions.Solar_Eclipse) { CalculateSolarEclipse(date, lat, longi, c); }
 
-        }  
+        }
         /// <summary>
-        /// Gets time of event based on specified degree below horizon
+        /// Gets time of event based on specified degree below specified altitude
         /// </summary>
         /// <param name="lw">Observer Longitude in radians</param>
         /// <param name="phi">Observer Latitude in radians</param>
         /// <param name="h">Angle in Degrees</param>
         /// <param name="date">Date of Event</param>
         /// <param name="offset">Offset hours</param>
+        /// <param name="calculateNoon">Should solar noon iterate and return value</param>
         /// <returns>DateTime?[]{rise, set}</returns> 
-        private static DateTime?[] Get_Event_Time(double lw, double phi, double h, DateTime date, double offset)
+        internal static DateTime?[] Get_Event_Time(double lw, double phi, double h, DateTime date, double offset, bool calculateNoon)
         {
             double julianOffset = offset * .04166667;
           
@@ -145,7 +148,8 @@ namespace CoordinateSharp
             //These will be used to find exact day event occurs for comparison
             DateTime?[] sets = new DateTime?[] { null, null, null, null, null };
             DateTime?[] rises = new DateTime?[] { null, null, null,null, null };
-            
+            DateTime?[] solarNoons = new DateTime?[] { null, null, null, null, null };
+
             //Iterate starting with day -1;
             for (int x = 0; x < 5; x++)
             {
@@ -165,18 +169,23 @@ namespace CoordinateSharp
                 double Jrise;
 
 
-                DateTime? solarNoon = JulianConversions.GetDate_FromJulian(Jnoon);
+               
                 DateTime? nadir = JulianConversions.GetDate_FromJulian(Jnoon - 0.5);
 
                 //Rise Set
                 Jset = GetTime(h * rad, lw, phi, dec, n, M, L);
                 Jrise = Jnoon - (Jset - Jnoon);
 
-                DateTime? rise = JulianConversions.GetDate_FromJulian(Jrise + julianOffset); //Adjusting julian for  DT OFFSET MAY HELP WITH LOCAL TIME
+                DateTime? rise = JulianConversions.GetDate_FromJulian(Jrise + julianOffset); //Adjusting julian for DT OFFSET MAY HELP WITH LOCAL TIME
                 DateTime? set = JulianConversions.GetDate_FromJulian(Jset + julianOffset); //Adjusting julian for DT OFFSET MAY HELP WITH LOCAL TIME
-
+                
                 rises[x] = rise;
                 sets[x] = set;
+
+                if (calculateNoon)
+                {
+                    solarNoons[x] = JulianConversions.GetDate_FromJulian(Jnoon + julianOffset);
+                }
             }
 
             //Compare and send
@@ -204,7 +213,24 @@ namespace CoordinateSharp
                     }
                 }
             }
-            return new DateTime?[] { tRise, tSet };
+
+            DateTime? tNoon = null;
+            if (calculateNoon)
+            {
+                for (int x = 0; x < 5; x++)
+                {
+                    if (solarNoons[x].HasValue)
+                    {
+                        if (solarNoons[x].Value.Day == date.Day)
+                        {
+                            tNoon = solarNoons[x];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return new DateTime?[] { tRise, tSet, tNoon};
         }
 
         public static void CalculateZodiacSign(DateTime date, Celestial c)

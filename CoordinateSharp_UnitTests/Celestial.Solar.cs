@@ -6,7 +6,7 @@ using System.Reflection;
 namespace CoordinateSharp_UnitTests
 {
     [TestClass]
-    public class Celestial
+    public class CelestialSolar
     {
         /// <summary>
         /// Ensures solstice/equinox accuracy is within error limits (100 seconds maximum delta).
@@ -59,5 +59,65 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(0, ts.TotalSeconds, delta);       
         }
       
+        /// <summary>
+        /// Ensures accuracy of solar noon times.
+        /// </summary>
+        [TestMethod]
+        public void Solar_Noon_Times()
+        {
+            Coordinate c = new Coordinate(39.833, -98.583, new DateTime(2020, 8, 11));
+            c.Offset = -5; //Chicago Time
+
+            //Solar noon based on NOAA Data.
+            var ts = new DateTime(2020, 8, 11, 13, 39, 25) - c.CelestialInfo.SolarNoon;
+            Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 90);        
+
+            c = new Coordinate(47.608, -122.335, new DateTime(2020, 8, 11));
+            c.Offset = -7; //Seattle Time
+
+            //Solar noon based on NOAA Data.
+            ts = new DateTime(2020, 8, 11, 13, 14, 25) - c.CelestialInfo.SolarNoon;
+            Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 90);
+
+            c = new Coordinate(-32.608, 125.335, new DateTime(2020, 8, 11));
+            c.Offset = 8; //Perth Time
+
+            //Solar noon based on NOAA Data.
+            ts = new DateTime(2020, 8, 11, 11, 43, 51) - c.CelestialInfo.SolarNoon;
+            Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 90);
+
+            //Zulu check
+            c.Offset = 0;
+            ts = new DateTime(2020, 8, 11, 03, 43, 51) - c.CelestialInfo.SolarNoon;
+            Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 90);
+        }
+
+        /// <summary>
+        /// Ensures correct time is return at specified point and date
+        /// </summary>
+        [TestMethod]
+        public void Time_at_Altitude_Tests()
+        {
+            //Expected values based of suncalc Data          
+            Coordinate c = new Coordinate(47.40615, -122.24517, new DateTime(2020, 8, 11, 11, 29, 0));
+            c.Offset = -7;
+            var t = Celestial.Get_Time_at_Solar_Altitude(c, 50.94);
+            var ts = c.GeoDate - t.Rising;
+            Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 60, $"Time: {t.Rising}");
+
+            t = Celestial.Get_Time_at_Solar_Altitude(c.Latitude.ToDouble(),c.Longitude.ToDouble(), c.GeoDate.AddHours(7), 50.94);
+            ts = c.GeoDate.AddHours(7) - t.Rising;
+            Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 60, $"Time: {t.Rising}");
+
+            t = Celestial.Get_Time_at_Solar_Altitude(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate, 50.94, c.Offset);
+            ts = c.GeoDate - t.Rising;
+            Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 60, $"Time: {t.Rising}");
+
+            //Expected values based on NOAA data
+            c.GeoDate = new DateTime(2020, 8, 11, 18, 02, 10);
+            t = Celestial.Get_Time_at_Solar_Altitude(c, 23.09);
+            ts = c.GeoDate - t.Setting;
+            Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 240, $"Time: {t.Setting}");
+        }
     }
 }

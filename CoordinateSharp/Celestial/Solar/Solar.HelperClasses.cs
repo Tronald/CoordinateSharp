@@ -431,6 +431,22 @@ namespace CoordinateSharp
         public DateTime Fall{ get; set; }
     }
 
+    /// <summary>
+    /// Celestial body altitude events
+    /// </summary>
+    [Serializable]
+    public class AltitudeEvents
+    {
+        /// <summary>
+        /// Celestial body time during rising through specified altitude
+        /// </summary>
+        public DateTime? Rising { get; set; }
+        /// <summary>
+        /// Celestial body time during setting through specified altitude
+        /// </summary>
+        public DateTime? Setting { get; set; }
+    }
+
     internal class CelCoords
     {
         public double ra { get; set; }

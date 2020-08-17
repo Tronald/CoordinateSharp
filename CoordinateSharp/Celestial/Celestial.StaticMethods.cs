@@ -1076,6 +1076,79 @@ namespace CoordinateSharp
             return c.Equinoxes;
         }
 
+        /// <summary>
+        /// Get times based the specified Coordinate object's data and altitude.
+        /// </summary>
+        /// <param name="c">Coordinate</param>
+        /// <param name="alt">Altitude in degrees</param>
+        /// <returns>AltitudeEvents</returns>
+        /// <example>
+        /// The following example returns local event times based on the provided Coordinate object
+        /// data and solar altitude.
+        /// <code>
+        /// Coordinate coordinate = new Coordinate(40.0,-74.6, new DateTime(2018,3,1));
+        /// coordinate.Offset = -5; //Offset UTC Time by 8 hours to operate in local time
+        ///
+        /// var sa = Celestial.Get_Time_at_Solar_Altitude(coordinate, 23.4);
+        /// Console.WriteLine(sa.Rising); //3/1/2018 8:49:35 AM
+        /// Console.WriteLine(sa.Setting); //3/1/2018 3:34:51 PM
+        /// </code>
+        /// </example>
+        public static AltitudeEvents Get_Time_at_Solar_Altitude(Coordinate c, double alt)
+        {
+            return Get_Time_at_Solar_Altitude(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate, alt, c.Offset);
+        }
+        /// <summary>
+        /// Get times (in UTC) at the provided solar position, date and altitude.
+        /// </summary>
+        /// <param name="lat">Signed latitude</param>
+        /// <param name="longi">Signed longitude</param>
+        /// <param name="date">Date</param>
+        /// <param name="alt">Altitude in degrees</param>
+        /// <returns>AltitudeEvents</returns>
+        /// <example>
+        /// The following example returns UTC event times based on the provided lat/long, date
+        /// and solar altitude.
+        /// <code>
+        /// var sa = Celestial.Get_Time_at_Solar_Altitude(40.0, -74.6, new DateTime(2018,3,1), 23.4);
+        /// Console.WriteLine(sa.Rising); //3/1/2018 13:49:35 UTC
+        /// Console.WriteLine(sa.Setting); //3/1/2018 20:34:51 UTC
+        /// </code>
+        /// </example>
+        public static AltitudeEvents Get_Time_at_Solar_Altitude(double lat, double longi, DateTime date, double alt)
+        {
+            return Get_Time_at_Solar_Altitude(lat, longi, date, alt, 0);
+        }
+        /// <summary>
+        /// Get times (at the specified offset) at the provided solar position, date and altitude.
+        /// </summary>
+        /// <param name="lat">Signed latitude</param>
+        /// <param name="longi">Signed longitude</param>
+        /// <param name="date">Date</param>
+        /// <param name="alt">Altitude in degrees</param>
+        /// <param name="offset">UTC offset</param>
+        /// <returns>AltitudeEvents</returns>
+        /// <example>
+        /// The following example returns local event times based on the provided lat/long, date, 
+        /// solar altitude and UTC offset.
+        /// <code>
+        /// var sa = Celestial.Get_Time_at_Solar_Altitude(40.0, -74.6, new DateTime(2018,3,1), 23.4, -5);
+        /// Console.WriteLine(sa.Rising); //3/1/2018 8:49:35 AM
+        /// Console.WriteLine(sa.Setting); //3/1/2018 3:34:51 PM
+        /// </code>
+        /// </example>
+        public static AltitudeEvents Get_Time_at_Solar_Altitude(double lat, double longi, DateTime date, double alt, double offset)
+        {
+            //IAW 15.1
+            double rad = Math.PI / 180;
+            double lw = rad * -longi;
+            double phi = rad * lat;
+        
+            var events = SunCalc.Get_Event_Time(lw, phi, alt, date, offset, false);
+
+            return new AltitudeEvents(){ Rising=events[0], Setting=events[1] };
+        }
+
         //Time Slips
         private static DateTime? Get_Correct_Slipped_Date(DateTime? actual, DateTime? pre, DateTime? post, int i)
         {
