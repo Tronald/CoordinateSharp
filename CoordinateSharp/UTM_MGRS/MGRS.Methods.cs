@@ -46,6 +46,8 @@ using System;
 using System.Linq;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+
+
 namespace CoordinateSharp
 {
     public partial class MilitaryGridReferenceSystem
@@ -169,15 +171,15 @@ namespace CoordinateSharp
 
             Digraphs ds = new Digraphs(systemType, latz);
 
-            if (longz < 1 || longz > 60) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            if ((longz < 1 || longz > 60) && longz!=0 && systemType!= MGRS_Type.MGRS_Polar) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
             if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
             if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
             if (d.Count() < 2 || d.Count() > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             if (ds.digraph1.Where(x => x.Letter == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             if (ds.digraph2.Where(x => x.Letter == d.ToUpper()[1].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
-            latZone = latz;
+            latZone = latz.ToUpper();
             longZone = longz;
-            digraph = d;
+            digraph = d.ToUpper();
             easting = e;
             northing = n;
             //WGS84
@@ -369,7 +371,7 @@ namespace CoordinateSharp
                 }
             }
 
-            UniversalTransverseMercator utm = new UniversalTransverseMercator(mgrs.LatZone, mgrs.LongZone, x, y);
+            UniversalTransverseMercator utm = new UniversalTransverseMercator(mgrs.LatZone, mgrs.LongZone, x, y, true);
             utm.equatorial_radius = mgrs.equatorialRadius;
             utm.inverse_flattening = mgrs.inverseFlattening;
             Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm, eagerLoad);
@@ -378,6 +380,8 @@ namespace CoordinateSharp
 
             return c;
         }
+
+      
         private static Coordinate MGRS_Polar_ToLatLong(MilitaryGridReferenceSystem mgrs, EagerLoad el)
         {
             //WORKING
@@ -482,7 +486,7 @@ namespace CoordinateSharp
             }
 
            // Debug.WriteLine("MGRS {0} {1}", x, y);
-            UniversalTransverseMercator utm = new UniversalTransverseMercator(mgrs.LatZone, mgrs.LongZone, x, y);
+            UniversalTransverseMercator utm = new UniversalTransverseMercator(mgrs.LatZone, mgrs.LongZone, x, y, true);
             utm.equatorial_radius = mgrs.equatorialRadius;
             utm.inverse_flattening = mgrs.inverseFlattening;
             Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm, el);
@@ -491,6 +495,7 @@ namespace CoordinateSharp
 
             return c;
         }
+     
         /// <summary>
         /// Creates a Signed Degree double[] object from an MGRS/NATO UTM Coordinate
         /// </summary>
@@ -591,6 +596,58 @@ namespace CoordinateSharp
             double[] sd = UniversalTransverseMercator.ConvertUTMtoSignedDegree(utm);
 
             return sd;
+        }
+
+        /// <summary>
+        /// Returns a populated MGRS_GridBox details based on the MGRS coordinate.
+        /// This can be useful for grid zone junction adjacent partial boxes or when needing
+        /// Lat/Long coordinates at the corners of the MGRS square.
+        /// </summary>
+        /// <returns>MGRS Grid Box</returns>
+        /// <example>
+        /// The following example will create an MGRS_GridBox that will allow us to determine 
+        /// The MGRS Point at the bottom left of the current 100km grid square and convert it to Lat/Long.
+        /// <code>
+        /// MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
+        /// var box = mgrs.Get_Box_Boundaries();
+        /// 
+        /// //Check if created MGRS coordinate is valid
+        /// if(!box.IsBoxValid){return;} //MGRS Coordinate GZD and Identifier are not standard. Box cannot be determined.
+        /// 
+        /// Console.WriteLine("BL: " + gb.Bottom_Left_MGRS_Point); //21N SA 66022 00000
+        /// Console.WriteLine("BL: " + gb.Bottom_Left_Coordinate_Point); //N 0º 0' 0" W 59º 59' 59.982"   
+        /// </code>
+        /// </example>
+        public MGRS_GridBox Get_Box_Boundaries()
+        {
+            return new MGRS_GridBox(this);
+        }
+
+        /// <summary>
+        /// Returns a populated MGRS_GridBox details based on the MGRS coordinate.
+        /// This can be useful for grid zone junction adjacent partial boxes or when needing
+        /// Lat/Long coordinates at the corners of the MGRS square.
+        /// </summary>
+        /// <param name="el">EagerLoad</param>
+        /// <returns>MGRS_GridBox</returns>
+        /// <example>
+        /// The following example will create an MGRS_GridBox that will allow us to determine 
+        /// The MGRS Point at the bottom left of the current 100km grid square and convert it to Lat/Long.
+        /// <code>
+        /// MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
+        /// EagerLoad el = new EagerLoad(EagerLoadType.UTM_MGRS); //Only eager load UTM MGRS data for efficiency
+        /// var box = mgrs.Get_Box_Boundaries();
+        /// 
+        /// //Check if created MGRS coordinate is valid
+        /// if(!box.IsBoxValid){return;} //MGRS Coordinate GZD and Identifier are not standard. Box cannot be determined.
+        /// 
+        /// Console.WriteLine("BL: " + gb.Bottom_Left_MGRS_Point); //21N SA 66022 00000
+        /// Console.WriteLine("BL: " + gb.Bottom_Left_Coordinate_Point); //N 0º 0' 0" W 59º 59' 59.982"   
+        /// </code>
+        /// </example>
+        public MGRS_GridBox Get_Box_Boundaries(EagerLoad el)
+        {
+            return new MGRS_GridBox(this, el);
         }
 
         /// <summary>

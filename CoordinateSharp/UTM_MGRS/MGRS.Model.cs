@@ -126,4 +126,6 @@ namespace CoordinateSharp
             get { return systemType; }
         }
     }
+
+    
 }

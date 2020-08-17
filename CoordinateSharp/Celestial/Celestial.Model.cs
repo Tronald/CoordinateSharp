@@ -63,6 +63,8 @@ namespace CoordinateSharp
         internal DateTime? moonSet;
         internal DateTime? moonRise;
 
+        internal DateTime? solarNoon;
+
         internal double sunAltitude;
         internal double sunAzimuth;
         internal double moonAltitude;
@@ -117,7 +119,7 @@ namespace CoordinateSharp
         /// The following example gets the sunrise time in UTC at N 39, W 72 on 1-March-2018
         /// <code>
         /// Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
-		/// Console.WriteLine(coordinate.CelestialInfo.SunRise); 3/1/2018 11:22:04 AM (UTC)
+		/// Console.WriteLine(coordinate.CelestialInfo.SunRise); //3/1/2018 11:22:04 AM (UTC)
         /// </code>
         /// The following example demonstrates a returned null SunRise value as the sun does not rise at N 39, W 72 on 1-March-2018. 
         /// You can see why there is no value returned by checking the SunCondition property to see that the sun is down all day
@@ -129,6 +131,19 @@ namespace CoordinateSharp
         /// </code>
         /// </example>
         public DateTime? SunRise { get { return sunRise; } }
+
+        /// <summary>
+        /// Solar noon time.
+        /// </summary>
+        /// <example>
+        /// The following example gets the solar noon time in UTC at N 39, W 72 on 1-March-2018
+        /// <code>
+        /// Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
+        /// Console.WriteLine(coordinate.CelestialInfo.SolarNoon); //3/1/2018 5:01:49 PM(UTC)
+        /// </code> 
+        /// </example>
+        public DateTime? SolarNoon{ get { return solarNoon; } }
+
         /// <summary>
         /// Moon set time.
         /// </summary>
@@ -137,7 +152,7 @@ namespace CoordinateSharp
         /// The following example gets the moon set time in UTC at N 39, W 72 on 1-March-2018
         /// <code>
         /// Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
-		/// Console.WriteLine(coordinate.CelestialInfo.MoonSet); 3/1/2018 11:12:08 AM (UTC)
+		/// Console.WriteLine(coordinate.CelestialInfo.MoonSet); //3/1/2018 11:12:08 AM (UTC)
         /// </code>
         /// The following example demonstrates a returned null MoonSet value as the moon does not set at N 39, W 72 on 1-March-2018. 
         /// You can see why there is no value returned by checking the MoonCondition property to see that the moon is up all day
@@ -157,7 +172,7 @@ namespace CoordinateSharp
         /// The following example gets the moon rise time in UTC at N 39, W 72 on 1-March-2018
         /// <code>
         /// Coordinate coordinate = new Coordinate(39,-72, new DateTime(2018,3,1));
-	    /// Console.WriteLine(coordinate.CelestialInfo.MoonRise); 3/1/2018 10:27:07 PM (UTC)
+	    /// Console.WriteLine(coordinate.CelestialInfo.MoonRise); //3/1/2018 10:27:07 PM (UTC)
         /// </code>
         /// The following example demonstrates a returned null MoonRise value as the moon does not rise at N 39, W 72 on 1-March-2018. 
         /// You can see why there is no value returned by checking the MoonCondition property to see that the moon is up all day

@@ -70,7 +70,7 @@ namespace CoordinateSharp
         private Celestial celestialInfo;
 
         internal double equatorial_radius;
-        internal double inverse_flattening;
+        internal double inverse_flattening;       
 
         /// <summary>
         /// Latitudinal Coordinate Part.

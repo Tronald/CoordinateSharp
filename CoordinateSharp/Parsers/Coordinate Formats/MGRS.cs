@@ -54,17 +54,26 @@ namespace CoordinateSharp
     {
         private static bool TryMGRS(string s, out string[] mgrs)
         {
+            
             mgrs = null;
+            //Add easting northing at 0,0 if not provided
+
+
             //Attempt Regex Match
             Regex regex = new Regex("[0-9]{1,2}[a-z,A-Z]{3}\\d+");
+
+            //Add default easting/northing if not provided
+            if (!regex.Match(s).Success && regex.Match(s + "00").Success) { s += "00"; }
+
             Match match = regex.Match(s);
+
             if (match.Success)
             {
                 //Extract Numbers for one string MGRS
                 regex = new Regex("\\d+");
                 MatchCollection matches = regex.Matches(s);
 
-                //IF character count of Easting Northing aren't even return false as precisions is unknown.
+                //IF character count of Easting Northing aren't even return false as precision is unknown.
                 int splitSpot = matches[1].Value.Count();
                 if (splitSpot % 2 == 0)
                 {
@@ -89,6 +98,13 @@ namespace CoordinateSharp
 
             }
             string[] sA = SpecialSplit(s, false);
+
+            //Adjust for Easting Northing unprovided
+            if (sA.Count() == 2 || sA.Count() == 3)
+            {
+                s += " 0 0";
+                sA = SpecialSplit(s, false);
+            }
 
             if (sA.Count() == 4 || sA.Count() == 5)
             {
@@ -136,7 +152,13 @@ namespace CoordinateSharp
            
             //Attempt Regex Match
             Regex regex = new Regex("[0-9]{1,2}[a,b,y,z,A,B,Y,Z]{1}[a-z,A-Z]{2}\\d+");
+
+            //Add default easting/northing if not provided
+            if (!regex.Match(s).Success && regex.Match(s + "00").Success) { s += "00"; }
+
             Match match = regex.Match(s);
+
+
             if (match.Success)
             {            
                 //Extract Numbers for one string MGRS
@@ -169,6 +191,13 @@ namespace CoordinateSharp
 
             }
             string[] sA = SpecialSplit(s, false);
+
+            //Adjust for Easting Northing unprovided
+            if (sA.Count()== 2 || sA.Count() == 3)
+            {
+                s += " 0 0";
+                sA = SpecialSplit(s, false);
+            }
 
             if (sA.Count() == 4 || sA.Count() == 5)
             {
