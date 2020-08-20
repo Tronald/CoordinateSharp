@@ -394,14 +394,14 @@ namespace CoordinateSharp
 
             for (int offset = 0; offset < 3; offset++)
             {
-                for (double x = 100000; x >= 0; x -= 10000)
+                for (double x = 100000; x >= 0; x -= 1000)
                 {
                     if (Check_Point(new MilitaryGridReferenceSystem(mgrs.LatZone, mgrs.LongZone, mgrs.Digraph, 0+offset, LC(x))) ||
                         Check_Point(new MilitaryGridReferenceSystem(mgrs.LatZone, mgrs.LongZone, mgrs.Digraph, 99999-offset, LC(x))))
                     {
                         if (x != 100000)
                         {
-                            return new double[] { x + 10000, offset};
+                            return new double[] { x + 1000, offset};
                         }
                         return new double[] { x, offset };
                     }
