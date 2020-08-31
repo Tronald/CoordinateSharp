@@ -363,11 +363,11 @@ namespace CoordinateSharp
         /// </summary>
         UpAllDay,
         /// <summary>
-        /// Celestial body rises, but does not set on the set day
+        /// Celestial body sets, but does not rise on the specified day
         /// </summary>
         NoRise,
         /// <summary>
-        /// Celestial body sets, but does not rise on the set day
+        /// Celestial body rises, but does not set on the specified day
         /// </summary>
         NoSet
     }
