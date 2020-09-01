@@ -51,7 +51,7 @@ namespace CoordinateSharp
     internal partial class FormatFinder_CoordPart
     {
         //Add main to Coordinate and tunnel to Format class. Add private methods to format.
-        //WHEN PARSING NO EXCPETIONS FOR OUT OF RANGE ARGS WILL BE THROWN
+        //WHEN PARSING NO EXCPETIONS FOR OUT OF RANGE ARGS WILL BE THROWN.
         public static bool TryParse(string coordString, out CoordinatePart cp)
         {
             try
