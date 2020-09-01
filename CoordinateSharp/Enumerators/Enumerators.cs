@@ -355,19 +355,19 @@ namespace CoordinateSharp
         /// </summary>
         RiseAndSet,
         /// <summary>
-        /// Celestial body is down all day
+        /// Celestial body is down all day.
         /// </summary>
         DownAllDay,
         /// <summary>
-        /// Celestial body is up all day
+        /// Celestial body is up all day.
         /// </summary>
         UpAllDay,
         /// <summary>
-        /// Celestial body sets, but does not rise on the specified day
+        /// Celestial body sets, but does not rise on the specified day.
         /// </summary>
         NoRise,
         /// <summary>
-        /// Celestial body rises, but does not set on the specified day
+        /// Celestial body rises, but does not set on the specified day.
         /// </summary>
         NoSet
     }
