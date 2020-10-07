@@ -65,11 +65,12 @@ Console.WriteLine(c.CelestialInfo.SunSet);         // 5-Jun-2018 4:02:00 AM
 Console.WriteLine(c.CelestialInfo.MoonAltitude);   // 14.4169966277874
 ```
 
-### Demo
+### Performance Tips
 
-<kbd>
-  <img src="https://github.com/Tronald/CoordinateSharp/blob/master/Graphics/ice_video_20190828-153122.gif">
-</kbd>
+CoordinateSharp's ease of use comes from its eager loaded architexture. This approach may come at the cost of performance at times, but luckily the eager loading of certain properties can be turned off to improve benchmarks. For example if you only need MGRS conversions, you can turn off celestial calculations and improve `Coordinate` initialization by 6-10ms.
+
+It is highly recommended that developers reference our [Performance Tips Page](https://coordinatesharp.com/Performance) once they have become familiar with the basic usage of 
+CoordinateSharp.
 
 ### Abilities
  
