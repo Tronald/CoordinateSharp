@@ -102,6 +102,16 @@ namespace CoordinateSharp_UnitTests
             Assert.IsTrue(MGRS_Comparer(new MilitaryGridReferenceSystem("10U", "BD", 99680, 99999), gb.Top_Left_MGRS_Point), $"Top Left Corner Exceeds Delta: \"10U BD 99680 99999\"     {gb.Top_Left_MGRS_Point}");
             Assert.IsTrue(MGRS_Comparer(new MilitaryGridReferenceSystem("10U", "BD", 99999, 99999), gb.Top_Right_MGRS_Point), $"Top Right Corner Exceeds Delta: \"10U BD 99999 99999\"     {gb.Top_Right_MGRS_Point}");
         }
+        [TestMethod]
+        public void GZJ_Box_Right_Pointed_Mid_Ascending_Accuracy_Test()
+        {
+            MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("7R", "AJ", 0, 0);
+            var gb = mgrs.Get_Box_Boundaries();
+            Assert.IsTrue(MGRS_Comparer(new MilitaryGridReferenceSystem("7R", "AJ", 97888, 0), gb.Bottom_Left_MGRS_Point), $"Bottom Left Corner Exceeds Delta: \"7R AJ 97888 00000\"     {gb.Bottom_Left_MGRS_Point}");
+            Assert.IsTrue(MGRS_Comparer(new MilitaryGridReferenceSystem("7R", "AJ", 99999, 00000), gb.Bottom_Right_MGRS_Point), $"Bottom Right Corner Exceeds Delta: \"7R AJ 99999 00000\"     {gb.Bottom_Right_MGRS_Point}");
+            Assert.IsTrue(MGRS_Comparer(new MilitaryGridReferenceSystem("7R", "AJ", 99999, 92903), gb.Top_Left_MGRS_Point), $"Top Left Corner Exceeds Delta: \"7R AJ 99999 99203\"     {gb.Top_Left_MGRS_Point}");
+            Assert.IsTrue(MGRS_Comparer(new MilitaryGridReferenceSystem("7R", "AJ", 99999, 92903), gb.Top_Right_MGRS_Point), $"Top Right Corner Exceeds Delta: \"7R AJ 99999 99203\"     {gb.Top_Right_MGRS_Point}");
+        }
 
 
         private bool MGRS_Comparer(MilitaryGridReferenceSystem expected, MilitaryGridReferenceSystem actual)

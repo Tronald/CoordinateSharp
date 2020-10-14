@@ -445,6 +445,11 @@ namespace CoordinateSharp
         /// Celestial body time during setting through specified altitude
         /// </summary>
         public DateTime? Setting { get; set; }
+
+        /// <summary>
+        /// Sun's Condition based on the provided date and specified altitude.
+        /// </summary>
+        public CelestialStatus Condition { get; set; }
     }
 
     internal class CelCoords
@@ -452,5 +457,11 @@ namespace CoordinateSharp
         public double ra { get; set; }
         public double dec { get; set; }
         public double dist { get; set; }
+
+        public double lat { get; set; }
+
+        public double equinox { get; set; }
+
+        public double lng { get; set; }
     }
 }

@@ -33,10 +33,24 @@
     <None Remove="CelestialData\SunAzs.txt" />
     <None Remove="CelestialData\SunRise.txt" />
     <None Remove="CelestialData\SunSet.txt" />
+    <None Remove="CoordinateData\Cartesian.txt" />
     <None Remove="CoordinateData\CoordinateParts.txt" />
-    <None Remove="CoordinateData\Coordinates.txt" />
+    <None Remove="CoordinateData\DD.txt" />
+    <None Remove="CoordinateData\DDM.txt" />
+    <None Remove="CoordinateData\DMS.txt" />
+    <None Remove="CoordinateData\MGRS.txt" />
     <None Remove="CoordinateData\MoveCoords.txt" />
+    <None Remove="CoordinateData\Signed.txt" />
+    <None Remove="CoordinateData\SignedDDM.txt" />
+    <None Remove="CoordinateData\SignedDMS.txt" />
     <None Remove="CoordinateData\UPS.csv" />
+    <None Remove="CoordinateData\UTM.txt" />
+    <None Remove="CoordinatePartData\DD.txt" />
+    <None Remove="CoordinatePartData\DDM.txt" />
+    <None Remove="CoordinatePartData\DMS.txt" />
+    <None Remove="CoordinatePartData\Signed.txt" />
+    <None Remove="CoordinatePartData\SignedDDM.txt" />
+    <None Remove="CoordinatePartData\SignedDMS.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -118,17 +132,56 @@
     <Content Include="CelestialData\SunSet.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="CoordinateData\CoordinateParts.txt">
+    <Content Include="CoordinateData\Cartesian.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="CoordinateData\Coordinates.txt">
+    <Content Include="CoordinateData\DD.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinateData\DDM.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinateData\DMS.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinateData\MGRS.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="CoordinateData\MoveCoords.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="CoordinateData\Signed.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinateData\SignedDDM.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinateData\SignedDMS.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="CoordinateData\UPS.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinateData\UTM.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinatePartData\DD.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinatePartData\DDM.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinatePartData\DMS.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinatePartData\Signed.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinatePartData\SignedDDM.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinatePartData\SignedDMS.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

@@ -54,10 +54,13 @@ namespace CoordinateSharp
         private static bool TryDecimalDegree(string s, out double[] d)
         {
             d = null;
-            if (Regex.Matches(s, @"[a-zA-Z]").Count != 2) { return false; } //Should only contain 1 letter per part.
 
-            string[] sA = SpecialSplit(s, true);
-            if (sA.Count() == 2 || sA.Count() == 4)
+            string rs = Geodetic_Position_Spacer(s);
+
+            if (Regex.Matches(rs, @"[a-zA-Z]").Count != 2) { return false; } //Should only contain 1 letter per part.
+
+            string[] sA = SpecialSplit(rs, true);
+            if (sA.Count() == 4)
             {
                 double lat;
                 double lng;
@@ -65,12 +68,11 @@ namespace CoordinateSharp
                 int latR = 1; //Sets negative if South
                 int lngR = 1; //Sets negative if West
 
-                //Contact get both directional indicator together with string
-                if (sA.Count() == 4)
-                {
-                    sA[0] += sA[1];
-                    sA[1] = sA[2] + sA[3];
-                }
+                //Put both directional indicator together with string
+
+                sA[0] += sA[1];
+                sA[1] = sA[2] + sA[3];
+
 
                 string latString = string.Empty;
                 string longString = string.Empty;

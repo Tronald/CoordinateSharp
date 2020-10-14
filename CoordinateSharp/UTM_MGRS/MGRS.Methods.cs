@@ -51,7 +51,8 @@ using System.Text.RegularExpressions;
 namespace CoordinateSharp
 {
     public partial class MilitaryGridReferenceSystem
-    {
+    {   
+
         /// <summary>
         /// Creates an MilitaryGridReferenceSystem (MGRS) object with a default WGS84 datum(ellipsoid).
         /// </summary>
@@ -231,6 +232,10 @@ namespace CoordinateSharp
             latZone = utm.LatZone;
             longZone = utm.LongZone;
 
+            //Extract centimeters to add back in
+            double cE = utm.Easting - ((int)utm.Easting);
+            double cN = utm.Northing - ((int)utm.Northing);
+
             //String easting = String.valueOf((int)_easting);
             string e =  ((int)utm.Easting).ToString();
             if (e.Length < 5)
@@ -239,7 +244,7 @@ namespace CoordinateSharp
             }
             e = e.Substring(e.Length - 5);
            
-            easting = Convert.ToInt32(e);
+            easting = Convert.ToDouble(e) + cE;
             
             string n =  ((int)utm.Northing).ToString();
             if (n.Length < 5)
@@ -247,8 +252,10 @@ namespace CoordinateSharp
                 n = "0000" + ((int)utm.Northing).ToString();
             }
             n = n.Substring(n.Length - 5);
+
            
-            northing = Convert.ToInt32(n);
+
+            northing = Convert.ToDouble(n) +cN;
             equatorialRadius = utm.equatorial_radius;
             inverseFlattening = utm.inverse_flattening;
          
@@ -664,6 +671,39 @@ namespace CoordinateSharp
             {
                 return LatZone + " " + digraph + " " + ((int)easting).ToString("00000") + " " + ((int)northing).ToString("00000");
             }
-        }      
+        }
+
+        /// <summary>
+        /// Centimeter formatted MGRS string
+        /// </summary>
+        /// <returns>MGRS Formatted Coordinate String</returns>
+        public string ToCentimeterString()
+        {
+            if (systemType == MGRS_Type.MGRS)
+            {
+                return longZone.ToString() + LatZone + " " + digraph + " " + easting.ToString("00000.#####") + " " + northing.ToString("00000.#####");
+            }
+            else
+            {
+                return LatZone + " " + digraph + " " + easting.ToString("00000.#####") + " " + northing.ToString("00000.#####");
+            }
+        }
+
+        /// <summary>
+        /// Rounded MGRS string
+        /// </summary>
+        /// <returns>MGRS Formatted Coordinate String</returns>
+        public string ToRoundedString()
+        {
+            if (systemType == MGRS_Type.MGRS)
+            {
+                return longZone.ToString() + LatZone + " " + digraph + " " + Math.Round(easting).ToString("00000") + " " + Math.Round(northing).ToString("00000");
+            }
+            else
+            {
+                return LatZone + " " + digraph + " " +  Math.Round(easting).ToString("00000") + " " + Math.Round(northing).ToString("00000");
+            }
+        }
+
     }
 }

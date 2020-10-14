@@ -73,7 +73,7 @@ namespace CoordinateSharp
 
                 c.sunCondition = CelestialStatus.RiseAndSet;
                 //Azimuth and Altitude
-                CalculateSunAngle(date.AddHours(-offset), longi, lat, c); //ADDED OFFSET TO ADJUST SUN ANGLE DURING LOCAL CALCULATIONS.
+                CalculateSunAngle(date.AddHours(-offset), longi, lat, c); //SUBTRACT OFFSET TO CALC IN Z TIME AND ADJUST SUN ANGLE DURING LOCAL CALCULATIONS.
                 // neither sunrise nor sunset
                 if ((!c.SunRise.HasValue) && (!c.SunSet.HasValue))
                 {
@@ -143,7 +143,7 @@ namespace CoordinateSharp
         internal static DateTime?[] Get_Event_Time(double lw, double phi, double h, DateTime date, double offset, bool calculateNoon)
         {
             double julianOffset = offset * .04166667;
-          
+           
             //Create arrays. Index 0 = Day -1, 1 = Day, 2 = Day + 1;
             //These will be used to find exact day event occurs for comparison
             DateTime?[] sets = new DateTime?[] { null, null, null, null, null };
@@ -165,20 +165,14 @@ namespace CoordinateSharp
 
                 double Jnoon = solarTransitJ(ds, M, L);
 
-                double Jset;
-                double Jrise;
-
-
-               
-                DateTime? nadir = JulianConversions.GetDate_FromJulian(Jnoon - 0.5);
-
+             
                 //Rise Set
-                Jset = GetTime(h * rad, lw, phi, dec, n, M, L);
-                Jrise = Jnoon - (Jset - Jnoon);
-
+                double Jset = GetTime(h * rad, lw, phi, dec, n, M, L);
+                double Jrise = Jnoon - (Jset - Jnoon);
+                   
                 DateTime? rise = JulianConversions.GetDate_FromJulian(Jrise + julianOffset); //Adjusting julian for DT OFFSET MAY HELP WITH LOCAL TIME
                 DateTime? set = JulianConversions.GetDate_FromJulian(Jset + julianOffset); //Adjusting julian for DT OFFSET MAY HELP WITH LOCAL TIME
-                
+               
                 rises[x] = rise;
                 sets[x] = set;
 
@@ -415,7 +409,7 @@ namespace CoordinateSharp
         {         
             return j2000 + ds + 0.0053 * Math.Sin(M) - 0.0069 * Math.Sin(2 * L); 
         }
-        
+       
         //CH15 
         //Formula 15.1
         //Returns Approximate Time
@@ -453,20 +447,29 @@ namespace CoordinateSharp
         }
    
         private static void CalculateSunAngle(DateTime date, double longi, double lat, Celestial c)
-        {          
-            TimeSpan ts = date - new DateTime(1970, 1, 1,0,0,0, DateTimeKind.Utc);
-            double dms = (ts.TotalMilliseconds / dayMS -.5 + j1970)-j2000;
-            
+        {
+            double[] ang = CalculateSunAngle(date, longi, lat);
+
+            c.sunAzimuth = ang[0];
+            c.sunAltitude = ang[1];           
+        }
+        public static double[] CalculateSunAngle(DateTime date, double longi, double lat)
+        {
+            TimeSpan ts = date - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            double dms = (ts.TotalMilliseconds / dayMS - .5 + j1970) - j2000;
+
             double lw = rad * -longi;
             double phi = rad * lat;
             double e = rad * 23.4397;
-         
+
             double[] sc = sunCoords(dms);
-          
+
             double H = SideRealTime(dms, lw) - sc[1];
 
-            c.sunAzimuth = Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(sc[0]) * Math.Cos(phi)) * 180 / Math.PI + 180;
-            c.sunAltitude = Math.Asin(Math.Sin(phi) * Math.Sin(sc[0]) + Math.Cos(phi) * Math.Cos(sc[0]) * Math.Cos(H)) * 180 / Math.PI;           
+            double azimuth = Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(sc[0]) * Math.Cos(phi)) * 180 / Math.PI + 180;
+            double altitude = Math.Asin(Math.Sin(phi) * Math.Sin(sc[0]) + Math.Cos(phi) * Math.Cos(sc[0]) * Math.Cos(H)) * 180 / Math.PI;
+
+            return new double[] { azimuth, altitude };
         }
 
         private static double solarMeanAnomaly(double d) 

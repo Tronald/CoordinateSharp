@@ -98,15 +98,15 @@ namespace CoordinateSharp
 
             if (type == CoordinateType.Long)
             {
-                if (value > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be greater than 180."); }
-                if (value < -180) { throw new ArgumentOutOfRangeException("Degrees out of range", "Longitudinal coordinate decimal cannot be less than 180."); }
+                if (value > 180) { throw new ArgumentOutOfRangeException("Degrees out of range", $"Longitudinal coordinate decimal cannot be greater than 180. Value Provided = {value}"); }
+                if (value < -180) { throw new ArgumentOutOfRangeException("Degrees out of range", $"Longitudinal coordinate decimal cannot be less than 180. Value Provided = {value}"); }
                 if (value < 0) { position = CoordinatesPosition.W; }
                 else { position = CoordinatesPosition.E; }
             }
             else
             {
-                if (value > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be greater than 90."); }
-                if (value < -90) { throw new ArgumentOutOfRangeException("Degrees out of range", "Latitudinal coordinate decimal cannot be less than 90."); }
+                if (value > 90) { throw new ArgumentOutOfRangeException("Degrees out of range", $"Latitudinal coordinate decimal cannot be greater than 90. Value Provided = {value}"); }
+                if (value < -90) { throw new ArgumentOutOfRangeException("Degrees out of range", $"Latitudinal coordinate decimal cannot be less than 90. Value Provided = {value}"); }
                 if (value < 0) { position = CoordinatesPosition.S; }
                 else { position = CoordinatesPosition.N; }
             }
@@ -531,6 +531,7 @@ namespace CoordinateSharp
         /// <returns>double</returns>
         public double ToRadians()
         {
+            
             return decimalDegree * Math.PI / 180;
         }
      

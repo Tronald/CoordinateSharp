@@ -43,7 +43,9 @@ Organizations or use cases that fall under the following conditions may receive 
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
 using System;
+using System.Text.RegularExpressions;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace CoordinateSharp
 {
@@ -158,9 +160,9 @@ namespace CoordinateSharp
                 {
                     try
                     {
-                        double zone = Convert.ToDouble(um[0]);
-                        double easting = Convert.ToDouble(um[3]);
-                        double northing = Convert.ToDouble(um[4]);
+                        double zone = Convert.ToDouble(um[0], CultureInfo.InvariantCulture);
+                        double easting = Convert.ToDouble(um[3], CultureInfo.InvariantCulture);
+                        double northing = Convert.ToDouble(um[4], CultureInfo.InvariantCulture);
                         MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem(um[1], (int)zone, um[2], easting, northing);
                         c = MilitaryGridReferenceSystem.MGRStoLatLong(mgrs);
                         c.Parse_Format = Parse_Format_Type.MGRS;
@@ -175,9 +177,9 @@ namespace CoordinateSharp
                 {
                     try
                     {
-                        double zone = Convert.ToDouble(um[0]);
-                        double easting = Convert.ToDouble(um[2]);
-                        double northing = Convert.ToDouble(um[3]);
+                        double zone = Convert.ToDouble(um[0], CultureInfo.InvariantCulture);
+                        double easting = Convert.ToDouble(um[2], CultureInfo.InvariantCulture);
+                        double northing = Convert.ToDouble(um[3], CultureInfo.InvariantCulture);
                         UniversalTransverseMercator utm = new UniversalTransverseMercator(um[1], (int)zone, easting, northing);
                         c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
                         c.Parse_Format = Parse_Format_Type.UTM;
@@ -233,24 +235,37 @@ namespace CoordinateSharp
         //KEEP DASHES FOR SIGNED AND CARTESIAN AS THEY ARE USED FOR NEGATVE VALUES
         private static string[] SpecialSplit(string s, bool removeDashes)
         {
+            s=s.ToUpper();
             s = s.Replace("°", " ");
             s = s.Replace("º", " ");
             s = s.Replace("'", " ");
             s = s.Replace("\"", " ");
             s = s.Replace(",", " ");
-            s = s.Replace("mE", " ");
-            s = s.Replace("mN", " ");
-            s = s.Replace("me", " ");
-            s = s.Replace("mn", " ");
+
             s = s.Replace("ME", " ");
             s = s.Replace("MN", " ");
-            s = s.Replace("Me", " ");
-            s = s.Replace("Mn", " ");
+      
+
+
             if (removeDashes)
             {
                 s = s.Replace("-", " ");
             }
             return s.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
+        }
+        private static string Geodetic_Position_Spacer(string s)
+        {
+            string rs = Regex.Replace(s.ToLower(), @"\d[n,e,s,w]", delegate (Match match)
+            {
+                string ns = match.ToString();
+                return ns[0] + " " + ns[1];
+            });
+            rs = Regex.Replace(rs, @"[n,e,s,w]\d", delegate (Match match)
+            {
+                string ns = match.ToString();
+                return ns[0] + " " + ns[1];
+            });
+            return rs;
         }
     }
 }

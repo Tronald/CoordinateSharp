@@ -47,21 +47,24 @@ For more information, please contact Signature Group, LLC at this address: sales
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1;</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.7.3.2</Version>
+    <Version>2.8.1.1</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2020</Copyright>
     <Description>A simple library designed to assist with geographic coordinate conversions, formatting and location based solar and lunar information.</Description>
-    <PackageReleaseNotes>-Improves MGRS_GridBox scanning algorithms for faster scanning.
--XML Fixes.</PackageReleaseNotes>
+    <PackageReleaseNotes>-Adds `Condition` property to `AltitudeEvents` class, allowing users to determine the sun's rise/set condition for a date at specified altitudes.
+-Adds ability to output UTM/MGRS rounded and centimeter strings.
+-Improves parsers.
+-Adds CoordinateSharp.Formatters namespace containing useful mathematical functions to convert things such as radians, degrees, HMS, etc.
+-Completes unit tests port.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian ECEF Sunset Sunrise Set Moonset Moonrise</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>    <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
-    <AssemblyVersion>2.7.3.2</AssemblyVersion>
+    <AssemblyVersion>2.8.1.1</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>CoordinateSharpPNG.png</PackageIcon>

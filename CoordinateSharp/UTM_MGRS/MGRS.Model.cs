@@ -60,7 +60,7 @@ namespace CoordinateSharp
         private string latZone;
         private int longZone;
         private double easting;
-        private double northing;
+        private double northing;     
         private string digraph;
 
         private MGRS_Type systemType = MGRS_Type.MGRS;
@@ -100,7 +100,8 @@ namespace CoordinateSharp
             get { return northing; }
 
         }
-     
+   
+
         /// <summary>
         /// MGRS 100,000 Meter Square Identifier
         /// </summary>

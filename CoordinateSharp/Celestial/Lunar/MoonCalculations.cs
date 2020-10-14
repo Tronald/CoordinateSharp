@@ -44,6 +44,7 @@ For more information, please contact Signature Group, LLC at this address: sales
 */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CoordinateSharp
 {
@@ -450,13 +451,16 @@ namespace CoordinateSharp
         }
       
         //Moon Time Functions
-        private static CelCoords GetSunCoords(double d)
+        public static CelCoords GetSunCoords(double d)
         {
-            double M = solarMeanAnomaly(d),
+            double M = solarMeanAnomaly(d),             
                 L = eclipticLongitude(M);
+
             CelCoords c = new CelCoords();
             c.dec = declination(L, 0);
             c.ra = rightAscension(L, 0);
+            c.lng = L;
+            c.equinox = M;
             return c;
         }
         private static double solarMeanAnomaly(double d) { return rad * (357.5291 + 0.98560028 * d); }
@@ -853,7 +857,7 @@ namespace CoordinateSharp
         /// <returns>Lat[0], Long[1]</returns>
         private static double[] Get_Moon_Coordinates(double[] LDMNF,double T)
         {
-            //Refence Ch 47.
+            //Reference Ch 47.
             double lat = LDMNF[0] + (MeeusTables.Moon_Periodic_El(LDMNF[0], LDMNF[1], LDMNF[2], LDMNF[3], LDMNF[4],T)/1000000);
             double longi = MeeusTables.Moon_Periodic_Eb(LDMNF[0], LDMNF[1], LDMNF[2], LDMNF[3], LDMNF[4], T) / 1000000;
             lat %= 360;

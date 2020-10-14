@@ -382,6 +382,48 @@ namespace CoordinateSharp_UnitTests
         }
 
         /// <summary>
+        /// Ensures correct MGRS Rounded string.
+        /// </summary>
+        [TestMethod]
+        public void MGRS_Rounded_Check()
+        {
+            Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
+            Assert.AreEqual("23T ML 45382 34246", c.MGRS.ToRoundedString());
+           
+        }
+        /// <summary>
+        /// Ensures correct MGRS Centimeter string.
+        /// </summary>
+        [TestMethod]
+        public void MGRS_Centimeter_Check()
+        {
+            Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
+            Assert.AreEqual("23T ML 45381.61737 34245.53566", c.MGRS.ToCentimeterString());
+        }
+
+        /// <summary>
+        /// Ensures correct UTM Centimeter string.
+        /// </summary>
+        [TestMethod]
+        public void UTM_Centimeter_Check()
+        {
+            Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
+            Assert.AreEqual("23T 445381.61737mE 5034245.53566mN", c.UTM.ToCentimeterString());          
+        }
+
+        /// <summary>
+        /// Ensures correct UTM Rounded string.
+        /// </summary>
+        [TestMethod]
+        public void UTM_Rounded_Check()
+        {
+            Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
+            Assert.AreEqual("23T 445382mE 5034246mN", c.UTM.ToRoundedString());
+        }
+
+      
+
+        /// <summary>
         /// Test geodetic to UPS conversions
         /// </summary>
         [TestMethod]
