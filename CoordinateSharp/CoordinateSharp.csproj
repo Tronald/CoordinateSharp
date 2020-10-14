@@ -58,7 +58,7 @@ For more information, please contact Signature Group, LLC at this address: sales
 -Adds ability to output UTM/MGRS rounded and centimeter strings.
 -Improves parsers.
 -Adds CoordinateSharp.Formatters namespace containing useful mathematical functions to convert things such as radians, degrees, HMS, etc.
--Completes unit tests port</PackageReleaseNotes>
+-Completes unit tests port.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian ECEF Sunset Sunrise Set Moonset Moonrise</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>    <PackageIconUrl></PackageIconUrl>
