@@ -115,7 +115,7 @@ namespace CoordinateSharp
                 if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out northing))
                 { return false; }
 
-                utm = new string[] { zone.ToString(), zoneL, easting.ToString(), northing.ToString() };
+                utm = new string[] { zone.ToString(), zoneL, easting.ToString(CultureInfo.InvariantCulture), northing.ToString(CultureInfo.InvariantCulture) };
                 return true;
             }
           
