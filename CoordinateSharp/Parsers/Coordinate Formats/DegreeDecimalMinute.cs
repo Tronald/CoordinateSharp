@@ -54,10 +54,13 @@ namespace CoordinateSharp
         private static bool TryDegreeDecimalMinute(string s, out double[] d)
         {
             d = null;
-            if (Regex.Matches(s, @"[a-zA-Z]").Count != 2) { return false; } //Should only contain 1 letter per part.
 
-            string[] sA = SpecialSplit(s, true);
-            if (sA.Count() == 4 || sA.Count() == 6)
+            string rs = Geodetic_Position_Spacer(s);
+
+            if (Regex.Matches(rs, @"[a-zA-Z]").Count != 2) { return false; } //Should only contain 1 letter per part.
+
+            string[] sA = SpecialSplit(rs, true);
+            if (sA.Count() == 6)
             {
                 double latD;
                 double latMS;
@@ -67,24 +70,23 @@ namespace CoordinateSharp
                 double latR = 0; //Sets 1 if South
                 double lngR = 0; //Sets 1 if West
 
-                //Contact get in order to combine directional indicator together with string
-                //Should reduce 6 items to 4
-                if (sA.Count() == 6)
-                {
-                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; }
-                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; }
-                    else if (char.IsLetter(sA[2][0])) { sA[0] += sA[2]; }
-                    else { return false; }
+                //Put in order to combine directional indicator together with string
+                //Reduce 6 items to 4
 
-                    if (char.IsLetter(sA[3][0])) { sA[3] += sA[4]; sA[4] = sA[5]; }
-                    else if (char.IsLetter(sA[4][0])) { sA[3] += sA[4]; sA[4] = sA[5]; }
-                    else if (char.IsLetter(sA[5][0])) { sA[3] += sA[5]; }
-                    else { return false; }
+                if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; }
+                else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; }
+                else if (char.IsLetter(sA[2][0])) { sA[0] += sA[2]; }
+                else { return false; }
 
-                    //Shift values for below logic
-                    sA[2] = sA[3];
-                    sA[3] = sA[4];
-                }
+                if (char.IsLetter(sA[3][0])) { sA[3] += sA[4]; sA[4] = sA[5]; }
+                else if (char.IsLetter(sA[4][0])) { sA[3] += sA[4]; sA[4] = sA[5]; }
+                else if (char.IsLetter(sA[5][0])) { sA[3] += sA[5]; }
+                else { return false; }
+
+                //Shift values for below logic
+                sA[2] = sA[3];
+                sA[3] = sA[4];
+
 
                 string latString = string.Empty;
                 string longString = string.Empty;

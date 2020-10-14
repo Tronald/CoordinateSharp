@@ -25,7 +25,7 @@ namespace CoordinateSharp_UnitTests
             Coordinate c = new Coordinate(39, -72, new DateTime(2018, 03, 15));
             data.SunAlts = new List<double>();
             data.SunAzs = new List<double>();
-           
+
 
             for (int x = 0; x < 144; x++)
             {
@@ -35,7 +35,7 @@ namespace CoordinateSharp_UnitTests
                 }
                 data.SunAlts.Add(c.CelestialInfo.SunAltitude);
                 data.SunAzs.Add(c.CelestialInfo.SunAzimuth);
-              
+
 
             }
 
@@ -80,7 +80,7 @@ namespace CoordinateSharp_UnitTests
             //IF CHANGING THE MODEL YOU WILL HAVE TO CHANGE THE OBJECTS THEY ARE TESTED AGAINST AS WELL
 
             data.SolarEclispe = c.CelestialInfo.SolarEclipse;
-          
+
         }
         /// <summary>
         /// Ensures solstice/equinox accuracy is within error limits (100 seconds maximum delta).
@@ -137,7 +137,7 @@ namespace CoordinateSharp_UnitTests
         public void CivilDusk()
         {
             Check_Values(data.CivilDusk, "CelestialData\\CivilDusk.txt");
-        }     
+        }
         [TestMethod]
         public void NauticalDawn()
         {
@@ -231,7 +231,7 @@ namespace CoordinateSharp_UnitTests
                             break;
                         case "NoRise":
                             c.GeoDate = c.GeoDate.AddMinutes(i);
-                            if (c.CelestialInfo.SunSet > c.GeoDate && c.CelestialInfo.IsSunUp == false) { Assert.Fail($"NoRise Sunset time is greater than geodate while sun is down at iteration {x+1}"); }
+                            if (c.CelestialInfo.SunSet > c.GeoDate && c.CelestialInfo.IsSunUp == false) { Assert.Fail($"NoRise Sunset time is greater than geodate while sun is down at iteration {x + 1}"); }
                             if (c.CelestialInfo.SunSet <= c.GeoDate && c.CelestialInfo.IsSunUp == true) { Assert.Fail($"NoRise Sunset time is less than geodate while sun is up at iteration {x + 1}"); }
                             break;
                         case "NoSet":
@@ -266,9 +266,9 @@ namespace CoordinateSharp_UnitTests
                 }
 
             }
-        
+
         }
-      
+
         /// <summary>
         /// Ensures static celestial logic works correctly.
         /// </summary>
@@ -279,7 +279,7 @@ namespace CoordinateSharp_UnitTests
             Coordinate c = new Coordinate(40.0352, -74.5844, d);
             DateTime val;
 
-           
+
             //Method 1 UTC
             val = Celestial.Get_Next_SunRise(c);
             Assert.AreEqual(val.ToString(), "2/6/2019 12:03:33 PM");
@@ -293,7 +293,7 @@ namespace CoordinateSharp_UnitTests
             val = Celestial.Get_Last_SunSet(c);
             Assert.AreEqual(val.ToString(), "2/5/2019 10:22:41 PM");
 
-          
+
 
             //Method 2 UTC
             val = Celestial.Get_Next_SunRise(40.0352, -74.5844, d);
@@ -308,7 +308,7 @@ namespace CoordinateSharp_UnitTests
             val = Celestial.Get_Last_SunSet(40.0352, -74.5844, d);
             Assert.AreEqual(val.ToString(), "2/5/2019 10:22:41 PM");
 
-         
+
 
             //Method 3 LOCAL TIMES
             val = Celestial.Get_Next_SunRise(40.0352, -74.5844, d, -4);
@@ -323,8 +323,8 @@ namespace CoordinateSharp_UnitTests
             val = Celestial.Get_Last_SunSet(40.0352, -74.5844, d, -4);
             Assert.AreEqual(val.ToString(), "2/5/2019 6:22:41 PM");
 
-          
-           
+
+
         }
 
         [TestMethod]
@@ -412,13 +412,13 @@ namespace CoordinateSharp_UnitTests
             Time_Compare(cCel.AdditionalSolarTimes.AstronomicalDusk, lCel.AdditionalSolarTimes.AstronomicalDusk, sCel.AdditionalSolarTimes.AstronomicalDusk, offset);
             Time_Compare(cCel.SolarEclipse.LastEclipse.MaximumEclipse, lCel.SolarEclipse.LastEclipse.MaximumEclipse, sCel.SolarEclipse.LastEclipse.MaximumEclipse, offset);
             Time_Compare(cCel.SolarEclipse.NextEclipse.MaximumEclipse, lCel.SolarEclipse.NextEclipse.MaximumEclipse, sCel.SolarEclipse.NextEclipse.MaximumEclipse, offset);
-           
+
             Assert.AreEqual(0, lCel.SunAltitude - bCel.SunAltitude, .00001);
             Assert.AreEqual(0, lCel.SunAzimuth - bCel.SunAzimuth, .00001);
-            Assert.AreEqual(0,lCel.SunAzimuth - bCel.SunAzimuth, .00001);
+            Assert.AreEqual(0, lCel.SunAzimuth - bCel.SunAzimuth, .00001);
 
             Assert.AreEqual(lCel.IsSunUp, bCel.IsSunUp);
-            Assert.AreEqual(lCel.SunCondition, bCel.SunCondition); 
+            Assert.AreEqual(lCel.SunCondition, bCel.SunCondition);
         }
         private void Time_Compare(DateTime? utc, DateTime? local, DateTime? backup, double offset)
         {
@@ -430,9 +430,9 @@ namespace CoordinateSharp_UnitTests
             if (Math.Abs(ts.TotalMilliseconds) > 5)
             {
                 ts = local.Value - backup.Value.AddHours(offset);
-                Assert.AreEqual(0, ts.TotalMilliseconds, 5);              
+                Assert.AreEqual(0, ts.TotalMilliseconds, 5);
             }
-           
+
         }
 
         private void Check_Values(object prop, string file)
@@ -444,13 +444,13 @@ namespace CoordinateSharp_UnitTests
                 List<DateTime?> d = (List<DateTime?>)prop;
                 for (int x = 0; x < lines.Length; x++)
                 {
-                  
+
                     if (lines[x] != "*")
                     {
 
                         DateTime date = DateTime.Parse(lines[x]);
                         TimeSpan span = date - d[x].Value;
-                        Assert.AreEqual(0, span.TotalMinutes, 1, $"DateTime exceeded delta at iteration {x + 1}");                          
+                        Assert.AreEqual(0, span.TotalMinutes, 1, $"DateTime exceeded delta at iteration {x + 1}");
                     }
                     else
                     {
@@ -464,7 +464,7 @@ namespace CoordinateSharp_UnitTests
                 for (int x = 0; x < lines.Length; x++)
                 {
                     double dub = double.Parse(lines[x]);
-                    Assert.AreEqual(0, dub - d[x], 1, $"Double exceeded delta at iteration {x + 1}");                     
+                    Assert.AreEqual(0, dub - d[x], 1, $"Double exceeded delta at iteration {x + 1}");
                 }
             }
             if (prop.GetType() == typeof(List<string>))
@@ -472,7 +472,7 @@ namespace CoordinateSharp_UnitTests
                 List<string> d = (List<string>)prop;
                 for (int x = 0; x < lines.Length; x++)
                 {
-                    Assert.AreEqual(d[x], lines[x], $"String properties do not match at iteration {x+1}");               
+                    Assert.AreEqual(d[x], lines[x], $"String properties do not match at iteration {x + 1}");
                 }
             }
         }
@@ -488,10 +488,10 @@ namespace CoordinateSharp_UnitTests
             Coordinate c = new Coordinate(45, 75, new DateTime(2000, 1, 1));
             int delta = 100;
             //1000AD+
-            
+
             //Spring
             var ts = new DateTime(2000, 3, 20, 7, 36, 19) - c.CelestialInfo.Equinoxes.Spring;
-            Assert.AreEqual(0,ts.TotalSeconds, delta);
+            Assert.AreEqual(0, ts.TotalSeconds, delta);
             //Summer
             ts = new DateTime(2000, 6, 21, 1, 48, 46) - c.CelestialInfo.Solstices.Summer;
             Assert.AreEqual(0, ts.TotalSeconds, delta);
@@ -500,9 +500,9 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(0, ts.TotalSeconds, delta);
             //Winter
             ts = new DateTime(2000, 12, 21, 13, 38, 30) - c.CelestialInfo.Solstices.Winter;
-            Assert.AreEqual(0, ts.TotalSeconds, delta);       
+            Assert.AreEqual(0, ts.TotalSeconds, delta);
         }
-      
+
         /// <summary>
         /// Ensures accuracy of solar noon times.
         /// </summary>
@@ -514,7 +514,7 @@ namespace CoordinateSharp_UnitTests
 
             //Solar noon based on NOAA Data.
             var ts = new DateTime(2020, 8, 11, 13, 39, 25) - c.CelestialInfo.SolarNoon;
-            Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 90);        
+            Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 90);
 
             c = new Coordinate(47.608, -122.335, new DateTime(2020, 8, 11));
             c.Offset = -7; //Seattle Time
@@ -537,38 +537,67 @@ namespace CoordinateSharp_UnitTests
         }
 
         /// <summary>
-        /// Ensures correct time is return at specified point and date
+        /// Ensures correct time is returned at specified point and date
         /// </summary>
         [TestMethod]
         public void Time_at_Altitude_Tests()
         {
-            //Expected values based of suncalc Data          
+            //Expected values based off suncalc data          
             Coordinate c = new Coordinate(47.40615, -122.24517, new DateTime(2020, 8, 11, 11, 29, 0));
             c.Offset = -7;
             var t = Celestial.Get_Time_at_Solar_Altitude(c, 50.94);
             var ts = c.GeoDate - t.Rising;
             Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 60, $"Time: {t.Rising}");
+            Assert.AreEqual(CelestialStatus.RiseAndSet, t.Condition);
 
-            t = Celestial.Get_Time_at_Solar_Altitude(c.Latitude.ToDouble(),c.Longitude.ToDouble(), c.GeoDate.AddHours(7), 50.94);
+            t = Celestial.Get_Time_at_Solar_Altitude(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate.AddHours(7), 50.94);
             ts = c.GeoDate.AddHours(7) - t.Rising;
             Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 60, $"Time: {t.Rising}");
+            Assert.AreEqual(CelestialStatus.RiseAndSet, t.Condition);
 
             t = Celestial.Get_Time_at_Solar_Altitude(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate, 50.94, c.Offset);
             ts = c.GeoDate - t.Rising;
             Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 60, $"Time: {t.Rising}");
+            Assert.AreEqual(CelestialStatus.RiseAndSet, t.Condition);
 
             //Expected values based on NOAA data
             c.GeoDate = new DateTime(2020, 8, 11, 18, 02, 10);
             t = Celestial.Get_Time_at_Solar_Altitude(c, 23.09);
             ts = c.GeoDate - t.Setting;
             Assert.AreEqual(0, Math.Abs(ts.Value.TotalSeconds), 240, $"Time: {t.Setting}");
+            Assert.AreEqual(CelestialStatus.RiseAndSet, t.Condition);
+        }
+
+        /// <summary>
+        /// Ensures correct conditions are returned at specified point and date
+        /// </summary>
+        [TestMethod]
+        public void Time_at_Altitude_Condition_Tests()
+        {
+            Coordinate c = new Coordinate(47.40615, -122.24517, new DateTime(2020, 8, 11, 11, 29, 0));
+            var t = Celestial.Get_Time_at_Solar_Altitude(c, 57.8);
+            Assert.AreEqual(CelestialStatus.DownAllDay, t.Condition);
+
+            t = Celestial.Get_Time_at_Solar_Altitude(c, -57.8);
+            Assert.AreEqual(CelestialStatus.UpAllDay, t.Condition);
+
+            c = new Coordinate(75, 45, new DateTime(2020, 11, 5, 10, 7, 0));
+            c.Offset = -9;
+            t = Celestial.Get_Time_at_Solar_Altitude(c, -.8);
+            Assert.AreEqual(CelestialStatus.NoRise, t.Condition);
+
+            c = new Coordinate(76, -45, new DateTime(2021, 8, 18, 10,7,0));           
+            t = Celestial.Get_Time_at_Solar_Altitude(c, -.8);
+            Assert.AreEqual(CelestialStatus.NoSet, t.Condition);
         }
     }
+
+
 
     public class Solar_Data
     {
         public List<DateTime?> SunRises { get; set; }
-     
+
         public List<DateTime?> SunSets { get; set; }
         public List<DateTime?> CivilDawn { get; set; }
         public List<DateTime?> CivilDusk { get; set; }
@@ -580,11 +609,11 @@ namespace CoordinateSharp_UnitTests
         public List<DateTime?> BottomSolarDiscSet { get; set; }
 
         public List<double> SunAlts { get; set; }
-        public List<double> SunAzs { get; set; }  
+        public List<double> SunAzs { get; set; }
 
         public SolarEclipse SolarEclispe { get; set; }
-     
+
         public List<bool> IsSunUp { get; set; }
-     
+
     }
 }

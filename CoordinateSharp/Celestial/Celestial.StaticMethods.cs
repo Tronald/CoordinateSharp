@@ -1077,7 +1077,8 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Get times based the specified Coordinate object's data and altitude.
+        /// Get times based on the specified Coordinate object's data and altitude.
+        /// Condition (AltitudeEvents) should be checked if either Rising or Setting values return null.
         /// </summary>
         /// <param name="c">Coordinate</param>
         /// <param name="alt">Altitude in degrees</param>
@@ -1092,6 +1093,7 @@ namespace CoordinateSharp
         /// var sa = Celestial.Get_Time_at_Solar_Altitude(coordinate, 23.4);
         /// Console.WriteLine(sa.Rising); //3/1/2018 8:49:35 AM
         /// Console.WriteLine(sa.Setting); //3/1/2018 3:34:51 PM
+        /// Console.WriteLine(sa.Condition); //RiseAndSet;
         /// </code>
         /// </example>
         public static AltitudeEvents Get_Time_at_Solar_Altitude(Coordinate c, double alt)
@@ -1100,6 +1102,7 @@ namespace CoordinateSharp
         }
         /// <summary>
         /// Get times (in UTC) at the provided solar position, date and altitude.
+        /// Condition (AltitudeEvents) should be checked if either Rising or Setting values return null.
         /// </summary>
         /// <param name="lat">Signed latitude</param>
         /// <param name="longi">Signed longitude</param>
@@ -1113,6 +1116,7 @@ namespace CoordinateSharp
         /// var sa = Celestial.Get_Time_at_Solar_Altitude(40.0, -74.6, new DateTime(2018,3,1), 23.4);
         /// Console.WriteLine(sa.Rising); //3/1/2018 13:49:35 UTC
         /// Console.WriteLine(sa.Setting); //3/1/2018 20:34:51 UTC
+        /// Console.WriteLine(sa.Condition); //RiseAndSet;
         /// </code>
         /// </example>
         public static AltitudeEvents Get_Time_at_Solar_Altitude(double lat, double longi, DateTime date, double alt)
@@ -1120,7 +1124,8 @@ namespace CoordinateSharp
             return Get_Time_at_Solar_Altitude(lat, longi, date, alt, 0);
         }
         /// <summary>
-        /// Get times (at the specified offset) at the provided solar position, date and altitude.
+        /// Get times (at the specified offset) at the provided solar position, date and altitude. 
+        /// Condition (AltitudeEvents) should be checked if either Rising or Setting value return null.
         /// </summary>
         /// <param name="lat">Signed latitude</param>
         /// <param name="longi">Signed longitude</param>
@@ -1135,6 +1140,7 @@ namespace CoordinateSharp
         /// var sa = Celestial.Get_Time_at_Solar_Altitude(40.0, -74.6, new DateTime(2018,3,1), 23.4, -5);
         /// Console.WriteLine(sa.Rising); //3/1/2018 8:49:35 AM
         /// Console.WriteLine(sa.Setting); //3/1/2018 3:34:51 PM
+        /// Console.WriteLine(sa.Condition); //RiseAndSet;
         /// </code>
         /// </example>
         public static AltitudeEvents Get_Time_at_Solar_Altitude(double lat, double longi, DateTime date, double alt, double offset)
@@ -1143,10 +1149,41 @@ namespace CoordinateSharp
             double rad = Math.PI / 180;
             double lw = rad * -longi;
             double phi = rad * lat;
-        
-            var events = SunCalc.Get_Event_Time(lw, phi, alt, date, offset, false);
 
-            return new AltitudeEvents(){ Rising=events[0], Setting=events[1] };
+            var events = SunCalc.Get_Event_Time(lw, phi, alt, date, offset, false);
+         
+            var altE = new AltitudeEvents() { Rising = events[0], Setting = events[1] };
+
+            //Determine Condition is event horizon is passed.
+            if (altE.Rising == null && altE.Setting == null)
+            {            
+                var ang = SunCalc.CalculateSunAngle(date.AddHours(-offset), lat, longi); //subtract offset to run calc at Z time.
+                if(ang[1] < alt) { altE.Condition = CelestialStatus.DownAllDay; }
+                else { altE.Condition = CelestialStatus.UpAllDay; }
+            }
+            else if (altE.Rising == null)
+            {
+                altE.Condition = CelestialStatus.NoRise;
+            }
+            else if (altE.Setting == null)
+            {
+                altE.Condition = CelestialStatus.NoSet;
+            }
+            else
+            {
+                altE.Condition = CelestialStatus.RiseAndSet;
+            }
+
+            return altE;
+        }
+
+        //Delete or reform after test
+        //Make celcoord internal
+        //Remove public declination for MoonClac function
+        //Work for next release
+        internal static CelCoords Get_Sun_Coords(double jde)
+        {
+            return MoonCalc.GetSunCoords(jde);
         }
 
         //Time Slips

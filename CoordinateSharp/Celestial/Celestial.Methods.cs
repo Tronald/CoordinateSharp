@@ -281,6 +281,8 @@ namespace CoordinateSharp
                 SunCalc.CalculateZodiacSign(c.GeoDate.AddHours(offset), this);
             }
         }
+
+       
     }
 
 }

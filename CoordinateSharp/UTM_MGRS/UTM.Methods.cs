@@ -440,7 +440,27 @@ namespace CoordinateSharp
             if (systemType== UTM_Type.UPS) { return LatZone + " " + (int)easting + "mE " + (int)northing + "mN"; }
             return longZone.ToString() + LatZone + " " + (int)easting + "mE " + (int)northing + "mN";
         }
-       
+
+        /// <summary>
+        /// Centimeter formatted UTM string (to the 5th decimal)
+        /// </summary>
+        /// <returns>UTM Formatted Coordinate String</returns>
+        public string ToCentimeterString()
+        {
+            if (systemType == UTM_Type.UPS) { return LatZone + " " + easting.ToString("0.#####") + "mE " + northing.ToString("0.#####") + "mN"; }
+            return longZone.ToString() + LatZone + " " + easting.ToString("0.#####") + "mE " + northing.ToString("0.#####") + "mN";
+        }
+
+        /// <summary>
+        /// Rounded UTM string
+        /// </summary>
+        /// <returns>UTM Formatted Coordinate String</returns>
+        public string ToRoundedString()
+        {
+            if (systemType == UTM_Type.UPS) { return LatZone + " " + Math.Round(easting) + "mE " + Math.Round(northing) + "mN"; }
+            return longZone.ToString() + LatZone + " " + Math.Round(easting) + "mE " + Math.Round(northing) + "mN";
+        }
+
         private static Coordinate UTMtoLatLong(double x, double y, double zone, double equatorialRadius, double flattening, EagerLoad el)
         {
             //x easting
