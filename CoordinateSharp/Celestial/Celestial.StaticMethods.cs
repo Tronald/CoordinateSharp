@@ -57,9 +57,6 @@ namespace CoordinateSharp
         /// <param name="coord">Coordinate</param>
         internal static Celestial LoadCelestial(Coordinate coord)
         {
-            DateTime geoDate = coord.GeoDate;
-
-            DateTime d = new DateTime(geoDate.Year, geoDate.Month, geoDate.Day, geoDate.Hour, geoDate.Minute, geoDate.Second, DateTimeKind.Utc);
             Celestial cel = new Celestial(coord.Latitude.ToDouble(), coord.Longitude.ToDouble(), coord.GeoDate);
 
             return cel;
@@ -1156,8 +1153,9 @@ namespace CoordinateSharp
 
             //Determine Condition is event horizon is passed.
             if (altE.Rising == null && altE.Setting == null)
-            {            
-                var ang = SunCalc.CalculateSunAngle(date.AddHours(-offset), lat, longi); //subtract offset to run calc at Z time.
+            {
+                var celC = SunCalc.Get_Solar_Coordinates(date, -offset);
+                var ang = SunCalc.CalculateSunAngle(date.AddHours(-offset), lat, longi, celC); //subtract offset to run calc at Z time.
                 if(ang[1] < alt) { altE.Condition = CelestialStatus.DownAllDay; }
                 else { altE.Condition = CelestialStatus.UpAllDay; }
             }
@@ -1177,13 +1175,110 @@ namespace CoordinateSharp
             return altE;
         }
 
-        //Delete or reform after test
-        //Make celcoord internal
-        //Remove public declination for MoonClac function
-        //Work for next release
-        internal static CelCoords Get_Sun_Coords(double jde)
+        /// <summary>
+        /// Gets solar coordinates based on UTC DateTime. Values are in degrees unless otherwise specified.
+        /// </summary>
+        /// <param name="date">UTC DateTime</param>
+        /// <returns>SolarCoordinates</returns>
+        /// <example>
+        /// The following example returns the coordinates of the sun based on the provided UTC DateTime.
+        /// <code>
+        /// var celC = Celestial.Get_Solar_Coordinates(new DateTime(1992,4,12));
+        /// 
+        /// //PROPERTY VALUES
+        /// //RadiusVector: 1.00249723716304
+        /// //Longitude: 22.3395779176985
+        /// //Latitude: 0
+        /// //RightAscension: 20.6576437884708
+        /// //Declination: 8.69650660229221
+        /// //GeometricMeanLongitude: 20.4480824646839
+        /// //SubsolarLatitude: 8.69650660229221
+        /// //SubsolarLongitude: -179.790438676213
+        /// </code>
+        /// </example>
+        public static SolarCoordinates Get_Solar_Coordinate(DateTime date)
         {
-            return MoonCalc.GetSunCoords(jde);
+            return SunCalc.Get_Solar_Coordinates(date, 0);
+        }
+
+        /// <summary>
+        /// Gets solar coordinates based on UTC DateTime. Values are in degrees unless otherwise specified.
+        /// </summary>
+        /// <param name="date">UTC DateTime</param>
+        /// <param name="offset">UTC Offset in Hours</param>
+        /// <returns>SolarCoordinates</returns>
+        /// <example>
+        /// The following example returns the coordinates of the sun based on the provided Local DateTime and UTC Offset.
+        /// <code>
+        /// var celC = Celestial.Get_Solar_Coordinates(new DateTime(1992,4,12,7,0,0), 7);
+        /// 
+        /// //PROPERTY VALUES
+        /// //RadiusVector: 1.00249723716304
+        /// //Longitude: 22.3395779176985
+        /// //Latitude: 0
+        /// //RightAscension: 20.6576437884708
+        /// //Declination: 8.69650660229221
+        /// //GeometricMeanLongitude: 20.4480824646839
+        /// //SubsolarLatitude: 8.69650660229221
+        /// //SubsolarLongitude: -179.790438676213
+        /// </code>
+        /// </example>
+        public static SolarCoordinates Get_Solar_Coordinate(DateTime date, double offset)
+        {
+            offset *= -1; //REVERSE OFFSET FOR POSITIONING
+            return SunCalc.Get_Solar_Coordinates(date, offset);
+        }
+
+        /// <summary>
+        /// Gets lunar coordinates based on UTC DateTime. Values are in degrees unless otherwise specified.
+        /// </summary>
+        /// <param name="date">UTC DateTime</param>
+        /// <returns>LunarCoordinates</returns>
+        /// <example>
+        /// The following example returns the coordinates of the moon based on the provided UTC DateTime.
+        /// <code>
+        /// var celC = Celestial.Get_Lunar_Coordinates(new DateTime(1992,4,12));
+        /// 
+        /// //PROPERTY VALUES
+        /// //Longitude: 133.167197165444
+        /// //Latitude: -3.22898378016249
+        /// //RightAscension: 134.683729152193
+        /// //Declination: 13.7688377109201
+        /// //GeometricMeanLongitude: 134.29018141258
+        /// //SublunarLatitude: 13.7688377109201
+        /// //SublunarLongitude: -65.7643937981642
+        /// </code>
+        /// </example>
+        public static LunarCoordinates Get_Lunar_Coordinate(DateTime date)
+        {
+            return MoonCalc.GetMoonCoords(date, 0);
+        }
+
+        /// <summary>
+        /// Gets lunar coordinates based on UTC DateTime. Values are in degrees unless otherwise specified.
+        /// </summary>
+        /// <param name="date">UTC DateTime</param>
+        /// <param name="offset">UTC Offset in Hours</param>
+        /// <returns>LunarCoordinates</returns>
+        /// <example>
+        /// The following example returns the coordinates of the moon based on the provided Local DateTime and UTC Offset.
+        /// <code>
+        /// var celC = Celestial.Get_Lunar_Coordinates(new DateTime(1992,4,12,7,0,0), 7);
+        /// 
+        /// //PROPERTY VALUES
+        /// //Longitude: 133.167197165444
+        /// //Latitude: -3.22898378016249
+        /// //RightAscension: 134.683729152193
+        /// //Declination: 13.7688377109201
+        /// //GeometricMeanLongitude: 134.29018141258
+        /// //SublunarLatitude: 13.7688377109201
+        /// //SublunarLongitude: -65.7643937981642
+        /// </code>
+        /// </example>
+        public static LunarCoordinates Get_Lunar_Coordinate(DateTime date, double offset)
+        {
+            offset *= -1; //REVERSE OFFSET FOR POSITIONING
+            return MoonCalc.GetMoonCoords(date, offset);
         }
 
         //Time Slips

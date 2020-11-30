@@ -291,10 +291,7 @@ namespace CoordinateSharp
             }
             return true;
         }
-        private double degreeToRadian(double degree)
-        {
-            return degree * Math.PI / 180;
-        }
+     
         /// <summary>
         /// Assigns UTM values based of Lat/Long
         /// </summary>
@@ -315,9 +312,8 @@ namespace CoordinateSharp
             else { systemType = UTM_Type.UTM; }
 
             //Within UTM BOUNDS
-            string letter = "";
-            double easting = 0;
-            double northing = 0;
+            string letter;
+          
             int zone;
             if (szone == null)
             {  
@@ -370,13 +366,13 @@ namespace CoordinateSharp
             double b = a * (1 - f);   // polar radius
            
             double e = Math.Sqrt(1 - Math.Pow(b, 2) / Math.Pow(a, 2));
-            double e0 = e / Math.Sqrt(1 - Math.Pow(e, 1));
+           // double e0 = e / Math.Sqrt(1 - Math.Pow(e, 1));
 
             double drad = Math.PI / 180;
             double k0 = 0.9996;
 
             double phi = lat * drad;                              // convert latitude to radians
-            double lng = longi * drad;                             // convert longitude to radians
+           
             double utmz;
             if (szone == null)
             {
@@ -388,7 +384,7 @@ namespace CoordinateSharp
                                                      // this gives us zone A-B for below 80S
             double esq = (1 - (b / a) * (b / a));
             double e0sq = e * e / (1 - Math.Pow(e, 2));
-            double M = 0;
+            
 
             double N = a / Math.Sqrt(1 - Math.Pow(e * Math.Sin(phi), 2));
             double T = Math.Pow(Math.Tan(phi), 2);
@@ -396,23 +392,23 @@ namespace CoordinateSharp
             double A = (longi - zcm) * drad * Math.Cos(phi);
 
             // calculate M (USGS style)
-            M = phi * (1 - esq * (1.0 / 4.0 + esq * (3.0 / 64.0 + 5.0 * esq / 256.0)));
-            M = M - Math.Sin(2.0 * phi) * (esq * (3.0 / 8.0 + esq * (3.0 / 32.0 + 45.0 * esq / 1024.0)));
-            M = M + Math.Sin(4.0 * phi) * (esq * esq * (15.0 / 256.0 + esq * 45.0 / 1024.0));
-            M = M - Math.Sin(6.0 * phi) * (esq * esq * esq * (35.0 / 3072.0));
-            M = M * a;//Arc length along standard meridian
+            double M = phi * (1 - esq * (1.0 / 4.0 + esq * (3.0 / 64.0 + 5.0 * esq / 256.0)));
+            M -= Math.Sin(2.0 * phi) * (esq * (3.0 / 8.0 + esq * (3.0 / 32.0 + 45.0 * esq / 1024.0)));
+            M += Math.Sin(4.0 * phi) * (esq * esq * (15.0 / 256.0 + esq * 45.0 / 1024.0));
+            M -= Math.Sin(6.0 * phi) * (esq * esq * esq * (35.0 / 3072.0));
+            M *= a;//Arc length along standard meridian
 
             double M0 = 0;// if another point of origin is used than the equator
 
             // Calculate the UTM values...
             // first the easting
             var x = k0 * N * A * (1 + A * A * ((1 - T + C) / 6 + A * A * (5 - 18 * T + T * T + 72.0 * C - 58 * e0sq) / 120.0)); //Easting relative to CM
-            x = x + 500000; // standard easting
+            x += 500000; // standard easting
 
             // Northing
         
             double y = k0 * (M - M0 + N * Math.Tan(phi) * (A * A * (1 / 2.0 + A * A * ((5 - T + 9 * C + 4 * C * C) / 24.0 + A * A * (61 - 58 * T + T * T + 600 * C - 330 * e0sq) / 720.0))));    // first from the equator
-            double yg = y + 10000000;  //yg = y global, from S. Pole
+           
             if (y < 0)
             {
                 y = 10000000 + y;   // add in false northing if south of the equator
@@ -421,8 +417,8 @@ namespace CoordinateSharp
             //Last zone is 60, but will hit 61 at 180 degrees exactly. Reset to 1.
             if (zone == 61) { zone = 1; }
 
-            easting = x;
-            northing = y; 
+            double easting = x;
+            double northing = y; 
                
             utm.latZone = letter;
             utm.longZone = zone;

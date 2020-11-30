@@ -46,18 +46,18 @@ using System;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Globalization;
-
+using System.Collections.Generic;
 namespace CoordinateSharp
 {
     internal partial class FormatFinder
     {
-        private static bool TryUTM(string s, out string[] utm)
+        private static bool TryUTM(string ns, out string[] utm)
         {
-            utm = null;       
-
+            utm = null;
+            string s = ns.ToUpper().Replace("ME", "").Replace("MN", "").Trim();
             //Attempt Regex Match
             Regex regex = new Regex("[0-9]{1,2}[a-z,A-Z]{1}\\d+");
-            Match match = regex.Match(s);
+            Match match = regex.Match(s.Replace(" ",""));
             if (match.Success)
             {
                 //Extract Numbers for one string UTM
@@ -115,39 +115,39 @@ namespace CoordinateSharp
                 if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out northing))
                 { return false; }
 
-                utm = new string[] { zone.ToString(), zoneL, easting.ToString(CultureInfo.InvariantCulture), northing.ToString(CultureInfo.InvariantCulture) };
+                utm = new string[] { zone.ToString(), zoneL, easting.ToString(), northing.ToString() };
                 return true;
             }
-          
+
             return false;
         }
-        private static bool TryUPS(string s, out string[] utm)
+        private static bool TryUPS(string ns, out string[] utm)
         {
             utm = null;
-
+            string s = ns.ToUpper().Replace("ME", "").Replace("MN", "").Trim();
             int i;
-            if(!int.TryParse(s.Trim()[0].ToString(), out i))
+            if (!int.TryParse(s.Trim()[0].ToString(), out i))
             {
                 s = "0" + s;
             }
 
             //Attempt Regex Match
             Regex regex = new Regex("[0]{1,2}[a,b,y,z,A,B,Y,Z]{1}\\d+");
-        
-            Match match = regex.Match(s);
+
+            Match match = regex.Match(s.Replace(" ",""));
             if (match.Success)
             {
-                
+
                 //Extract Numbers for one string UTM
                 regex = new Regex("\\d+");
                 MatchCollection matches = regex.Matches(s);
-  
+
                 //IF character count of Easting Northing aren't even return false as precisions is unknown.
                 int splitSpot = matches[1].Value.Count();
-   
+
                 if (splitSpot % 2 == 0)
                 {
-         
+
                     string longZone = "0";
                     string eastingNorthing = matches[1].Value;
 
@@ -161,7 +161,7 @@ namespace CoordinateSharp
                     string northing = eastingNorthing.Substring((int)(eastingNorthing.Length / 2), (int)(eastingNorthing.Length / 2));
 
                     utm = new string[] { longZone, latZone, easting, northing };
-         
+
                     return true;
                 }
 

@@ -44,6 +44,7 @@ For more information, please contact Signature Group, LLC at this address: sales
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace CoordinateSharp
@@ -260,6 +261,9 @@ namespace CoordinateSharp
         /// Eagerloading settings.
         /// </summary>
         public EagerLoad EagerLoadSettings { get; set; }
+
+        public double Equatorial_Radius { get { return equatorial_radius; } }
+        public double Inverse_Flattening { get { return inverse_flattening; } }
 
         //PARSER INDICATOR
         private Parse_Format_Type parse_Format = Parse_Format_Type.None;

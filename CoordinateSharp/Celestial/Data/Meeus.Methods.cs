@@ -42,9 +42,12 @@ Organizations or use cases that fall under the following conditions may receive 
 
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
+using CoordinateSharp.Formatters;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace CoordinateSharp
@@ -96,26 +99,9 @@ namespace CoordinateSharp
             double A1 = 119.75 + 131.849 * T;
             double A2 = 53.09 + 479264.290 * T;
 
-            //Normalize 0-360 degree number
-            A1 %= 360;
-            if (A1 < 0) { A1 += 360; }
-            A2 %= 360;
-            if (A2 < 0) { A2 += 360; }
-
-            //Convert DMF to radians
-            A1 = A1 * Math.PI / 180;
-            A2 = A2 * Math.PI / 180;
-
-            //L TO RADIANS
-            L %= 360;
-            if (L < 0) { L += 360; }
-
-            //Convert DMF to radians
-            L = L * Math.PI / 180;
-
-            sum += 3958 * Math.Sin(A1);
-            sum += 1962 * Math.Sin(L - F);
-            sum += 318 * Math.Sin(A2);
+            sum += 3958 * Math.Sin(A1.ToRadians());
+            sum += 1962 * Math.Sin(L.ToRadians() - F);
+            sum += 318 * Math.Sin(A2.ToRadians());
 
             return sum;
         }
@@ -131,8 +117,14 @@ namespace CoordinateSharp
         /// <returns>Eb</returns>
         public static double Moon_Periodic_Eb(double L, double D, double M, double N, double F, double T)
         {
+            //Not returning exact Meeus Values
+            //LDMNFT Accurate
+            //A1 & A3 Accurate
+            //Table checked match (book example may be contain incorrect sum or table value)?
+
             //Table 47B contains 60 lines to sum
             double[] values = new double[] { D, M, N, F };
+          
             double sum = 0;
             for (int x = 0; x < 60; x++)
             {
@@ -143,29 +135,12 @@ namespace CoordinateSharp
             double A1 = 119.75 + 131.849 * T;
             double A3 = 313.45 + 481266.484 * T;
 
-            //Normalize 0-360 degree number   
-            A1 %= 360;
-            if (A1 < 0) { A1 += 360; }
-            A3 %= 360;
-            if (A3 < 0) { A3 += 360; }
-
-            //Convert DMF to radians
-            A1 = A1 * Math.PI / 180;
-            A3 = A3 * Math.PI / 180;
-
-            //L TO RADIANS
-            L %= 360;
-            if (L < 0) { L += 360; }
-
-            //Convert DMF to radians
-            L = L * Math.PI / 180;
-
-            sum += -2235 * Math.Sin(L);
-            sum += 382 * Math.Sin(A3);
-            sum += 175 * Math.Sin(A1 - F);
-            sum += 175 * Math.Sin(A1 + F);
-            sum += 127 * Math.Sin(L - M);
-            sum += -115 * Math.Sin(L + M);
+            sum += -2235 * Math.Sin(L.ToRadians())
+              + 382 * Math.Sin(A3.ToRadians())
+            + 175 * Math.Sin(A1.ToRadians() - F)
+            + 175 * Math.Sin(A1.ToRadians() + F)
+            + 127 * Math.Sin(L.ToRadians() - M)
+            - 115 * Math.Sin(L.ToRadians() + M);
 
             return sum;
         }

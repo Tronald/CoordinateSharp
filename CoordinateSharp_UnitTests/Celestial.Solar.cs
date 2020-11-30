@@ -161,12 +161,12 @@ namespace CoordinateSharp_UnitTests
         [TestMethod]
         public void SunAltitude()
         {
-            Check_Values(data.SunAlts, "CelestialData\\SunAlts.txt");
+            Check_Values(data.SunAlts, "CelestialData\\SunAlts.txt",.3);
         }
         [TestMethod]
         public void SunAzimuth()
         {
-            Check_Values(data.SunAzs, "CelestialData\\SunAzs.txt");
+            Check_Values(data.SunAzs, "CelestialData\\SunAzs.txt",.5);
         }
 
         [TestMethod]
@@ -435,7 +435,7 @@ namespace CoordinateSharp_UnitTests
 
         }
 
-        private void Check_Values(object prop, string file)
+        private void Check_Values(object prop, string file, double doubleDelta=0)
         {
             string[] lines = File.ReadAllLines(file);
 
@@ -460,11 +460,12 @@ namespace CoordinateSharp_UnitTests
             }
             if (prop.GetType() == typeof(List<double>))
             {
+               
                 List<double> d = (List<double>)prop;
                 for (int x = 0; x < lines.Length; x++)
                 {
                     double dub = double.Parse(lines[x]);
-                    Assert.AreEqual(0, dub - d[x], 1, $"Double exceeded delta at iteration {x + 1}");
+                    Assert.AreEqual(0, dub - d[x], doubleDelta, $"Double exceeded delta at iteration {x + 1}");
                 }
             }
             if (prop.GetType() == typeof(List<string>))
@@ -589,6 +590,70 @@ namespace CoordinateSharp_UnitTests
             c = new Coordinate(76, -45, new DateTime(2021, 8, 18, 10,7,0));           
             t = Celestial.Get_Time_at_Solar_Altitude(c, -.8);
             Assert.AreEqual(CelestialStatus.NoSet, t.Condition);
+        }
+
+        /// <summary>
+        /// Ensure solar coordinate accuracy
+        /// </summary>
+        [TestMethod]
+        public void Solar_Coordinate_Accuracy_Check()
+        {
+            var sc1 = Celestial.Get_Solar_Coordinate(new DateTime(2020, 11, 19, 0, 0, 0));
+            var sc2 = Celestial.Get_Solar_Coordinate(new DateTime(2020, 11, 19, 0, 26, 0));
+            var sc3 = Celestial.Get_Solar_Coordinate(new DateTime(2020, 11, 19, 12, 26, 0));
+            var sc4 = Celestial.Get_Solar_Coordinate(new DateTime(1992, 10, 13, 1, 0, 0));
+
+
+            Assert.AreEqual(0.988293, sc1.RadiusVector, .000001, "Radius vector for sc1 exceeds delta.");
+            Assert.AreEqual(237.122, sc1.Longitude, .8, "Longitude for sc1 exceeds delta.");
+            Assert.AreEqual(0, sc1.Latitude, .001, "Latitude for sc1 exceeds delta.");
+            Assert.AreEqual(234.835, sc1.RightAscension, .1, "Right Ascension for sc1 exceeds delta.");
+            Assert.AreEqual(-19.514, sc1.Declination, .1, "Declination for sc1 exceeds delta.");
+            Assert.AreEqual(238.491, sc1.GeometricMeanLongitude, .001, "Geometric Mean Longitude for sc1 exceeds delta.");
+            Assert.AreEqual(-19.514, sc1.SubsolarLatitude, .01, "Subsolar Latitude for sc1 exceeds delta.");
+            Assert.AreEqual(176.344, sc1.SubsolarLongitude, .03, "Subsolar Longitude for sc1 exceeds delta.");
+
+            Assert.AreEqual(0.988289, sc2.RadiusVector, .000001, "Radius vector for sc2 exceeds delta.");
+            Assert.AreEqual(237.141, sc2.Longitude, .8, "Longitude for sc2 exceeds delta.");
+            Assert.AreEqual(0, sc2.Latitude, .001, "Latitude for sc2 exceeds delta.");
+            Assert.AreEqual(234.854, sc2.RightAscension, .1, "Right Ascension for sc2 exceeds delta.");
+            Assert.AreEqual(-19.518, sc2.Declination, .1, "Declination for sc2 exceeds delta.");
+            Assert.AreEqual(238.509, sc2.GeometricMeanLongitude, .001, "Geometric Mean Longitude for sc2 exceeds delta.");
+            Assert.AreEqual(-19.518, sc2.SubsolarLatitude, .01, "Subsolar Latitude for sc2 exceeds delta.");
+            Assert.AreEqual(169.845, sc2.SubsolarLongitude, .03, "Subsolar Longitude for sc2 exceeds delta.");
+
+            Assert.AreEqual(0.988186, sc3.RadiusVector, .000001, "Radius vector for sc3 exceeds delta.");
+            Assert.AreEqual(237.141, sc3.Longitude, .8, "Longitude for sc3 exceeds delta.");
+            Assert.AreEqual(0, sc3.Latitude, .001, "Latitude for sc3 exceeds delta.");
+            Assert.AreEqual(235.376, sc3.RightAscension, .1, "Right Ascension for sc3 exceeds delta.");
+            Assert.AreEqual(-19.632, sc3.Declination, .1, "Declination for sc3 exceeds delta.");
+            Assert.AreEqual(239.002, sc3.GeometricMeanLongitude, .001, "Geometric Mean Longitude for sc3 exceeds delta.");
+            Assert.AreEqual(-19.632, sc3.SubsolarLatitude, .01, "Subsolar Latitude for sc3 exceeds delta.");
+            Assert.AreEqual(-10.126, sc3.SubsolarLongitude, .03, "Subsolar Longitude for sc3 exceeds delta.");
+
+            Assert.AreEqual(0.997650, sc4.RadiusVector, .000001, "Radius vector for sc4 exceeds delta.");
+            Assert.AreEqual(199.950, sc4.Longitude, .8, "Longitude for sc4 exceeds delta.");
+            Assert.AreEqual(0, sc4.Latitude, .001, "Latitude for sc4 exceeds delta.");
+            Assert.AreEqual(198.420, sc4.RightAscension, .1, "Right Ascension for sc4 exceeds delta.");
+            Assert.AreEqual(-7.801, sc4.Declination, .1, "Declination for sc4 exceeds delta.");
+            Assert.AreEqual(201.848, sc4.GeometricMeanLongitude, .001, "Geometric Mean Longitude for sc4 exceeds delta.");
+            Assert.AreEqual(-7.801, sc4.SubsolarLatitude, .01, "Subsolar Latitude for sc4 exceeds delta.");
+            Assert.AreEqual(161.572, sc4.SubsolarLongitude, .03, "Subsolar Longitude for sc4 exceeds delta.");
+        }
+
+        /// <summary>
+        /// Ensures solar coordinate accuracy in local time
+        /// </summary>
+        [TestMethod]
+        public void Solar_Coordinate_Accuracy_Local_Time_Check()
+        {
+            var lcZ = Celestial.Get_Solar_Coordinate(new DateTime(2020, 11, 19, 0, 0, 0));
+            var lcL = Celestial.Get_Solar_Coordinate(new DateTime(2020, 11, 18, 13, 0, 0), -11);
+
+            //Local float precision loss will occur
+            Assert.AreEqual(lcZ.SubsolarLatitude, lcL.SubsolarLatitude, .000001, "Subsolar Latitude");
+            Assert.AreEqual(lcZ.SubsolarLongitude, lcL.SubsolarLongitude, .0001, "Subsolar Longitude");
+            Assert.AreEqual(lcZ.RightAscension, lcL.RightAscension, .0000001, "Right Ascension");
         }
     }
 

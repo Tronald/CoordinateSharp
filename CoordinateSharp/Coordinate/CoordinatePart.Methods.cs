@@ -119,6 +119,7 @@ namespace CoordinateSharp
             decimal sec = dm - dmFloor;
             sec *= 60;//SECONDS
 
+          
 
             decimalDegree = value;
             degrees = Convert.ToInt32(ddFloor);
@@ -359,6 +360,23 @@ namespace CoordinateSharp
             string leadTrail = Leading_Trailing_Format(lead, trail, rounding);
 
             double sc = Math.Round(Seconds, rounding);
+
+            //Correct float loss
+            string nPos = Position.ToString();       
+            if(sc == 60) 
+            { 
+                sc = 0;
+                int min = Minutes + 1;
+                if(min>59)
+                {
+                    min = 0;
+                    d = string.Format(leadString, Degrees + 1);                  
+                }
+                if (lead) { minute = string.Format("{0:00}", min); }
+                else { minute = min.ToString(); }
+            }
+            //end correction
+
             string second = string.Format(leadTrail, sc);
             string hs = " ";
             string ds = "";
@@ -372,8 +390,9 @@ namespace CoordinateSharp
             }
             if (hyphen) { hs = "-"; }
 
-            if (positionFirst) { return Position.ToString() + hs + d + ds + hs + minute + ms + hs + second + ss; }
-            else { return d + ds + hs + minute + ms + hs + second + ss + hs + Position.ToString(); }
+            
+            if (positionFirst) { return nPos + hs + d + ds + hs + minute + ms + hs + second + ss; }
+            else { return d + ds + hs + minute + ms + hs + second + ss + hs + nPos; }
         }
         //DDM Coordinate Format
         private string ToDegreeDecimalMinuteString(int rounding, bool lead, bool trail, bool symbols, bool degreeSymbol, bool minuteSymbol, bool hyphen, bool positionFirst)
@@ -414,7 +433,7 @@ namespace CoordinateSharp
 
             double ns = Seconds / 60;
             double c = Math.Round(Minutes + ns, rounding);
-            if (c == 60 && Degrees + 1 < 91) { c = 0; d = string.Format(leadString, Degrees + 1); }//Adjust for rounded maxed out Seconds. will Convert 42 60.0 to 43
+            if (c == 60) { c = 0; d = string.Format(leadString, Degrees + 1); }//Adjust for rounded maxed out Seconds. will Convert 42 60.0 to 43
             string ms = string.Format(leadTrail, c);
             string hs = " ";
             string ds = "";
@@ -534,7 +553,6 @@ namespace CoordinateSharp
             
             return decimalDegree * Math.PI / 180;
         }
-     
 
         /// <summary>
         /// Property changed event
@@ -545,7 +563,7 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="props">Property Type</param>
         private void NotifyProperties(PropertyTypes props)
-        {
+        {     
             switch (props)
             {
                 case PropertyTypes.DecimalDegree:

@@ -245,7 +245,7 @@ namespace CoordinateSharp
 
                   
 
-                    easting = easting + chunk;
+                    easting += chunk;
                   
                 }
                 northing--;
@@ -285,7 +285,7 @@ namespace CoordinateSharp
                         else { return Correct_Min_Precision_Loss(nMgrs); }
                     }
 
-                    easting = easting - chunk;
+                    easting -= chunk;
                    
                 }
                 northing--;

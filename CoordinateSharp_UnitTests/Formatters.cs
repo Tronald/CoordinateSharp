@@ -15,6 +15,7 @@ namespace CoordinateSharp_UnitTests
         {
             double degree = 45.258;
             Assert.AreEqual(.7899011, Format.ToRadians(degree), .0000001);
+            Assert.AreEqual(.7899011, degree.ToRadians(), .0000001);
         }
 
         [TestMethod]
@@ -23,6 +24,7 @@ namespace CoordinateSharp_UnitTests
 
             double rad = .7899011;
             Assert.AreEqual(45.258, Format.ToDegrees(rad), .000001);
+            Assert.AreEqual(45.258, rad.ToDegrees(), .000001);
         }
 
         [TestMethod]
@@ -35,6 +37,7 @@ namespace CoordinateSharp_UnitTests
 
             Assert.AreEqual(Format.ToDegrees((int)ddm1[0],ddm1[1]), c.Latitude.ToDouble(), .000001);
             Assert.AreEqual(Format.ToDegrees((int)ddm2[0], ddm2[1]), c.Longitude.ToDouble(), .000001);
+          
 
         }
 
@@ -57,7 +60,7 @@ namespace CoordinateSharp_UnitTests
             Coordinate c = new Coordinate(45.234, -34.567, new EagerLoad(false));
             var lat = Format.ToDegreeDecimalMinutes(c.Latitude.ToDouble());
             var lng = Format.ToDegreeDecimalMinutes(c.Longitude.ToDouble());
-
+            
             Assert.AreEqual(Math.Truncate(c.Latitude.DecimalDegree), lat[0]);
             Assert.AreEqual(c.Latitude.DecimalMinute, lat[1], .0000001);
 
@@ -86,7 +89,7 @@ namespace CoordinateSharp_UnitTests
         {
             double signed = -161.61917;
             var hms = Format.ToHoursMinutesSeconds(signed);
-
+            
             Assert.AreEqual(-10, hms[0]);
             Assert.AreEqual(-46, hms[1]);
             Assert.AreEqual(-28.60068, hms[2],.001);

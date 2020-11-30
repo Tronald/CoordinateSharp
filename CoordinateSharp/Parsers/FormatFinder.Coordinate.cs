@@ -153,7 +153,36 @@ namespace CoordinateSharp
                     {//Parser failed try next method 
                     }
                 }
-
+                //Try Cartesian
+                if (TryCartesian(s.ToUpper().Replace("KM", "").Replace("X", "").Replace("Y", "").Replace("Z", ""), out d))
+                {
+                    if (ct == CartesianType.Cartesian)
+                    {
+                        try
+                        {
+                            Cartesian cart = new Cartesian(d[0], d[1], d[2]);
+                            c = Cartesian.CartesianToLatLong(cart);
+                            c.Parse_Format = Parse_Format_Type.Cartesian_Spherical;
+                            return true;
+                        }
+                        catch
+                        {//Parser failed try next method 
+                        }
+                    }
+                    if (ct == CartesianType.ECEF)
+                    {
+                        try
+                        {
+                            ECEF ecef = new ECEF(d[0], d[1], d[2]);
+                            c = ECEF.ECEFToLatLong(ecef);
+                            c.Parse_Format = Parse_Format_Type.Cartesian_ECEF;
+                            return true;
+                        }
+                        catch
+                        {//Parser failed try next method 
+                        }
+                    }
+                }
                 string[] um;
                 //Try MGRS
                 if (TryMGRS(s, out um) || TryMGRS_Polar(s, out um))
@@ -190,36 +219,7 @@ namespace CoordinateSharp
                     }
                 }
 
-                //Try Cartesian
-                if (TryCartesian(s.ToUpper().Replace("KM", "").Replace("X", "").Replace("Y", "").Replace("Z", ""), out d))
-                {
-                    if (ct == CartesianType.Cartesian)
-                    {
-                        try
-                        {
-                            Cartesian cart = new Cartesian(d[0], d[1], d[2]);
-                            c = Cartesian.CartesianToLatLong(cart);
-                            c.Parse_Format = Parse_Format_Type.Cartesian_Spherical;
-                            return true;
-                        }
-                        catch
-                        {//Parser failed try next method 
-                        }
-                    }
-                    if (ct == CartesianType.ECEF)
-                    {
-                        try
-                        {
-                            ECEF ecef = new ECEF(d[0], d[1], d[2]);
-                            c = ECEF.ECEFToLatLong(ecef);
-                            c.Parse_Format = Parse_Format_Type.Cartesian_ECEF;
-                            return true;
-                        }
-                        catch
-                        {//Parser failed try next method 
-                        }
-                    }
-                }
+               
             }
             catch(Exception ex)
             {
@@ -241,12 +241,7 @@ namespace CoordinateSharp
             s = s.Replace("'", " ");
             s = s.Replace("\"", " ");
             s = s.Replace(",", " ");
-
-            s = s.Replace("ME", " ");
-            s = s.Replace("MN", " ");
-      
-
-
+         
             if (removeDashes)
             {
                 s = s.Replace("-", " ");
