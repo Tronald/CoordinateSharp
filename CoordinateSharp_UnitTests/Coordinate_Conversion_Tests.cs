@@ -587,6 +587,39 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual("N 0º 0' 0\" E 0º 0' 0\"", c.ToString(), "Coordinate not expected");
         }
 
+        /// <summary>
+        /// Ensure decimal minutes and seconds properly round string output if field is equal to 60.
+        /// </summary>
+        [TestMethod]
+        public void Check_60_Degree_Handling()
+        {
+            Coordinate c = new Coordinate(new EagerLoad(false));
+            var options = new CoordinateFormatOptions();
+            options.Format = CoordinateFormatType.Degree_Decimal_Minutes;
+            var lat = new CoordinatePart(CoordinateType.Lat);
+            lat.Degrees = 89;
+            lat.Minutes = 59;
+            lat.Seconds = 59.99999;
+            var lng = new CoordinatePart(CoordinateType.Long);
+            lng.Degrees = 179;
+            lng.Minutes = 59;
+            lng.Seconds = 59.99999;
+
+            c.Latitude = lat;
+            c.Longitude = lng;
+
+            Assert.AreEqual("N 90º 0' 0\" E 180º 0' 0\"", c.ToString());
+            Assert.AreEqual("N 90º 0' E 180º 0'", c.ToString(options));
+
+            lat.Position = CoordinatesPosition.S;
+            lng.Position = CoordinatesPosition.W;
+
+
+            Assert.AreEqual("S 90º 0' 0\" W 180º 0' 0\"", c.ToString());
+            Assert.AreEqual("S 90º 0' W 180º 0'", c.ToString(options));
+
+        }
+
 
         /// <summary>
         /// Asserts conversions

@@ -438,6 +438,9 @@ namespace CoordinateSharp
             }
             equatorial_radius = radius;
             inverse_flattening = flattening;
+
+            NotifyPropertyChanged("Equatorial_Radius");
+            NotifyPropertyChanged("Inverse_Flattening");
         }
         /// <summary>
         /// Set a custom datum for coordinate conversions and distance calculation for specified coordinate formats only.
@@ -488,6 +491,9 @@ namespace CoordinateSharp
                 equatorial_radius = radius;
                 inverse_flattening = flattening;
             }
+
+            NotifyPropertyChanged("Equatorial_Radius");
+            NotifyPropertyChanged("Inverse_Flattening");
         }
 
         /*DISTANCE & MOVING METHODS*/
@@ -870,6 +876,7 @@ namespace CoordinateSharp
                 default:
                     break;
             }
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 

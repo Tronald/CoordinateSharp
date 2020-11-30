@@ -192,67 +192,67 @@ namespace CoordinateSharp
         };
         private static double[] Table47B_Arguments = new double[]
         {
-            0,0,0,1,
-            0,0,1,1,
-            0,0,1,-1,
-            2,0,0,-1,
-            2,0,-1,1,
-            2,0,-1,-1,
-            2,0,0,1,
-            0,0,2,1,
-            2,0,1,-1,
-            0,0,2,-1,
-            2,-1,0,-1,
-            2,0,-2,-1,
-            2,0,1,1,
-            2,1,0,-1,
-            2,-1,-1,1,
-            2,-1,0,1,
-            2,-1,-1,-1,
-            0,1,-1,-1,
-            4,0,-1,-1,
-            0,1,0,1,
-            0,0,0,3,
-            0,1,-1,1,
-            1,0,0,1,
-            0,1,1,1,
-            0,1,1,-1,
-            0,1,0,-1,
-            1,0,0,-1,
-            0,0,3,1,
-            4,0,0,-1,
-            4,0,-1,1,
+            0,0,0,1,//
+            0,0,1,1, //
+            0,0,1,-1,//
+            2,0,0,-1,//
+            2,0,-1,1,//
+            2,0,-1,-1,//
+            2,0,0,1,//
+            0,0,2,1,//
+            2,0,1,-1,//
+            0,0,2,-1,//
+            2,-1,0,-1,//
+            2,0,-2,-1,//
+            2,0,1,1,//
+            2,1,0,-1,//
+            2,-1,-1,1,//
+            2,-1,0,1,//
+            2,-1,-1,-1,//
+            0,1,-1,-1,//
+            4,0,-1,-1,//
+            0,1,0,1,//
+            0,0,0,3,//
+            0,1,-1,1,//
+            1,0,0,1,//
+            0,1,1,1,//
+            0,1,1,-1,//
+            0,1,0,-1,//
+            1,0,0,-1,//
+            0,0,3,1,//
+            4,0,0,-1,//
+            4,0,-1,1,//
 
-            0,0,1,-3,
-            4,0,-2,1,
-            2,0,0,-3,
-            2,0,2,-1,
-            2,-1,1,-1,
-            2,0,-2,1,
-            0,0,3,-1,
-            2,0,2,1,
-            2,0,-3,-1,
-            2,1,-1,1,
-            2,1,0,1,
-            4,0,0,1,
-            2,-1,1,1,
-            2,-2,0,-1,
-            0,0,1,3,
-            2,1,1,-1,
-            1,1,0,-1,
-            1,1,0,1,
-            0,1,-2,-1,
-            2,1,-1,-1,
-            1,0,1,1,
-            2,-1,-2,-1,
-            0,1,2,1,
-            4,0,-2,-1,
-            4,-1,-1,-1,
-            1,0,1,-1,
-            4,0,1,-1,
-            1,0,-1,-1,
-            4,-1,0,-1,
-            2,-2,0,1,
+            0,0,1,-3,//
+            4,0,-2,1,//
+            2,0,0,-3,//
+            2,0,2,-1,//
+            2,-1,1,-1,//
+            2,0,-2,1,//
+            0,0,3,-1,//
+            2,0,2,1,//
+            2,0,-3,-1,//
+            2,1,-1,1,//
+            2,1,0,1,//
+            4,0,0,1,//
+            2,-1,1,1,//
+            2,-2,0,-1,//
+            0,0,1,3,//
+            2,1,1,-1,//
+            1,1,0,-1,//
+            1,1,0,1,//
+            0,1,-2,-1,//
+            2,1,-1,-1,//
+            1,0,1,1,//
+            2,-1,-2,-1,//
+            0,1,2,1,//
+            4,0,-2,-1,//
+            4,-1,-1,-1,//
+            1,0,1,-1,//
+            4,0,1,-1,//
+            1,0,-1,-1,//
+            4,-1,0,-1,//
+            2,-2,0,1,//
         };
         private static double[] Table47A_El_Er = new double[]
         {
@@ -278,6 +278,7 @@ namespace CoordinateSharp
             777,671,607,596,491,-451,439,422,421,-366,-351,331,315,302,-283,-229,
             223,223,-220,-220,-185,181,-177,176,166,-164,132,-119,115,107
         };
+
         private static double Get_Table47A_Values(double[] values, int l, double t, bool sine)
         {
             //sine true returns El
@@ -299,7 +300,7 @@ namespace CoordinateSharp
                         e *= e;
                     }
                 }
-                return (Table47A_El_Er[l] * e) * Math.Sin(Table47A_Arguments[nl] * values[0] + Table47A_Arguments[nl + 1] * values[1] +
+                return Table47A_El_Er[l] * e * Math.Sin(Table47A_Arguments[nl] * values[0] + Table47A_Arguments[nl + 1] * values[1] +
                    Table47A_Arguments[nl + 2] * values[2] + Table47A_Arguments[nl + 3] * values[3]);
             }
             else
@@ -314,7 +315,7 @@ namespace CoordinateSharp
                         e *= e;
                     }
                 }
-                return (Table47A_El_Er[l + 60] * e) * Math.Cos(Table47A_Arguments[nl] * values[0] + Table47A_Arguments[nl + 1] * values[1] +
+                return Table47A_El_Er[l + 60] * e * Math.Cos(Table47A_Arguments[nl] * values[0] + Table47A_Arguments[nl + 1] * values[1] +
                    Table47A_Arguments[nl + 2] * values[2] + Table47A_Arguments[nl + 3] * values[3]);
             }
         }
@@ -326,13 +327,13 @@ namespace CoordinateSharp
             if (Table47B_Arguments[nl + 1] != 0)
             {
                 e = 1 - .002516 * t - .0000074 * Math.Pow(t, 2);
-
+             
                 if (Math.Abs(Table47B_Arguments[nl + 1]) == 2)
                 {
                     e *= e;
                 }
             }
-            return (Table47B_Eb[l] * e) * Math.Sin(Table47B_Arguments[nl] * values[0] + Table47B_Arguments[nl + 1] * values[1] +
+            return Table47B_Eb[l] * e * Math.Sin(Table47B_Arguments[nl] * values[0] + Table47B_Arguments[nl + 1] * values[1] +
                Table47B_Arguments[nl + 2] * values[2] + Table47B_Arguments[nl + 3] * values[3]);
         }
     }

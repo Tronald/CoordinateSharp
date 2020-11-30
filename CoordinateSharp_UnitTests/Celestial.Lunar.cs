@@ -15,7 +15,7 @@ namespace CoordinateSharp_UnitTests
     [TestClass]
     public class CelestialLunar
     {
-        Lunar_Data data = new Lunar_Data();
+        readonly Lunar_Data  data = new Lunar_Data();
 
         public CelestialLunar()
         {
@@ -76,27 +76,27 @@ namespace CoordinateSharp_UnitTests
         [TestMethod]
         public void MoonAltitude()
         {
-            Check_Values(data.MoonAlts, "CelestialData\\MoonAlts.txt");
+            Check_Values(data.MoonAlts, "CelestialData\\MoonAlts.txt",.0001);
         }
         [TestMethod]
         public void MoonAzimuth()
         {
-            Check_Values(data.MoonAzs, "CelestialData\\MoonAzs.txt");
+            Check_Values(data.MoonAzs, "CelestialData\\MoonAzs.txt",.0001);
         }
         [TestMethod]
         public void MoonDistance()
         {
-            Check_Values(data.MoonDistances, "CelestialData\\MoonDistance.txt");
+            Check_Values(data.MoonDistances, "CelestialData\\MoonDistance.txt",.0001);
         }
         [TestMethod]
         public void MoonIllum()
         {
-            Check_Values(data.MoonFractions, "CelestialData\\MoonFraction.txt");
+            Check_Values(data.MoonFractions, "CelestialData\\MoonFraction.txt",.01);
         }
         [TestMethod]
         public void MoonPhase()
         {
-            Check_Values(data.MoonPhases, "CelestialData\\MoonPhase.txt");
+            Check_Values(data.MoonPhases, "CelestialData\\MoonPhase.txt",.001);
         }
         [TestMethod]
         public void MoonPhaseName()
@@ -105,8 +105,7 @@ namespace CoordinateSharp_UnitTests
         }
         [TestMethod]
         public void LunarEclipse()
-        {
-            IFormatter formatter = new BinaryFormatter();
+        {     
             //Deserialize     
             using (StreamReader streamReader = new StreamReader("CelestialData\\LunarEclipse.txt"))
             {
@@ -142,8 +141,7 @@ namespace CoordinateSharp_UnitTests
                 double lat = double.Parse(split[0]);
                 double longi = double.Parse(split[1]);
                 DateTime geoDate = DateTime.Parse(split[2]).Date;
-                string sR = split[3];
-                string SS = split[4];
+                
                 string condition = split[5];
                 EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
                 el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Lunar_Cycle);
@@ -318,6 +316,7 @@ namespace CoordinateSharp_UnitTests
             cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, 12);
             cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, new EagerLoad(), 12);
             cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, new EagerLoad(), -12);
+
             //OUT OF RANGE
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cUTC.Offset = -13; });
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cUTC.Offset = 13; });
@@ -335,7 +334,6 @@ namespace CoordinateSharp_UnitTests
         [TestMethod]
         public void Perigee()
         {
-            IFormatter formatter = new BinaryFormatter();
             //Deserialize     
             using (StreamReader streamReader = new StreamReader("CelestialData\\Perigee.txt"))
             {
@@ -355,7 +353,7 @@ namespace CoordinateSharp_UnitTests
                     var n1 = property.GetValue(nE1);
                     var n2 = property.GetValue(nE2);
 
-                    Assert.AreEqual(l1.ToString(), l2.ToString(), $"Last Perigee: {l2.ToString()} not expected.");
+                    Assert.AreEqual(l1.ToString(), l2.ToString(), $"Last Perigee: {l2} not expected.");
 
                     if (l1.GetType() == typeof(Distance) && l2.GetType() == typeof(Distance))
                     {
@@ -364,10 +362,10 @@ namespace CoordinateSharp_UnitTests
                         {
                             var l1Sub = propertySub.GetValue(l1);
                             var l2Sub = propertySub.GetValue(l2);
-                            Assert.AreEqual(l1Sub.ToString(), l2Sub.ToString(), $"Last Perigee {propertySub.Name}: {l2Sub.ToString()} not expected.");                        
+                            Assert.AreEqual(l1Sub.ToString(), l2Sub.ToString(), $"Last Perigee {propertySub.Name}: {l2Sub} not expected.");                        
                         }
                     }
-                    Assert.AreEqual(n1.ToString(), n2.ToString(), $"Next Perigee: {n2.ToString()} not expected.");
+                    Assert.AreEqual(n1.ToString(), n2.ToString(), $"Next Perigee: {n2} not expected.");
 
                     if (n1.GetType() == typeof(Distance) && n2.GetType() == typeof(Distance))
                     {
@@ -376,7 +374,7 @@ namespace CoordinateSharp_UnitTests
                         {
                             var n1Sub = propertySub.GetValue(n1);
                             var n2Sub = propertySub.GetValue(n2);
-                            Assert.AreEqual(n1Sub.ToString(), n2Sub.ToString(), $"Next Perigee {propertySub.Name}: {n2Sub.ToString()} not expected.");
+                            Assert.AreEqual(n1Sub.ToString(), n2Sub.ToString(), $"Next Perigee {propertySub.Name}: {n2Sub} not expected.");
                         }
                     }
 
@@ -387,8 +385,7 @@ namespace CoordinateSharp_UnitTests
 
         [TestMethod]
         public void Apogee()
-        {
-            IFormatter formatter = new BinaryFormatter();
+        {          
             //Deserialize     
             using (StreamReader streamReader = new StreamReader("CelestialData\\Apogee.txt"))
             {
@@ -408,7 +405,7 @@ namespace CoordinateSharp_UnitTests
                     var n1 = property.GetValue(nE1);
                     var n2 = property.GetValue(nE2);
 
-                    Assert.AreEqual(l1.ToString(), l2.ToString(), $"Last Apogee: {l2.ToString()} not expected.");
+                    Assert.AreEqual(l1.ToString(), l2.ToString(), $"Last Apogee: {l2} not expected.");
                     if (l1.GetType() == typeof(Distance) && l2.GetType() == typeof(Distance))
                     {
                         PropertyInfo[] propertiesSub = typeof(Distance).GetProperties();
@@ -416,10 +413,10 @@ namespace CoordinateSharp_UnitTests
                         {
                             var l1Sub = propertySub.GetValue(l1);
                             var l2Sub = propertySub.GetValue(l2);
-                            Assert.AreEqual(l1Sub.ToString(), l2Sub.ToString(), $"Last Apogee {propertySub.Name}: {l2Sub.ToString()} not expected.");
+                            Assert.AreEqual(l1Sub.ToString(), l2Sub.ToString(), $"Last Apogee {propertySub.Name}: {l2Sub} not expected.");
                         }
                     }
-                    Assert.AreEqual(n1.ToString(), n2.ToString(), $"Next Apogee: {l2.ToString()} not expected.");
+                    Assert.AreEqual(n1.ToString(), n2.ToString(), $"Next Apogee: {l2} not expected.");
                     if (n1.GetType() == typeof(Distance) && n2.GetType() == typeof(Distance))
                     {
                         PropertyInfo[] propertiesSub = typeof(Distance).GetProperties();
@@ -427,12 +424,76 @@ namespace CoordinateSharp_UnitTests
                         {
                             var n1Sub = propertySub.GetValue(n1);
                             var n2Sub = propertySub.GetValue(n2);
-                            Assert.AreEqual(n1Sub.ToString(), n2Sub.ToString(), $"Next Apogee {propertySub.Name}: {n2Sub.ToString()} not expected.");
+                            Assert.AreEqual(n1Sub.ToString(), n2Sub.ToString(), $"Next Apogee {propertySub.Name}: {n2Sub} not expected.");
                         }
                     }
 
                 }
             }
+        }
+
+        /// <summary>
+        /// Ensures lunar coordinate accuracy
+        /// </summary>
+        [TestMethod]
+        public void Lunar_Coordinate_Accuracy_Check()
+        {
+            https://www.timeanddate.com/worldclock/sunearth.html
+            var lc1 = Celestial.Get_Lunar_Coordinate(new DateTime(2020, 11, 19, 0, 0, 0));
+            var lc2 = Celestial.Get_Lunar_Coordinate(new DateTime(2020, 11, 19, 0, 26, 0));
+            var lc3 = Celestial.Get_Lunar_Coordinate(new DateTime(2020, 11, 19, 12, 26, 0));
+            var lc4 = Celestial.Get_Lunar_Coordinate(new DateTime(1992, 10, 13, 1, 0, 0));
+
+
+          
+            Assert.AreEqual(288.404, lc1.Longitude, .8, "Longitude for lc1 exceeds delta.");
+            Assert.AreEqual(-2.490, lc1.Latitude, .1, "Latitude for lc1 exceeds delta.");
+            Assert.AreEqual(290.305, lc1.RightAscension, .1, "Right Ascension for lc1 exceeds delta.");
+            Assert.AreEqual(-24.639, lc1.Declination, .1, "Declination for lc1 exceeds delta.");
+            Assert.AreEqual(281.280, lc1.GeometricMeanLongitude, .001, "Geometric Mean Longitude for lc1 exceeds delta.");
+            Assert.AreEqual(-24.39, lc1.SublunarLatitude, .4, "Sublunar Latitude for lc1 exceeds delta.");
+            Assert.AreEqual(-128.09, lc1.SublunarLongitude, .4, "Sublunar Longitude for lc1 exceeds delta.");
+
+           
+            Assert.AreEqual(288.653, lc2.Longitude, .8, "Longitude for lc2 exceeds delta.");
+            Assert.AreEqual(-2.511, lc2.Latitude, .1, "Latitude for lc2 exceeds delta.");
+            Assert.AreEqual(290.579, lc2.RightAscension, .1, "Right Ascension for lc2 exceeds delta.");
+            Assert.AreEqual(-24.624, lc2.Declination, .1, "Declination for lc2 exceeds delta.");
+            Assert.AreEqual(281.518, lc2.GeometricMeanLongitude, .001, "Geometric Mean Longitude for lc2 exceeds delta.");
+            Assert.AreEqual(-24.38, lc2.SublunarLatitude, .4, "Sublunar Latitude for lc2 exceeds delta.");
+            Assert.AreEqual(-134.24, lc2.SublunarLongitude, .4, "Sublunar Longitude for lc2 exceeds delta.");
+
+           
+            Assert.AreEqual(295.493, lc3.Longitude, .8, "Longitude for lc3 exceeds delta.");
+            Assert.AreEqual(-3.043, lc3.Latitude, .1, "Latitude for lc3 exceeds delta.");
+            Assert.AreEqual(298.072, lc3.RightAscension, .1, "Right Ascension for lc3 exceeds delta.");
+            Assert.AreEqual(-24.030, lc3.Declination, .1, "Declination for lc3 exceeds delta.");
+            Assert.AreEqual(288.106, lc3.GeometricMeanLongitude, .001, "Geometric Mean Longitude for lc3 exceeds delta.");
+            Assert.AreEqual(-24.02, lc3.SublunarLatitude, .4, "Sublunar Latitude for lc3 exceeds delta.");
+            Assert.AreEqual(52.36, lc3.SublunarLongitude, .4, "Sublunar Longitude for lc3 exceeds delta.");
+
+          
+            Assert.AreEqual(34.832, lc4.Longitude, .8, "Longitude for lc4 exceeds delta.");
+            Assert.AreEqual(3.776, lc4.Latitude, .1, "Latitude for lc4 exceeds delta.");
+            Assert.AreEqual(31.235, lc4.RightAscension, .1, "Right Ascension for lc4 exceeds delta.");
+            Assert.AreEqual(16.686, lc4.Declination, .1, "Declination for lc4 exceeds delta.");
+            Assert.AreEqual(39.296, lc4.GeometricMeanLongitude, .001, "Geometric Mean Longitude for lc4 exceeds delta.");
+            Assert.AreEqual(16.420, lc4.SublunarLatitude, .4, "Sublunar Latitude for lc4 exceeds delta.");
+            Assert.AreEqual(-5.37, lc4.SublunarLongitude, .4, "Sublunar Longitude for lc4 exceeds delta.");
+        }
+        /// <summary>
+        /// Ensures lunar coordinate accuracy in local time
+        /// </summary>
+        [TestMethod]
+        public void Lunar_Coordinate_Accuracy_Local_Time_Check()
+        {     
+            var lcZ = Celestial.Get_Lunar_Coordinate(new DateTime(2020, 11, 19, 0, 0, 0));
+            var lcL = Celestial.Get_Lunar_Coordinate(new DateTime(2020, 11, 18, 13, 0, 0),-11);
+
+            //Local float precision loss will occur
+            Assert.AreEqual(lcZ.SublunarLatitude, lcL.SublunarLatitude, .0001, "Sublunar Latitude");
+            Assert.AreEqual(lcZ.SublunarLongitude, lcL.SublunarLongitude, .0001, "Sublunar Longitude");
+            Assert.AreEqual(lcZ.RightAscension, lcL.RightAscension,.00001, "Right Ascension");
         }
 
         private void Local_Time_Checker(Celestial cCel, Celestial lCel, Celestial sCel, Celestial bCel, double offset)
@@ -481,7 +542,7 @@ namespace CoordinateSharp_UnitTests
         }
 
 
-        private void Check_Values(object prop, string file)
+        private void Check_Values(object prop, string file, double doubleDelta=0)
         {
             string[] lines = File.ReadAllLines(file);
 
@@ -510,7 +571,7 @@ namespace CoordinateSharp_UnitTests
                 for (int x = 0; x < lines.Length; x++)
                 {
                     double dub = double.Parse(lines[x]);
-                    Assert.AreEqual(0, dub - d[x], 1, $"Double exceeded delta at iteration {x + 1}");
+                    Assert.AreEqual(0, dub - d[x], doubleDelta, $"Double exceeded delta at iteration {x + 1}");
                 }
             }
             if (prop.GetType() == typeof(List<string>))

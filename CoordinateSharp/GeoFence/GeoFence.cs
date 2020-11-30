@@ -53,7 +53,7 @@ namespace CoordinateSharp
     [Serializable]
     public partial class GeoFence
     {   
-        private List<Point> _points = new List<Point>();
+        private readonly List<Point> _points = new List<Point>();
 
         /// <summary>
         /// Create a GeoFence using a list of points. 

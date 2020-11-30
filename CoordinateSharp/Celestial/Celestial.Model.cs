@@ -43,9 +43,7 @@ Organizations or use cases that fall under the following conditions may receive 
 For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 
 namespace CoordinateSharp
 {
@@ -87,6 +85,9 @@ namespace CoordinateSharp
         internal LunarEclipse lunarEclipse;
         internal Solstices solstices;
         internal Equinoxes equinoxes;
+
+        internal LunarCoordinates lunarCoordinates;
+        internal SolarCoordinates solarCoordinates;
 
         /// <summary>
         /// Sunset time.
@@ -250,7 +251,7 @@ namespace CoordinateSharp
         /// Astrological signs based on the provided date.
         /// </summary>
         /// <remarks>
-        /// Contains zodiac, moon sign and moon name during full moon events
+        /// Contains zodiac, moon sign and moon name during full moon events.
         /// </remarks>
         public AstrologicalSigns AstrologicalSigns { get { return astrologicalSigns; } }
 
@@ -264,13 +265,23 @@ namespace CoordinateSharp
         public LunarEclipse LunarEclipse { get { return lunarEclipse; } }
 
         /// <summary>
-        /// Get solstice values based on provided year
+        /// Get solstice values based on provided year.
         /// </summary>
         public Solstices Solstices { get { return solstices; } }
        
         /// <summary>
-        /// Get equinox values based on provided year
+        /// Get equinox values based on provided year.
         /// </summary>
         public Equinoxes Equinoxes { get { return equinoxes; } }
+
+        /// <summary>
+        /// Lunar Coordinates.
+        /// </summary>
+        public LunarCoordinates LunarCoordinates { get { return lunarCoordinates; } }
+
+        /// <summary>
+        /// Solar Coordinates.
+        /// </summary>
+        public SolarCoordinates SolarCoordinates { get { return solarCoordinates; } }
     }
 }

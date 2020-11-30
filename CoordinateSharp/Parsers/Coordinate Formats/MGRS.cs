@@ -47,20 +47,39 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Globalization;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace CoordinateSharp
 {
     internal partial class FormatFinder
     {
-        private static bool TryMGRS(string s, out string[] mgrs)
+        private static bool TryMGRS(string ns, out string[] mgrs)
         {
-            
+            //Prepare string for regex validation
+            string s = ns.Replace(" ", "").ToUpper();
+          
+            if(Regex.IsMatch(s, @"[0-9]{1,2}[a-z,A-Z]{3}\d+ME\d+MN"))
+            {
+                int found = 0;
+                List<char> msc = new List<char>();
+                foreach (var c in s.ToArray())
+                {
+                    bool isLetter = char.IsLetter(c);
+                    if(isLetter)
+                    { found++; }
+
+                    if(found>3 && isLetter) { continue; }
+                    msc.Add(c);
+                }
+                s = string.Join("", msc);
+            }
+
             mgrs = null;
             //Add easting northing at 0,0 if not provided
 
-
+           
             //Attempt Regex Match
-            Regex regex = new Regex("[0-9]{1,2}[a-z,A-Z]{3}\\d+");
+            Regex regex = new Regex(@"[0-9]{1,2}[a-z,A-Z]{3}\d+");
 
             //Add default easting/northing if not provided
             if (!regex.Match(s).Success && regex.Match(s + "00").Success) { s += "00"; }
@@ -97,51 +116,30 @@ namespace CoordinateSharp
                 }
 
             }
-            string[] sA = SpecialSplit(s, false);
-
-            //Adjust for Easting Northing unprovided
-            if (sA.Count() == 2 || sA.Count() == 3)
-            {
-                s += " 0 0";
-                sA = SpecialSplit(s, false);
-            }
-
-            if (sA.Count() == 4 || sA.Count() == 5)
-            {
-                double zone;
-                string zoneL;
-                string diagraph;
-                double easting;
-                double northing;
-
-                if (sA.Count() == 5)
-                {
-                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; sA[3] = sA[4]; }
-                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; ; sA[3] = sA[4]; }
-                    else { return false; }
-                }
-                zoneL = new string(sA[0].Where(Char.IsLetter).ToArray());
-                if (zoneL == string.Empty) { return false; }
-                if (zoneL.Count() != 1) { return false; }
-                sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
-                diagraph = sA[1];
-                if (diagraph.Count() != 2) { return false; }
-                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out zone))
-                { return false; }
-                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out easting))
-                { return false; }
-                if (!double.TryParse(sA[3], NumberStyles.Any, CultureInfo.InvariantCulture, out northing))
-                { return false; }
-
-                
-
-                mgrs = new string[] { zone.ToString(), zoneL, diagraph, sA[2].PadRight(5,'0'), sA[3].PadRight(5, '0') };
-                return true;
-            }
+      
             return false;
         }
-        private static bool TryMGRS_Polar(string s, out string[] mgrs)
+        private static bool TryMGRS_Polar(string ns, out string[] mgrs)
         {
+            //Prepare string for regex validation
+            string s = ns.Replace(" ", "").ToUpper();
+
+            if (Regex.IsMatch(s, @"\d?\d?[a,b,y,z,A,B,Y,Z]{1}[a-z,A-Z]{2}\d+ME\d+MN"))
+            {
+                int found = 0;
+                List<char> msc = new List<char>();
+                foreach (var c in s.ToArray())
+                {
+                    bool isLetter = char.IsLetter(c);
+                    if (isLetter)
+                    { found++; }
+
+                    if (found > 3 && isLetter) { continue; }
+                    msc.Add(c);
+                }
+                s = string.Join("", msc);
+            }
+            if (s.Count() > 0 && char.IsLetter(s[0])) { s = "0" + s; }//For validation only add 0 to front of string
             mgrs = null;
 
             int i;
@@ -149,18 +147,18 @@ namespace CoordinateSharp
             {
                 s = "0" + s;
             }
-           
+
             //Attempt Regex Match
-            Regex regex = new Regex("[0-9]{1,2}[a,b,y,z,A,B,Y,Z]{1}[a-z,A-Z]{2}\\d+");
+            Regex regex = new Regex(@"\d?\d?[a,b,y,z,A,B,Y,Z]{1}[a-z,A-Z]{2}\d+");
 
             //Add default easting/northing if not provided
             if (!regex.Match(s).Success && regex.Match(s + "00").Success) { s += "00"; }
 
             Match match = regex.Match(s);
-
+        
 
             if (match.Success)
-            {            
+            {
                 //Extract Numbers for one string MGRS
                 regex = new Regex("\\d+");
                 MatchCollection matches = regex.Matches(s);
@@ -185,51 +183,12 @@ namespace CoordinateSharp
                     string northing = eastingNorthing.Substring((int)(eastingNorthing.Length / 2), (int)(eastingNorthing.Length / 2));
 
                     mgrs = new string[] { longZone, latZone, identifier, easting.PadRight(5, '0'), northing.PadRight(5, '0') };
-                
+
                     return true;
                 }
 
             }
-            string[] sA = SpecialSplit(s, false);
-
-            //Adjust for Easting Northing unprovided
-            if (sA.Count()== 2 || sA.Count() == 3)
-            {
-                s += " 0 0";
-                sA = SpecialSplit(s, false);
-            }
-
-            if (sA.Count() == 4 || sA.Count() == 5)
-            {
-                double zone;
-                string zoneL;
-                string diagraph;
-                double easting;
-                double northing;
-
-                if (sA.Count() == 5)
-                {
-                    if (char.IsLetter(sA[0][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; sA[3] = sA[4]; }
-                    else if (char.IsLetter(sA[1][0])) { sA[0] += sA[1]; sA[1] = sA[2]; sA[2] = sA[3]; ; sA[3] = sA[4]; }
-                    else { return false; }
-                }
-                zoneL = new string(sA[0].Where(Char.IsLetter).ToArray());
-                if (zoneL == string.Empty) { return false; }
-                if (zoneL.Count() != 1) { return false; }
-                sA[0] = Regex.Replace(sA[0], "[^0-9.]", "");
-                diagraph = sA[1];
-                if (diagraph.Count() != 2) { return false; }
-                if (!double.TryParse(sA[0], NumberStyles.Any, CultureInfo.InvariantCulture, out zone))
-                { return false; }
-                if (!double.TryParse(sA[2], NumberStyles.Any, CultureInfo.InvariantCulture, out easting))
-                { return false; }
-                if (!double.TryParse(sA[3], NumberStyles.Any, CultureInfo.InvariantCulture, out northing))
-                { return false; }
-
-                mgrs = new string[] { zone.ToString(), zoneL, diagraph, sA[2].PadRight(5, '0'), sA[3].PadRight(5, '0') };
-               
-                return true;
-            }
+           
             return false;
         }
     }

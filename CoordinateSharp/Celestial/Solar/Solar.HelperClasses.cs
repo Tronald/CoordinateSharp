@@ -452,16 +452,4 @@ namespace CoordinateSharp
         public CelestialStatus Condition { get; set; }
     }
 
-    internal class CelCoords
-    {
-        public double ra { get; set; }
-        public double dec { get; set; }
-        public double dist { get; set; }
-
-        public double lat { get; set; }
-
-        public double equinox { get; set; }
-
-        public double lng { get; set; }
-    }
 }
