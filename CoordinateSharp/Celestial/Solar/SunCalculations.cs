@@ -446,7 +446,7 @@ namespace CoordinateSharp
             //celC.trueDeclination = tdec.ToDegrees();
             celC.rightAscension = ara.ToDegrees().NormalizeDegrees360();
             celC.declination = adec.ToDegrees();
-            celC.julianDayDecimal = JD - Math.Floor(JD);
+            celC.julianDayDecimal = JD-.5 - Math.Floor(JD-.5);
             celC.trueLongitude = trueLongitude.NormalizeDegrees360();
             celC.longitude = apparentLongitude.NormalizeDegrees360();
             celC.radiusVector = R;

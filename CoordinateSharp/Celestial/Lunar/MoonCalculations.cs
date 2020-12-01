@@ -255,7 +255,7 @@ namespace CoordinateSharp
 
         
             double geocentricLongitude = l.ToDegrees();
-            cel.julianDayDecimal = JD - Math.Floor(JD);
+            cel.julianDayDecimal = JD-.5 - Math.Floor(JD-.5);
             cel.latitude = b.ToDegrees();
             cel.rightAscension = RightAscension(l, b).ToDegrees().NormalizeDegrees360();
             cel.declination = Declination(l, b).ToDegrees();

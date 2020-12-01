@@ -602,6 +602,7 @@ namespace CoordinateSharp_UnitTests
             var sc2 = Celestial.Get_Solar_Coordinate(new DateTime(2020, 11, 19, 0, 26, 0));
             var sc3 = Celestial.Get_Solar_Coordinate(new DateTime(2020, 11, 19, 12, 26, 0));
             var sc4 = Celestial.Get_Solar_Coordinate(new DateTime(1992, 10, 13, 1, 0, 0));
+            var sc5 = Celestial.Get_Solar_Coordinate(new DateTime(2020, 9, 1, 11, 24, 0)); //Normalization subsolar check
 
 
             Assert.AreEqual(0.988293, sc1.RadiusVector, .000001, "Radius vector for sc1 exceeds delta.");
@@ -639,6 +640,10 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(201.848, sc4.GeometricMeanLongitude, .001, "Geometric Mean Longitude for sc4 exceeds delta.");
             Assert.AreEqual(-7.801, sc4.SubsolarLatitude, .01, "Subsolar Latitude for sc4 exceeds delta.");
             Assert.AreEqual(161.572, sc4.SubsolarLongitude, .03, "Subsolar Longitude for sc4 exceeds delta.");
+
+          
+            Assert.AreEqual(8.016, sc5.SubsolarLatitude, .01, "Subsolar Latitude for sc5 exceeds delta.");
+            Assert.AreEqual(8.966, sc5.SubsolarLongitude, .03, "Subsolar Longitude for sc5 exceeds delta.");
         }
 
         /// <summary>
