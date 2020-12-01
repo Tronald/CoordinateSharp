@@ -67,6 +67,7 @@ namespace CoordinateSharp
         internal double rightAscension;
         internal double declination;
         internal double geometricMeanLongitude;
+    
 
         /// <summary>
         /// Radius Vector (expressed in astronomical units).
@@ -117,12 +118,14 @@ namespace CoordinateSharp
             get
             {
                 double gmsto = geometricMeanLongitude;
-                if (gmsto > 180) { gmsto -= 180; }
-                double circle = (rightAscension - gmsto-julianDayDecimal*360);
-              
-                if (circle < 0) { return 180+circle; }//East
-                else { return (180 - circle) *-1; } //West
-           
+                gmsto += 180;
+
+                double circle = (0*180+rightAscension - gmsto-(julianDayDecimal)*360);
+                var x = circle - Math.Floor(circle / 360.0) * 360;
+                if (x > 180) { x = (360 - x) * -1; }
+                return x;
+             
+
             }
         }
 
@@ -186,12 +189,12 @@ namespace CoordinateSharp
             get
             {
                 double gmsto = sunMeanLongitude;
-                if (gmsto > 180) { gmsto -= 180; }
-                double circle = (rightAscension - gmsto - julianDayDecimal * 360);
+                gmsto += 180;
 
-                if (circle < 0) { return 180 + circle; }//East
-                else { return (180 - circle) * -1; } //West
-
+                double circle = (0 * 180 + rightAscension - gmsto - (julianDayDecimal) * 360);
+                var x = circle - Math.Floor(circle / 360.0) * 360;
+                if (x > 180) { x = (360 - x) * -1; }
+                return x;            
             }
         }
 
