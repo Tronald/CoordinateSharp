@@ -262,7 +262,14 @@ namespace CoordinateSharp
         /// </summary>
         public EagerLoad EagerLoadSettings { get; set; }
 
+        /// <summary>
+        /// Equatorial Radius of Earth (Default WGS84)
+        /// </summary>
         public double Equatorial_Radius { get { return equatorial_radius; } }
+
+        /// <summary>
+        /// Inverse Flattening of Earth (Default WGS84)
+        /// </summary>
         public double Inverse_Flattening { get { return inverse_flattening; } }
 
         //PARSER INDICATOR
