@@ -62,7 +62,7 @@ namespace CoordinateSharp
             {
                 //Extract Numbers for one string UTM
                 regex = new Regex("\\d+");
-                MatchCollection matches = regex.Matches(s);
+                MatchCollection matches = regex.Matches(s.Replace(" ", ""));
 
                 //IF character count of Easting Northing aren't even return false as precisions is unknown.
                 int splitSpot = matches[1].Value.Count();
@@ -140,7 +140,7 @@ namespace CoordinateSharp
 
                 //Extract Numbers for one string UTM
                 regex = new Regex("\\d+");
-                MatchCollection matches = regex.Matches(s);
+                MatchCollection matches = regex.Matches(s.Replace(" ", ""));
 
                 //IF character count of Easting Northing aren't even return false as precisions is unknown.
                 int splitSpot = matches[1].Value.Count();

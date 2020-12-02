@@ -47,25 +47,26 @@ For more information, please contact Signature Group, LLC at this address: sales
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1;</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.9.2.1</Version>
+    <Version>2.9.3.1</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2020</Copyright>
     <Description>A simple library designed to assist with geographic coordinate conversions, formatting and location based solar and lunar information.</Description>
-    <PackageReleaseNotes>-Fixes subsolar/sublunar degree normalization bug occuring under certain conditions that causes the celstial body to appear in the opposite position. Only effects the new feature added in v2.9.#.#</PackageReleaseNotes>
+    <PackageReleaseNotes>-Fixes UPS parser issue that can occur when Easting and Northing string length are not consistent.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian ECEF Sunset Sunrise Set Moonset Moonrise</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>    <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
-    <AssemblyVersion>2.9.1.3</AssemblyVersion>
+    <AssemblyVersion>2.9.3.1</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>CoordinateSharpPNG.png</PackageIcon>
     <AssemblyOriginatorKeyFile>CoordinateSharp Strong Name.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
+    <FileVersion>2.9.3.1</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
