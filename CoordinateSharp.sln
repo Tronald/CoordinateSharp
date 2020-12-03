@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoordinateSharp", "Coordina
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoordinateSharp_Playground", "CoordinateSharp_Playground\CoordinateSharp_Playground.csproj", "{F81EBED4-1B80-4987-A499-F669F345E7BB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoordinateSharp_UnitTests", "CoordinateSharp_UnitTests\CoordinateSharp_UnitTests.csproj", "{081621EE-78D3-4F86-8669-A42081B87A60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoordinateSharp_UnitTests", "CoordinateSharp_UnitTests\CoordinateSharp.UnitTests.csproj", "{081621EE-78D3-4F86-8669-A42081B87A60}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{848975D1-C7FA-4860-BF1B-60501630279F}"
 EndProject
