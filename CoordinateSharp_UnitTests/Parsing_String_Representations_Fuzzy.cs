@@ -25,7 +25,7 @@ namespace CoordinateSharp_UnitTests
         private static readonly Distance AccuracyLimit = new Distance(2.0, DistanceType.Meters);
 
 #if DETERMINISTIC_SEED
-        private static readonly int rngSeed = "CoordinateSharp".GetHashCode();
+        private const int rngSeed = 0;
         private static readonly Random random = new Random(rngSeed);
 #else
         private static readonly Random random = new Random();
@@ -46,7 +46,7 @@ namespace CoordinateSharp_UnitTests
         }
 
         /// <summary>
-        /// Creats a <see cref="Coordinate"/> object with a uniformly random latitude and uniformly random longitude with specified eager loading options.
+        /// Creats a <see cref="Coordinate"/> object with a uniformly distributed random latitude and uniformly distributed random longitude with specified eager loading options.
         /// </summary>
         /// <param name="eagerLoad"></param>
         /// <returns></returns>
