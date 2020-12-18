@@ -54,6 +54,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Coordinate information of the Sun, expressed in degrees (unless otherwise specified).
     /// </summary>
+    [Serializable]
     public class SolarCoordinates
     {
         //Test Against https://www.timeanddate.com/worldclock/sunearth.html     
@@ -134,6 +135,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Coordinate information of the Moon, expressed in degrees (unless otherwise specified).
     /// </summary>
+    [Serializable]
     public class LunarCoordinates
     {
         //Test Against https://www.timeanddate.com/worldclock/sunearth.html

@@ -557,6 +557,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Property changed event
         /// </summary>
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
         /// <summary>
         /// Notifies the correct properties and parent properties.
@@ -617,8 +618,9 @@ namespace CoordinateSharp
                 Parent.NotifyPropertyChanged("MGRS");
                 Parent.NotifyPropertyChanged("Cartesian");
                 Parent.NotifyPropertyChanged("ECEF");
+                parent.InvokeCoordinateChanged();
             }
-
+            
         }
 
         /// <summary>

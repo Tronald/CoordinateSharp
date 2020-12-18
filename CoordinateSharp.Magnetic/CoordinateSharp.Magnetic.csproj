@@ -47,14 +47,14 @@ For more information, please contact Signature Group, LLC at this address: sales
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1;</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.9.1.1</Version>
+    <Version>1.0.0.0</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2020</Copyright>
     <Description>CoordinateSharp magnetic data extensions.</Description>
-    <PackageReleaseNotes>-Initial Release
+    <PackageReleaseNotes>-Initial Release. Extends CoordinateSharp to allow for magnetic field element calculations.
 </PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Magnetic Declination</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
@@ -62,7 +62,7 @@ For more information, please contact Signature Group, LLC at this address: sales
     <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp.Magnetic</PackageId>
     <Title>CoordinateSharp.Magnetic</Title>
-    <AssemblyVersion>2.9.1.1</AssemblyVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>CoordinateSharpPNG.png</PackageIcon>

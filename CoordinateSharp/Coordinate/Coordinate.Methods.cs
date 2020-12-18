@@ -441,6 +441,7 @@ namespace CoordinateSharp
 
             NotifyPropertyChanged("Equatorial_Radius");
             NotifyPropertyChanged("Inverse_Flattening");
+            CoordinateChanged?.Invoke(this, new EventArgs());
         }
         /// <summary>
         /// Set a custom datum for coordinate conversions and distance calculation for specified coordinate formats only.
@@ -494,6 +495,7 @@ namespace CoordinateSharp
 
             NotifyPropertyChanged("Equatorial_Radius");
             NotifyPropertyChanged("Inverse_Flattening");
+            CoordinateChanged?.Invoke(this, new EventArgs());
         }
 
         /*DISTANCE & MOVING METHODS*/
@@ -595,7 +597,9 @@ namespace CoordinateSharp
                 //ADJUST CORD
                 Latitude.DecimalDegree = lat2;
                 Longitude.DecimalDegree = lon2;
-            }        
+            }
+
+            CoordinateChanged?.Invoke(this, new EventArgs());
         }
         /// <summary>
         /// Move a coordinate a specified distance (in meters) towards a target coordinate.
@@ -652,6 +656,8 @@ namespace CoordinateSharp
                 Latitude.DecimalDegree = lat2;
                 Longitude.DecimalDegree = lon2;
             }
+
+            CoordinateChanged?.Invoke(this, new EventArgs());
         }
         /// <summary>
         /// Move coordinate based on provided bearing and distance (in meters).
@@ -705,6 +711,8 @@ namespace CoordinateSharp
                 Latitude.DecimalDegree = lat2;
                 Longitude.DecimalDegree = lon2;
             }
+
+            CoordinateChanged?.Invoke(this, new EventArgs());
         }
         /// <summary>
         /// Move a coordinate a specified distance towards a target coordinate.
@@ -761,6 +769,8 @@ namespace CoordinateSharp
                 Latitude.DecimalDegree = lat2;
                 Longitude.DecimalDegree = lon2;
             }
+
+            CoordinateChanged?.Invoke(this, new EventArgs());
         }
      
 
@@ -834,7 +844,15 @@ namespace CoordinateSharp
         /// <summary>
         /// Property changed event
         /// </summary>
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Event handler that triggers when changes to the Coordinate occur. 
+        /// Can be subscribed to run logic after a Coordinate has "changed" (location, DateTime, UTC offset or datum).
+        /// </summary>
+        [field: NonSerialized]
+        public event EventHandler CoordinateChanged;
         /// <summary>
         /// Notify property changed
         /// </summary>
@@ -877,8 +895,13 @@ namespace CoordinateSharp
                     break;
             }
 
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));     
         }
 
+        internal void InvokeCoordinateChanged()
+        {
+            CoordinateChanged?.Invoke(this, new EventArgs());
+        }
+       
     }
 }

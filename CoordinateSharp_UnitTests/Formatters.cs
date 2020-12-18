@@ -2,7 +2,10 @@
 using System;
 using CoordinateSharp;
 using CoordinateSharp.Formatters;
-
+using System.Runtime.Serialization;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 namespace CoordinateSharp_UnitTests
 {
     [TestClass]
@@ -111,6 +114,30 @@ namespace CoordinateSharp_UnitTests
         {
             double signed = -2318.19280;
             Assert.AreEqual(201.80720, Format.NormalizeDegrees360(signed),.000000001);
+        }
+
+        /// <summary>
+        /// Ensures Coordinate and serialize in binary and deserialze properly
+        /// </summary>
+        [TestMethod]
+        public void Binary_Serialization()
+        {
+            //Thread safety for test
+            new Thread(delegate ()
+            {
+                Coordinate c1 = new Coordinate(45, 45, new DateTime(2020, 1, 1));
+
+                var stream = new MemoryStream();
+                BinaryFormatter bfS = new BinaryFormatter();
+                bfS.Serialize(stream, c1);
+                BinaryFormatter bfD = new BinaryFormatter();
+                stream.Position = 0;
+                Coordinate c2 = (Coordinate)bfD.Deserialize(stream);
+                stream.Close();
+                Assert.AreEqual(c1.ToString(), c2.ToString());
+                Assert.AreEqual(c1.CelestialInfo.SunSet, c2.CelestialInfo.SunSet);
+                Assert.AreEqual(c1.MGRS.ToString(), c2.MGRS.ToString());
+            }).Start();
         }
     }
 }

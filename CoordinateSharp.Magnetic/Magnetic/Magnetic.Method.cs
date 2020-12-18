@@ -50,17 +50,87 @@ namespace CoordinateSharp.Magnetic
     /// <summary>
     /// Coordinate based magnetic data.
     /// </summary>
-    public partial class Magnetic
+    public partial class Magnetic 
     {
+        /// <summary>
+        /// Initializes a magnetic object based on a Coordinate and a provided data Model. Assumes height is at MSL.
+        /// </summary>
+        /// <param name="coordinate">Coordinate</param>
+        /// <param name="dataModel">DataModel</param>
+        /// <example>
+        /// Creating a Magnetic object from a coordinate.
+        /// <code>
+        /// Coordinate c = Coordinate(25,25, new DateTime(2020,1,1));
+        /// Magnetic m = new Magnetic(c, DataModel.WMM2020);
+        /// </code>
+        /// </example>
         public Magnetic(Coordinate coordinate, DataModel dataModel)
         {
-            DateTime d = coordinate.GeoDate.AddHours(coordinate.Offset);
+            DateTime d = coordinate.GeoDate.AddHours(-coordinate.Offset);
             Model = dataModel;
-            Load(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), 0, coordinate.Equatorial_Radius, coordinate.Inverse_Flattening, d , dataModel);
+            Load(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), 0, coordinate.Equatorial_Radius, coordinate.Inverse_Flattening, d);
+        }
+        /// <summary>
+        /// Initializes a magnetic object based on a Coordinate, height and a provided data model.
+        /// </summary>
+        /// <param name="coordinate">Coordinate</param>
+        /// <param name="height">Height in Meters</param>
+        /// <param name="dataModel">Data Model</param>
+        /// <example>
+        /// Creating a Magnetic object from a coordinate with a specified height (in meters).
+        /// <code>
+        /// Coordinate c = Coordinate(25,25, new DateTime(2020,1,1));
+        /// Magnetic m = new Magnetic(c, 1000, DataModel.WMM2020);
+        /// </code>
+        /// </example>
+        public Magnetic(Coordinate coordinate, double height, DataModel dataModel)
+        {
+            DateTime d = coordinate.GeoDate.AddHours(-coordinate.Offset);
+            Model = dataModel;
+            Load(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), height, coordinate.Equatorial_Radius, coordinate.Inverse_Flattening, d);
+        }
+        /// <summary>
+        /// Initializes a magnetic object based on a Coordinate, height and a provided data model.
+        /// </summary>
+        /// <param name="coordinate">Coordinate</param>
+        /// <param name="height">Height</param>
+        /// <param name="dataModel">Data Model</param>
+        /// <example>
+        /// Creating a Magnetic object from a coordinate with a specified height (in meters).
+        /// <code>
+        /// Coordinate c = Coordinate(25,25, new DateTime(2020,1,1));
+        /// Distance d = new Distance(10, DistanceType.Miles); //Height is 10 miles above MSL
+        /// Magnetic m = new Magnetic(c, d, DataModel.WMM2020);
+        /// </code>
+        /// </example>
+        public Magnetic(Coordinate coordinate, Distance height, DataModel dataModel)
+        {
+            DateTime d = coordinate.GeoDate.AddHours(-coordinate.Offset);
+            Model = dataModel;
+            Load(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), height.Meters, coordinate.Equatorial_Radius, coordinate.Inverse_Flattening, d);
         }
 
         /// <summary>
-        /// Load Magnetic Values
+        /// Initializes a magnetic object based on a signed lat/long, date, time offset, height in meters and a provided data model.
+        /// Assume WGS84 datum earth shape for calculations.
+        /// </summary>
+        /// <param name="lat">Latitude</param>
+        /// <param name="lng">Longitude</param>
+        /// <param name="date">DateTime</param>
+        /// <param name="offset">UTC Offset in Hours</param>
+        /// <param name="height">Height in Meters</param>
+        /// <param name="dataModel">Data Model</param>
+        public Magnetic(double lat, double lng, DateTime date, double offset, double height, DataModel dataModel)
+        {
+            DateTime d = date.AddHours(-offset);
+            Model = dataModel;
+            Load(lat, lng, height, 6378137.0, 298.257223563, d);
+        }
+      
+
+
+        /// <summary>
+        /// Load Magnetic Values.
         /// </summary>
         /// <param name="lat">Signed Latitude (Geodetic)</param>
         /// <param name="lng">Signed Longitude (Geodetic)</param>
@@ -68,9 +138,12 @@ namespace CoordinateSharp.Magnetic
         /// <param name="semiMajorAxis">Semi-Major Axis</param>
         /// <param name="inverseFlattening">Inverse Flattening</param>
         /// <param name="date">Date Time</param>
-        /// <param name="model">Data Model</param>
-        private void Load(double lat, double lng, double height, double semiMajorAxis, double inverseFlattening, DateTime date, DataModel model)
+        private void Load(double lat, double lng, double height, double semiMajorAxis, double inverseFlattening, DateTime date)
         {
+            if (lat > 90 || lat<-90) { throw new ArgumentOutOfRangeException("Latitude exceeds maximum of 90 degrees."); }
+            if (lng > 180 || lng < -180) { throw new ArgumentOutOfRangeException("Longitude exceeds maximum of 180 degrees."); }
+            latSigned = lat;
+            lngSigned = lng;
             this.semiMajorAxis = semiMajorAxis;
             this.inverseFlattening = inverseFlattening;
             flattening = 1 / inverseFlattening;//Flattening
@@ -82,7 +155,8 @@ namespace CoordinateSharp.Magnetic
          
             radiusOfCurvature = semiMajorAxis / Math.Sqrt(1 - (eccentricitySquared * Math.Pow(Math.Sin(nLatGD.ToRadians()), 2)));
             northPolarAxis = (radiusOfCurvature * (1 - eccentricitySquared) + height) * Math.Sin(nLatGD.ToRadians());
-            pointOfInterest = (radiusOfCurvature - height) * Math.Cos(nLatGD.ToRadians());
+            double latRad = nLatGD.ToRadians();
+            pointOfInterest = (radiusOfCurvature + height) * Math.Cos(latRad);
             radius = Math.Sqrt(Math.Pow(pointOfInterest, 2) + Math.Pow(northPolarAxis, 2));
 
             nLatGC = Math.Asin(northPolarAxis / radius);
@@ -94,14 +168,12 @@ namespace CoordinateSharp.Magnetic
             decimalDate = date.Year + (ts.TotalDays / ly);
   
 
-            points = new DataPoints(model, this);
+            points = new DataPoints(Model, this);
             points.Load_Values(); //Load Calculated Values
 
             magneticFieldElements = new MagneticFieldElements(this);
             secularVariations = new SecularVariations(this);
             uncertainty = new Uncertainty(this);
         }
-
-     
     }
 }

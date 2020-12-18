@@ -108,7 +108,7 @@ namespace CoordinateSharp
                             ecef = new ECEF(this);
                         }
                     }
-
+                    CoordinateChanged?.Invoke(this, new EventArgs());
                 }
             }
         }
@@ -146,7 +146,7 @@ namespace CoordinateSharp
                             ecef = new ECEF(this);
                         }
                     }
-
+                    CoordinateChanged?.Invoke(this, new EventArgs());
                 }
             }
         }
@@ -166,6 +166,7 @@ namespace CoordinateSharp
                     geoDate = value;                 
                     NotifyPropertyChanged("CelestialInfo");
                     NotifyPropertyChanged("GeoDate");
+                    CoordinateChanged?.Invoke(this, new EventArgs());
                 }
             }
         }
@@ -186,6 +187,7 @@ namespace CoordinateSharp
                    
                     NotifyPropertyChanged("CelestialInfo");
                     NotifyPropertyChanged("Offset");
+                    CoordinateChanged?.Invoke(this, new EventArgs());
                 }
             }
         }       
