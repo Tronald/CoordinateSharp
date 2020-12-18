@@ -54,7 +54,7 @@ For more information, please contact Signature Group, LLC at this address: sales
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2020</Copyright>
     <Description>CoordinateSharp magnetic data extensions.</Description>
-    <PackageReleaseNotes>-Initial Release. Extends CoordinateSharp to allows for magnetic field element calculations.
+    <PackageReleaseNotes>-Initial Release. Extends CoordinateSharp to allow for magnetic field element calculations.
 </PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Magnetic Declination</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
