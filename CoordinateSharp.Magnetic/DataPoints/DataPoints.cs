@@ -48,6 +48,7 @@ using System.Linq;
 
 namespace CoordinateSharp.Magnetic
 {
+    [Serializable]
     internal class DataPoints
     {
         public DataPoints(DataModel model, Magnetic magnetic)
@@ -94,6 +95,7 @@ namespace CoordinateSharp.Magnetic
         //Time Dependents
         private void Load_TimeDependents()
         {
+            
             foreach (DataPoint dp in Points)
             {             
                 var dec = Parent.decimalDate - modelYear;
@@ -103,7 +105,7 @@ namespace CoordinateSharp.Magnetic
                 dp.TimeDependent_Gm = dp.Gm + dec * dp.Gtm;
                 //Hm
                 if (dp.Hm == null) { dp.TimeDependent_Hm = null; }
-                dp.TimeDependent_Hm = dp.Hm + dec * dp.Htm;
+                dp.TimeDependent_Hm = dp.Hm + dec * dp.Htm;           
             }
         }
 
@@ -120,6 +122,7 @@ namespace CoordinateSharp.Magnetic
         {
             int x = 0;
             int xx = 0;
+           
             foreach (DataPoint dp in Points)
             {
                 if (dp.IsFactFactDouble)
@@ -151,6 +154,7 @@ namespace CoordinateSharp.Magnetic
                     dp.Schmidt_Semi_P = (Math.Sin(Parent.nLatGC) * (2 * dp.Degree - 1) * Points[x].Schmidt_Semi_P) / (dp.Degree - dp.Order);
                     x++;
                 }
+               
             }
 
         }

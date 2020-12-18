@@ -45,7 +45,6 @@ For more information, please contact Signature Group, LLC at this address: sales
 using System;
 using System.Diagnostics;
 
-
 namespace CoordinateSharp.Debuggers
 {
     /// <summary>
@@ -187,10 +186,14 @@ namespace CoordinateSharp.Debuggers
             }, 100, "Local Lunar Cycle Only Times From Coordinate", opt);
         }
 
-
-
-
-        private static void Benchmark(Action act, int iterations, string bechmarkName, OutputOption opt)
+        /// <summary>
+        /// Benchmarke Tool.
+        /// </summary>
+        /// <param name="act">Action</param>
+        /// <param name="iterations">Iterations</param>
+        /// <param name="bechmarkName">Benchmark Name</param>
+        /// <param name="opt">Output Option</param>
+        public static void Benchmark(Action act, int iterations, string bechmarkName, OutputOption opt)
         {
             GC.Collect();
             act.Invoke(); // run once outside of loop to avoid initialization costs

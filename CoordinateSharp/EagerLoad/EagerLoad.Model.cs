@@ -90,6 +90,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Extensions to the EagerLoading class which allow for more specific EagerLoading specifications.
     /// </summary>
+    [Serializable]
     public partial class EagerLoad_Extensions
     {
        

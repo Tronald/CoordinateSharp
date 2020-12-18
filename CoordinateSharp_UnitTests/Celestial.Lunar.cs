@@ -438,7 +438,7 @@ namespace CoordinateSharp_UnitTests
         [TestMethod]
         public void Lunar_Coordinate_Accuracy_Check()
         {
-            https://www.timeanddate.com/worldclock/sunearth.html
+            //https://www.timeanddate.com/worldclock/sunearth.html
             var lc1 = Celestial.Get_Lunar_Coordinate(new DateTime(2020, 11, 19, 0, 0, 0));
             var lc2 = Celestial.Get_Lunar_Coordinate(new DateTime(2020, 11, 19, 0, 26, 0));
             var lc3 = Celestial.Get_Lunar_Coordinate(new DateTime(2020, 11, 19, 12, 26, 0));

@@ -49,6 +49,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CoordinateSharp.Magnetic\CoordinateSharp.Magnetic.csproj">
+      <Project>{0ca21056-3299-4be5-9d8a-44eaa2095c1c}</Project>
+      <Name>CoordinateSharp.Magnetic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CoordinateSharp\CoordinateSharp.csproj">
       <Project>{82b32704-3306-49fd-a7fa-db48b67b7b64}</Project>
       <Name>CoordinateSharp</Name>

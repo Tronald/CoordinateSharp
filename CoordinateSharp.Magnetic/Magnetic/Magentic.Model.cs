@@ -48,7 +48,8 @@ using CoordinateSharp.Formatters;
 
 namespace CoordinateSharp.Magnetic
 {
-    public partial class Magnetic
+    [Serializable]
+    public partial class Magnetic 
     {
         internal double semiMajorAxis;
         internal double semiMinorAxis;
@@ -60,9 +61,11 @@ namespace CoordinateSharp.Magnetic
         internal double nLngGD;
         internal double nLatGC;
         internal double nLngGC;
+        internal double latSigned;
+        internal double lngSigned;
 
 
-        internal double geomagneticRadius = 6371200;
+        internal double geomagneticRadius = 6371200.0; //IAW WMM2020 REPORT
         internal double radiusOfCurvature;
         internal double northPolarAxis;
         internal double pointOfInterest;
@@ -75,11 +78,26 @@ namespace CoordinateSharp.Magnetic
         private MagneticFieldElements magneticFieldElements;
         private SecularVariations secularVariations;
         private Uncertainty uncertainty;
-        public MagneticFieldElements MagneticFieldElements { get { return magneticFieldElements; } }
-        public SecularVariations SecularVariations { get { return secularVariations; } }
-        public Uncertainty Uncertainty { get { return uncertainty; } }
-        public DataModel Model { get; }
 
+        /// <summary>
+        /// Location and DateTime based magnetic field elements.
+        /// </summary>
+        public MagneticFieldElements MagneticFieldElements { get { return magneticFieldElements; } }
+
+        /// <summary>
+        /// Location and DateTime based secular variation elements.
+        /// </summary>
+        public SecularVariations SecularVariations { get { return secularVariations; } }
+
+        /// <summary>
+        /// Location and DateTime based geomagnetic uncertainty estimates.
+        /// </summary>
+        public Uncertainty Uncertainty { get { return uncertainty; } }
+
+        /// <summary>
+        /// Geomagnetic data model.
+        /// </summary>
+        public DataModel Model { get; }    
     }
 
     /// <summary>
@@ -87,12 +105,33 @@ namespace CoordinateSharp.Magnetic
     /// </summary>
     public class FieldElements
     {
+        /// <summary>
+        /// North Component.
+        /// </summary>
         public double NorthComponent { get; internal set; }
+        /// <summary>
+        /// East Component.
+        /// </summary>
         public double EastComponent { get; internal set; }
+        /// <summary>
+        /// Down Component.
+        /// </summary>
         public double DownComponent { get; internal set; }
+        /// <summary>
+        /// Horizontal Intensity.
+        /// </summary>
         public double HorizontalIntensity { get; internal set; }
+        /// <summary>
+        /// Total Intensity.
+        /// </summary>
         public double TotalIntensity { get; internal set; }
+        /// <summary>
+        /// Inclination.
+        /// </summary>
         public double Inclination { get; internal set; }
+        /// <summary>
+        /// Declination.
+        /// </summary>
         public double Declination { get; internal set; }
     }
 
@@ -101,6 +140,10 @@ namespace CoordinateSharp.Magnetic
     /// </summary>
     public class MagneticFieldElements : FieldElements
     {
+        /// <summary>
+        /// Initializes magnetic field elements.
+        /// </summary>
+        /// <param name="m">Magnetic</param>
         public MagneticFieldElements(Magnetic m)
         {
             double gc = m.nLatGC - m.nLatGD.ToRadians();
@@ -111,13 +154,20 @@ namespace CoordinateSharp.Magnetic
             TotalIntensity = Math.Sqrt(Math.Pow(HorizontalIntensity, 2) + Math.Pow(DownComponent, 2));
             Inclination = Math.Atan2(DownComponent, HorizontalIntensity).ToDegrees(); //Y,X
             Declination = Math.Atan2(EastComponent, NorthComponent).ToDegrees(); //Y,X
-            if (m.nLatGD > 55)
+            
+            if (m.latSigned > 55)
             {
                 GridVariation = Declination - m.nLngGD;
+                int s = Math.Sign(GridVariation);
+                GridVariation = (((Math.Abs(GridVariation) + 180) % 360) - 180)*s;
+               // if (Math.Abs(GridVariation) > 180) { GridVariation = (360 - Math.Abs(GridVariation)); }
             }
-            else if (m.nLatGD < -55)
+            else if (m.latSigned < -55)
             {
                 GridVariation = Declination + m.nLngGD;
+                int s = Math.Sign(GridVariation);
+                GridVariation = (((Math.Abs(GridVariation) + 180) % 360) - 180) * s;
+                // if (GridVariation > 180) { GridVariation = (360 - GridVariation)*-1; }
             }
             else
             {
@@ -126,6 +176,9 @@ namespace CoordinateSharp.Magnetic
 
         }
 
+        /// <summary>
+        /// Grid Variation.
+        /// </summary>
         public double GridVariation { get; }
 
     }
@@ -135,6 +188,10 @@ namespace CoordinateSharp.Magnetic
     /// </summary>
     public class SecularVariations : FieldElements
     {
+        /// <summary>
+        /// Initializes magnetic secular variations.
+        /// </summary>
+        /// <param name="m">Magnetic</param>
         public SecularVariations(Magnetic m)
         {
             MagneticFieldElements mf = m.MagneticFieldElements;
@@ -151,15 +208,30 @@ namespace CoordinateSharp.Magnetic
     }
 
     /// <summary>
-    /// Magenetic uncertainty elements.
+    /// Magnetic uncertainty elements.
     /// </summary>
     public class Uncertainty : FieldElements
     {
-        //Uncertaints taken from https://www.ngdc.noaa.gov/geomag/WMM/limit.shtml
+        //***REFERENCE WMM DOCUMENTS FOLDER FOR INFO***
+        //Uncertainty taken from https://www.ngdc.noaa.gov/geomag/WMM/limit.shtml
+        //WMM REPORT DOWNLOADED HAS TOTAL INTESTY AT 145 not 148 like web site says.
+        //Values are populated via the hard calculated values in the World Magnetic Model
+        //X = North
+        //Y = East
+        //Z - down
+        //H = Horizontal
+        //F = Total Intensity
+        //I = Inclination
+        //D = Declination
+
+        /// <summary>
+        /// Initializes magnetic uncertainty.
+        /// </summary>
+        /// <param name="m">Magentic</param>
         public Uncertainty(Magnetic m)
         {
-            if(m.Model== DataModel.WMM2015) { Load_2015(m); }
-            else if(m.Model == DataModel.WMM2020) { Load_2020(m); }
+            if (m.Model == DataModel.WMM2015) { Load_2015(m); }
+            else if (m.Model == DataModel.WMM2020) { Load_2020(m); }
 
         }
 
@@ -182,12 +254,9 @@ namespace CoordinateSharp.Magnetic
             EastComponent = 94;
             DownComponent = 157;
             HorizontalIntensity = 128;
-            TotalIntensity = 148;
+            TotalIntensity = 145;
             Inclination = .21;
             Declination = Math.Sqrt(Math.Pow(.26, 2) + Math.Pow(5625 / m.MagneticFieldElements.HorizontalIntensity, 2));
         }
     }
-
-
-
 }

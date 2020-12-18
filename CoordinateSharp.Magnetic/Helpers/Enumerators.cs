@@ -51,14 +51,15 @@ namespace CoordinateSharp.Magnetic
     /// <summary>
     /// Magnetic Data Model
     /// </summary>
+    [Serializable]
     public enum DataModel
     {
         /// <summary>
-        /// World Magnetic Model 2015
+        /// World Magnetic Model 2015 (2014-2019).
         /// </summary>
         WMM2015, 
         /// <summary>
-        /// World Magnetic Model 2020
+        /// World Magnetic Model 2020 (2019-2024).
         /// </summary>
         WMM2020
     }

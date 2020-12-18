@@ -51,6 +51,7 @@
     <None Remove="CoordinatePartData\Signed.txt" />
     <None Remove="CoordinatePartData\SignedDDM.txt" />
     <None Remove="CoordinatePartData\SignedDMS.txt" />
+    <None Remove="MagneticData\MagneticFields2020.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -183,6 +184,9 @@
     <Content Include="CoordinatePartData\SignedDMS.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="MagneticData\MagneticFields2020.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -193,6 +197,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CoordinateSharp.Magnetic\CoordinateSharp.Magnetic.csproj" />
     <ProjectReference Include="..\CoordinateSharp\CoordinateSharp.csproj" />
   </ItemGroup>
 

@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CoordinateSharp.Magnetic\CoordinateSharp.Magnetic.csproj" />
     <ProjectReference Include="..\CoordinateSharp\CoordinateSharp.csproj" />
   </ItemGroup>
 

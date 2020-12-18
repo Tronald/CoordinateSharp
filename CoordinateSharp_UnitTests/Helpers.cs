@@ -30,7 +30,7 @@ namespace CoordinateSharp_UnitTests
                     object firstValue = propertyInfo.GetValue(first, null);
                     object secondValue = propertyInfo.GetValue(second, null);
                     if (!object.Equals(firstValue, secondValue))
-                    {
+                    {                                               
                         return false;
                     }
                 }
