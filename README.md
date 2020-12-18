@@ -65,6 +65,12 @@ Console.WriteLine(c.CelestialInfo.SunSet);         // 5-Jun-2018 4:02:00 AM
 Console.WriteLine(c.CelestialInfo.MoonAltitude);   // 14.4169966277874
 ```
 
+### Extension Packages
+
+Extension packages are being built to work in conjunction with CoordinateSharp. Currently available extension packages may be downloaded via Nuget.org. Documatation for extensions packages is contain in the main documentation of the library and can be found [on our website](https://coordinatesharp.com/).
+
+* **CoordinateSharp.Magnetic** - Calculate location based magnetic field elements.
+
 ### Performance Tips
 
 CoordinateSharp's ease of use comes from its eager loaded architexture. This approach may come at the cost of performance at times, but luckily the eager loading of certain properties can be turned off to improve benchmarks. For example if you only need MGRS conversions, you can turn off celestial calculations and improve `Coordinate` initialization by 6-10ms.
