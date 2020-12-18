@@ -31,7 +31,7 @@ namespace Benchmarks
 
             Benchmarkers.Benchmark(() => {
                 Magnetic m = new Magnetic(c, DataModel.WMM2020);
-                }, 100, "Local Lunar Cycle Only Times From Coordinate", opt);
+                }, 100, "Magnetic Calculation Times", opt);
         }
 
 
