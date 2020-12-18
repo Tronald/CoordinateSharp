@@ -67,7 +67,7 @@ Console.WriteLine(c.CelestialInfo.MoonAltitude);   // 14.4169966277874
 
 ### Extension Packages
 
-Extension packages are being built to work in conjunction with CoordinateSharp. Currently available extension packages may be downloaded via Nuget.org. Documatation for extension packages is contained in the main documentation of the library and can be found [on our website](https://coordinatesharp.com/).
+Extension packages are being built to work in conjunction with CoordinateSharp. Currently available extension packages may be downloaded via Nuget.org. Documentation for extension packages is contained in the main documentation of the library and can be found [on our website](https://coordinatesharp.com/).
 
 * **CoordinateSharp.Magnetic** - Calculate location based magnetic field elements.
 
