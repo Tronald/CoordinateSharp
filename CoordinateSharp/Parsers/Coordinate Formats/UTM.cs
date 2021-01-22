@@ -89,8 +89,9 @@ namespace CoordinateSharp
             }
             //Attempt Regex Match
             Regex regex = new Regex("[0-9]{1,2}[a-z,A-Z]{1}\\d+");
-            Match match = regex.Match(s.Replace(" ",""));
-            if (match.Success)
+            s = s.Replace(" ", "").Trim();
+            Match match = regex.Match(s);
+            if (match.Success && match.ToString()==s)
             {
                 //Extract Numbers for one string UTM
                 regex = new Regex("\\d+");
@@ -167,9 +168,9 @@ namespace CoordinateSharp
 
             //Attempt Regex Match
             Regex regex = new Regex("[0]{1,2}[a,b,y,z,A,B,Y,Z]{1}\\d+");
-
-            Match match = regex.Match(s.Replace(" ",""));
-            if (match.Success)
+            s = s.Replace(" ", "").Trim();
+            Match match = regex.Match(s);
+            if (match.Success && match.ToString()==s)
             {
 
                 //Extract Numbers for one string UTM

@@ -86,7 +86,7 @@ namespace CoordinateSharp
 
             Match match = regex.Match(s);
 
-            if (match.Success)
+            if (match.Success && match.ToString().Trim()== s)
             {
                 //Extract Numbers for one string MGRS
                 regex = new Regex("\\d+");
@@ -157,7 +157,7 @@ namespace CoordinateSharp
             Match match = regex.Match(s);
         
 
-            if (match.Success)
+            if (match.Success && match.ToString().Trim()==s)
             {
                 //Extract Numbers for one string MGRS
                 regex = new Regex("\\d+");

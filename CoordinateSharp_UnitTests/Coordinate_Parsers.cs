@@ -362,6 +362,17 @@ namespace CoordinateSharp_UnitTests
         }
 
         /// <summary>
+        /// Ensures strings that are not MGRS do not parse in MGRS format
+        /// </summary>
+        [TestMethod]
+        public void MGRS_String_Fail()
+        { 
+            Coordinate c;
+            Assert.IsFalse(Coordinate.TryParse("smart", out c));
+            Assert.IsFalse(Coordinate.TryParse("warszawa", out c));
+        }
+
+        /// <summary>
         /// Check ECEF Parse Options Work
         /// </summary>
         [TestMethod]
