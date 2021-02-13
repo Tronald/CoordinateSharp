@@ -104,7 +104,7 @@ namespace CoordinateSharp
             }
         }
     
-        private Coordinate ClosestPointOnSegment(Point a, Point b, Coordinate p)
+        private Coordinate ClosestPointOnSegment(Point a, Point b, Coordinate p, DateTime dt, EagerLoad eg)
         {
             var d = new Point
             {
@@ -115,14 +115,14 @@ namespace CoordinateSharp
             double number = (p.Longitude.ToDouble() - a.Longitude) * d.Longitude + (p.Latitude.ToDouble() - a.Latitude) * d.Latitude;
 
             if (number <= 0.0)
-                return new Coordinate(a.Latitude, a.Longitude);
+                return new Coordinate(a.Latitude, a.Longitude, dt, eg);
 
             double denom = d.Longitude * d.Longitude + d.Latitude * d.Latitude;
 
             if (number >= denom)
-                return new Coordinate(b.Latitude, b.Longitude);
+                return new Coordinate(b.Latitude, b.Longitude, dt, eg);
 
-            return new Coordinate(a.Latitude + (number / denom) * d.Latitude, a.Longitude + (number / denom) * d.Longitude);
+            return new Coordinate(a.Latitude + (number / denom) * d.Latitude, a.Longitude + (number / denom) * d.Longitude, dt, eg);
         }
 
         /// <summary>
@@ -213,11 +213,11 @@ namespace CoordinateSharp
 
             for (int i = 0; i < _points.Count - 1; i++)
             {
-                Coordinate c = ClosestPointOnSegment(_points[i], _points[i + 1], point);
+                Coordinate c = ClosestPointOnSegment(_points[i], _points[i + 1], point, point.GeoDate, point.EagerLoadSettings);
                 if (c.Get_Distance_From_Coordinate(point).Meters <= range)
                     return true;
             }
-
+        
             return false;
         }
 
