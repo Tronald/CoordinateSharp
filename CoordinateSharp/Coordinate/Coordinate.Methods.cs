@@ -424,6 +424,7 @@ namespace CoordinateSharp
             if(utm != null)
             {
                 utm.inverse_flattening = flattening;
+                utm.equatorial_radius = radius;
                 utm.ToUTM(Latitude.ToDouble(), Longitude.ToDouble(), utm);
                 mgrs = new MilitaryGridReferenceSystem(utm);
                 NotifyPropertyChanged("UTM");
@@ -472,6 +473,7 @@ namespace CoordinateSharp
             {
                 if(utm==null || mgrs == null) { throw new NullReferenceException("UTM/MGRS objects must be loaded prior to changing the datum."); }
                 utm.inverse_flattening = flattening;
+                utm.equatorial_radius = radius;
                 utm.ToUTM(Latitude.ToDouble(), Longitude.ToDouble(), utm);
                 mgrs = new MilitaryGridReferenceSystem(utm);
                 NotifyPropertyChanged("UTM");
@@ -496,6 +498,51 @@ namespace CoordinateSharp
             NotifyPropertyChanged("Equatorial_Radius");
             NotifyPropertyChanged("Inverse_Flattening");
             CoordinateChanged?.Invoke(this, new EventArgs());
+        }
+        /// <summary>
+        /// Set a custom datum for coordinate conversions and distance calculation.
+        /// Objects must be loaded prior to setting if EagerLoading is turned off or else the items Datum won't be set.
+        /// Use overload if EagerLoading options are used.
+        /// </summary>
+        /// <param name="spec">Earth ellipsoid spec</param>      
+        /// <example>   
+        /// The following example demonstrates how to set the earths ellipsoid values for UTM/MGRS and ECEF conversion as well as Distance calculations
+        /// that use ellipsoidal earth values.
+        /// <code>
+        /// //Initialize a coordinate with the default WGS84 Ellipsoid.
+        /// Coordinate c = new Coordinate(25,25);
+        /// 
+        /// //Change Ellipsoid to GRS80 Datum
+        /// c.Set_Datum(Earth_Ellipsoid_Spec.GRS80_1979);      
+        /// </code>
+        /// </example>
+        public void Set_Datum(Earth_Ellipsoid_Spec spec)
+        {
+            Earth_Ellipsoid ee = Earth_Ellipsoid.Get_Ellipsoid(spec);
+            Set_Datum(ee.Equatorial_Radius, ee.Inverse_Flattening);
+        }
+        /// <summary>
+        /// Set a custom datum for coordinate conversions and distance calculation for specified coordinate formats only.
+        /// Objects must be loaded prior to setting if EagerLoading is turned off.
+        /// </summary>
+        /// <param name="spec">Earth ellipsoid spec</param>      
+        /// <param name="datum">Coordinate_Datum</param>
+        /// <example>
+        /// The following example demonstrates how to set the earths ellipsoid values for UTM/MGRS conversions only.
+        /// <code>
+        /// //Initialize a coordinate with the default WGS84 Ellipsoid that eagerloads UTM/MGRS only.
+        /// EagerLoadType et = EagerLoadType.UTM_MGRS;
+        /// EagerLoad eagerLoad = new EagerLoad(et);
+        /// Coordinate c = new Coordinate(25, 25, et);
+        /// 
+        /// //Change Ellipsoid to GRS80 Datum for UTM_MGRS calculations only.
+        /// c.Set_Datum(Earth_Ellipsoid_Spec.GRS80_1979, Coordinate_Datum.UTM_MGRS);      
+        /// </code>
+        /// </example>
+        public void Set_Datum(Earth_Ellipsoid_Spec spec, Coordinate_Datum datum)
+        {
+            Earth_Ellipsoid ee = Earth_Ellipsoid.Get_Ellipsoid(spec);
+            Set_Datum(ee.Equatorial_Radius, ee.Inverse_Flattening, datum);
         }
 
         /*DISTANCE & MOVING METHODS*/

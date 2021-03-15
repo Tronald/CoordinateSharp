@@ -620,6 +620,47 @@ namespace CoordinateSharp_UnitTests
 
         }
 
+        [TestMethod]
+        public void UTM_Ellipsoid_Conversions()
+        {
+            UniversalTransverseMercator utm = UniversalTransverseMercator.Parse("16N 500872 5505009", Earth_Ellipsoid_Spec.Clarke_1866);
+            Coordinate c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm, new EagerLoad(EagerLoadType.UTM_MGRS));
+
+            //Check ellipsoid values carry
+            Earth_Ellipsoid ee = Earth_Ellipsoid.Get_Ellipsoid(Earth_Ellipsoid_Spec.Clarke_1866);
+            Assert.AreEqual(ee.Equatorial_Radius, c.Equatorial_Radius, "Equatorial Radius do not match");
+            Assert.AreEqual(ee.Inverse_Flattening, c.Inverse_Flattening, "Inverse Flattening values do not match");
+            Assert.AreEqual(utm.LongZone, c.UTM.LongZone, "UTM Long Zones do not match");
+            Assert.AreEqual(utm.Easting, c.UTM.Easting, 1, "UTM Easting does not match");
+            Assert.AreEqual(utm.Northing, c.UTM.Northing, 1, "UTM Northing does not match");
+
+            c.Set_Datum(Earth_Ellipsoid_Spec.WGS84_1984);
+
+            Assert.AreEqual(c.UTM.Easting, 500872, 1, "UTM Easting does not match WGS84 expected");
+            Assert.AreEqual(c.UTM.Northing, 5505228, 1, "UTM Northing does not match WGS84 expected");
+        }
+
+        [TestMethod]
+        public void MGRS_Ellipsoid_Conversions()
+        {
+            MilitaryGridReferenceSystem mgrs = MilitaryGridReferenceSystem.Parse("16U EA 00872 05009", Earth_Ellipsoid_Spec.Clarke_1866);
+            Coordinate c = MilitaryGridReferenceSystem.MGRStoLatLong(mgrs, new EagerLoad(EagerLoadType.UTM_MGRS));
+
+            //Check ellipsoid values carry
+            Earth_Ellipsoid ee = Earth_Ellipsoid.Get_Ellipsoid(Earth_Ellipsoid_Spec.Clarke_1866);
+            Assert.AreEqual(ee.Equatorial_Radius, c.Equatorial_Radius, "Equatorial Radius do not match");
+            Assert.AreEqual(ee.Inverse_Flattening, c.Inverse_Flattening, "Inverse Flattening values do not match");
+
+            Assert.AreEqual(mgrs.LongZone, c.MGRS.LongZone, "MGRS Long Zones do not match");
+            Assert.AreEqual(mgrs.Digraph, c.MGRS.Digraph, "MGRS Designators do not match");
+            Assert.AreEqual(mgrs.Easting, c.MGRS.Easting, 1, "MGRS Easting does not match");
+            Assert.AreEqual(mgrs.Northing, c.MGRS.Northing, 1, "MGRS Northing does not match");
+
+            c.Set_Datum(Earth_Ellipsoid_Spec.WGS84_1984);
+
+            Assert.AreEqual(c.MGRS.Easting, 00872, 1, "MGRS Easting does not match WGS84 expected");
+            Assert.AreEqual(c.MGRS.Northing, 05228, 1, "MGRS Northing does not match WGS84 expected");
+        }
 
         /// <summary>
         /// Asserts conversions

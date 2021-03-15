@@ -53,7 +53,7 @@ namespace CoordinateSharp
 {
     internal partial class FormatFinder
     {
-        private static bool TryMGRS(string ns, out string[] mgrs)
+        public static bool TryMGRS(string ns, out string[] mgrs)
         {
             //Prepare string for regex validation
             string s = ns.Replace(" ", "").ToUpper();
@@ -119,7 +119,7 @@ namespace CoordinateSharp
       
             return false;
         }
-        private static bool TryMGRS_Polar(string ns, out string[] mgrs)
+        public static bool TryMGRS_Polar(string ns, out string[] mgrs)
         {
             //Prepare string for regex validation
             string s = ns.Replace(" ", "").ToUpper();

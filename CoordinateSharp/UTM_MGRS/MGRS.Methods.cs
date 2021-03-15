@@ -148,8 +148,8 @@ namespace CoordinateSharp
                 else { systemType = MGRS_Type.MGRS_Polar; resultString = "0"; }
             }
 
-            string latz = gridZone.Replace(resultString, "");
-
+            string latz = gridZone.Replace(resultString, "");           
+         
             Construct_MGRS(latz, longz, d, e, n, flt, rad);
         }
 

@@ -51,7 +51,7 @@ namespace CoordinateSharp
 {
     internal partial class FormatFinder
     {
-        private static bool TryUTM(string ns, out string[] utm)
+        public static bool TryUTM(string ns, out string[] utm)
         {
             utm = null;
             string s = ns.ToUpper().Replace("ME", "").Replace("MN", "").Trim();
@@ -124,7 +124,7 @@ namespace CoordinateSharp
 
             return false;
         }
-        private static bool TryUPS(string ns, out string[] utm)
+        public static bool TryUPS(string ns, out string[] utm)
         {
             utm = null;
             string s = ns.ToUpper().Replace("ME", "").Replace("MN", "").Trim();
