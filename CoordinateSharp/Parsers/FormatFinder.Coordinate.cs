@@ -153,46 +153,42 @@ namespace CoordinateSharp
                     {//Parser failed try next method 
                     }
                 }
-                //Try Cartesian
-                if (TryCartesian(s.ToUpper().Replace("KM", "").Replace("X", "").Replace("Y", "").Replace("Z", ""), out d))
+
+                Cartesian cart;
+                if (ct == CartesianType.Cartesian && Cartesian.TryParse(s, out cart))
                 {
-                    if (ct == CartesianType.Cartesian)
-                    {
-                        try
-                        {
-                            Cartesian cart = new Cartesian(d[0], d[1], d[2]);
-                            c = Cartesian.CartesianToLatLong(cart);
-                            c.Parse_Format = Parse_Format_Type.Cartesian_Spherical;
-                            return true;
-                        }
-                        catch
-                        {//Parser failed try next method 
-                        }
+                    try
+                    {                    
+                        c = Cartesian.CartesianToLatLong(cart);
+                        c.Parse_Format = Parse_Format_Type.Cartesian_Spherical;
+                        return true;
                     }
-                    if (ct == CartesianType.ECEF)
-                    {
-                        try
-                        {
-                            ECEF ecef = new ECEF(d[0], d[1], d[2]);
-                            c = ECEF.ECEFToLatLong(ecef);
-                            c.Parse_Format = Parse_Format_Type.Cartesian_ECEF;
-                            return true;
-                        }
-                        catch
-                        {//Parser failed try next method 
-                        }
+                    catch
+                    {//Parser failed try next method 
                     }
                 }
-                string[] um;
+
+                ECEF ecef;
+                if (ct == CartesianType.ECEF && ECEF.TryParse(s, out ecef))
+                {
+                    try
+                    {                      
+                        c = ECEF.ECEFToLatLong(ecef);
+                        c.Parse_Format = Parse_Format_Type.Cartesian_ECEF;
+                        return true;
+                    }
+                    catch
+                    {//Parser failed try next method 
+                    }
+                }
+                
+
                 //Try MGRS
-                if (TryMGRS(s, out um) || TryMGRS_Polar(s, out um))
+                MilitaryGridReferenceSystem mgrs;
+                if (MilitaryGridReferenceSystem.TryParse(s, out mgrs))
                 {
                     try
                     {
-                        double zone = Convert.ToDouble(um[0], CultureInfo.InvariantCulture);
-                        double easting = Convert.ToDouble(um[3], CultureInfo.InvariantCulture);
-                        double northing = Convert.ToDouble(um[4], CultureInfo.InvariantCulture);
-                        MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem(um[1], (int)zone, um[2], easting, northing);
                         c = MilitaryGridReferenceSystem.MGRStoLatLong(mgrs);
                         c.Parse_Format = Parse_Format_Type.MGRS;
                         return true;
@@ -201,15 +197,13 @@ namespace CoordinateSharp
                     {//Parser failed try next method 
                     }
                 }
+
                 //Try UTM
-                if (TryUTM(s, out um) || TryUPS(s, out um))
+                UniversalTransverseMercator utm;
+                if (UniversalTransverseMercator.TryParse(s, out utm))
                 {
                     try
-                    {
-                        double zone = Convert.ToDouble(um[0], CultureInfo.InvariantCulture);
-                        double easting = Convert.ToDouble(um[2], CultureInfo.InvariantCulture);
-                        double northing = Convert.ToDouble(um[3], CultureInfo.InvariantCulture);
-                        UniversalTransverseMercator utm = new UniversalTransverseMercator(um[1], (int)zone, easting, northing);
+                    {                      
                         c = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
                         c.Parse_Format = Parse_Format_Type.UTM;
                         return true;

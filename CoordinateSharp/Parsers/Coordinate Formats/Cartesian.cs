@@ -49,7 +49,7 @@ namespace CoordinateSharp
 {
     internal partial class FormatFinder
     {
-        private static bool TryCartesian(string s, out double[] d)
+        internal static bool TryCartesian(string s, out double[] d)
         {
             d = null;
             string[] sA = SpecialSplit(s, false);

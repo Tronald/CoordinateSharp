@@ -215,6 +215,9 @@ namespace CoordinateSharp_UnitTests
             {
                 TryParse_Check(cs);
                 Parse_Check(cs);
+
+                UTM_Parse_Checks(cs);
+                UTM_TryParse_Checks(cs);
             }
         }
 
@@ -230,6 +233,9 @@ namespace CoordinateSharp_UnitTests
             {
                 TryParse_Check(cs);
                 Parse_Check(cs);
+
+                UTM_Parse_Checks(cs);
+                UTM_TryParse_Checks(cs);
             }
         }
 
@@ -245,6 +251,9 @@ namespace CoordinateSharp_UnitTests
             {
                 TryParse_Check(cs);
                 Parse_Check(cs);
+
+                MGRS_Parse_Checks(cs);
+                MGRS_TryParse_Checks(cs);
             }
         }
 
@@ -260,6 +269,9 @@ namespace CoordinateSharp_UnitTests
             {
                 TryParse_Check(cs);
                 Parse_Check(cs);
+
+                MGRS_Parse_Checks(cs);
+                MGRS_TryParse_Checks(cs);
             }
         }
 
@@ -275,6 +287,18 @@ namespace CoordinateSharp_UnitTests
             {
                 TryParse_Check(cs);
                 Parse_Check(cs);
+
+                var vals = cs.Split('#'); //First part of string is value to parse, seconds is expected string value after parse
+                string coordString = vals[0];
+
+                Cartesian cart;
+                ECEF ecef;
+
+                Cartesian.Parse(coordString);
+                Assert.IsTrue(Cartesian.TryParse(coordString, out cart));
+
+                ECEF.Parse(coordString);
+                Assert.IsTrue(ECEF.TryParse(coordString, out ecef));
             }
         }
 
@@ -290,6 +314,18 @@ namespace CoordinateSharp_UnitTests
             {
                 TryParse_Check(cs);
                 Parse_Check(cs);
+
+                var vals = cs.Split('#'); //First part of string is value to parse, seconds is expected string value after parse
+                string coordString = vals[0];
+               
+                Cartesian cart;
+                ECEF ecef;
+                
+                Cartesian.Parse(coordString);
+                Assert.IsTrue(Cartesian.TryParse(coordString, out cart));
+
+                ECEF.Parse(coordString);
+                Assert.IsTrue(ECEF.TryParse(coordString, out ecef));
             }
         }
 
@@ -327,6 +363,50 @@ namespace CoordinateSharp_UnitTests
 
             //CHECK STRING COMPARISON, BUT REPLACE , and . with * to avoid cultural mismatch
             Assert.AreEqual(expected.Replace(",", "*").Replace(".", "*"), c.ToString().Replace(",", "*").Replace(".", "*"), $"{vals} parsed as {c.ToString().Replace(",", "*").Replace(".", "*")} but {expected.Replace(",", "*").Replace(".", "*")} was expected.");
+        }        
+
+        private void MGRS_Parse_Checks(string val)
+        {
+
+            //Ensures parse success only. Values are compared in normal parser
+            var vals = val.Split('#');
+            string coordString = vals[0];
+            MilitaryGridReferenceSystem.Parse(coordString);
+            MilitaryGridReferenceSystem.Parse(coordString, Earth_Ellipsoid_Spec.WGS72_1972);
+            MilitaryGridReferenceSystem.Parse(coordString, 6378137, 298.257222101);
+        }
+
+        private void MGRS_TryParse_Checks(string val)
+        {
+            //Ensures parse success only. Values are compared in normal parser
+            var vals = val.Split('#'); 
+            string coordString = vals[0];
+            MilitaryGridReferenceSystem mgrs;
+            Assert.IsTrue(MilitaryGridReferenceSystem.TryParse(coordString, out mgrs), $"{coordString} MGRS cannot be parsed at TryParse 1.");
+            Assert.IsTrue(MilitaryGridReferenceSystem.TryParse(coordString, Earth_Ellipsoid_Spec.WGS72_1972, out mgrs), $"{coordString} MGRS cannot be parsed at TryParse 2.");
+            Assert.IsTrue(MilitaryGridReferenceSystem.TryParse(coordString, 6378137, 298.257222101, out mgrs), $"{coordString} MGRS cannot be parsed at TryParse 3.");
+        }
+
+        private void UTM_Parse_Checks(string val)
+        {
+
+            //Ensures parse success only. Values are compared in normal parser
+            var vals = val.Split('#');
+            string coordString = vals[0];
+            UniversalTransverseMercator.Parse(coordString);
+            UniversalTransverseMercator.Parse(coordString, Earth_Ellipsoid_Spec.WGS72_1972);
+            UniversalTransverseMercator.Parse(coordString, 6378137, 298.257222101);
+        }
+
+        private void UTM_TryParse_Checks(string val)
+        {
+            //Ensures parse success only. Values are compared in normal parser
+            var vals = val.Split('#');
+            string coordString = vals[0];
+            UniversalTransverseMercator utm;
+            Assert.IsTrue(UniversalTransverseMercator.TryParse(coordString, out utm), $"{coordString} UTM cannot be parsed at TryParse 1.");
+            Assert.IsTrue(UniversalTransverseMercator.TryParse(coordString, Earth_Ellipsoid_Spec.WGS72_1972, out utm), $"{coordString} UTM cannot be parsed at TryParse 2.");
+            Assert.IsTrue(UniversalTransverseMercator.TryParse(coordString, 6378137, 298.257222101, out utm), $"{coordString} UTM cannot be parsed at TryParse 3.");
         }
 
         /// <summary>

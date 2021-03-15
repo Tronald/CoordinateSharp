@@ -255,6 +255,36 @@ namespace CoordinateSharp
                 return false;
 
             return IsPointInRangeOfLine(point, range.Meters);
-        }      
+        }   
+        
+        /// <summary>
+        /// Gets distance from nearest polyline in shape
+        /// </summary>
+        /// <param name="point">Coordinate</param>
+        /// <returns>Distance</returns>
+        public Distance DistanceFromNearestPolyLine(Coordinate point)
+        {
+            if (point == null)
+                return null;
+
+            Distance d = null;
+
+            for (int i = 0; i < _points.Count - 1; i++)
+            {
+                Coordinate c = ClosestPointOnSegment(_points[i], _points[i + 1], point, point.GeoDate, point.EagerLoadSettings);
+
+                if (d == null) { d= new Distance(point, c); }
+                else
+                {
+                    Distance nd = new Distance(point, c);
+                    if (nd.Meters < d.Meters) { d = nd; }
+                }
+              
+            }
+
+            return d;
+        }
+
+       
     }  
 }

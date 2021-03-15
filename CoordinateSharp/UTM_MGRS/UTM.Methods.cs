@@ -46,7 +46,7 @@ using System;
 using System.Linq;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-
+using System.Globalization;
 namespace CoordinateSharp
 {
     public partial class UniversalTransverseMercator 
@@ -129,13 +129,13 @@ namespace CoordinateSharp
         /// <param name="est">Easting</param>
         /// <param name="nrt">Northing</param>
         /// <param name="radius">Equatorial Radius</param>
-        /// <param name="flaten">Inverse Flattening</param>
+        /// <param name="flatten">Inverse Flattening</param>
         /// <example>
         /// <code>
         /// UniversalTransverseMercator utm = new UniversalTransverseMercator("14Q", 581943.5, 2111989.8, 6378160.000, 298.25);
         /// </code>
         /// </example>
-        public UniversalTransverseMercator(string gridZone, double est, double nrt, double radius, double flaten)
+        public UniversalTransverseMercator(string gridZone, double est, double nrt, double radius, double flatten)
         {
             int longz;
             string latz;
@@ -160,13 +160,13 @@ namespace CoordinateSharp
                 latz = gridZone.Replace(resultString, "");             
             }
 
-            Construct_UTM(latz, longz, est, nrt, radius, flaten, false);
+            Construct_UTM(latz, longz, est, nrt, radius, flatten, false);
         }
 
         internal UniversalTransverseMercator(string latz, int longz, double est, double nrt, bool suppressWarnings)
         {
             Construct_UTM(latz, longz, est, nrt, 6378137.0, 298.257223563, suppressWarnings);
-        }
+        }      
 
         /// <summary>
         /// Creates a UniversalTransverMercator (UTM) object
@@ -555,7 +555,8 @@ namespace CoordinateSharp
             if (dLong < -180) { dLong = -180; }
 
             Coordinate c = new Coordinate(dLat,dLong, el, equatorialRadius,flattening);
-           
+            c.Set_Datum(equatorialRadius, flattening);
+
             return c;
         }
 
