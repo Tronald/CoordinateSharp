@@ -52,6 +52,7 @@ namespace CoordinateSharp_UnitTests
                 data.MoonDistances.Add(c.CelestialInfo.MoonDistance.Kilometers);
                 data.MoonPhases.Add(c.CelestialInfo.MoonIllum.Phase);
                 data.MoonPhaseNames.Add(c.CelestialInfo.MoonIllum.PhaseName);
+                data.MoonPhaseNameEnums.Add(c.CelestialInfo.MoonIllum.PhaseNameEnum);
             }
 
             //Set Dates and Finish
@@ -102,6 +103,11 @@ namespace CoordinateSharp_UnitTests
         public void MoonPhaseName()
         {
             Check_Values(data.MoonPhaseNames, "CelestialData\\MoonPhaseName.txt");
+        }
+        [TestMethod]
+        public void MoonPhaseEnum()
+        {
+            Check_Values(data.MoonPhaseNameEnums, "CelestialData\\MoonPhaseName.txt");
         }
         [TestMethod]
         public void LunarEclipse()
@@ -582,6 +588,14 @@ namespace CoordinateSharp_UnitTests
                     Assert.AreEqual(d[x], lines[x], $"String properties do not match at iteration {x + 1}");
                 }
             }
+            if (prop.GetType() == typeof(List<PhaseEnum>))
+            {
+                List<PhaseEnum> d = (List<PhaseEnum>)prop;
+                for (int x = 0; x < lines.Length; x++)
+                {
+                    Assert.AreEqual(d[x].ToString(), lines[x].Replace(" ",""), $"Properties do not match at iteration {x + 1}");
+                }
+            }
         }
     }
 
@@ -595,6 +609,7 @@ namespace CoordinateSharp_UnitTests
         public List<double> MoonDistances { get; set; } = new List<double>();
         public List<double> MoonPhases { get; set; } = new List<double>();
         public List<string> MoonPhaseNames { get; set; } = new List<string>();
+        public List<PhaseEnum> MoonPhaseNameEnums { get; set; } = new List<PhaseEnum>();
 
 
         public List<double> MoonAlts { get; set; } = new List<double>();

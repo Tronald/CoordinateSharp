@@ -71,6 +71,10 @@ namespace CoordinateSharp
         /// Moon's phase name for the specified day
         /// </summary>
         public string PhaseName { get; internal set; }
+        /// <summary>
+        /// Moon's phase name enumerator for the specified day
+        /// </summary>
+        public PhaseEnum PhaseNameEnum { get; internal set; }
 
     }
     /// <summary>
