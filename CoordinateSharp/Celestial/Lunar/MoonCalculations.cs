@@ -371,42 +371,50 @@ namespace CoordinateSharp
                         if (startPhase > endPhase)
                         {
                             mi.PhaseName = "New Moon";
+                            mi.PhaseNameEnum = PhaseEnum.NewMoon;
                             break;
                         }
                         if (startPhase <= .25 && endPhase >= .25)
                         {
                             mi.PhaseName = "First Quarter";
+                            mi.PhaseNameEnum = PhaseEnum.FirstQuarter;
                             break;
                         }
                         if (startPhase <= .5 && endPhase >= .5)
                         {
                             mi.PhaseName = "Full Moon";
+                            mi.PhaseNameEnum = PhaseEnum.FullMoon;
                             break;
                         }
                         if (startPhase <= .75 && endPhase >= .75)
                         {
                             mi.PhaseName = "Last Quarter";
+                            mi.PhaseNameEnum = PhaseEnum.LastQuarter;
                             break;
                         }
 
                         if (startPhase > 0 && startPhase < .25 && endPhase > 0 && endPhase < .25)
                         {
                             mi.PhaseName = "Waxing Crescent";
+                            mi.PhaseNameEnum = PhaseEnum.WaxingCrescent;
                             break;
                         }
                         if (startPhase > .25 && startPhase < .5 && endPhase > .25 && endPhase < .5)
                         {
                             mi.PhaseName = "Waxing Gibbous";
+                            mi.PhaseNameEnum = PhaseEnum.WaxingGibbous;
                             break;
                         }
                         if (startPhase > .5 && startPhase < .75 && endPhase > .5 && endPhase < .75)
                         {
                             mi.PhaseName = "Waning Gibbous";
+                            mi.PhaseNameEnum = PhaseEnum.WaningGibbous;
                             break;
                         }
                         if (startPhase > .75 && startPhase < 1 && endPhase > .75 && endPhase < 1)
                         {
                             mi.PhaseName = "Waning Crescent";
+                            mi.PhaseNameEnum = PhaseEnum.WaningCrescent;
                             break;
                         }
                     }

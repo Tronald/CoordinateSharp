@@ -427,9 +427,50 @@ namespace CoordinateSharp
     /// For static local time conversions.
     /// Used internally during local time calls.
     /// </summary>
+    [Serializable]
     internal enum Celestial_EagerLoad
     {
         All, Lunar, Solar
+    }
+
+    /// <summary>
+    /// Phase name enumerator
+    /// </summary>
+    [Serializable]
+    public enum PhaseEnum
+    {
+        /// <summary>
+        /// New Moon (1.0/0.0 phase) reached on specified day.
+        /// </summary>
+        NewMoon, 
+        /// <summary>
+        /// Waxing Crescent. Phase between 0.0 and 0.25 on specified day.
+        /// </summary>
+        WaxingCrescent,
+        /// <summary>
+        /// First Quarter (0.25 phase) reached on specified day.
+        /// </summary>
+        FirstQuarter,
+        /// <summary>
+        ///  Waxing Gibbous. Phase between 0.25 and 0.5 on specified day.
+        /// </summary>
+        WaxingGibbous,
+        /// <summary>
+        /// Full Moon (0.5 phase) reached on specified day
+        /// </summary>
+        FullMoon,
+        /// <summary>
+        /// Waning Gibbous. Phase between 0.5 and 0.75 on specified day.
+        /// </summary>
+        WaningGibbous,
+        /// <summary>
+        /// Last Quarter (0.75 phase) reached on specified day.
+        /// </summary>
+        LastQuarter,
+        /// <summary>
+        /// Waning Crescent. Phase between 0.75 and 1.0 on specified day.
+        /// </summary>
+        WaningCrescent
     }
 
 }
