@@ -11,7 +11,7 @@ License
 
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
-Copyright (C) 2019, Signature Group, LLC
+Copyright (C) 2021, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
 as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
@@ -33,21 +33,16 @@ as soon as you develop commercial activities involving the CoordinateSharp softw
 These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application, 
 or shipping CoordinateSharp with a closed source product.
 
-Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request.
--Department of Defense
--Department of Homeland Security
--Open source contributors to this library
--Scholarly or scientific uses on a case by case basis.
--Emergency response / management uses on a case by case basis.
+Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request on a case by case basis.
+	-United States Department of Defense.
+	-United States Department of Homeland Security.
+	-Open source contributors to this library.
+	-Scholarly or scientific research.
+	-Emergency response / management uses.
 
-For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
+Please visit http://coordinatesharp.com/licensing or contact Signature Group, LLC to purchase a commercial license, or for any questions regarding the AGPL 3.0 license requirements or free use license: sales@signatgroup.com.
 */
 using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security;
-using System.Text;
 
 namespace CoordinateSharp
 {
@@ -72,7 +67,7 @@ namespace CoordinateSharp
         public bool IsBoxValid { get => isBoxValid; }
 
         /// <summary>
-        /// Populate MGRS_GridBox details based on the provided MGRS coordinate.
+        /// Populate MGRS_GridBox (Grid Zone Designator / 100km Square Identifier) details based on the provided MGRS coordinate.
         /// </summary>
         /// <param name="mgrs">MilitaryGridReferenceSystem</param>
         public MGRS_GridBox(MilitaryGridReferenceSystem mgrs)
@@ -80,7 +75,7 @@ namespace CoordinateSharp
             Construct_GridBox(mgrs, new EagerLoad());          
         }
         /// <summary>
-        /// Populate MGRS_GridBox details based on the provided MGRS coordinate.
+        /// Populate MGRS_GridBox (Grid Zone Designator / 100km Square Identifier) details based on the provided MGRS coordinate.
         /// Option to specify eager loading options for more efficient lat / long Coordinate creation.
         /// </summary>
         /// <param name="mgrs">MilitaryGridReferenceSystem</param>
@@ -104,38 +99,38 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// MGRS point location at the bottom left of the 100km grid square.
+        /// MGRS point location at the bottom left of the 100km grid square (Grid Zone Designator / 100km Square Identifier).
         /// </summary>
         public MilitaryGridReferenceSystem Bottom_Left_MGRS_Point { get => bottom_Left; }
         /// <summary>
-        /// MGRS point location at the bottom right of the 100km grid square.
+        /// MGRS point location at the bottom right of the 100km grid square (Grid Zone Designator / 100km Square Identifier).
         /// </summary>
         public MilitaryGridReferenceSystem Bottom_Right_MGRS_Point { get => bottom_Right; }
 
         /// <summary>
-        /// MGRS point location at the top left of the 100km grid square.
+        /// MGRS point location at the top left of the 100km grid square (Grid Zone Designator / 100km Square Identifier).
         /// </summary>
         public MilitaryGridReferenceSystem Top_Left_MGRS_Point { get => top_Left; }
 
         /// <summary>
-        /// MGRS point location at the top right of the 100km grid square.
+        /// MGRS point location at the top right of the 100km grid square (Grid Zone Designator / 100km Square Identifier).
         /// </summary>
         public MilitaryGridReferenceSystem Top_Right_MGRS_Point { get => top_Right; }
 
         /// <summary>
-        /// Lat/Long point location at the bottom left of the 100km grid square.
+        /// Lat/Long point location at the bottom left of the 100km grid square (Grid Zone Designator / 100km Square Identifier).
         /// </summary>
         public Coordinate Bottom_Left_Coordinate_Point { get => MilitaryGridReferenceSystem.MGRStoLatLong(bottom_Left, el); }
         /// <summary>
-        /// Lat/Long point location at the bottom right of the 100km grid square.
+        /// Lat/Long point location at the bottom right of the 100km grid square (Grid Zone Designator / 100km Square Identifier).
         /// </summary>
         public Coordinate Bottom_Right_Coordinate_Point { get => MilitaryGridReferenceSystem.MGRStoLatLong(bottom_Right, el); }
         /// <summary>
-        /// Lat/Long point location at the top left of the 100km grid square.
+        /// Lat/Long point location at the top left of the 100km grid square (Grid Zone Designator / 100km Square Identifier).
         /// </summary>
         public Coordinate Top_Left_Coordinate_Point { get => MilitaryGridReferenceSystem.MGRStoLatLong(top_Left, el); }
         /// <summary>
-        /// Lat/Long point location at the top right of the 100km grid square.
+        /// Lat/Long point location at the top right of the 100km grid square (Grid Zone Designator / 100km Square Identifier).
         /// </summary>
         public Coordinate Top_Right_Coordinate_Point { get => MilitaryGridReferenceSystem.MGRStoLatLong(top_Right, el); }
 

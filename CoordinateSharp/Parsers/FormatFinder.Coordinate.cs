@@ -11,7 +11,7 @@ License
 
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
-Copyright (C) 2019, Signature Group, LLC
+Copyright (C) 2021, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
 as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
@@ -33,14 +33,14 @@ as soon as you develop commercial activities involving the CoordinateSharp softw
 These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application, 
 or shipping CoordinateSharp with a closed source product.
 
-Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request.
--Department of Defense
--Department of Homeland Security
--Open source contributors to this library
--Scholarly or scientific uses on a case by case basis.
--Emergency response / management uses on a case by case basis.
+Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request on a case by case basis.
+	-United States Department of Defense.
+	-United States Department of Homeland Security.
+	-Open source contributors to this library.
+	-Scholarly or scientific research.
+	-Emergency response / management uses.
 
-For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
+Please visit http://coordinatesharp.com/licensing or contact Signature Group, LLC to purchase a commercial license, or for any questions regarding the AGPL 3.0 license requirements or free use license: sales@signatgroup.com.
 */
 using System;
 using System.Text.RegularExpressions;
