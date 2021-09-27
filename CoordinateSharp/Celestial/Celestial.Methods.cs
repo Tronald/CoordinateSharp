@@ -196,7 +196,7 @@ namespace CoordinateSharp
         /// <param name="offset">UTC offset in hours</param>
         internal void CalculateCelestialTime(double lat, double longi, DateTime date, EagerLoad el, double offset)
         {
-            if (offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater than 12 or less than -12."); }
+            if (offset < -12 || offset > 14) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater than 14 or less than -12."); }
 
             date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
 

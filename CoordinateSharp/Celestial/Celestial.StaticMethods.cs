@@ -1360,7 +1360,7 @@ namespace CoordinateSharp
         [Obsolete("Use instance method 'Coordinate.Celestial_LocalTime(double hourOffset)'.")]
         public static Celestial Celestial_LocalTime(Coordinate coord, double offset)
         {
-            if (offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 12 or less than -12."); }
+            if (offset < -12 || offset > 14) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 14 or less than -12."); }
             //Probably need to offset initial UTC date so user can op in local
             //Determine best way to do this.
             DateTime d = coord.GeoDate.AddHours(offset);
@@ -1447,7 +1447,7 @@ namespace CoordinateSharp
         [Obsolete("Use instance method 'Coordinate.Celestial_LocalTime(double hourOffset)'.")]
         public static Celestial Solar_LocalTime(Coordinate coord, double offset)
         {
-            if (offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 12 or less than -12."); }
+            if (offset < -12 || offset > 14) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 14 or less than -12."); }
             //Probably need to offset initial UTC date so user can op in local
             //Determine best way to do this.
             DateTime d = coord.GeoDate.AddHours(offset);
@@ -1522,7 +1522,7 @@ namespace CoordinateSharp
         [Obsolete("Use instance method 'Coordinate.Celestial_LocalTime(double hourOffset)'.")]
         public static Celestial Lunar_LocalTime(Coordinate coord, double offset)
         {
-            if (offset < -12 || offset > 12) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 12 or less than -12."); }
+            if (offset < -12 || offset > 14) { throw new ArgumentOutOfRangeException("Time offsets cannot be greater 14 or less than -12."); }
             //Probably need to offset initial UTC date so user can op in local
             //Determine best way to do this.
             DateTime d = coord.GeoDate.AddHours(offset);

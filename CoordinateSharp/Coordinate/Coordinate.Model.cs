@@ -180,8 +180,8 @@ namespace CoordinateSharp
             {              
                 if (offset != value)
                 {
-                    if (value < -12 || value > 12)
-                    { throw new ArgumentOutOfRangeException("Time offsets cannot be greater than 12 or less than -12."); }
+                    if (value < -12 || value > 14)
+                    { throw new ArgumentOutOfRangeException("Time offsets cannot be greater than 14 or less than -12."); }
 
                     offset = value;
                    

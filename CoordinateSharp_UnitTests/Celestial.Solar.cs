@@ -378,24 +378,24 @@ namespace CoordinateSharp_UnitTests
             cUTC.Offset = -12;
             cUTC.Offset = 12;
             cCel = new Celestial(0, 0, DateTime.Now, -12);
-            cCel = new Celestial(0, 0, DateTime.Now, 12);
+            cCel = new Celestial(0, 0, DateTime.Now, 14);
             cCel = new Celestial(0, 0, DateTime.Now, -12, new EagerLoad());
-            cCel = new Celestial(0, 0, DateTime.Now, 12, new EagerLoad());
+            cCel = new Celestial(0, 0, DateTime.Now, 14, new EagerLoad());
             cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, -12);
-            cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, 12);
-            cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, new EagerLoad(), 12);
+            cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, 14);
+            cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, new EagerLoad(), 14);
             cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, new EagerLoad(), -12);
             //OUT OF RANGE
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cUTC.Offset = -13; });
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cUTC.Offset = 13; });
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cUTC.Offset = 15; });
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cCel = new Celestial(0, 0, DateTime.Now, -13); });
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cCel = new Celestial(0, 0, DateTime.Now, 13); });
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cCel = new Celestial(0, 0, DateTime.Now, 15); });
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cCel = new Celestial(0, 0, DateTime.Now, -13, new EagerLoad()); });
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cCel = new Celestial(0, 0, DateTime.Now, 13, new EagerLoad()); });
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cCel = new Celestial(0, 0, DateTime.Now, 15, new EagerLoad()); });
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, -13); });
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, 13); });
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, 15); });
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, new EagerLoad(), -13); });
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, new EagerLoad(), 13); });
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { cCel = Celestial.CalculateCelestialTimes(0, 0, DateTime.Now, new EagerLoad(), 15); });
 
         }
 
