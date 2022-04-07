@@ -44,30 +44,29 @@ For more information, please contact Signature Group, LLC at this address: sales
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1;</TargetFrameworks>
+    <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.12.1.1</Version>
+    <Version>2.13.1.1</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <Copyright>Copyright 2021</Copyright>
+    <Copyright>Copyright 2022</Copyright>
     <Description>A simple library designed to assist with geographic coordinate conversions, formatting and location based solar and lunar information.</Description>
-    <PackageReleaseNotes>-Extends UTC offset validation from -12/+12 to -12/+14 to handle outlying countries that extend IDL past 12 hours.
-</PackageReleaseNotes>
+    <PackageReleaseNotes>Adds .NET 5.0 targets</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Sun Moon Solar Lunar Time MGRS UTM Julian ECEF Sunset Sunrise Set Moonset Moonrise</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>    <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
-    <AssemblyVersion>2.12.1.1</AssemblyVersion>
+    <AssemblyVersion>2.13.1.1</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>CoordinateSharpPNG.png</PackageIcon>
     <AssemblyOriginatorKeyFile>CoordinateSharp Strong Name.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
-    <FileVersion>2.12.1.1</FileVersion>
+    <FileVersion>2.13.1.1</FileVersion>
     <RepositoryUrl>https://github.com/Tronald/CoordinateSharp</RepositoryUrl>
   </PropertyGroup>
 
@@ -96,6 +95,11 @@ For more information, please contact Signature Group, LLC at this address: sales
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net50|AnyCPU'">
+    <DocumentationFile>bin\Release\net50\CoordinateSharp.xml</DocumentationFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net40|AnyCPU'">
     <DocumentationFile>bin\Debug\net40\CoordinateSharp.xml</DocumentationFile>
@@ -113,6 +117,9 @@ For more information, please contact Signature Group, LLC at this address: sales
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.1|AnyCPU'">
     <DocumentationFile>bin\Debug\netstandard2.1\CoordinateSharp.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net50|AnyCPU'">
+    <DocumentationFile>bin\Debug\net50\CoordinateSharp.xml</DocumentationFile>
   </PropertyGroup>
 
 
