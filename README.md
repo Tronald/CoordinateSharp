@@ -7,7 +7,7 @@
 </p>
 <br/>
 
-CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations.
+CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations such as sunset, sunrise, moonset, moonrise and more.
 
 ### Like CoordinateSharp? Tell us about it!
 
