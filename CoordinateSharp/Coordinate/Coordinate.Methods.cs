@@ -248,12 +248,17 @@ namespace CoordinateSharp
             {
                 ecef = new ECEF(this);
             }
+            //Load Web Mercator
+            if(eagerLoad.WebMercator)
+            {
+                webMercator = new WebMercator(lat, longi, this);
+            }
 
           
 
             //Set Ellipsoid
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
+            equatorial_radius = DataValues.DefaultSemiMajorAxis;
+            inverse_flattening = DataValues.DefaultInverseFlattening;
         }     
 
         /*DATA LOADERS*/
@@ -270,7 +275,7 @@ namespace CoordinateSharp
         /// Coordinate c = new Coordinate(40.0352, -74.5844, DateTime.Now, eagerLoad);
         ///
         /// //To load Celestial information when ready
-        /// c.LoadCelestialInfo;           
+        /// c.LoadCelestialInfo();           
         /// </code>
         /// </example>
         public void LoadCelestialInfo()
@@ -288,7 +293,7 @@ namespace CoordinateSharp
         /// Coordinate c = new Coordinate(40.0352, -74.5844, DateTime.Now, eagerLoad);
         ///
         /// //To load UTM_MGRS information when ready
-        /// c.LoadUTM_MGRSInfo;           
+        /// c.LoadUTM_MGRSInfo();           
         /// </code>
         /// </example>
         public void LoadUTM_MGRS_Info()
@@ -307,7 +312,7 @@ namespace CoordinateSharp
         /// Coordinate c = new Coordinate(40.0352, -74.5844, DateTime.Now, eagerLoad);
         ///
         /// //To load Cartesian information when ready
-        /// c.LoadCartesianInfo;           
+        /// c.LoadCartesianInfo();           
         /// </code>
         /// </example>
         public void LoadCartesianInfo()
@@ -325,12 +330,31 @@ namespace CoordinateSharp
         /// Coordinate c = new Coordinate(40.0352, -74.5844, DateTime.Now, eagerLoad);
         ///
         /// //To load ECEF information when ready
-        /// c.LoadECEFInfo;           
+        /// c.LoadECEFInfo();           
         /// </code>
         /// </example>
         public void LoadECEFInfo()
         {
             ecef = new ECEF(this);
+        }
+
+        /// <summary>
+        /// Load Web Mercator EPSG:3857 information (required if eager loading is turned off).
+        /// </summary>
+        /// <example>
+        /// The following example shows how to Load Web Mercator information when eager loading is turned off.
+        /// <code>
+        /// EagerLoad eagerLoad = new EagerLoad();
+        /// eagerLoad.WebMercator = false;
+        /// Coordinate c = new Coordinate(40.0352, -74.5844, DateTime.Now, eagerLoad);
+        ///
+        /// //To load ECEF information when ready
+        /// c.LoadWebMercatorInfo();           
+        /// </code>
+        /// </example>
+        public void LoadWebMercatorInfo()
+        {
+            webMercator = new WebMercator(latitude.ToDouble(), longitude.ToDouble(), this);
         }
 
         /*OUTPUT METHODS*/
@@ -404,7 +428,7 @@ namespace CoordinateSharp
         /// Use overload if EagerLoading options are used.
         /// </summary>
         /// <param name="radius">Equatorial Radius</param>
-        /// <param name="flattening">Inverse Flattening</param>
+        /// <param name="inverseflattening">Inverse Flattening</param>
         /// <example>   
         /// The following example demonstrates how to set the earths ellipsoid values for UTM/MGRS and ECEF conversion as well as Distance calculations
         /// that use ellipsoidal earth values.
@@ -416,14 +440,14 @@ namespace CoordinateSharp
         /// c.Set_Datum(6378160.000, 298.25);      
         /// </code>
         /// </example>
-        public void Set_Datum(double radius, double flattening)
+        public void Set_Datum(double radius, double inverseflattening)
         {
             //WGS84
             //RADIUS 6378137.0;
             //FLATTENING 298.257223563;
             if(utm != null)
             {
-                utm.inverse_flattening = flattening;
+                utm.inverse_flattening = inverseflattening;
                 utm.equatorial_radius = radius;
                 utm.ToUTM(Latitude.ToDouble(), Longitude.ToDouble(), utm);
                 mgrs = new MilitaryGridReferenceSystem(utm);
@@ -433,15 +457,22 @@ namespace CoordinateSharp
             if(ecef != null)
             {
                 ecef.equatorial_radius = radius;
-                ecef.inverse_flattening = flattening;
+                ecef.inverse_flattening = inverseflattening;
                 ecef.ToECEF(this);
                 NotifyPropertyChanged("ECEF");              
             }
+            //Only calculate when WGS84 used
+            if(webMercator!=null && radius == DataValues.DefaultSemiMajorAxis && inverseflattening == DataValues.DefaultInverseFlattening)
+            {
+                NotifyPropertyChanged("Web Mercator"); 
+            }
+           
             equatorial_radius = radius;
-            inverse_flattening = flattening;
+            inverse_flattening = inverseflattening;
 
             NotifyPropertyChanged("Equatorial_Radius");
             NotifyPropertyChanged("Inverse_Flattening");
+
             CoordinateChanged?.Invoke(this, new EventArgs());
         }
         /// <summary>
@@ -449,7 +480,7 @@ namespace CoordinateSharp
         /// Objects must be loaded prior to setting if EagerLoading is turned off.
         /// </summary>
         /// <param name="radius">Equatorial Radius</param>
-        /// <param name="flattening">Inverse Flattening</param>
+        /// <param name="inverseflattening">Inverse Flattening</param>
         /// <param name="datum">Coordinate_Datum</param>
         /// <example>
         /// The following example demonstrates how to set the earths ellipsoid values for UTM/MGRS conversions only.
@@ -463,7 +494,7 @@ namespace CoordinateSharp
         /// c.Set_Datum(6378160.000, 298.25, Coordinate_Datum.UTM_MGRS);      
         /// </code>
         /// </example>
-        public void Set_Datum(double radius, double flattening, Coordinate_Datum datum)
+        public void Set_Datum(double radius, double inverseflattening, Coordinate_Datum datum)
         {
             //WGS84
             //RADIUS 6378137.0;
@@ -472,7 +503,7 @@ namespace CoordinateSharp
             if (datum.HasFlag(Coordinate_Datum.UTM_MGRS))
             {
                 if(utm==null || mgrs == null) { throw new NullReferenceException("UTM/MGRS objects must be loaded prior to changing the datum."); }
-                utm.inverse_flattening = flattening;
+                utm.inverse_flattening = inverseflattening;
                 utm.equatorial_radius = radius;
                 utm.ToUTM(Latitude.ToDouble(), Longitude.ToDouble(), utm);
                 mgrs = new MilitaryGridReferenceSystem(utm);
@@ -480,23 +511,34 @@ namespace CoordinateSharp
                 NotifyPropertyChanged("MGRS");
             
             }
+
             if (datum.HasFlag(Coordinate_Datum.ECEF))
             {
                 if (ECEF==null) { throw new NullReferenceException("ECEF objects must be loaded prior to changing the datum."); }
                 ecef.equatorial_radius = radius;
-                ecef.inverse_flattening = flattening;
+                ecef.inverse_flattening = inverseflattening;
                 ecef.ToECEF(this);
                 NotifyPropertyChanged("ECEF");
             
             }
+
             if (datum.HasFlag(Coordinate_Datum.LAT_LONG))
             {
                 equatorial_radius = radius;
-                inverse_flattening = flattening;
+                inverse_flattening = inverseflattening;
+
+                //Web mercator will disable calculation if datum is changed from WGS84 default.
+                //This call will recalculate if restored.
+                if (webMercator!=null) { NotifyPropertyChanged("Web Mercator"); }
             }
+
+          
 
             NotifyPropertyChanged("Equatorial_Radius");
             NotifyPropertyChanged("Inverse_Flattening");
+
+          
+
             CoordinateChanged?.Invoke(this, new EventArgs());
         }
         /// <summary>
@@ -938,13 +980,19 @@ namespace CoordinateSharp
                     else if(EagerLoadSettings.ECEF && ecef == null) { ecef = new ECEF(this); }
                     else ECEF.ToECEF(this);
                     break;
+                case "WebMercator":
+                    if (!EagerLoadSettings.WebMercator) { return; }
+                    if (equatorial_radius != DataValues.DefaultSemiMajorAxis || inverse_flattening != DataValues.DefaultInverseFlattening) { return; }
+                    else if (EagerLoadSettings.WebMercator && webMercator == null) { webMercator = new WebMercator(latitude.ToDouble(), longitude.ToDouble(), this); }
+                    else WebMercator.ToWebMercator(latitude.ToDouble(), longitude.ToDouble(), webMercator);
+                    break;
                 default:
                     break;
             }
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));     
         }
-
+      
         internal void InvokeCoordinateChanged()
         {
             CoordinateChanged?.Invoke(this, new EventArgs());

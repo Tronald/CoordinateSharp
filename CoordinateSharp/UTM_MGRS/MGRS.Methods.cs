@@ -68,7 +68,7 @@ namespace CoordinateSharp
         /// </example>
         public MilitaryGridReferenceSystem(string latz, int longz, string d, double e, double n)
         {
-            Construct_MGRS(latz, longz, d, e, n, 6378137.0, 298.257223563);
+            Construct_MGRS(latz, longz, d, e, n, DataValues.DefaultSemiMajorAxis, DataValues.DefaultInverseFlattening);
         }
         /// <summary>
         /// Creates an MilitaryGridReferenceSystem (MGRS) object with a custom datum(ellipsoid).
@@ -118,7 +118,7 @@ namespace CoordinateSharp
 
             string latz = gridZone.Replace(resultString, "");
 
-            Construct_MGRS(latz, longz, d, e, n, 6378137.0, 298.257223563);
+            Construct_MGRS(latz, longz, d, e, n, DataValues.DefaultSemiMajorAxis, DataValues.DefaultInverseFlattening);
         }
         /// <summary>
         /// Creates an MilitaryGridReferenceSystem (MGRS) object with a default WGS84 datum(ellipsoid).
@@ -507,7 +507,7 @@ namespace CoordinateSharp
         /// Creates a Signed Degree double[] object from an MGRS/NATO UTM Coordinate
         /// </summary>
         /// <param name="mgrs">MilitaryGridReferenceSystem</param>
-        /// <returns>Coordinate object</returns>
+        /// <returns>double[]</returns>
         /// <example>
         /// The following example creates (converts to) a geodetic Coordinate object based on a MGRS object.
         /// <code>

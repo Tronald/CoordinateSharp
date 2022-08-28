@@ -49,7 +49,7 @@ namespace CoordinateSharp
     public partial class ECEF 
     {
         /// <summary>
-        /// Creates an ECEF coordinate.
+        /// Creates an ECEF coordinate in kilometers.
         /// </summary>
         /// <remarks>
         /// ECEF values will be populated by converting from the passed geodetic Coordinate object.
@@ -70,9 +70,9 @@ namespace CoordinateSharp
         /// </example>
         public ECEF(Coordinate coordinate)
         {
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
-            WGS84();
+            equatorial_radius = DataValues.DefaultSemiMajorAxis;
+            inverse_flattening = DataValues.DefaultInverseFlattening;
+            Ellipsoid();
             geodetic_height = new Distance(0);
             double[] ecef = LatLong_To_ECEF(coordinate.Latitude.DecimalDegree, coordinate.Longitude.DecimalDegree, geodetic_height.Kilometers);
             x = ecef[0];
@@ -80,10 +80,10 @@ namespace CoordinateSharp
             z = ecef[2];
         }
         /// <summary>
-        /// Creates an ECEF coordinate.
+        /// Creates an ECEF coordinate in kilometers.
         /// </summary>
         /// <remarks>
-        /// ECEF values will be populated by converting from the passed geodetic Coordinate object and height (above mean sea level).
+        /// ECEF values will be populated by converting from the passed geodetic Coordinate object and height above ellipsoid.
         /// </remarks>
         /// <param name="coordinate">Coordinate</param>
         /// <param name="height">Height above Mean Sea Level</param>
@@ -95,7 +95,7 @@ namespace CoordinateSharp
         /// Coordinate c = new Coordinate(25,45);
         /// 
         /// //Create a distance object set at 450 meters.
-        /// //This will be used to signal the ECEF coordinate is 450 meters above MSL.
+        /// //This will be used to signal the ECEF coordinate is 450 meters above HAE (Height above Ellipsoid).
         /// Distance height = new Distance(450, DistanceType.Meters);
         /// 
         /// //Create and convert geodetic to ECEF
@@ -106,9 +106,9 @@ namespace CoordinateSharp
         /// </example>
         public ECEF(Coordinate coordinate, Distance height)
         {
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
-            WGS84();
+            equatorial_radius = DataValues.DefaultSemiMajorAxis;
+            inverse_flattening = DataValues.DefaultInverseFlattening;
+            Ellipsoid();
             geodetic_height = height;
             double[] ecef = LatLong_To_ECEF(coordinate.Latitude.DecimalDegree, coordinate.Longitude.DecimalDegree, geodetic_height.Kilometers);
             x = ecef[0];
@@ -116,7 +116,7 @@ namespace CoordinateSharp
             z = ecef[2];
         }
         /// <summary>
-        /// Create an ECEF coordinate.
+        /// Create an ECEF coordinate in kilometers.
         /// </summary>
         /// <param name="xc">X coordinate in KM</param>
         /// <param name="yc">Y coordinate in KM</param>
@@ -135,24 +135,24 @@ namespace CoordinateSharp
         /// </example>
         public ECEF(double xc, double yc, double zc)
         {
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
-            WGS84();
+            equatorial_radius = DataValues.DefaultSemiMajorAxis;
+            inverse_flattening = DataValues.DefaultInverseFlattening;
+            Ellipsoid();
             geodetic_height = new Distance(0);
             x = xc;
             y = yc;
             z = zc;
         }
         
-        /// <summary>
+        /// <summary>re
         /// Updates ECEF values when eagerloading is used.
         /// </summary>
         /// <param name="coordinate">Geodetic coordinate</param>
         internal void ToECEF(Coordinate coordinate)
         {
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
-            WGS84();           
+            equatorial_radius = DataValues.DefaultSemiMajorAxis;
+            inverse_flattening = DataValues.DefaultInverseFlattening;
+            Ellipsoid();           
             double[] ecef = LatLong_To_ECEF(coordinate.Latitude.DecimalDegree, coordinate.Longitude.DecimalDegree, geodetic_height.Kilometers);
             x = ecef[0];
             y = ecef[1];
@@ -168,16 +168,16 @@ namespace CoordinateSharp
         /// <param name="coordinate">Geodetic coordinate</param>
         /// <param name="distance">Height above Mean Sea Level</param>
         /// <example>
-        /// The following example demonstrates how to set the height above MSL at the geodetic coordinate. 
+        /// The following example demonstrates how to set the height above ellipsoid (HAE) at the geodetic coordinate. 
         /// The provided height is used in the conversion from geodetic to ECEF.
         /// <code>
-        /// //Create a geodetic coordinate at N25, E45 at 0 MSL.
+        /// //Create a geodetic coordinate at N25, E45 at 0 HAE.
         /// Coordinate c = new Coordinate(25, 45);
         ///
         /// //Display converted ECEF values.        
         /// Console.WriteLine(c.ECEF); //4089.916 km, 4089.916 km, 2679.074 km
 		///
-		/// //Set geodetic coordinate height to 1500 meters above MSL
+		/// //Set geodetic coordinate height to 1500 meters above HAE
 		/// c.ECEF.Set_GeoDetic_Height(c, new Distance(1500, DistanceType.Meters));						
 		/// 
 		/// //Display new ECEF values.        
@@ -272,13 +272,13 @@ namespace CoordinateSharp
         /// <summary>
         /// Initialize EARTH global variables based on the Datum.
         /// </summary>
-        private void WGS84()
+        private void Ellipsoid()
         {
-            double wgs84a = equatorial_radius / 1000;
-            double wgs84f = 1.0 / inverse_flattening;
-            double wgs84b = wgs84a * (1.0 - wgs84f);
+            double a = equatorial_radius / 1000;
+            double f = 1.0 / inverse_flattening;
+            double b = a * (1.0 - f);
 
-            EarthCon(wgs84a, wgs84b);
+            EarthCon(a, b);
         }
 
         /// <summary>
@@ -537,6 +537,7 @@ namespace CoordinateSharp
                 if (z < 0.0) { flat = -90.0; }
 
                 altkm = rp - rearth(flat);
+
                 llhvec[0] = flat;
                 llhvec[1] = flon;
                 llhvec[2] = altkm;

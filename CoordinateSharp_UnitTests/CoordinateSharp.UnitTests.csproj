@@ -45,6 +45,7 @@
     <None Remove="CoordinateData\SignedDMS.txt" />
     <None Remove="CoordinateData\UPS.csv" />
     <None Remove="CoordinateData\UTM.txt" />
+    <None Remove="CoordinateData\WebMercator.txt" />
     <None Remove="CoordinatePartData\DD.txt" />
     <None Remove="CoordinatePartData\DDM.txt" />
     <None Remove="CoordinatePartData\DMS.txt" />
@@ -164,6 +165,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="CoordinateData\UTM.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinateData\WebMercator.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="CoordinatePartData\DD.txt">

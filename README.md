@@ -7,14 +7,14 @@
 </p>
 <br/>
 
-CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations.
+CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations such as sunset, sunrise, moonset, moonrise and more.
 
 ### Like CoordinateSharp? Tell us about it!
 
 This library was built to help other developers. Please make the time and effort worth while by [telling us what you are using it for](https://github.com/Tronald/CoordinateSharp/issues/79).
 
 ### Prerequisites
-.NET 4.0 or .NET Standard 2.0, 1.4, 1.3 compatible runtimes.
+.NET 4.0, .NET 5.0, .NET 6.0 or .NET Standard 2.0, 1.4, 1.3 compatible runtimes.
 
 ### Installing
 CoordinateSharp is available as a nuget package from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
@@ -81,7 +81,7 @@ CoordinateSharp.
 ### Abilities
  
 * **Lat/Long formatting:** Quickly format how a coordinate is output.
-* **Coordinate conversions:** Convert Lat/Long to UTM, MGRS, Cartesian (Spherical and ECEF) or vice versa.
+* **Coordinate conversions:** Convert Geodetic Latitude / Longitude to UTM, MGRS, Cartesian (Spherical and ECEF), Web Mercator (EPSG:3857) or vice versa.
 * **Coordinate parsing:** Initialize a `Coordinate` with multiple format types using `TryParse()`.
 * **Coordinate moving/shifting:** Shift coordinates using a distance and bearing, or a distance and target coordinate.
 * **Location based celestial information:** Quickly determine sun set, moon rise, next solar eclipse or even zodiac signs at the input location.

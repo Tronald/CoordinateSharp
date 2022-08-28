@@ -63,8 +63,7 @@ namespace CoordinateSharp
         private double northing;
 
         private UTM_Type systemType = UTM_Type.UTM;
-        private bool withinCoordinateSystemBounds = true;
-
+     
         /// <summary>
         /// UTM Latitude Band Grid Zone Designation
         /// </summary>
@@ -113,14 +112,7 @@ namespace CoordinateSharp
             get { return inverse_flattening; }
         }
 
-        /// <summary>
-        /// Determine if the UTM conversion within the coordinate system's accurate boundaries after conversion from Lat/Long.
-        /// </summary>
-        [Obsolete("UTM coordinates may now work within the Universal Polar Stereographic. Coordinates will always be within bounds.")]
-        public bool WithinCoordinateSystemBounds
-        {
-            get { return withinCoordinateSystemBounds; }
-        }   
+      
         
         /// <summary>
         /// Coordinate system that the UTM coordinate is working in.

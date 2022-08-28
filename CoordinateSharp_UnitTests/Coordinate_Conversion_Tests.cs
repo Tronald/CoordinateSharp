@@ -3,7 +3,7 @@ using System;
 using CoordinateSharp;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
+
 using System.Diagnostics;
 using System.IO;
 
@@ -193,6 +193,46 @@ namespace CoordinateSharp_UnitTests
                 Assert.AreEqual(expected, c.ECEF.ToString());
                 x++;
             }
+        }
+       
+        /// <summary>
+        /// Test Web Mercator formatted coordinate conversions
+        /// </summary>
+        [TestMethod]
+        public void WebMercator_Conversion()
+        {
+            string s1 = "8069093.478mE 4804633.247mN";
+            string s2 = "11186039.22mE -1755765.217mN";
+            string s3 = "-1690486.655mE 9674532.836mN";
+            string s4 = "-16975109.151mE -15975590.566mN";
+
+            string[] expecteds = new string[] { s1, s2, s3, s4 };
+
+            int x = 0;
+            List<double[]> coordinates = new List<double[]>() { tc1, tc2, tc3, tc4 };
+
+            foreach (string expected in expecteds)
+            {
+                Coordinate c = new Coordinate(coordinates[x][0], coordinates[x][1], eg);
+                Assert.AreEqual(expected, c.WebMercator.ToString());
+                Coordinate c2 = WebMercator.ConvertWebMercatortoLatLong(c.WebMercator);
+                Assert.AreEqual(c2.ToString(), c.ToString());
+                x++;
+            }
+        }
+
+        /// <summary>
+        /// Test Web Mercator disables when datum is changed from WGS84
+        /// </summary>
+        [TestMethod]
+        public void WebMercator_Not_WGS84_Block()
+        {
+            Coordinate c = new Coordinate(45, 80);
+            string s = c.WebMercator.ToString();
+            c.Set_Datum(Earth_Ellipsoid_Spec.IERS_2003);
+            Assert.ThrowsException<FormatException>(() => s = c.WebMercator.ToString());
+            c.Set_Datum(Earth_Ellipsoid_Spec.WGS84_1984);
+            s = c.WebMercator.ToString();
         }
 
         /// <summary>
@@ -662,12 +702,11 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(c.MGRS.Northing, 05228, 1, "MGRS Northing does not match WGS84 expected");
         }
 
+     
         /// <summary>
         /// Asserts conversions
         /// </summary>
-        /// <param name="lat">Latitude</param>
-        /// <param name="lng">Longitude</param>
-        /// <param name="expected">Expected Value</param>
+        /// <param name="expecteds">Expected Value</param>
         /// <param name="format">Coordinate Format</param>
         private void Assert_Geodetic_Conversion(string[] expecteds, CoordinateFormatOptions format)
         {

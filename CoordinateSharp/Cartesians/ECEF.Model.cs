@@ -46,7 +46,7 @@ using System;
 namespace CoordinateSharp
 {
     /// <summary>
-    /// Earth Centered - Earth Fixed (X,Y,Z) Coordinate 
+    /// Earth Centered - Earth Fixed (X,Y,Z) Kilometer Coordinate 
     /// </summary>
     [Serializable]
     public partial class ECEF
@@ -107,11 +107,11 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// GeoDetic Height from Mean Sea Level.
+        /// GeoDetic height from above ellipsoid (HAE).
         /// Used for converting Lat Long / ECEF.
         /// </summary>
         /// <remarks>
-        /// Default value is 0 MSL. Adjust as needed for conversions.
+        /// Default value is 0 HAE (Height above Ellipsoid). Adjust as needed for conversions.
         /// </remarks>
         public Distance GeoDetic_Height
         {

@@ -67,6 +67,7 @@ namespace CoordinateSharp
         private MilitaryGridReferenceSystem mgrs;
         private Cartesian cartesian;
         private ECEF ecef;
+        private WebMercator webMercator;
              
         private Celestial celestialInfo;
 
@@ -107,6 +108,10 @@ namespace CoordinateSharp
                         {
                             ecef = new ECEF(this);
                         }
+                        if (EagerLoadSettings.WebMercator)
+                        {
+                            webMercator = new WebMercator(latitude.ToDouble(), longitude.ToDouble(), this);
+                        }
                     }
                     CoordinateChanged?.Invoke(this, new EventArgs());
                 }
@@ -144,6 +149,10 @@ namespace CoordinateSharp
                         if (EagerLoadSettings.ECEF)
                         {
                             ecef = new ECEF(this);
+                        }
+                        if(EagerLoadSettings.WebMercator)
+                        {
+                            webMercator = new WebMercator(latitude.ToDouble(), longitude.ToDouble(), this);
                         }
                     }
                     CoordinateChanged?.Invoke(this, new EventArgs());
@@ -247,6 +256,22 @@ namespace CoordinateSharp
                 }
             }
         }
+       
+        /// <summary>
+        /// Web Mercator EPSG:3857 values.
+        /// </summary>
+        public WebMercator WebMercator
+        {
+            get
+            {
+                if(equatorial_radius!= DataValues.DefaultSemiMajorAxis || inverse_flattening!= DataValues.DefaultInverseFlattening)
+                {
+                    throw new FormatException("Web Mercator can only convert from coordinates specifying a WGS84 datum. The datum of this coordinate has been changed, therefore you cannot use Web Mercator.");
+                }
+                return webMercator;
+            }
+        }
+
         /// <summary>
         /// Celestial information based on the objects location and geographic UTC date.
         /// </summary>
@@ -276,6 +301,7 @@ namespace CoordinateSharp
 
         //PARSER INDICATOR
         private Parse_Format_Type parse_Format = Parse_Format_Type.None;
+     
         /// <summary>
         /// Used to determine what format the coordinate was parsed from.
         /// Will equal "None" if Coordinate was not initialized via a TryParse() method.

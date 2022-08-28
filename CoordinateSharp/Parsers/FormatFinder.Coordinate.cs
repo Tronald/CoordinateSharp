@@ -45,7 +45,6 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
 using System;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
-using System.Globalization;
 
 namespace CoordinateSharp
 {
@@ -57,7 +56,7 @@ namespace CoordinateSharp
         {
             try
             {
-                //Turn of eagerload for efficiency
+                //Turn off eagerload for efficiency
                 EagerLoad eg = new EagerLoad();
                 eg.Cartesian = false;
                 eg.Celestial = false;
@@ -210,6 +209,21 @@ namespace CoordinateSharp
                     }
                     catch
                     {//Parser failed try next method 
+                    }
+                }
+
+                //Try Web Mercator
+                WebMercator webMercator;
+                if(WebMercator.TryParse(s, out webMercator))
+                {
+                    try
+                    {
+                        c = WebMercator.ConvertWebMercatortoLatLong(webMercator);
+                        c.Parse_Format = Parse_Format_Type.WebMercator;
+                        return true;
+                    }
+                    catch
+                    {//parser failed try next method
                     }
                 }
 

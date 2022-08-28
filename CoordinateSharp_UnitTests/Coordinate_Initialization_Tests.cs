@@ -101,6 +101,16 @@ namespace CoordinateSharp_UnitTests
             ECEF ecef = new ECEF(c);
             ecef = new ECEF(3194.469, 3194.469, 4487.419);
         }
+
+        /// <summary>
+        /// Test Web Mercator initialization to ensure no exceptions are thrown.
+        /// </summary>
+        [TestMethod]
+        public void Web_Mercator_Initializes_Without_Exceptions()
+        {
+            WebMercator wmc = new WebMercator(581943.5, 2111989.8);   
+        }
+
         /// <summary>
         /// Tests to ensure coordinate cannot initialize outside of allowed system ranges.
         /// </summary>
@@ -143,6 +153,24 @@ namespace CoordinateSharp_UnitTests
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => c = new Coordinate(-91, -180, new DateTime(), eg), failMsg);
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => c = new Coordinate(-90, -181, new DateTime(), eg), failMsg);
 
+        }
+        /// <summary>
+        /// Tests to ensure Web Mercator throws exceptions when limits are exceeded.
+        /// </summary>
+        [TestMethod]
+        public void Web_Mercator_Throws_ArguementOutOfRangeException_When_Ranges_Exceed()
+        {
+
+            WebMercator wmc;
+            EagerLoad eg = new EagerLoad();
+            string failMsg = "Web Mercator initialized with exceeded limitations.";
+
+            //Should fail as arguments are out of range.
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => wmc = new WebMercator(-20037508.342789, -20037508.34279), failMsg);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => wmc = new WebMercator(-20037508.34279, -20037508.342789), failMsg);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => wmc = new WebMercator(20037508.342789, 20037508.34279), failMsg);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => wmc = new WebMercator(20037508.34279, 20037508.342789), failMsg);
+        
         }
         /// <summary>
         /// Tests to ensure coordinate part cannot initialize outside of allowed system ranges.

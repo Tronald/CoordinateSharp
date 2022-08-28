@@ -44,66 +44,61 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
 */
 using System;
 
-
 namespace CoordinateSharp
 {
-    public partial class ECEF
+    /// <summary>
+    /// Web Mercator EPSG:3857 coordinate system. Must use WGS84 datum.
+    /// Coordinates above +/- 85.06 Latitude should not be considered accurate due to Web Mercator specified limitations.
+    /// </summary>
+    [Serializable]
+    public partial class WebMercator
     {
-        /// <summary>
-        /// Parses a string into an ECEF coordinate (kilometer format).
-        /// </summary>
-        /// <param name="value">string</param>          
-        /// <returns>ECEF</returns>
-        /// <example>
-        /// The following example attempts to parse an ECEF coordinate.
-        /// <code>
-        /// ECEF ecef = ECEF.Parse("217.206 km, -4127.862 km, 4841.101 km");
-        /// </code>
-        /// </example>
-        public static ECEF Parse(string value)
-        {
-            ECEF ecef;
-            if (TryParse(value, out ecef)) { return ecef; }
+        private Coordinate coordinate;
 
-            throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
+        private double easting;
+        private double northing;
+
+        private double false_easting=0;
+        private double false_northing=0;
+
+        /// <summary>
+        /// Web Mercator Easting
+        /// </summary>
+        public double Easting
+        {
+            get { return easting; }
+            internal set { easting = value; }
         }
 
         /// <summary>
-        /// Attempts to parse a string into an ECEF coordinate (kilometer format).
+        /// Web Mercator Northing
         /// </summary>
-        /// <param name="value">string</param>    
-        /// <param name="ecef">ECEF</param>
-        /// <returns>ECEF</returns>
-        /// <example>
-        /// The following example attempts to parse an ECEF coordinate.
-        /// <code>
-        /// ECEF ecef;
-        /// if(!ECEF.TryParse("217.206 km, -4127.862 km, 4841.101 km", out ecef))
-        /// {
-        ///     Console.WriteLine(ecef);//217.206 km, -4127.862 km, 4841.101 km
-        /// }
-        /// </code>
-        /// </example>
-        public static bool TryParse(string value, out ECEF ecef)
+        public double Northing
         {
-            double[] vals = null;
-
-            if (FormatFinder.TryCartesian(value.ToUpper().Replace("KM", "").Replace("X", "").Replace("Y", "").Replace("Z", ""), out vals))
-            {
-                try
-                {
-                    ecef = new ECEF(vals[0], vals[1], vals[2]);
-
-                    return true;
-                }
-                catch
-                {//Parser failed try next method 
-                }
-
+            get 
+            { 
+                return northing; 
             }
-
-            ecef = null;
-            return false;
+            internal set { northing = value; }
         }
+
+        /// <summary>
+        /// Web Mercator False Easting (Set internal, add feature for user input if requested).
+        /// </summary>
+        internal double False_Easting
+        {
+            get { return false_easting; }
+            //internal set { false_easting = value; }
+        }
+
+        /// <summary>
+        /// Web Mercator  False Northing (Set internal, add feature for user input if requested).
+        /// </summary>
+        internal double False_Northing
+        {
+            get { return false_northing; }
+            //internal set { false_northing = value; }
+        }
+          
     }
 }
