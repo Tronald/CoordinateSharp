@@ -64,8 +64,7 @@ namespace CoordinateSharp
         private string digraph;
 
         private MGRS_Type systemType = MGRS_Type.MGRS;
-        private bool withinCoordinateSystemBounds = true;
-     
+         
 
         /// <summary>
         /// MGRS Latitude Band Grid Zone Designation
@@ -110,15 +109,7 @@ namespace CoordinateSharp
             get { return digraph; }
         }
 
-        /// <summary>
-        /// Determine if the MGRS conversion within the coordinate system's accurate boundaries after conversion from Lat/Long.
-        /// </summary>
-        [Obsolete("MGRS coordinates may now work within the MGRS Polar system. Coordinates will always be within bounds.")]
-        public bool WithinCoordinateSystemBounds
-        {
-            get { return withinCoordinateSystemBounds; }
-        }
-
+       
         /// <summary>
         /// Coordinate system that the MGRS coordinate is working in.
         /// </summary>

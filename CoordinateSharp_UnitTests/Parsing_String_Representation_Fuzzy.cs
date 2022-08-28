@@ -59,6 +59,19 @@ namespace CoordinateSharp_UnitTests
         }
 
         /// <summary>
+        /// Creats a <see cref="Coordinate"/> object with a uniformly distributed random latitude and uniformly distributed random longitude with specified eager loading options in non polar regions
+        /// </summary>
+        /// <param name="eagerLoad"></param>
+        /// <returns></returns>
+        private static Coordinate GetRandomNonPolarCoordinate(EagerLoad eagerLoad)
+        {
+            double latitude = GetRandomDoubleBetween(-85.05, 85.05);
+            double longitude = GetRandomDoubleBetween(-180.0, 180.0);
+
+            return new Coordinate(latitude, longitude, eagerLoad);
+        }
+
+        /// <summary>
         /// Asserts whether <paramref name="actual"/> is "close enough" to <paramref name="expected"/>.
         /// </summary>
         /// <param name="expected"></param>
@@ -234,6 +247,28 @@ namespace CoordinateSharp_UnitTests
                 Coordinate expected = GetRandomCoordinate(el);
                 string s = expected.Cartesian.ToString();
                 Coordinate actual = Coordinate.Parse(s, CartesianType.Cartesian, el);
+                AsserCoordinatesAreClose(expected, actual);
+            }
+
+            for (int i = 0; i < nrRepetitions; ++i)
+            {
+                DoOneRandomTest();
+            }
+        }
+
+        /// <summary>
+        /// Tests whether parsing string representations of random <see cref="Coordinate"/> in Web Mercator results in close enough <see cref="Coordinate"/>.
+        /// </summary>
+        [TestMethod]
+        public void Parse_Web_Mercator_String()
+        {
+            EagerLoad el = new EagerLoad(EagerLoadType.WebMercator);
+
+            void DoOneRandomTest()
+            {
+                Coordinate expected = GetRandomNonPolarCoordinate(el);
+                string s = expected.WebMercator.ToString();
+                Coordinate actual = Coordinate.Parse(s, el);
                 AsserCoordinatesAreClose(expected, actual);
             }
 

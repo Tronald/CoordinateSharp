@@ -106,6 +106,11 @@ namespace CoordinateSharp
         /// ECEF
         /// </summary>
         ECEF = 4,
+        /// <summary>
+        /// WebMercator
+        /// </summary>
+        WebMercator = 8,
+
     }
 
     /// <summary>
@@ -219,7 +224,11 @@ namespace CoordinateSharp
         /// <summary>
         /// ECEF
         /// </summary>
-        ECEF = 8
+        ECEF = 8,
+        /// <summary>
+        /// Web Mercator EPSG:3857
+        /// </summary>
+        WebMercator = 16,
 
     }
     /// <summary>
@@ -342,7 +351,11 @@ namespace CoordinateSharp
         /// <summary>
         /// Earth Centered Earth Fixed
         /// </summary>
-        Cartesian_ECEF
+        Cartesian_ECEF,
+        /// <summary>
+        /// WebMercator EPSG:3857
+        /// </summary>
+        WebMercator
     }
     /// <summary>
     /// Used to display a celestial condition for a specified date.

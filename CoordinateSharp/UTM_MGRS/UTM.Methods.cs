@@ -46,7 +46,7 @@ using System;
 using System.Linq;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using System.Globalization;
+
 namespace CoordinateSharp
 {
     public partial class UniversalTransverseMercator 
@@ -65,7 +65,7 @@ namespace CoordinateSharp
         /// </example>
         public UniversalTransverseMercator(string latz, int longz, double est, double nrt)
         {
-            Construct_UTM(latz, longz, est, nrt, 6378137.0, 298.257223563, false);
+            Construct_UTM(latz, longz, est, nrt, DataValues.DefaultSemiMajorAxis, DataValues.DefaultInverseFlattening, false);
         }
         /// <summary>
         /// Creates a UniversalTransverMercator (UTM) object with a custom datum(ellipsoid).
@@ -120,7 +120,7 @@ namespace CoordinateSharp
                 latz = gridZone.Replace(resultString, "");             
             }
          
-            Construct_UTM(latz, longz, est, nrt, 6378137.0, 298.257223563, false);
+            Construct_UTM(latz, longz, est, nrt, DataValues.DefaultSemiMajorAxis, DataValues.DefaultInverseFlattening, false);
         }
         /// <summary>
         /// Creates a UniversalTransverMercator (UTM) object with a custom WGS84 datum(ellipsoid).
@@ -165,7 +165,7 @@ namespace CoordinateSharp
 
         internal UniversalTransverseMercator(string latz, int longz, double est, double nrt, bool suppressWarnings)
         {
-            Construct_UTM(latz, longz, est, nrt, 6378137.0, 298.257223563, suppressWarnings);
+            Construct_UTM(latz, longz, est, nrt, DataValues.DefaultSemiMajorAxis, DataValues.DefaultInverseFlattening, suppressWarnings);
         }      
 
         /// <summary>
@@ -213,8 +213,8 @@ namespace CoordinateSharp
         /// <param name="c">Parent Coordinate Object</param>
         internal UniversalTransverseMercator(double lat, double longi, Coordinate c)
         {       
-            equatorial_radius = 6378137.0;
-            inverse_flattening = 298.257223563;
+            equatorial_radius = DataValues.DefaultSemiMajorAxis;
+            inverse_flattening = DataValues.DefaultInverseFlattening;
             ToUTM(lat, longi, this);
 
             coordinate = c;
@@ -789,7 +789,7 @@ namespace CoordinateSharp
         /// Converts UTM coordinate to Signed Degree Lat/Long
         /// </summary>
         /// <param name="utm">utm</param>
-        /// <returns>Coordinate</returns>
+        /// <returns>double[]</returns>
         /// <example>
         /// The following example creates (converts to) a signed degree lat long based on a UTM object.
         /// <code>

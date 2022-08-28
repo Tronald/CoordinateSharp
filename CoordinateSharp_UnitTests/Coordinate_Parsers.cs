@@ -330,6 +330,48 @@ namespace CoordinateSharp_UnitTests
         }
 
         /// <summary>
+        /// Ensures parse
+        /// </summary>
+        [TestMethod]
+        public void WebMercator_Parse()
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            var lines = File.ReadAllLines("CoordinateData\\WebMercator.txt");
+            foreach (string cs in lines)
+            {
+                TryParse_Check(cs);
+                Parse_Check(cs);
+
+                var vals = cs.Split('#'); //First part of string is value to parse, seconds is expected string value after parse
+                string coordString = vals[0];
+
+                WebMercator webMercator;              
+                Assert.IsTrue(WebMercator.TryParse(coordString, out webMercator));              
+            }
+        }
+
+        /// <summary>
+        /// Ensures parses work in Dutch Culture formatting
+        /// </summary>
+        [TestMethod]
+        public void WebMercator_Dutch_Culture()
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("nl");
+            var lines = File.ReadAllLines("CoordinateData\\WebMercator.txt");
+            foreach (string cs in lines)
+            {
+                TryParse_Check(cs);
+                Parse_Check(cs);
+
+                var vals = cs.Split('#'); //First part of string is value to parse, seconds is expected string value after parse
+                string coordString = vals[0];
+
+                WebMercator webMercator;
+                Assert.IsTrue(WebMercator.TryParse(coordString, out webMercator));
+            }
+        }
+
+        /// <summary>
         /// Splits Coordinate test string to get value to parse and expected output.
         /// Checks proper parsing and value
         /// </summary>
@@ -503,6 +545,9 @@ namespace CoordinateSharp_UnitTests
 
             Coordinate.TryParse("5242.097 km, 2444.43 km, 2679.074 km", CartesianType.ECEF, out coordinate);
             Assert.AreEqual(Parse_Format_Type.Cartesian_ECEF, coordinate.Parse_Format, $"Parse_Format_Type.Cartesian_ECEF expected but {coordinate.Parse_Format} returned.");
+
+            Coordinate.TryParse("8284118.2mE -6339892.6mN", out coordinate);
+            Assert.AreEqual(Parse_Format_Type.WebMercator, coordinate.Parse_Format, $"Parse_Format_Type.WebMercator expected but {coordinate.Parse_Format} returned.");
         }
 
         /// <summary>
@@ -533,6 +578,11 @@ namespace CoordinateSharp_UnitTests
             Assert.IsTrue(Coordinate.TryParse("12,12", el, out coordinate), "Parse Failed");
             Assert.IsNotNull(coordinate.CelestialInfo, "CelestialInfo 4 expected");
             Assert.IsNotNull(coordinate.ECEF, "ECEF 4 expected");
+
+            el = new EagerLoad(EagerLoadType.WebMercator | EagerLoadType.Celestial);
+            Assert.IsTrue(Coordinate.TryParse("12,12", el, out coordinate), "Parse Failed");
+            Assert.IsNotNull(coordinate.CelestialInfo, "CelestialInfo 5 expected");
+            Assert.IsNotNull(coordinate.WebMercator, "Web Mercator 5 expected");
         }
 
         /// <summary>
@@ -596,6 +646,7 @@ namespace CoordinateSharp_UnitTests
             if (parseCoord.Cartesian.Y != tryParseCoord.Cartesian.Y) { pass = false; }
             if (parseCoord.Cartesian.Z != tryParseCoord.Cartesian.Z) { pass = false; }
             if (parseCoord.MGRS != null && eagerLoadCheck == true) { pass = false; }
+            if(parseCoord.WebMercator !=null && eagerLoadCheck == true) { pass = false; }
             if (parseCoord.Parse_Format != tryParseCoord.Parse_Format) { pass = false; }
 
             return pass;

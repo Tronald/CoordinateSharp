@@ -80,6 +80,11 @@ namespace CoordinateSharp
         /// </summary>
         public bool ECEF { get; set; }
         /// <summary>
+        /// Eager load Web Mercator EPSG:3857 information.
+        /// </summary>
+        public bool WebMercator { get; set; }
+
+        /// <summary>
         /// Extensions that allow for more specific EagerLoading specifications.
         /// </summary>
         public EagerLoad_Extensions Extensions
