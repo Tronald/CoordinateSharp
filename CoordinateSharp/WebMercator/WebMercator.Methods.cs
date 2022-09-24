@@ -11,7 +11,7 @@ License
 
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
-Copyright (C) 2021, Signature Group, LLC
+Copyright (C) 2022, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
 as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
@@ -34,8 +34,8 @@ These activities include: offering paid services to customers as an ASP, on the 
 or shipping CoordinateSharp with a closed source product.
 
 Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request on a case by case basis.
-	-United States Department of Defense.
-	-United States Department of Homeland Security.
+
+
 	-Open source contributors to this library.
 	-Scholarly or scientific research.
 	-Emergency response / management uses.
@@ -236,7 +236,7 @@ namespace CoordinateSharp
         {
             return ConvertWebMercatortoLatLong(wmt, GlobalSettings.Default_EagerLoad);
         }
-
+     
         /// <summary>
         /// Converts Web Mercator coordinate to Lat/Long.
         /// </summary>
@@ -261,6 +261,47 @@ namespace CoordinateSharp
         }
 
         /// <summary>
+        /// Converts Web Mercator coordinate to Lat/Long.
+        /// </summary>
+        /// <param name="easting">Easting</param>
+        /// <param name="northing">Northing</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on Web Mercator Easting and Northing values.
+        /// <code>
+        /// Coordinate c = WebMercator.ConvertWebMercatortoLatLong(8284118.2, 6339892.6);
+        /// Console.WriteLine(c); //N 49º 22' 54.431" E 74º 25' 3"
+        /// </code>
+        /// </example>
+        public static Coordinate ConvertWebMercatortoLatLong(double easting, double northing)
+        {
+            WebMercator wmt = new WebMercator(easting, northing);
+            return ConvertWebMercatortoLatLong(wmt, GlobalSettings.Default_EagerLoad);
+        }
+
+        /// <summary>
+        /// Converts Web Mercator coordinate to Lat/Long.
+        /// </summary>
+        /// <param name="easting">Easting</param>
+        /// <param name="northing">Northing</param>
+        /// <param name="eagerLoad">EagerLoad</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on Web Mercator Easting and Northing values.
+        /// Performance is maximized by turning off EagerLoading.
+        /// <code>
+        /// EagerLoad el = new EagerLoad(false);
+        /// Coordinate c = WebMercator.ConvertWebMercatortoLatLong(8284118.2, 6339892.6, el);
+        /// Console.WriteLine(c); //N 49º 22' 54.431" E 74º 25' 3"
+        /// </code>
+        /// </example>
+        public static Coordinate ConvertWebMercatortoLatLong(double easting, double northing, EagerLoad eagerLoad)
+        {
+            WebMercator wmt = new WebMercator(easting, northing);
+            return ConvertWebMercatortoLatLong(wmt, eagerLoad);
+        }
+
+        /// <summary>
         /// Converts Web Mercator coordinate to Signed Degree Lat/Long.
         /// </summary>
         /// <param name="wmt">Web Mercator</param>
@@ -281,6 +322,11 @@ namespace CoordinateSharp
             return signed;
         }
 
-       
+        internal static bool Datum_Check(double radius, double inverseflattening)
+        {
+            if (Math.Abs(radius - DataValues.DefaultSemiMajorAxis) > .000000001) { return false; }
+            if (Math.Abs(inverseflattening- DataValues.DefaultInverseFlattening) > .000000001) { return false; }
+            return true;
+        }
     }
 }
