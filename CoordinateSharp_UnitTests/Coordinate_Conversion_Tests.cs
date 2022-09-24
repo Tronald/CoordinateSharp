@@ -213,10 +213,27 @@ namespace CoordinateSharp_UnitTests
 
             foreach (string expected in expecteds)
             {
+                EagerLoad el = new EagerLoad(false);
+                
                 Coordinate c = new Coordinate(coordinates[x][0], coordinates[x][1], eg);
                 Assert.AreEqual(expected, c.WebMercator.ToString());
+                
                 Coordinate c2 = WebMercator.ConvertWebMercatortoLatLong(c.WebMercator);
                 Assert.AreEqual(c2.ToString(), c.ToString());
+
+                Coordinate c3 = WebMercator.ConvertWebMercatortoLatLong(c.WebMercator, el);
+                Assert.AreEqual(c3.ToString(), c.ToString());
+                Assert.ThrowsException<NullReferenceException>(() => c3.WebMercator.ToString()); //Ensure eagerload settings
+
+                double easting = c.WebMercator.Easting;
+                double northing = c.WebMercator.Northing;
+
+                Coordinate c4 = WebMercator.ConvertWebMercatortoLatLong(easting,northing);
+                Assert.AreEqual(c4.ToString(), c.ToString());             
+
+                Coordinate c5 = WebMercator.ConvertWebMercatortoLatLong(easting, northing, el);
+                Assert.AreEqual(c5.ToString(), c.ToString());
+                Assert.ThrowsException<NullReferenceException>(() => c5.WebMercator.ToString()); //Ensure eagerload settings
                 x++;
             }
         }
