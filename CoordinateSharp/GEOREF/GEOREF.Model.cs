@@ -44,67 +44,53 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
 */
 using System;
 
+
 namespace CoordinateSharp
 {
-    public partial class WebMercator
+    /// <summary>
+    /// World Geographic Reference System (GEOREF)
+    /// </summary>
+    [Serializable]
+    public partial class GEOREF
     {
+        private string quad_15;
+        private string quad_1;
+        private string easting; //stored as string due to leading zero with dynamic precision requirements.
+        private string northing; //stored as string due to leading zero with dynamic precision requirements. 
+
         /// <summary>
-        /// Parses a string into a Web Mercator coordinate.
+        /// 15 Degree Quadrangle
         /// </summary>
-        /// <param name="value">string</param>
-        /// <returns>WebMercator</returns>
-        /// <example>
-        /// The following example parses a Web Mercator coordinate.
-        /// <code>
-        /// WebMecator wmc = WebMercator.Parse("8284118.2 6339892.6");    
-        /// </code>
-        /// </example>
-        public static WebMercator Parse(string value)
+        public string Quad_15
         {
-            WebMercator wmc;         
-            if (TryParse(value, out wmc)) { return wmc; }
-            throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
+            get { return quad_15; }
+            internal set { quad_15 = value; }
         }
-     
-     
+        /// <summary>
+        /// 1 Degree Quadrangle
+        /// </summary>
+        public string Quad_1
+        {
+            get { return quad_1; }
+            internal set { quad_1 = value; }
+        }
 
         /// <summary>
-        /// Attempts to parse a string into an Web Mercator coordinate.
+        /// Easting
         /// </summary>
-        /// <param name="value">string</param>
-        /// <param name="wmc">WebMercator</param>
-        /// <returns>WebMercator</returns>
-        /// <example>
-        /// The following example attempts to parse a Web Mercator coordinate.
-        /// <code>
-        /// WebMercator wmc;
-        /// if(!WebMercator.TryParse("8284118.2 6339892.6", out wmc))
-        /// {
-        ///     Console.WriteLine(wmc);//8284118.2mE 6339892.6mN
-        /// }
-        /// </code>
-        /// </example>
-        public static bool TryParse(string value, out WebMercator wmc)
+        public string Easting
         {
-            string[] vals = null;
-            if (FormatFinder.TryWebMercator(value, out vals))
-            {
-                try
-                {
+            get { return easting; }
+            internal set { easting = value; }
+        }
 
-                    double easting = Convert.ToDouble(vals[0]);
-                    double northing = Convert.ToDouble(vals[1]);
-                    wmc = new WebMercator(easting, northing);
-
-                    return true;
-                }
-                catch
-                {
-                    //silent fail, return false.
-                }
-            }
-            wmc = null;
-            return false;
-        }    
+        /// <summary>
+        /// Northing
+        /// </summary>
+        public string Northing
+        {
+            get { return northing; }
+            internal set{northing = value;}
+        }     
     }
 }

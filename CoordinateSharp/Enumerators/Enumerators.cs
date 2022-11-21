@@ -229,6 +229,10 @@ namespace CoordinateSharp
         /// Web Mercator EPSG:3857
         /// </summary>
         WebMercator = 16,
+        /// <summary>
+        /// GEOREF
+        /// </summary>
+        GEOREF = 32,
 
     }
     /// <summary>
@@ -355,7 +359,11 @@ namespace CoordinateSharp
         /// <summary>
         /// WebMercator EPSG:3857
         /// </summary>
-        WebMercator
+        WebMercator,
+        /// <summary>
+        /// World Geographic Reference System
+        /// </summary>
+        GEOREF
     }
     /// <summary>
     /// Used to display a celestial condition for a specified date.

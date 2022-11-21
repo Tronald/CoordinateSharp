@@ -227,7 +227,22 @@ namespace CoordinateSharp
                     }
                 }
 
-               
+                //Try GEOREF
+                GEOREF georef;
+                if (GEOREF.TryParse(s, out georef))
+                {
+                    try
+                    {
+                        c = GEOREF.ConvertGEOREFtoLatLong(georef);
+                        c.Parse_Format = Parse_Format_Type.GEOREF;
+                        return true;
+                    }
+                    catch
+                    {//parser failed try next method
+                    }
+                }
+
+
             }
             catch(Exception ex)
             {

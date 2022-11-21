@@ -253,7 +253,11 @@ namespace CoordinateSharp
             {
                 webMercator = new WebMercator(lat, longi, this);
             }
-
+            //Load GEOREF
+            if(eagerLoad.GEOREF)
+            {
+                georef = new GEOREF(lat, longi);
+            }
           
 
             //Set Ellipsoid
@@ -355,6 +359,25 @@ namespace CoordinateSharp
         public void LoadWebMercatorInfo()
         {
             webMercator = new WebMercator(latitude.ToDouble(), longitude.ToDouble(), this);
+        }
+
+        /// <summary>
+        /// Load GEOREF information (required if eager loading is turned off).
+        /// </summary>
+        ///  <example>
+        /// The following example shows how to Load GEOREF information when eager loading is turned off.
+        /// <code>
+        /// EagerLoad eagerLoad = new EagerLoad();
+        /// eagerLoad.GEOREF = false;
+        /// Coordinate c = new Coordinate(40.0352, -74.5844, DateTime.Now, eagerLoad);
+        ///
+        /// //To load ECEF information when ready
+        /// c.LoadGEOREFInfo();           
+        /// </code>
+        /// </example>
+        public void LoadGEOREFInfo()
+        {
+            georef = new GEOREF(latitude.ToDouble(), longitude.ToDouble());
         }
 
         /*OUTPUT METHODS*/
@@ -985,6 +1008,11 @@ namespace CoordinateSharp
                     if (!WebMercator.Datum_Check(equatorial_radius, inverse_flattening)) { return; }
                     else if (EagerLoadSettings.WebMercator && webMercator == null) { webMercator = new WebMercator(latitude.ToDouble(), longitude.ToDouble(), this); }
                     else WebMercator.ToWebMercator(latitude.ToDouble(), longitude.ToDouble(), webMercator);
+                    break;
+                case "GEOREF":
+                    if (!EagerLoadSettings.GEOREF) { return; }
+                    else if (EagerLoadSettings.GEOREF && georef == null) { georef = new GEOREF(latitude.ToDouble(), longitude.ToDouble()); }
+                    else { GEOREF.ToGEOREF(latitude.ToDouble(), longitude.ToDouble(), GEOREF); }
                     break;
                 default:
                     break;

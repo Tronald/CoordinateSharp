@@ -29,6 +29,7 @@ namespace CoordinateSharp_UnitTests
             Assert.AreNotEqual(null, c.ECEF);
             Assert.AreNotEqual(null, c.Cartesian);
             Assert.AreNotEqual(null, c.WebMercator);
+            Assert.AreNotEqual(null, c.GEOREF);
 
             //Check Polar Regions
             c = new Coordinate(86, 75, new DateTime(2008, 1, 2), e);
@@ -52,6 +53,7 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(null, c.ECEF);
             Assert.AreEqual(null, c.Cartesian);
             Assert.AreEqual(null, c.WebMercator);
+            Assert.AreEqual(null, c.GEOREF);
 
             //Check Polar Regions
             c = new Coordinate(86, 75, new DateTime(2008, 1, 2), e);
@@ -116,6 +118,18 @@ namespace CoordinateSharp_UnitTests
             Coordinate c = new Coordinate(45, 75, new DateTime(2008, 1, 2), e);
             c.LoadWebMercatorInfo();
             Assert.AreNotEqual(null, c.WebMercator);
+        }
+
+        /// <summary>
+        /// Ensures GEOREFproperties load when called.
+        /// </summary>
+        [TestMethod]
+        public void GEOREF_Load_Call()
+        {
+            EagerLoad e = new EagerLoad(false);
+            Coordinate c = new Coordinate(45, 75, new DateTime(2008, 1, 2), e);
+            c.LoadGEOREFInfo();
+            Assert.AreNotEqual(null, c.GEOREF);
         }
         /// <summary>
         /// Ensures celestial values do not change with coordinate when eagerloading is off.
@@ -199,6 +213,20 @@ namespace CoordinateSharp_UnitTests
             c.Latitude.DecimalDegree = 44;
             c.Longitude.DecimalDegree = 74;
             Assert.IsTrue(Helpers.ReflectiveEquals(val, c.WebMercator));
+        }
+
+        /// <summary>
+        /// Ensures GEOREF values do not change with coordinate when eagerloading is off.
+        /// </summary>
+        [TestMethod]
+        public void GEOREF_EagerLoad_Off_Does_Not_Update_With_Coordinate_Change()
+        {
+            Coordinate c = new Coordinate(45, 75, new DateTime(2008, 1, 2));
+            var val = c.GEOREF;//For comparison
+            c.EagerLoadSettings = new EagerLoad(false); //Turn off eager loading
+            c.Latitude.DecimalDegree = 44;
+            c.Longitude.DecimalDegree = 74;
+            Assert.IsTrue(Helpers.ReflectiveEquals(val, c.GEOREF));
         }
 
         /// <summary>
@@ -292,38 +320,57 @@ namespace CoordinateSharp_UnitTests
         }
 
         /// <summary>
+        /// Ensures GEOREF values change with coordinate when eagerloading is turned back on.
+        /// </summary>
+        [TestMethod]
+        public void GEOREF_EagerLoad_On_Updates_With_Coordinate_Change()
+        {
+
+            EagerLoad el = new EagerLoad(false);
+            Coordinate c = new Coordinate(45, 75, new DateTime(2008, 1, 2), el);
+            var val = c.GEOREF;//For comparison
+            c.EagerLoadSettings = new EagerLoad(true); //Turn on eager loading      
+            c.Latitude.DecimalDegree = 44;
+            c.Longitude.DecimalDegree = 74;
+            Assert.IsFalse(Helpers.ReflectiveEquals(val, c.GEOREF));
+        }
+
+        /// <summary>
         /// Ensures flags turn on and of eager loaded properties as specified.
         /// </summary>
         [TestMethod]
         public void Flag_Initialization_Tests()
         {
-            EagerLoad eg = new EagerLoad(EagerLoadType.Cartesian | EagerLoadType.Celestial | EagerLoadType.UTM_MGRS | EagerLoadType.ECEF | EagerLoadType.WebMercator);
+            EagerLoad eg = new EagerLoad(EagerLoadType.Cartesian | EagerLoadType.Celestial | EagerLoadType.UTM_MGRS | EagerLoadType.ECEF | 
+                EagerLoadType.WebMercator | EagerLoadType.GEOREF);
 
-            if (!eg.Cartesian || !eg.Celestial || !eg.UTM_MGRS || !eg.ECEF || !eg.WebMercator) { Assert.Fail("Property values not expected (1)."); }
+            if (!eg.Cartesian || !eg.Celestial || !eg.UTM_MGRS || !eg.ECEF || !eg.WebMercator || !eg.GEOREF) { Assert.Fail("Property values not expected (1)."); }
             eg = new EagerLoad(EagerLoadType.Celestial);
-            if (eg.Cartesian || !eg.Celestial || eg.UTM_MGRS || eg.ECEF || eg.WebMercator) { Assert.Fail("Property values not expected (2)."); }
+            if (eg.Cartesian || !eg.Celestial || eg.UTM_MGRS || eg.ECEF || eg.WebMercator || eg.GEOREF) { Assert.Fail("Property values not expected (2)."); }
             eg = new EagerLoad(EagerLoadType.Cartesian);
-            if (!eg.Cartesian || eg.Celestial || eg.UTM_MGRS || eg.ECEF || eg.WebMercator) { Assert.Fail("Property values not expected (3)."); }
+            if (!eg.Cartesian || eg.Celestial || eg.UTM_MGRS || eg.ECEF || eg.WebMercator || eg.GEOREF) { Assert.Fail("Property values not expected (3)."); }
             eg = new EagerLoad(EagerLoadType.UTM_MGRS);
-            if (eg.Cartesian || eg.Celestial || !eg.UTM_MGRS || eg.ECEF || eg.WebMercator) { Assert.Fail("Property values not expected (4)."); }
+            if (eg.Cartesian || eg.Celestial || !eg.UTM_MGRS || eg.ECEF || eg.WebMercator || eg.GEOREF) { Assert.Fail("Property values not expected (4)."); }
             eg = new EagerLoad(EagerLoadType.ECEF);
-            if (eg.Cartesian || eg.Celestial || eg.UTM_MGRS || !eg.ECEF || eg.WebMercator) { Assert.Fail("Property values not expected (5)."); }
+            if (eg.Cartesian || eg.Celestial || eg.UTM_MGRS || !eg.ECEF || eg.WebMercator || eg.GEOREF) { Assert.Fail("Property values not expected (5)."); }
             eg = new EagerLoad(EagerLoadType.UTM_MGRS | EagerLoadType.Celestial);
-            if (eg.Cartesian || !eg.Celestial || !eg.UTM_MGRS || eg.ECEF || eg.WebMercator) { Assert.Fail("Property values not expected (6)."); }
+            if (eg.Cartesian || !eg.Celestial || !eg.UTM_MGRS || eg.ECEF || eg.WebMercator || eg.GEOREF) { Assert.Fail("Property values not expected (6)."); }
             eg = new EagerLoad(EagerLoadType.Cartesian | EagerLoadType.Celestial);
-            if (!eg.Cartesian || !eg.Celestial || eg.UTM_MGRS || eg.ECEF || eg.WebMercator) { Assert.Fail("Property values not expected (6)."); }
+            if (!eg.Cartesian || !eg.Celestial || eg.UTM_MGRS || eg.ECEF || eg.WebMercator || eg.GEOREF) { Assert.Fail("Property values not expected (6)."); }
             eg = new EagerLoad(EagerLoadType.UTM_MGRS | EagerLoadType.Cartesian);
-            if (!eg.Cartesian || eg.Celestial || !eg.UTM_MGRS || eg.ECEF || eg.WebMercator) { Assert.Fail("Property values not expected (7)."); }
+            if (!eg.Cartesian || eg.Celestial || !eg.UTM_MGRS || eg.ECEF || eg.WebMercator || eg.GEOREF) { Assert.Fail("Property values not expected (7)."); }
             eg = new EagerLoad(EagerLoadType.ECEF | EagerLoadType.Celestial);
-            if (eg.Cartesian || !eg.Celestial || eg.UTM_MGRS || !eg.ECEF || eg.WebMercator) { Assert.Fail("Property values not expected (8)."); }
+            if (eg.Cartesian || !eg.Celestial || eg.UTM_MGRS || !eg.ECEF || eg.WebMercator || eg.GEOREF) { Assert.Fail("Property values not expected (8)."); }
             eg = new EagerLoad(EagerLoadType.ECEF | EagerLoadType.Cartesian);
-            if (!eg.Cartesian || eg.Celestial || eg.UTM_MGRS || !eg.ECEF || eg.WebMercator) { Assert.Fail("Property values not expected (10)."); }
-            eg = new EagerLoad(EagerLoadType.ECEF | EagerLoadType.Cartesian | EagerLoadType.UTM_MGRS);
-            if (!eg.Cartesian || eg.Celestial || !eg.UTM_MGRS || !eg.ECEF || eg.WebMercator) { Assert.Fail("Property values not expected (11)."); }
+            if (!eg.Cartesian || eg.Celestial || eg.UTM_MGRS || !eg.ECEF || eg.WebMercator || eg.GEOREF) { Assert.Fail("Property values not expected (10)."); }
+            eg = new EagerLoad(EagerLoadType.ECEF | EagerLoadType.Cartesian | EagerLoadType.UTM_MGRS );
+            if (!eg.Cartesian || eg.Celestial || !eg.UTM_MGRS || !eg.ECEF || eg.WebMercator || eg.GEOREF) { Assert.Fail("Property values not expected (11)."); }
             eg = new EagerLoad(EagerLoadType.ECEF | EagerLoadType.WebMercator | EagerLoadType.UTM_MGRS);
-            if (eg.Cartesian || eg.Celestial || !eg.UTM_MGRS || !eg.ECEF || !eg.WebMercator) { Assert.Fail("Property values not expected (12)."); }
-            eg = new EagerLoad(EagerLoadType.WebMercator | EagerLoadType.Cartesian | EagerLoadType.UTM_MGRS);
+            if (eg.Cartesian || eg.Celestial || !eg.UTM_MGRS || !eg.ECEF || !eg.WebMercator || eg.GEOREF) { Assert.Fail("Property values not expected (12)."); }
+            eg = new EagerLoad(EagerLoadType.WebMercator | EagerLoadType.Cartesian | EagerLoadType.UTM_MGRS | EagerLoadType.GEOREF);
             if (!eg.Cartesian || eg.Celestial || !eg.UTM_MGRS || eg.ECEF || !eg.WebMercator) { Assert.Fail("Property values not expected (13)."); }
+            eg = new EagerLoad(EagerLoadType.GEOREF | EagerLoadType.Cartesian | EagerLoadType.UTM_MGRS | EagerLoadType.GEOREF);
+            if (!eg.Cartesian || eg.Celestial || !eg.UTM_MGRS || eg.ECEF || !eg.GEOREF) { Assert.Fail("Property values not expected (14)."); }
         }
 
         /// <summary>

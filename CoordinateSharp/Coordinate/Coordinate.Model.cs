@@ -68,6 +68,7 @@ namespace CoordinateSharp
         private Cartesian cartesian;
         private ECEF ecef;
         private WebMercator webMercator;
+        private GEOREF georef;
              
         private Celestial celestialInfo;
 
@@ -269,6 +270,17 @@ namespace CoordinateSharp
                     throw new FormatException("Web Mercator can only convert from coordinates specifying a WGS84 datum. The datum of this coordinate has been changed, therefore you cannot use Web Mercator.");
                 }
                 return webMercator;
+            }
+        }
+
+        /// <summary>
+        /// GEOREF values.
+        /// </summary>
+        public GEOREF GEOREF
+        {
+            get
+            {
+                return georef;
             }
         }
 

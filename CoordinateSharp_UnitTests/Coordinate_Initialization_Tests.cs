@@ -101,6 +101,16 @@ namespace CoordinateSharp_UnitTests
             ECEF ecef = new ECEF(c);
             ecef = new ECEF(3194.469, 3194.469, 4487.419);
         }
+        
+        /// <summary>
+        /// Test GEOREF initialization to ensure no exceptions are thrown.
+        /// </summary>
+        [TestMethod]
+        public void GEOREF_Initializes_Without_Exceptions()
+        {
+            Coordinate c = new Coordinate();
+            GEOREF geo = new GEOREF(c.GEOREF.Quad_15, c.GEOREF.Quad_1, c.GEOREF.Easting, c.GEOREF.Northing);
+        }
 
         /// <summary>
         /// Test Web Mercator initialization to ensure no exceptions are thrown.
@@ -111,6 +121,7 @@ namespace CoordinateSharp_UnitTests
             WebMercator wmc = new WebMercator(581943.5, 2111989.8);   
         }
 
+       
         /// <summary>
         /// Tests to ensure coordinate cannot initialize outside of allowed system ranges.
         /// </summary>
@@ -171,6 +182,47 @@ namespace CoordinateSharp_UnitTests
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => wmc = new WebMercator(20037508.342789, 20037508.34279), failMsg);
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => wmc = new WebMercator(20037508.34279, 20037508.342789), failMsg);
         
+        }
+        /// <summary>
+        /// Tests to ensure GEOREF throws exceptions when limits are exceeded.
+        /// </summary>
+        [TestMethod]
+        public void GEOREF_Throws_ArguementOutOfRangeException_When_Ranges_Exceed()
+        {
+
+            GEOREF geo;
+            EagerLoad eg = new EagerLoad();
+            string failMsg = "GEOREF initialized with exceeded limitations.";
+
+            //Should fail as arguments are out of range.
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("SZ", "FB", "145200", "367200"), failMsg);
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("SA", "FZ", "145200", "367200"), failMsg);
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("!A", "FB", "145200", "367200"), failMsg);
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("SA", "!B", "145200", "367200"), failMsg);
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("SA", "!B", "Z", "367200"), failMsg);
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("SA", "!B", "145200", "Z"), failMsg);
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("", "FB", "145200", "367200"), failMsg);
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("SA", " ", "145200", "367200"), failMsg);
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("SA", "FB", "", "367200"), failMsg);
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("SA", "FB", "145200", " "), failMsg);
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("SA", "FB", "145200", "3672"), failMsg);
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("SA", "FB", "745200", "3672"), failMsg);
+            Assert.ThrowsException<FormatException>(() => geo = new GEOREF("SA", "FB", "145200", "7672"), failMsg);
+
+        }
+        /// <summary>
+        /// Tests GEOREF String Precision calls
+        /// </summary>
+        [TestMethod]
+        public void GEOREF_String_Precision()
+        {
+
+            GEOREF geo = new GEOREF("SH", "FB", "145200", "367200");
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => geo.ToString(-1), "Precision may not be less than 0");
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => geo.ToString(11), "Precision may not be greater than 10");
+            Assert.AreEqual(geo.ToString(0).Length, 4);
+            Assert.AreEqual(geo.ToString(10).Length, 24);
+            Assert.AreEqual(geo.ToString(8).Length, 20);
         }
         /// <summary>
         /// Tests to ensure coordinate part cannot initialize outside of allowed system ranges.

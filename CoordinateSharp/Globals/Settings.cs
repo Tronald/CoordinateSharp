@@ -53,6 +53,7 @@ namespace CoordinateSharp
     /// <summary>
     /// Application wide, global settings for CoordinateSharp. Should be used with caution and only during times where the specified
     /// setting will not have varying changes throughout the application.
+    /// Set during application start up.
     /// </summary>
     public static class GlobalSettings
     {
@@ -65,6 +66,5 @@ namespace CoordinateSharp
         /// Application wide, default coordinate formatting output options.
         /// </summary>
         public static CoordinateFormatOptions Default_CoordinateFormatOptions { get; set; } = new CoordinateFormatOptions();
-
     }
 }

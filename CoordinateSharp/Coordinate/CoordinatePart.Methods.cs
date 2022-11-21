@@ -619,6 +619,7 @@ namespace CoordinateSharp
                 Parent.NotifyPropertyChanged("Cartesian");
                 Parent.NotifyPropertyChanged("ECEF");
                 Parent.NotifyPropertyChanged("WebMercator");
+                Parent.NotifyPropertyChanged("GEOREF");
                 parent.InvokeCoordinateChanged();
             }
             

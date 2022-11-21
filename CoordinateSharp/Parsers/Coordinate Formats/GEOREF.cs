@@ -1,4 +1,10 @@
-﻿/*
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+/*
 CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate 
 format conversions and location based celestial calculations.
 https://github.com/Tronald/CoordinateSharp
@@ -42,69 +48,46 @@ Organizations or use cases that fall under the following conditions may receive 
 
 Please visit http://coordinatesharp.com/licensing or contact Signature Group, LLC to purchase a commercial license, or for any questions regarding the AGPL 3.0 license requirements or free use license: sales@signatgroup.com.
 */
-using System;
-
 namespace CoordinateSharp
 {
-    public partial class WebMercator
+    internal partial class FormatFinder
     {
-        /// <summary>
-        /// Parses a string into a Web Mercator coordinate.
-        /// </summary>
-        /// <param name="value">string</param>
-        /// <returns>WebMercator</returns>
-        /// <example>
-        /// The following example parses a Web Mercator coordinate.
-        /// <code>
-        /// WebMecator wmc = WebMercator.Parse("8284118.2 6339892.6");    
-        /// </code>
-        /// </example>
-        public static WebMercator Parse(string value)
+        public static bool TryGEOREF(string ns, out string[] georef)
         {
-            WebMercator wmc;         
-            if (TryParse(value, out wmc)) { return wmc; }
-            throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
-        }
-     
-     
+            //X,Y
+            //mE,mN
+            //E,N
+            georef = null;
+            Regex r = new Regex(@"([A-Z,a-z][A-M,a-m][A-Q,a-q][A-Q,a-q]?\d+)|([A-Z,a-z][A-M,a-m][A-Q,a-q][A-Q,a-q])");
+            Match match = r.Match(ns);
+            if (!match.Success || match.Value != ns) { return false; }
+            if(ns.Length % 2 != 0) { return false; }
+      
+            int length = ns.Length - 4;
 
-        /// <summary>
-        /// Attempts to parse a string into an Web Mercator coordinate.
-        /// </summary>
-        /// <param name="value">string</param>
-        /// <param name="wmc">WebMercator</param>
-        /// <returns>WebMercator</returns>
-        /// <example>
-        /// The following example attempts to parse a Web Mercator coordinate.
-        /// <code>
-        /// WebMercator wmc;
-        /// if(!WebMercator.TryParse("8284118.2 6339892.6", out wmc))
-        /// {
-        ///     Console.WriteLine(wmc);//8284118.2mE 6339892.6mN
-        /// }
-        /// </code>
-        /// </example>
-        public static bool TryParse(string value, out WebMercator wmc)
-        {
-            string[] vals = null;
-            if (FormatFinder.TryWebMercator(value, out vals))
+            if (length == 4)
             {
-                try
-                {
-
-                    double easting = Convert.ToDouble(vals[0]);
-                    double northing = Convert.ToDouble(vals[1]);
-                    wmc = new WebMercator(easting, northing);
-
-                    return true;
-                }
-                catch
-                {
-                    //silent fail, return false.
-                }
+                georef = new string[] { ns.Substring(0, 2), ns.Substring(2, 2), "", ""};
             }
-            wmc = null;
-            return false;
-        }    
+            else
+            {
+                //Ensure easting northing values follow correct formatting guidelines (first 2 digits cannot exceed 60).
+                string easting = ns.Substring(4, length / 2);
+                string northing= ns.Substring(length / 2 + 4, length / 2);
+                r = new Regex(@"[0-6]\d+");
+
+                match = r.Match(easting);
+                if (!match.Success || match.Value != easting) { return false; }
+
+                match = r.Match(northing);
+                if (!match.Success || match.Value != northing) { return false; }
+
+                georef = new string[] { ns.Substring(0, 2), ns.Substring(2, 2), easting, northing };
+            }
+           
+            return true;
+
+        }
     }
 }
+

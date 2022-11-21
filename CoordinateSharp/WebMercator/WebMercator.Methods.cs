@@ -59,7 +59,7 @@ namespace CoordinateSharp
         /// <param name="nrt">Northing</param>
         /// <example>
         /// <code>
-        /// WebMercator = new WebMercator(8284118.2, 6339892.6);
+        /// WebMercator wm = new WebMercator(8284118.2, 6339892.6);
         /// </code>
         /// </example>
         public WebMercator(double est, double nrt)
@@ -86,17 +86,17 @@ namespace CoordinateSharp
         /// Constructs a Web Mercator object based off signed Lat/Long.
         /// </summary>
         /// <param name="lat">Signed Latitude</param>
-        /// <param name="longi">Signed Longitide</param>
+        /// <param name="lng">Signed Longitude</param>
         /// <param name="c">Parent Coordinate Object</param>
-        internal WebMercator(double lat, double longi, Coordinate c)
+        internal WebMercator(double lat, double lng, Coordinate c)
         {
-            ToWebMercator(lat, longi, this);
+            ToWebMercator(lat, lng, this);
             coordinate = c;
         }
      
 
         /// <summary>
-        /// Assigns Web Mercator values based of Lat/Long.
+        /// Assigns Web Mercator values based on Lat/Long.
         /// </summary>
         /// <param name="lat">Signed Latitude</param>
         /// <param name="lng">Signed longitude</param>     
@@ -151,38 +151,8 @@ namespace CoordinateSharp
     
         private static Coordinate WebMercatortoLatLong(double x, double y, EagerLoad el)
         {
-            //x easting
-            //y northing
-
-            //E = Easting
-            //FE = False Easting
-            //a= Semi-Major Axis
-            //lng = Longitude
-            //lngNO = Longitude of Natural Origin
-            //N = Northing
-            //FN = False Northing
-
-            //D = -(FN - N) / a = (FN-n)/a
-            //lat = pi/2 - 2 * atan(e^D) where e=base of natural log 2.7182818
-            //lng = [(E-FE)/a] +lngNO
-
-            double E = x;
-            double N = y;
-          
-            double FE = 0;
-            double FN = 0;
-
-            double a = DataValues.DefaultSemiMajorAxis;
-            double lngNO = 0;
-            double D = -(N - FN) / a;
-
-            double lat = Extensions.ToDegrees(Math.PI / 2 - 2 * Math.Atan(Math.Pow(Math.E, D)));
-            double lng = Extensions.ToDegrees(((E - FE) / a) + lngNO);
-          
-
-            Coordinate c = new Coordinate(lat, lng, el);
-    
-            return c;
+            double[] d = WebMercatortoSigned(x, y);
+            return new Coordinate(d[0], d[1], el);
         }
 
         private static double[] WebMercatortoSigned(double x, double y)
@@ -255,9 +225,7 @@ namespace CoordinateSharp
         /// </example>
         public static Coordinate ConvertWebMercatortoLatLong(WebMercator wmt, EagerLoad eagerLoad)
         {
-            Coordinate c = WebMercatortoLatLong(wmt.easting, wmt.northing, eagerLoad);
-
-            return c;
+            return WebMercatortoLatLong(wmt.easting, wmt.northing, eagerLoad);
         }
 
         /// <summary>
@@ -305,9 +273,9 @@ namespace CoordinateSharp
         /// Converts Web Mercator coordinate to Signed Degree Lat/Long.
         /// </summary>
         /// <param name="wmt">Web Mercator</param>
-        /// <returns>double[]</returns>
+        /// <returns>double[lat, lng]</returns>
         /// <example>
-        /// The following example creates (converts to) a signed degree lat long based on a Web Mercator object.
+        /// The following example creates (converts to) a signed degree lat long double array based on a Web Mercator object.
         /// <code>
         /// WebMercator wmc = new WebMercator(8284118.2, 6339892.6);
         /// double[] signed = WebMercator.ConvertWebMercatortoSignedDegree(wmc);

@@ -85,6 +85,11 @@ namespace CoordinateSharp
         public bool WebMercator { get; set; }
 
         /// <summary>
+        /// Eager load GEORED information.
+        /// </summary>
+        public bool GEOREF { get; set; }
+
+        /// <summary>
         /// Extensions that allow for more specific EagerLoading specifications.
         /// </summary>
         public EagerLoad_Extensions Extensions

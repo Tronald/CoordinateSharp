@@ -81,7 +81,7 @@ namespace CoordinateSharp
             Cartesian = true;
             ECEF = true;
             WebMercator = true;
-           
+            GEOREF = true;          
         }
 
         /// <summary>
@@ -114,6 +114,7 @@ namespace CoordinateSharp
             Cartesian = isOn;
             ECEF = isOn;
             WebMercator= isOn;
+            GEOREF = isOn;
         }
 
         /// <summary>
@@ -146,6 +147,7 @@ namespace CoordinateSharp
             UTM_MGRS = false;
             ECEF = false;
             WebMercator= false;
+            GEOREF = false;
 
             if (et.HasFlag(EagerLoadType.Cartesian))
             {
@@ -166,6 +168,10 @@ namespace CoordinateSharp
             if (et.HasFlag(EagerLoadType.WebMercator))
             {
                 WebMercator = true;
+            }
+            if (et.HasFlag(EagerLoadType.GEOREF))
+            {
+                GEOREF = true;
             }
         }
 

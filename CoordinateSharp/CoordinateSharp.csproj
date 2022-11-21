@@ -44,10 +44,10 @@ For more information, please contact Signature Group, LLC at this address: sales
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60</TargetFrameworks>
+    <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.14.2.1</Version>
+    <Version>2.15.1.1-beta</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
@@ -55,24 +55,22 @@ For more information, please contact Signature Group, LLC at this address: sales
     <Copyright>Copyright 2022</Copyright>
     <Description>A simple library designed to assist with geographic coordinate conversions, formatting and location based solar and lunar information.</Description>
     <PackageReleaseNotes>***BREAKING CHANGE***
--Adds Web Mercator EPSG:3857 conversions (for use in mapping applications). Benchmark changes minimal, but may slightly impact performance in certain use cases. Eager Loading settings may need to be adjusted for users that prefer Lazy Loading. 
--Adds .NET 6.0 targets
--Removes obsolete UTM/MGRS boundary check property. 
--Documentation updates to clarify expected ECEF precision.
--Updates commercial license (change does not effect existing lifetime license holders).
+-Adds GEOREF conversions (for use in legacy systems). Benchmark changes minimal, but may slightly impact performance in certain performance sensitive use cases. Eager Loading settings may need to be adjusted for users that prefer Lazy Loading. 
+-Adds .NET 7.0 targets.
+-Documentation fixes.
 </PackageReleaseNotes>
-    <PackageTags>CoordinateSharp; Latitude; Longitude; Coordinates; Geography; Sun; Moon; Solar; Lunar; Time; MGRS; UTM; EPSG:3857; ECEF; Sunset; Sunrise; Moonset; Moonrise; Web Mercator;</PackageTags>
+    <PackageTags>Conversion; Latitude; Longitude; Coordinates; Geography; Sun; Moon; Solar; Lunar; Time; MGRS; UTM; EPSG:3857; ECEF; GEOREF; Web Mercator;</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>    <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
-    <AssemblyVersion>2.14.2.1</AssemblyVersion>
+    <AssemblyVersion>2.15.1.1</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>CoordinateSharpPNG.png</PackageIcon>
     <AssemblyOriginatorKeyFile>CoordinateSharp Strong Name.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
-    <FileVersion>2.14.2.1</FileVersion>
+    <FileVersion>2.15.1.1</FileVersion>
     <RepositoryUrl>https://github.com/Tronald/CoordinateSharp</RepositoryUrl>
   </PropertyGroup>
 

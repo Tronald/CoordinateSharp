@@ -253,6 +253,51 @@ namespace CoordinateSharp_UnitTests
         }
 
         /// <summary>
+        /// Test GEOREF formatted coordinate conversions
+        /// </summary>
+        [TestMethod]
+        public void GEOREF_Conversion()
+        {
+            string s1 = "SJNK291540346080";
+            string s2 = "UELQ291540253920";
+            string s3 = "LLQF488460150000";
+            string s4 = "BANK306000204600";
+
+            string[] expecteds = new string[] { s1, s2, s3, s4 };
+
+            int x = 0;
+            List<double[]> coordinates = new List<double[]>() { tc1, tc2, tc3, tc4 };
+
+            foreach (string expected in expecteds)
+            {
+                EagerLoad el = new EagerLoad(false);
+
+                Coordinate c = new Coordinate(coordinates[x][0], coordinates[x][1], eg);
+                Assert.AreEqual(expected, c.GEOREF.ToString());
+
+                Coordinate c2 = GEOREF.ConvertGEOREFtoLatLong(c.GEOREF);
+                Assert.AreEqual(c2.ToString(), c.ToString());
+
+                Coordinate c3 = GEOREF.ConvertGEOREFtoLatLong(c.GEOREF, el);
+                Assert.AreEqual(c3.ToString(), c.ToString());
+                Assert.ThrowsException<NullReferenceException>(() => c3.GEOREF.ToString()); //Ensure eagerload settings
+
+                string quad_15 = c.GEOREF.Quad_15;
+                string quad_1 = c.GEOREF.Quad_1;
+                string easting = c.GEOREF.Easting;
+                string northing = c.GEOREF.Northing;
+
+                Coordinate c4 = GEOREF.ConvertGEOREFtoLatLong(quad_15, quad_1, easting, northing);
+                Assert.AreEqual(c4.ToString(), c.ToString());
+
+                Coordinate c5 = GEOREF.ConvertGEOREFtoLatLong(quad_15, quad_1, easting, northing, el);
+                Assert.AreEqual(c5.ToString(), c.ToString());
+                Assert.ThrowsException<NullReferenceException>(() => c5.GEOREF.ToString()); //Ensure eagerload settings
+                x++;
+            }
+        }
+
+        /// <summary>
         /// Test Geodetic height correctly converts with ECEF
         /// </summary>
         [TestMethod]
