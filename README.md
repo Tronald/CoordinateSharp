@@ -81,7 +81,7 @@ CoordinateSharp.
 ### Abilities
  
 * **Lat/Long formatting:** Quickly format how a coordinate is output.
-* **Coordinate conversions:** Convert Geodetic Latitude / Longitude to UTM, MGRS, Cartesian (Spherical and ECEF), Web Mercator (EPSG:3857) or vice versa.
+* **Coordinate conversions:** Convert Geodetic Latitude / Longitude to UTM, MGRS, Cartesian (Spherical and ECEF), Web Mercator (EPSG:3857), GEOREF or vice versa.
 * **Coordinate parsing:** Initialize a `Coordinate` with multiple format types using `TryParse()`.
 * **Coordinate moving/shifting:** Shift coordinates using a distance and bearing, or a distance and target coordinate.
 * **Location based celestial information:** Quickly determine sun set, moon rise, next solar eclipse or even zodiac signs at the input location.
