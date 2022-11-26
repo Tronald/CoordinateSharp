@@ -73,7 +73,7 @@ Extension packages are being built to work in conjunction with CoordinateSharp. 
 
 ### Performance Tips
 
-CoordinateSharp's ease of use comes from its eager loaded architexture. This approach may come at the cost of performance at times, but luckily the eager loading of certain properties can be turned off to improve benchmarks. For example if you only need MGRS conversions, you can turn off celestial calculations and improve `Coordinate` initialization by 6-10ms.
+CoordinateSharp's ease of use comes from its eager loaded architecture. This approach may come at the cost of performance at times, but luckily the eager loading of certain properties can be turned off to improve benchmarks. For example if you only need MGRS conversions, you can turn off celestial calculations and improve `Coordinate` initialization by 6-10ms.
 
 It is highly recommended that developers reference our [Performance Tips Page](https://coordinatesharp.com/Performance) once they have become familiar with the basic usage of 
 CoordinateSharp.
