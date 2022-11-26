@@ -663,6 +663,122 @@ namespace CoordinateSharp_UnitTests
           
         }
 
+        /// <summary>
+        /// Verifies restricted parse formats
+        /// </summary>
+        [TestMethod]
+        public void Disallowed_Parse_Check()
+        {
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("91 12", Allowed_Parse_Format.MGRS));
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("91 12", new DateTime(2022,12,12), Allowed_Parse_Format.MGRS));           
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("91 12", new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS));
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("91 12", new DateTime(2022, 12, 12), new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS));
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("91 12", CartesianType.ECEF, Allowed_Parse_Format.MGRS));
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("91 12", new DateTime(2022, 12, 12), CartesianType.ECEF, Allowed_Parse_Format.MGRS));
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("91 12", CartesianType.ECEF, new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS));
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("91 12", new DateTime(2022, 12, 12), CartesianType.ECEF, new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS));
+
+
+        }
+
+        /// <summary>
+        /// Verifies restricted parse formats
+        /// </summary>
+        [TestMethod]
+        public void Allowed_Parse_Check()
+        {
+            Coordinate.Parse("91 12", Allowed_Parse_Format.WebMercator | Allowed_Parse_Format.MGRS);
+            Coordinate.Parse("35T LF 88428 80135", Allowed_Parse_Format.WebMercator | Allowed_Parse_Format.MGRS);
+            Coordinate.Parse("35T LF 88428 80135", new DateTime(2022, 12, 12), Allowed_Parse_Format.MGRS);
+            Coordinate.Parse("35T LF 88428 80135", new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS);
+            Coordinate.Parse("35T LF 88428 80135", new DateTime(2022, 12, 12), new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS);
+            Coordinate.Parse("35T LF 88428 80135", CartesianType.ECEF, Allowed_Parse_Format.MGRS);
+            Coordinate.Parse("35T LF 88428 80135", new DateTime(2022, 12, 12), CartesianType.ECEF, Allowed_Parse_Format.MGRS);
+            Coordinate.Parse("35T LF 88428 80135", CartesianType.ECEF, new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS);
+            Coordinate.Parse("35T LF 88428 80135", new DateTime(2022, 12, 12), CartesianType.ECEF, new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS);
+        }
+        /// <summary>
+        /// Verifies restricted try_parse formats
+        /// </summary>
+        [TestMethod]
+        public void Diallowed_TryParse_Check()
+        {
+            Coordinate c;
+            Assert.AreEqual(false, Coordinate.TryParse("91 12", Allowed_Parse_Format.MGRS, out c));
+            Assert.AreEqual(false, Coordinate.TryParse("91 12", new DateTime(2022, 12, 12), Allowed_Parse_Format.MGRS, out c));
+            Assert.AreEqual(false, Coordinate.TryParse("91 12", new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS, out c));
+            Assert.AreEqual(false, Coordinate.TryParse("91 12", new DateTime(2022, 12, 12), new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS, out c));
+            Assert.AreEqual(false, Coordinate.TryParse("91 12", CartesianType.ECEF, Allowed_Parse_Format.MGRS, out c));
+            Assert.AreEqual(false, Coordinate.TryParse("91 12", new DateTime(2022, 12, 12), CartesianType.ECEF, Allowed_Parse_Format.MGRS, out c));
+            Assert.AreEqual(false, Coordinate.TryParse("91 12", CartesianType.ECEF, new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS, out c));
+            Assert.AreEqual(false, Coordinate.TryParse("91 12", new DateTime(2022, 12, 12), CartesianType.ECEF, new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS, out c));
+
+        }
+        /// <summary>
+        /// Verifies restricted try_parse formats
+        /// </summary>
+        [TestMethod]
+        public void Allowed_TryParse_Check()
+        {
+            Coordinate c;
+            Coordinate.TryParse("91 12", Allowed_Parse_Format.WebMercator | Allowed_Parse_Format.MGRS, out c);
+            Coordinate.TryParse("35T LF 88428 80135", Allowed_Parse_Format.WebMercator | Allowed_Parse_Format.MGRS, out c);
+            Coordinate.TryParse("35T LF 88428 80135", new DateTime(2022, 12, 12), Allowed_Parse_Format.MGRS, out c);
+            Coordinate.TryParse("35T LF 88428 80135", new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS, out c);
+            Coordinate.TryParse("35T LF 88428 80135", new DateTime(2022, 12, 12), new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS, out c);
+            Coordinate.TryParse("35T LF 88428 80135", CartesianType.ECEF, Allowed_Parse_Format.MGRS, out c);
+            Coordinate.TryParse("35T LF 88428 80135", new DateTime(2022, 12, 12), CartesianType.ECEF, Allowed_Parse_Format.MGRS, out c);
+            Coordinate.TryParse("35T LF 88428 80135", CartesianType.ECEF, new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS, out c);
+            Coordinate.TryParse("35T LF 88428 80135", new DateTime(2022, 12, 12), CartesianType.ECEF, new EagerLoad(EagerLoadType.UTM_MGRS), Allowed_Parse_Format.MGRS, out c);
+        }
+
+        /// <summary>
+        /// Verifies global parse format restrictions
+        /// </summary>
+        [TestMethod]
+        public void Z_Global_Settings_Parse_Works()
+        {
+            GlobalSettings.Default_Parsable_Formats = Allowed_Parse_Format.Lat_Long;
+
+            Coordinate.Parse("24 56");
+            Coordinate.Parse("24 56", new DateTime(2022, 2, 2));
+            Coordinate.Parse("24 56", new EagerLoad(false));
+            Coordinate.Parse("24 56", new DateTime(2022, 2, 2), new EagerLoad(false));
+
+            Coordinate.Parse("24 56", CartesianType.ECEF);
+            Coordinate.Parse("24 56", new DateTime(2022, 2, 2), CartesianType.ECEF);
+            Coordinate.Parse("24 56", CartesianType.ECEF, new EagerLoad(false));
+            Coordinate.Parse("24 56", new DateTime(2022, 2, 2), CartesianType.ECEF, new EagerLoad(false));
+
+            GlobalSettings.Default_Parsable_Formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.MGRS | Allowed_Parse_Format.UTM |
+            Allowed_Parse_Format.Cartesian_ECEF | Allowed_Parse_Format.Cartesian_Spherical |
+            Allowed_Parse_Format.WebMercator | Allowed_Parse_Format.GEOREF;
+        }
+
+        /// <summary>
+        /// Verifies global parse format fails
+        /// </summary>
+        [TestMethod]
+        public void Z_Global_Settings_Parse_Fails()
+        {
+            GlobalSettings.Default_Parsable_Formats = Allowed_Parse_Format.MGRS;
+
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("24 56"));
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("24 56", new DateTime(2022, 2, 2)));
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("24 56", new EagerLoad(false)));
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("24 56", new DateTime(2022, 2, 2), new EagerLoad(false)));
+
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("24 56", CartesianType.ECEF));
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("24 56", new DateTime(2022, 2, 2), CartesianType.ECEF));
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("24 56", CartesianType.ECEF, new EagerLoad(false)));
+            Assert.ThrowsException<FormatException>(() => Coordinate.Parse("24 56", new DateTime(2022, 2, 2), CartesianType.ECEF, new EagerLoad(false)));
+
+            GlobalSettings.Default_Parsable_Formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.MGRS | Allowed_Parse_Format.UTM |
+            Allowed_Parse_Format.Cartesian_ECEF | Allowed_Parse_Format.Cartesian_Spherical |
+            Allowed_Parse_Format.WebMercator | Allowed_Parse_Format.GEOREF;
+
+        }
+
         private static bool Parse_Wrap_Check(Coordinate parseCoord, Coordinate tryParseCoord, bool eagerLoadCheck)
         {
             bool pass = true;

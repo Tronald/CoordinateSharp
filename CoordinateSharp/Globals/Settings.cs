@@ -66,5 +66,17 @@ namespace CoordinateSharp
         /// Application wide, default coordinate formatting output options.
         /// </summary>
         public static CoordinateFormatOptions Default_CoordinateFormatOptions { get; set; } = new CoordinateFormatOptions();
+
+        /// <summary>
+        /// Application wide, default parsable formats
+        /// </summary>
+        public static Allowed_Parse_Format Default_Parsable_Formats { get; set; } = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.MGRS | Allowed_Parse_Format.UTM |
+            Allowed_Parse_Format.Cartesian_ECEF | Allowed_Parse_Format.Cartesian_Spherical |
+            Allowed_Parse_Format.WebMercator | Allowed_Parse_Format.GEOREF;
+
+        /// <summary>
+        /// Application wide, default Cartesian parsed format.
+        /// </summary>
+        public static CartesianType Default_Cartersian_Type { get; set; } = CartesianType.Cartesian;
     }
 }

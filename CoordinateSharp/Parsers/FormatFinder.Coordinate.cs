@@ -52,7 +52,7 @@ namespace CoordinateSharp
     {
         //Add main to Coordinate and tunnel to Format class. Add private methods to format.
         //WHEN PARSING NO EXCPETIONS FOR OUT OF RANGE ARGS WILL BE THROWN
-        public static bool TryParse(string coordString, CartesianType ct, out Coordinate c)
+        public static bool TryParse(string coordString, CartesianType ct, Allowed_Parse_Format pf, out Coordinate c)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace CoordinateSharp
                 s = s.Trim(); //Trim all spaces before and after string
                 double[] d;
                 //Try Signed Degree
-                if (TrySignedDegree(s, out d))
+                if (pf.HasFlag(Allowed_Parse_Format.Lat_Long) && TrySignedDegree(s, out d))
                 {
                     try
                     {
@@ -83,7 +83,7 @@ namespace CoordinateSharp
                 }
 
                 //Try Decimal Degree
-                if (TryDecimalDegree(s, out d))
+                if (pf.HasFlag(Allowed_Parse_Format.Lat_Long) && TryDecimalDegree(s, out d))
                 {
                     try
                     {
@@ -96,7 +96,7 @@ namespace CoordinateSharp
                     }
                 }
                 //Try DDM
-                if (TryDegreeDecimalMinute(s, out d))
+                if (pf.HasFlag(Allowed_Parse_Format.Lat_Long) && TryDegreeDecimalMinute(s, out d))
                 {
                     try
                     {
@@ -123,7 +123,7 @@ namespace CoordinateSharp
                     }
                 }
                 //Try DMS
-                if (TryDegreeMinuteSecond(s, out d))
+                if (pf.HasFlag(Allowed_Parse_Format.Lat_Long) && TryDegreeMinuteSecond(s, out d))
                 {
                     try
                     {
@@ -154,7 +154,7 @@ namespace CoordinateSharp
                 }
 
                 Cartesian cart;
-                if (ct == CartesianType.Cartesian && Cartesian.TryParse(s, out cart))
+                if (pf.HasFlag(Allowed_Parse_Format.Cartesian_Spherical) && ct == CartesianType.Cartesian && Cartesian.TryParse(s, out cart))
                 {
                     try
                     {                    
@@ -168,7 +168,7 @@ namespace CoordinateSharp
                 }
 
                 ECEF ecef;
-                if (ct == CartesianType.ECEF && ECEF.TryParse(s, out ecef))
+                if (pf.HasFlag(Allowed_Parse_Format.Cartesian_ECEF) && ct == CartesianType.ECEF && ECEF.TryParse(s, out ecef))
                 {
                     try
                     {                      
@@ -184,7 +184,7 @@ namespace CoordinateSharp
 
                 //Try MGRS
                 MilitaryGridReferenceSystem mgrs;
-                if (MilitaryGridReferenceSystem.TryParse(s, out mgrs))
+                if (pf.HasFlag(Allowed_Parse_Format.MGRS) && MilitaryGridReferenceSystem.TryParse(s, out mgrs))
                 {
                     try
                     {
@@ -199,7 +199,7 @@ namespace CoordinateSharp
 
                 //Try UTM
                 UniversalTransverseMercator utm;
-                if (UniversalTransverseMercator.TryParse(s, out utm))
+                if (pf.HasFlag(Allowed_Parse_Format.UTM) && UniversalTransverseMercator.TryParse(s, out utm))
                 {
                     try
                     {                      
@@ -214,7 +214,7 @@ namespace CoordinateSharp
 
                 //Try Web Mercator
                 WebMercator webMercator;
-                if(WebMercator.TryParse(s, out webMercator))
+                if(pf.HasFlag(Allowed_Parse_Format.WebMercator) && WebMercator.TryParse(s, out webMercator))
                 {
                     try
                     {
@@ -229,7 +229,7 @@ namespace CoordinateSharp
 
                 //Try GEOREF
                 GEOREF georef;
-                if (GEOREF.TryParse(s, out georef))
+                if (pf.HasFlag(Allowed_Parse_Format.GEOREF) && GEOREF.TryParse(s, out georef))
                 {
                     try
                     {

@@ -311,7 +311,7 @@ namespace CoordinateSharp
     }
 
     /// <summary>
-    /// Type of format a Coordinate is parsed from. 
+    /// Type of format a Coordinate has been parsed from. 
     /// </summary>
     [Serializable]
     public enum Parse_Format_Type
@@ -365,6 +365,44 @@ namespace CoordinateSharp
         /// </summary>
         GEOREF
     }
+
+    /// <summary>
+    /// Type of format a Coordinate is allowed to parse from.
+    /// </summary>
+    [Serializable]
+    public enum Allowed_Parse_Format
+    {
+
+        /// <summary>
+        /// Geodetic latitude and longitude 
+        /// </summary>
+        Lat_Long=1,
+        /// <summary>
+        /// Universal Transverse Mercator
+        /// </summary>
+        UTM=2,
+        /// <summary>
+        /// Military Grid Reference System
+        /// </summary>
+        MGRS=4,
+        /// <summary>
+        /// Spherical Cartesian
+        /// </summary>
+        Cartesian_Spherical=8,
+        /// <summary>
+        /// Earth Centered Earth Fixed
+        /// </summary>
+        Cartesian_ECEF=16,
+        /// <summary>
+        /// WebMercator EPSG:3857
+        /// </summary>
+        WebMercator=32,
+        /// <summary>
+        /// World Geographic Reference System
+        /// </summary>
+        GEOREF=64
+    }
+
     /// <summary>
     /// Used to display a celestial condition for a specified date.
     /// </summary>
