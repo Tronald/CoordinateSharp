@@ -14,7 +14,7 @@ CoordinateSharp is a simple .NET library that is designed to assist with geograp
 This library was built to help other developers. Please make the time and effort worth while by [telling us what you are using it for](https://github.com/Tronald/CoordinateSharp/issues/79).
 
 ### Prerequisites
-.NET 4.0, .NET 5.0, .NET 6.0 or .NET Standard 2.0, 1.4, 1.3 compatible runtimes.
+.NET 4.0+ Framework, .NET 5.0+, or .NET Standard 1.3+ compatible runtimes.
 
 ### Installing
 CoordinateSharp is available as a nuget package from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
@@ -73,7 +73,7 @@ Extension packages are being built to work in conjunction with CoordinateSharp. 
 
 ### Performance Tips
 
-CoordinateSharp's ease of use comes from its eager loaded architexture. This approach may come at the cost of performance at times, but luckily the eager loading of certain properties can be turned off to improve benchmarks. For example if you only need MGRS conversions, you can turn off celestial calculations and improve `Coordinate` initialization by 6-10ms.
+CoordinateSharp's ease of use comes from its eager loaded architecture. This approach may come at the cost of performance at times, but luckily the eager loading of certain properties can be turned off to improve benchmarks. For example if you only need MGRS conversions, you can turn off celestial calculations and improve `Coordinate` initialization by 6-10ms.
 
 It is highly recommended that developers reference our [Performance Tips Page](https://coordinatesharp.com/Performance) once they have become familiar with the basic usage of 
 CoordinateSharp.
@@ -81,7 +81,7 @@ CoordinateSharp.
 ### Abilities
  
 * **Lat/Long formatting:** Quickly format how a coordinate is output.
-* **Coordinate conversions:** Convert Geodetic Latitude / Longitude to UTM, MGRS, Cartesian (Spherical and ECEF), Web Mercator (EPSG:3857) or vice versa.
+* **Coordinate conversions:** Convert Geodetic Latitude / Longitude to UTM, MGRS, Cartesian (Spherical and ECEF), Web Mercator (EPSG:3857), GEOREF or vice versa.
 * **Coordinate parsing:** Initialize a `Coordinate` with multiple format types using `TryParse()`.
 * **Coordinate moving/shifting:** Shift coordinates using a distance and bearing, or a distance and target coordinate.
 * **Location based celestial information:** Quickly determine sun set, moon rise, next solar eclipse or even zodiac signs at the input location.
