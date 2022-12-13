@@ -47,15 +47,14 @@ For more information, please contact Signature Group, LLC at this address: sales
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.15.2.1-beta</Version>
+    <Version>2.15.2.1</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2022</Copyright>
     <Description>A simple library designed to assist with geographic coordinate conversions, formatting and location based solar and lunar information.</Description>
-    <PackageReleaseNotes>***BREAKING CHANGE***
--Adds GEOREF conversions (for use in legacy systems). Benchmark changes minimal, but may slightly impact performance in certain performance sensitive use cases. Eager Loading settings may need to be adjusted for users that prefer Lazy Loading. 
+    <PackageReleaseNotes>-Adds GEOREF conversions (for use in legacy systems). Benchmark changes minimal, but may slightly impact performance in certain performance sensitive use cases. Eager Loading settings may need to be adjusted for users that prefer Lazy Loading. 
 -Adds .NET 7.0 targets.
 -Add ability to restrict parsable formats.
 -Fixes parse bug impacting ECEF format parsed coordinates with Eager Loading turned off.
