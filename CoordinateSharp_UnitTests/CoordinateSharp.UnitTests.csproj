@@ -38,6 +38,7 @@
     <None Remove="CoordinateData\DD.txt" />
     <None Remove="CoordinateData\DDM.txt" />
     <None Remove="CoordinateData\DMS.txt" />
+    <None Remove="CoordinateData\GEOREF.txt" />
     <None Remove="CoordinateData\MGRS.txt" />
     <None Remove="CoordinateData\MoveCoords.txt" />
     <None Remove="CoordinateData\Signed.txt" />
@@ -144,6 +145,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="CoordinateData\DMS.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CoordinateData\GEOREF.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="CoordinateData\MGRS.txt">

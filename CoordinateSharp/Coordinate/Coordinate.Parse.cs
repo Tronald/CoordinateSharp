@@ -48,6 +48,7 @@ namespace CoordinateSharp
 {
     public partial class Coordinate
     {
+
         /*PARSE METHODS*/
 
         /// <summary>
@@ -242,7 +243,215 @@ namespace CoordinateSharp
 
             throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
         }
-      
+
+        /// <summary>
+        /// Parses a string into a Coordinate.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="formats">Allowable parse formats</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example parses a decimal degree formatted geodetic coordinate string. Parsable format is restricted to Lat/Long and MGRS.
+        /// <code>
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.MGRS;
+        /// Coordinate c = Coordinate.Parse("N 32.891º W 64.872º", formats);
+        /// </code>
+        /// </example>
+        public static Coordinate Parse(string value, Allowed_Parse_Format formats)
+        {
+            Coordinate coordinate = null;
+            if (TryParse(value, formats, out coordinate))
+            {
+                return coordinate;
+            }
+
+            throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
+        }
+        /// <summary>
+        /// Parses a string into a Coordinate with specified date.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="geoDate">GeoDate</param>
+        /// <param name="formats">Allowable parse formats</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example parses a decimal degree formatted geodetic coordinate string, with a provided GeoDate. Parsable format is restricted to Lat/Long and MGRS.
+        /// <code>
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.MGRS;
+        /// Coordinate c = Coordinate.Parse("N 32.891º W 64.872º", new DateTime(2018,7,7), formats);
+        /// </code>
+        /// </example>
+        public static Coordinate Parse(string value, DateTime geoDate, Allowed_Parse_Format formats)
+        {
+            Coordinate coordinate = null;
+            if (TryParse(value, geoDate, formats, out coordinate))
+            {
+                return coordinate;
+            }
+
+            throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
+        }
+        /// <summary>
+        /// Parses a string into a Coordinate with a specified Cartesian system type.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="cartesianType">Cartesian Type</param>
+        /// <param name="formats">Allowable parse formats</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example parses an ECEF formatted coordinate string. 
+        /// Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type. Parsable format is restricted to Lat/Long and MGRS.
+        /// <code>
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.MGRS;
+        /// Coordinate c = Coordinate.Parse("5242.097 km, 2444.43 km, 2679.074 km", CartesianType.Cartesian, formats);
+        /// </code>
+        /// </example>
+        public static Coordinate Parse(string value, CartesianType cartesianType, Allowed_Parse_Format formats)
+        {
+            Coordinate coordinate = null;
+            if (TryParse(value, cartesianType, formats, out coordinate))
+            {
+                return coordinate;
+            }
+
+            throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
+        }
+        /// <summary>
+        /// Parses a string into a Coordinate with specified DateTime and Cartesian system type.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="geoDate">GeoDate</param>
+        /// <param name="cartesianType">Cartesian Type</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example parses an ECEF formatted coordinate string, with an included GeoDate. 
+        /// Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type. Parsable format is restricted to Lat/Long and Cartesian/ECEF.
+        /// <code>
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// Coordinate c = Coordinate.Parse("5242.097 km, 2444.43 km, 2679.074 km", new DateTime(2018,7,7), CartesianType.ECEF, formats);
+        /// </code>
+        /// </example>
+        public static Coordinate Parse(string value, DateTime geoDate, CartesianType cartesianType, Allowed_Parse_Format formats)
+        {
+            Coordinate coordinate = null;
+            if (TryParse(value, geoDate, cartesianType, formats, out coordinate))
+            {
+                return coordinate;
+            }
+
+            throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
+        }
+        /// <summary>
+        /// Parses a string into a Coordinate with specified eager loading settings.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example parses a decimal degree formatted geodetic coordinate string. Parsable format is restricted to Lat/Long and Cartesian/ECEF.
+        /// Eager loading is turned off for improved efficiency.
+        /// <code>
+        /// EagerLoad el = new EagerLoad(false);
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// Coordinate c = Coordinate.Parse("N 32.891º W 64.872º", el, formats);
+        /// </code>
+        /// </example>
+        public static Coordinate Parse(string value, EagerLoad eagerLoad, Allowed_Parse_Format formats)
+        {
+            Coordinate coordinate = null;
+            if (TryParse(value, eagerLoad, formats, out coordinate))
+            {
+                return coordinate;
+            }
+
+            throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
+        }
+        /// <summary>
+        /// Parses a string into a Coordinate with a specified date and eager loading settings.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="geoDate">GeoDate</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example parses a decimal degree formatted geodetic coordinate string with a provided GeoDate. Parsable format is restricted to Lat/Long and Cartesian/ECEF.
+        /// Eager loading is set to load celestial calculations only.
+        /// <code>
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// Coordinate c = Coordinate.Parse("N 32.891º W 64.872º", new DateTime(2018,7,7), el, formats);       
+        /// </code>
+        /// </example>
+        public static Coordinate Parse(string value, DateTime geoDate, EagerLoad eagerLoad, Allowed_Parse_Format formats)
+        {
+            Coordinate coordinate = null;
+            if (TryParse(value, geoDate, eagerLoad, formats, out coordinate))
+            {
+                return coordinate;
+            }
+
+            throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
+        }
+        /// <summary>
+        /// Parses a string into a Coordinate with a specified Cartesian system type and eager loading settings.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>    
+        /// <param name="cartesianType">Cartesian Type</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example parses an ECEF formatted coordinate string. 
+        /// Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type. Parsable format is restricted to Lat/Long and Cartesian/ECEF.
+        /// Eager loading options have been specified for efficiency.
+        /// <code>      
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Cartesian);
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// Coordinate c = Coordinate.Parse("5242.097 km, 2444.43 km, 2679.074 km", CartesianType.Cartesian, el, formats);
+        /// </code>
+        /// </example>
+        public static Coordinate Parse(string value, CartesianType cartesianType, EagerLoad eagerLoad, Allowed_Parse_Format formats)
+        {
+            Coordinate coordinate = null;
+            if (TryParse(value, cartesianType, eagerLoad, formats, out coordinate))
+            {
+                return coordinate;
+            }
+
+            throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
+        }
+        /// <summary>
+        /// Parses a string into a Coordinate with a specified date, Cartesian system type and eager loading settings.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="geoDate">GeoDate</param>
+        /// <param name="cartesianType">Cartesian Type</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example parses an ECEF formatted coordinate string, with an included GeoDate. 
+        /// Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type. Parsable format is restricted to Lat/Long and Cartesian/ECEF.
+        /// Eager loading options have been specified for efficiency.
+        /// <code>
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Cartesian);
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// Coordinate c = Coordinate.Parse("5242.097 km, 2444.43 km, 2679.074 km", new DateTime(2018,7,7), CartesianType.ECEF, el);    
+        /// </code>
+        /// </example>
+        public static Coordinate Parse(string value, DateTime geoDate, CartesianType cartesianType, EagerLoad eagerLoad, Allowed_Parse_Format formats)
+        {
+            Coordinate coordinate = null;
+            if (TryParse(value, geoDate, cartesianType, eagerLoad, formats, out coordinate))
+            {
+                return coordinate;
+            }
+
+            throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
+        }
 
         /*TRYPARSE METHODS*/
 
@@ -265,7 +474,7 @@ namespace CoordinateSharp
         public static bool TryParse(string value, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, CartesianType.Cartesian, out coordinate))
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, GlobalSettings.Default_Parsable_Formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad default settings
@@ -295,7 +504,7 @@ namespace CoordinateSharp
         public static bool TryParse(string value, DateTime geoDate, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, CartesianType.Cartesian, out coordinate))
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, GlobalSettings.Default_Parsable_Formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad default settings
@@ -326,14 +535,17 @@ namespace CoordinateSharp
         public static bool TryParse(string value, CartesianType cartesianType, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, cartesianType, out coordinate))
+            if (FormatFinder.TryParse(value, cartesianType, GlobalSettings.Default_Parsable_Formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 if (cartesianType == CartesianType.ECEF)
                 {
                     Distance h = coordinate.ecef.GeoDetic_Height;
                     coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad default settings
-                    coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                    if (coordinate.ecef != null)
+                    {
+                        coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                    }
                 }
                 else
                 {
@@ -367,14 +579,17 @@ namespace CoordinateSharp
         public static bool TryParse(string value, DateTime geoDate, CartesianType cartesianType, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, cartesianType, out coordinate))
+            if (FormatFinder.TryParse(value, cartesianType,     GlobalSettings.Default_Parsable_Formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 if (cartesianType == CartesianType.ECEF)
                 {
                     Distance h = coordinate.ecef.GeoDetic_Height;
                     coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad default settings
-                    coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                    if (coordinate.ecef != null)
+                    {
+                        coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                    }
                 }
                 else
                 {
@@ -408,7 +623,7 @@ namespace CoordinateSharp
         public static bool TryParse(string value, EagerLoad eagerLoad, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, CartesianType.Cartesian, out coordinate))
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, GlobalSettings.Default_Parsable_Formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), eagerLoad); //Reset with specified eager load options.
@@ -442,7 +657,7 @@ namespace CoordinateSharp
         public static bool TryParse(string value, DateTime geoDate, EagerLoad eagerLoad, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, CartesianType.Cartesian, out coordinate))
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, GlobalSettings.Default_Parsable_Formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate, eagerLoad); //Reset with specified eager load options.
@@ -476,14 +691,17 @@ namespace CoordinateSharp
         public static bool TryParse(string value, CartesianType cartesianType, EagerLoad eagerLoad, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, cartesianType, out coordinate))
+            if (FormatFinder.TryParse(value, cartesianType, GlobalSettings.Default_Parsable_Formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 if (cartesianType == CartesianType.ECEF)
                 {
                     Distance h = coordinate.ecef.GeoDetic_Height;
                     coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), eagerLoad); //Reset with eager load options specified.
-                    coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                    if (coordinate.ecef != null) 
+                    { 
+                        coordinate.ecef.Set_GeoDetic_Height(coordinate, h); 
+                    }
                 }
                 else
                 {
@@ -520,14 +738,341 @@ namespace CoordinateSharp
         public static bool TryParse(string value, DateTime geoDate, CartesianType cartesianType, EagerLoad eagerLoad, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, cartesianType, out coordinate))
+            if (FormatFinder.TryParse(value, cartesianType, GlobalSettings.Default_Parsable_Formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 if (cartesianType == CartesianType.ECEF)
                 {
                     Distance h = coordinate.ecef.GeoDetic_Height;
                     coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate, eagerLoad); //Reset with eager load options specified.
-                    coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                    if (coordinate.ecef != null)
+                    {
+                        coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                    }
+                }
+                else
+                {
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate, eagerLoad); //Reset with eager load options specified.
+                }
+                coordinate.parse_Format = pft;
+
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// The following example parses a decimal degree formatted geodetic coordinate string. Parsable format is restricted to Lat/Long and Cartesian/ECEF.
+        /// <code>
+        /// Coordinate c;
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// if(Coordinate.TryParse("N 32.891º W 64.872º", formats, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, Allowed_Parse_Format formats, out Coordinate coordinate)
+        {
+            coordinate = null;
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, formats, out coordinate))
+            {
+                Parse_Format_Type pft = coordinate.Parse_Format;
+                coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad default settings
+                coordinate.parse_Format = pft;
+
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate with specified date.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="geoDate">GeoDate</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// The following example parses a decimal degree formatted geodetic coordinate string, with a provided GeoDate. Parsable format is restricted to Lat/Long and Cartesian/ECEF.
+        /// <code>
+        /// Coordinate c;
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// if(Coordinate.TryParse("N 32.891º W 64.872º", new DateTime(2018,7,7), out c))
+        /// {
+        ///     Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, DateTime geoDate, Allowed_Parse_Format formats, out Coordinate coordinate)
+        {
+            coordinate = null;
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, formats, out coordinate))
+            {
+                Parse_Format_Type pft = coordinate.Parse_Format;
+                coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad default settings
+                coordinate.parse_Format = pft;
+
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate with a specified Cartesian system type.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="cartesianType">Cartesian Type</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// The following example parses an ECEF formatted coordinate string. Parsable format is restricted to Lat/Long and Cartesian/ECEF.
+        /// Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type.
+        /// <code>
+        /// Coordinate c;
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// if(Coordinate.TryParse("5242.097 km, 2444.43 km, 2679.074 km", CartesianType.Cartesian, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 24º 59' 59.987" E 25º 0' 0.001"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, CartesianType cartesianType, Allowed_Parse_Format formats, out Coordinate coordinate)
+        {
+            coordinate = null;
+            if (FormatFinder.TryParse(value, cartesianType, formats, out coordinate))
+            {
+                Parse_Format_Type pft = coordinate.Parse_Format;
+                if (cartesianType == CartesianType.ECEF)
+                {
+                    Distance h = coordinate.ecef.GeoDetic_Height;
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad default settings
+                    if (coordinate.ecef != null)
+                    {
+                        coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                    }
+                }
+                else
+                {
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad default settings
+                }
+                coordinate.parse_Format = pft;
+
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate with specified DateTime and Cartesian system type
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="geoDate">GeoDate</param>       
+        /// <param name="cartesianType">Cartesian Type</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// The following example parses an ECEF formatted coordinate string, with an included GeoDate. Parsable format is restricted to Lat/Long and Cartesian/ECEF.
+        /// Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type.
+        /// <code>
+        /// Coordinate c;
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// if(Coordinate.TryParse("5242.097 km, 2444.43 km, 2679.074 km", new DateTime(2018,7,7), CartesianType.ECEF, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 24º 59' 59.987" E 25º 0' 0.001"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, DateTime geoDate, CartesianType cartesianType, Allowed_Parse_Format formats, out Coordinate coordinate)
+        {
+            coordinate = null;
+            if (FormatFinder.TryParse(value, cartesianType, formats, out coordinate))
+            {
+                Parse_Format_Type pft = coordinate.Parse_Format;
+                if (cartesianType == CartesianType.ECEF)
+                {
+                    Distance h = coordinate.ecef.GeoDetic_Height;
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad default settings
+                    if (coordinate.ecef != null)
+                    {
+                        coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                    }
+                }
+                else
+                {
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad default setting
+                }
+                coordinate.parse_Format = pft;
+
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate with specified eager loading settings.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// The following example parses a decimal degree formatted geodetic coordinate string. Parsable format is restricted to Lat/Long and Cartesian/ECEF.
+        /// Eager loading is turned off for improved efficiency.
+        /// <code>
+        /// Coordinate c;
+        /// EagerLoad el = new EagerLoad(false);
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// if(Coordinate.TryParse("N 32.891º W 64.872º", el, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, EagerLoad eagerLoad, Allowed_Parse_Format formats, out Coordinate coordinate)
+        {
+            coordinate = null;
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, formats, out coordinate))
+            {
+                Parse_Format_Type pft = coordinate.Parse_Format;
+                coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), eagerLoad); //Reset with specified eager load options.
+                coordinate.parse_Format = pft;
+                coordinate.parse_Format = pft;
+
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate with a specified date and eager loading settings.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="geoDate">GeoDate</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// The following example parses a decimal degree formatted geodetic coordinate string, with a provided GeoDate. Parsable format is restricted to Lat/Long and Cartesian/ECEF. 
+        /// Eager loading is set to load celestial calculations only.
+        /// <code>
+        /// Coordinate c;
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// if(Coordinate.TryParse("N 32.891º W 64.872º", new DateTime(2018,7,7), el, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 32º 53' 28.212" W 64º 52' 20.914"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, DateTime geoDate, EagerLoad eagerLoad, Allowed_Parse_Format formats, out Coordinate coordinate)
+        {
+            coordinate = null;
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, formats, out coordinate))
+            {
+                Parse_Format_Type pft = coordinate.Parse_Format;
+                coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate, eagerLoad); //Reset with specified eager load options.
+                coordinate.parse_Format = pft;
+
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate with a specified Cartesian system type and eager loading settings.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>    
+        /// <param name="cartesianType">Cartesian Type</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// The following example parses an ECEF formatted coordinate string. 
+        /// Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type. Parsable format is restricted to Lat/Long and Cartesian/ECEF.
+        /// Eager loading options have been specified for efficiency.
+        /// <code>
+        /// Coordinate c;
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Cartesian);
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// if(Coordinate.TryParse("5242.097 km, 2444.43 km, 2679.074 km", CartesianType.Cartesian, el, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 24º 59' 59.987" E 25º 0' 0.001"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, CartesianType cartesianType, EagerLoad eagerLoad, Allowed_Parse_Format formats, out Coordinate coordinate)
+        {
+            coordinate = null;
+            if (FormatFinder.TryParse(value, cartesianType, formats, out coordinate))
+            {
+                Parse_Format_Type pft = coordinate.Parse_Format;
+                if (cartesianType == CartesianType.ECEF)
+                {
+                    Distance h = coordinate.ecef.GeoDetic_Height;
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), eagerLoad); //Reset with eager load options specified.
+                    if (coordinate.ecef != null)
+                    {
+                        coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                    }
+                }
+                else
+                {
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), eagerLoad); //Reset with eager load options specified.
+                }
+                coordinate.parse_Format = pft;
+
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Attempts to parse a string into a Coordinate with a specified date, Cartesian system type and eager loading settings.
+        /// </summary>
+        /// <param name="value">Coordinate string</param>
+        /// <param name="geoDate">GeoDate</param>
+        /// <param name="cartesianType">Cartesian Type</param>
+        /// <param name="eagerLoad">Eager loading options</param>
+        /// <param name="formats">Allowed parse formats</param>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>boolean</returns>
+        /// <example>
+        /// The following example parses an ECEF formatted coordinate string, with an included GeoDate. Parsable format is restricted to Lat/Long and Cartesian/ECEF.
+        /// Because this is an ECEF Cartesian type coordinate, we will specify the Cartesian system type.
+        /// Eager loading options have been specified for efficiency.
+        /// <code>
+        /// Coordinate c;
+        /// EagerLoad el = new EagerLoad(EagerLoadType.Cartesian);
+        /// Allowed_Parse_Format formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.Cartesian_ECEF;
+        /// if(Coordinate.TryParse("5242.097 km, 2444.43 km, 2679.074 km", new DateTime(2018,7,7), CartesianType.ECEF, el, out c))
+        /// {
+        ///     Console.WriteLine(c); //N 24º 59' 59.987" E 25º 0' 0.001"
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, DateTime geoDate, CartesianType cartesianType, EagerLoad eagerLoad, Allowed_Parse_Format formats, out Coordinate coordinate)
+        {
+            coordinate = null;
+            if (FormatFinder.TryParse(value, cartesianType, formats, out coordinate))
+            {
+                Parse_Format_Type pft = coordinate.Parse_Format;
+                if (cartesianType == CartesianType.ECEF)
+                {
+                    Distance h = coordinate.ecef.GeoDetic_Height;
+                    coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate, eagerLoad); //Reset with eager load options specified.
+                    if (coordinate.ecef != null)
+                    {
+                        coordinate.ecef.Set_GeoDetic_Height(coordinate, h);
+                    }
                 }
                 else
                 {

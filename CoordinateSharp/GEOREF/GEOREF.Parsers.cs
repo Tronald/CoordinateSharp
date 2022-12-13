@@ -44,23 +44,66 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
 */
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-namespace CoordinateSharp.Magnetic
+namespace CoordinateSharp
 {
-    /// <summary>
-    /// Magnetic Data Model
-    /// </summary>
-    [Serializable]
-    public enum DataModel
+    public partial class GEOREF
     {
         /// <summary>
-        /// World Magnetic Model 2015 (2014-2019).
+        /// Parses a string into a GEOREF coordinate.
         /// </summary>
-        WMM2015, 
+        /// <param name="value">string</param>
+        /// <returns>GEOREF</returns>
+        /// <example>
+        /// The following example parses a GEOREF coordinate.
+        /// <code>
+        /// GEOREF geo = GEOREF.Parse("SAFB60125012");    
+        /// </code>
+        /// </example>
+        public static GEOREF Parse(string value)
+        {
+            GEOREF geo;
+            if (TryParse(value, out geo)) { return geo; }
+            throw new FormatException(string.Format("Input Coordinate \"{0}\" was not in a correct format.", value));
+        }
+
+
+
         /// <summary>
-        /// World Magnetic Model 2020 (2019-2024).
+        /// Attempts to parse a string into an GEOREF coordinate.
         /// </summary>
-        WMM2020
+        /// <param name="value">string</param>
+        /// <param name="geo">GEOREF</param>
+        /// <returns>WebMercator</returns>
+        /// <example>
+        /// The following example attempts to parse a GEOREF coordinate.
+        /// <code>
+        /// GEOREF geo;
+        /// if(!GEOREF.TryParse("SAFB60125012", out wmc))
+        /// {
+        ///     Console.WriteLine(geo);//8284118.2mE 6339892.6mN
+        /// }
+        /// </code>
+        /// </example>
+        public static bool TryParse(string value, out GEOREF geo)
+        {
+            string[] vals = null;
+            if (FormatFinder.TryGEOREF(value, out vals))
+            {
+                try
+                {
+                    geo = new GEOREF(vals[0], vals[1], vals[2], vals[3]);
+                    return true;
+                }
+                catch
+                {
+                    //silent fail, return false.
+                }
+            }
+            geo = null;
+            return false;
+        }
     }
 }

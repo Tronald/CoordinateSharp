@@ -43,24 +43,54 @@ Organizations or use cases that fall under the following conditions may receive 
 Please visit http://coordinatesharp.com/licensing or contact Signature Group, LLC to purchase a commercial license, or for any questions regarding the AGPL 3.0 license requirements or free use license: sales@signatgroup.com.
 */
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace CoordinateSharp.Magnetic
+
+namespace CoordinateSharp
 {
     /// <summary>
-    /// Magnetic Data Model
+    /// World Geographic Reference System (GEOREF)
     /// </summary>
     [Serializable]
-    public enum DataModel
+    public partial class GEOREF
     {
+        private string quad_15;
+        private string quad_1;
+        private string easting; //stored as string due to leading zero with dynamic precision requirements.
+        private string northing; //stored as string due to leading zero with dynamic precision requirements. 
+
         /// <summary>
-        /// World Magnetic Model 2015 (2014-2019).
+        /// 15 Degree Quadrangle
         /// </summary>
-        WMM2015, 
+        public string Quad_15
+        {
+            get { return quad_15; }
+            internal set { quad_15 = value; }
+        }
         /// <summary>
-        /// World Magnetic Model 2020 (2019-2024).
+        /// 1 Degree Quadrangle
         /// </summary>
-        WMM2020
+        public string Quad_1
+        {
+            get { return quad_1; }
+            internal set { quad_1 = value; }
+        }
+
+        /// <summary>
+        /// Easting
+        /// </summary>
+        public string Easting
+        {
+            get { return easting; }
+            internal set { easting = value; }
+        }
+
+        /// <summary>
+        /// Northing
+        /// </summary>
+        public string Northing
+        {
+            get { return northing; }
+            internal set{northing = value;}
+        }     
     }
 }

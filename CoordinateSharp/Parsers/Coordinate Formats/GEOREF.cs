@@ -1,4 +1,10 @@
-﻿/*
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+/*
 CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate 
 format conversions and location based celestial calculations.
 https://github.com/Tronald/CoordinateSharp
@@ -42,25 +48,46 @@ Organizations or use cases that fall under the following conditions may receive 
 
 Please visit http://coordinatesharp.com/licensing or contact Signature Group, LLC to purchase a commercial license, or for any questions regarding the AGPL 3.0 license requirements or free use license: sales@signatgroup.com.
 */
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CoordinateSharp.Magnetic
+namespace CoordinateSharp
 {
-    /// <summary>
-    /// Magnetic Data Model
-    /// </summary>
-    [Serializable]
-    public enum DataModel
+    internal partial class FormatFinder
     {
-        /// <summary>
-        /// World Magnetic Model 2015 (2014-2019).
-        /// </summary>
-        WMM2015, 
-        /// <summary>
-        /// World Magnetic Model 2020 (2019-2024).
-        /// </summary>
-        WMM2020
+        public static bool TryGEOREF(string ns, out string[] georef)
+        {
+            //X,Y
+            //mE,mN
+            //E,N
+            georef = null;
+            Regex r = new Regex(@"([A-Z,a-z][A-M,a-m][A-Q,a-q][A-Q,a-q]?\d+)|([A-Z,a-z][A-M,a-m][A-Q,a-q][A-Q,a-q])");
+            Match match = r.Match(ns);
+            if (!match.Success || match.Value != ns) { return false; }
+            if(ns.Length % 2 != 0) { return false; }
+      
+            int length = ns.Length - 4;
+
+            if (length == 4)
+            {
+                georef = new string[] { ns.Substring(0, 2), ns.Substring(2, 2), "", ""};
+            }
+            else
+            {
+                //Ensure easting northing values follow correct formatting guidelines (first 2 digits cannot exceed 60).
+                string easting = ns.Substring(4, length / 2);
+                string northing= ns.Substring(length / 2 + 4, length / 2);
+                r = new Regex(@"[0-6]\d+");
+
+                match = r.Match(easting);
+                if (!match.Success || match.Value != easting) { return false; }
+
+                match = r.Match(northing);
+                if (!match.Success || match.Value != northing) { return false; }
+
+                georef = new string[] { ns.Substring(0, 2), ns.Substring(2, 2), easting, northing };
+            }
+           
+            return true;
+
+        }
     }
 }
+

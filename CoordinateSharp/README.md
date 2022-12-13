@@ -1,12 +1,3 @@
-<p align="center"><img src="https://s8.postimg.cc/y7wuenuzp/LOGO_COORDINATE_SHARP.jpg"></p>
-<br/>
-<p align="center">
-<img src="https://img.shields.io/github/v/release/Tronald/CoordinateSharp?include_prereleases"/>
-<img src="https://img.shields.io/nuget/dt/CoordinateSharp"/>
-<img src="https://img.shields.io/website?url=https%3A%2F%2Fcoordinatesharp.com%2FDeveloperGuide"/>
-</p>
-<br/>
-
 CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations such as sunset, sunrise, moonset, moonrise and more.
 
 ### Like CoordinateSharp? Tell us about it!
@@ -16,10 +7,6 @@ This library was built to help other developers. Please make the time and effort
 ### Prerequisites
 .NET 4.0+ Framework, .NET 5.0+, or .NET Standard 1.3+ compatible runtimes.
 
-### Installing
-CoordinateSharp is available as a nuget package from [nuget.org](https://www.nuget.org/packages/CoordinateSharp/)
-
-Alternatively, you may download the library directly [on our website](https://www.coordinatesharp.com/Download)
 
 ### Licensing & Purchase
 
@@ -99,5 +86,3 @@ Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes).
 ### Questions
 
 Have a technical question, but don't feel like creating an issue? Email us at support@signatgroup.com
-   
-<p align="center"><img src="https://s8.postimg.cc/wvf5cfpqt/LOGO_COORDINATE_SHARP_1.jpg"></p>

@@ -277,5 +277,27 @@ namespace CoordinateSharp_UnitTests
                 DoOneRandomTest();
             }
         }
+
+        /// <summary>
+        /// Tests whether parsing string representations of random <see cref="Coordinate"/> in Web Mercator results in close enough <see cref="Coordinate"/>.
+        /// </summary>
+        [TestMethod]
+        public void Parse_GEOREF_String()
+        {
+            EagerLoad el = new EagerLoad(EagerLoadType.GEOREF);
+
+            void DoOneRandomTest()
+            {
+                Coordinate expected = GetRandomNonPolarCoordinate(el);
+                string s = expected.GEOREF.ToString();
+                Coordinate actual = Coordinate.Parse(s, el);
+                AsserCoordinatesAreClose(expected, actual);
+            }
+
+            for (int i = 0; i < nrRepetitions; ++i)
+            {
+                DoOneRandomTest();
+            }
+        }
     }
 }
