@@ -1,15 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoordinateSharp", "CoordinateSharp\CoordinateSharp.csproj", "{82B32704-3306-49FD-A7FA-DB48B67B7B64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoordinateSharp_Playground", "CoordinateSharp_Playground\CoordinateSharp_Playground.csproj", "{F81EBED4-1B80-4987-A499-F669F345E7BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoordinateSharp.Playground", "CoordinateSharp_Playground\CoordinateSharp.Playground.csproj", "{F81EBED4-1B80-4987-A499-F669F345E7BB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoordinateSharp_UnitTests", "CoordinateSharp_UnitTests\CoordinateSharp.UnitTests.csproj", "{081621EE-78D3-4F86-8669-A42081B87A60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoordinateSharp.UnitTests", "CoordinateSharp_UnitTests\CoordinateSharp.UnitTests.csproj", "{081621EE-78D3-4F86-8669-A42081B87A60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{848975D1-C7FA-4860-BF1B-60501630279F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks .NET CORE", "Benchmarks .NET CORE\Benchmarks .NET CORE.csproj", "{848975D1-C7FA-4860-BF1B-60501630279F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks .NET Framework", "Benchmarks .NET Framework\Benchmarks .NET Framework.csproj", "{984AD04B-D8A8-427D-9BA9-6CD74A9DE148}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoordinateSharp.Magnetic", "CoordinateSharp.Magnetic\CoordinateSharp.Magnetic.csproj", "{91F911B5-9438-4651-8A26-4B8A5496A4B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{848975D1-C7FA-4860-BF1B-60501630279F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{848975D1-C7FA-4860-BF1B-60501630279F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{848975D1-C7FA-4860-BF1B-60501630279F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{984AD04B-D8A8-427D-9BA9-6CD74A9DE148}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{984AD04B-D8A8-427D-9BA9-6CD74A9DE148}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{984AD04B-D8A8-427D-9BA9-6CD74A9DE148}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{984AD04B-D8A8-427D-9BA9-6CD74A9DE148}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91F911B5-9438-4651-8A26-4B8A5496A4B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91F911B5-9438-4651-8A26-4B8A5496A4B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91F911B5-9438-4651-8A26-4B8A5496A4B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91F911B5-9438-4651-8A26-4B8A5496A4B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
