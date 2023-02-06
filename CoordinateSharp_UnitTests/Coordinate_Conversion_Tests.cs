@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 
 namespace CoordinateSharp_UnitTests
@@ -60,7 +61,7 @@ namespace CoordinateSharp_UnitTests
 
             CoordinateFormatOptions format = new CoordinateFormatOptions() { Format = CoordinateFormatType.Decimal_Degree };
 
-            Assert_Geodetic_Conversion(expecteds, format);          
+            Assert_Geodetic_Conversion(expecteds, format);
         }
 
         /// <summary>
@@ -110,7 +111,7 @@ namespace CoordinateSharp_UnitTests
             string s3 = "28W 491315mE 7236329mN";
             string s4 = "A 1519951mE 1078227mN";
 
-            string[] expecteds = new string[] { s1, s2, s3, s4 };          
+            string[] expecteds = new string[] { s1, s2, s3, s4 };
 
             int x = 0;
             List<double[]> coordinates = new List<double[]>() { tc1, tc2, tc3, tc4 };
@@ -194,7 +195,7 @@ namespace CoordinateSharp_UnitTests
                 x++;
             }
         }
-       
+
         /// <summary>
         /// Test Web Mercator formatted coordinate conversions
         /// </summary>
@@ -214,10 +215,10 @@ namespace CoordinateSharp_UnitTests
             foreach (string expected in expecteds)
             {
                 EagerLoad el = new EagerLoad(false);
-                
+
                 Coordinate c = new Coordinate(coordinates[x][0], coordinates[x][1], eg);
                 Assert.AreEqual(expected, c.WebMercator.ToString());
-                
+
                 Coordinate c2 = WebMercator.ConvertWebMercatortoLatLong(c.WebMercator);
                 Assert.AreEqual(c2.ToString(), c.ToString());
 
@@ -229,7 +230,7 @@ namespace CoordinateSharp_UnitTests
                 double northing = c.WebMercator.Northing;
 
                 Coordinate c4 = WebMercator.ConvertWebMercatortoLatLong(easting,northing);
-                Assert.AreEqual(c4.ToString(), c.ToString());             
+                Assert.AreEqual(c4.ToString(), c.ToString());
 
                 Coordinate c5 = WebMercator.ConvertWebMercatortoLatLong(easting, northing, el);
                 Assert.AreEqual(c5.ToString(), c.ToString());
@@ -303,7 +304,7 @@ namespace CoordinateSharp_UnitTests
         [TestMethod]
         public void Geodetic_To_ECEF_Height_Conversion()
         {
-            //ECEF WITH HEIGHT CHECK           
+            //ECEF WITH HEIGHT CHECK
             double latE = -80.6586;
             double longE = -152.49;
 
@@ -313,15 +314,15 @@ namespace CoordinateSharp_UnitTests
             cE.ECEF.Set_GeoDetic_Height(cE, h);
             Assert.AreEqual(0, cE.ECEF.X - -921.443,  .001, "X - GeoDetic Height Conversions Outside Limits");
             Assert.AreEqual(0, cE.ECEF.Y - -479.878,  .001, "Y - Setting GeoDetic Height Conversions Outside Limits");
-            Assert.AreEqual(0, cE.ECEF.Z - -6273.377,  .001, "Z - Setting GeoDetic Height Conversions Outside Limits");                  
+            Assert.AreEqual(0, cE.ECEF.Z - -6273.377,  .001, "Z - Setting GeoDetic Height Conversions Outside Limits");
         }
         /// <summary>
-        /// Test ECEF height correctly converts with geodetic 
+        /// Test ECEF height correctly converts with geodetic
         /// </summary>
         [TestMethod]
         public void ECEF_To_Geodetic_Height_Conversion()
         {
-            //ECEF WITH HEIGHT CHECK           
+            //ECEF WITH HEIGHT CHECK
             double latE = -80.6586;
             double longE = -152.49;
 
@@ -329,24 +330,24 @@ namespace CoordinateSharp_UnitTests
             Coordinate cE = new Coordinate(latE, longE);
 
             cE.ECEF.Set_GeoDetic_Height(cE, h);
-        
+
             ECEF ecefE = new ECEF(cE.ECEF.X, cE.ECEF.Y, cE.ECEF.Z);
 
             Coordinate rcE = ECEF.ECEFToLatLong(ecefE);
-        
+
             Assert.AreEqual(0, rcE.Latitude.ToDouble() - cE.Latitude.ToDouble(), .00001, "Latitude 1 Conversion Outside Limits");
             Assert.AreEqual(0, rcE.Longitude.ToDouble() - cE.Longitude.ToDouble(),  .00001, "Longitude 1 Conversion Outside Limits");
             Assert.AreEqual(0, rcE.ECEF.GeoDetic_Height.Meters - cE.ECEF.GeoDetic_Height.Meters,  .00001, "Height 1 Conversion Outside Limits");
-           
+
             ecefE = new ECEF(cE, cE.ECEF.GeoDetic_Height);
 
             rcE = ECEF.ECEFToLatLong(ecefE);
 
             Assert.AreEqual(0, rcE.Latitude.ToDouble() - cE.Latitude.ToDouble(), .00001, "Latitude 2 Conversion Outside Limits");
             Assert.AreEqual(0, rcE.Longitude.ToDouble() - cE.Longitude.ToDouble(), .00001, "Longitude 2 Conversion Outside Limits");
-            Assert.AreEqual(0, rcE.ECEF.GeoDetic_Height.Meters - cE.ECEF.GeoDetic_Height.Meters, .00001, "Height 2 Conversion Outside Limits");     
+            Assert.AreEqual(0, rcE.ECEF.GeoDetic_Height.Meters - cE.ECEF.GeoDetic_Height.Meters, .00001, "Height 2 Conversion Outside Limits");
         }
-       
+
         /// <summary>
         /// Tests to ensure UTM gridzone locks during conversions if specified.
         /// </summary>
@@ -365,10 +366,10 @@ namespace CoordinateSharp_UnitTests
         public void MGRS_Grid_Zone_Conversion_Lock()
         {
 
-            Coordinate coord1 = new Coordinate(51.5074, 1);      
+            Coordinate coord1 = new Coordinate(51.5074, 1);
             Assert.AreEqual(31, coord1.MGRS.LongZone,"Grid zone value not expected");
             coord1.Lock_UTM_MGRS_Zone(30);
-            Assert.AreEqual(30, coord1.MGRS.LongZone, "Grid zone did not lock to new value.");         
+            Assert.AreEqual(30, coord1.MGRS.LongZone, "Grid zone did not lock to new value.");
         }
 
         /// <summary>
@@ -412,14 +413,14 @@ namespace CoordinateSharp_UnitTests
         public void UTM_Grid_Zone_Conversion_Unlock()
         {
             Coordinate coord1 = new Coordinate(51.5074, 1);
-           
+
             coord1.Lock_UTM_MGRS_Zone(30); //Lock first coord to zone 30
 
             //2 degree change tested at 1.1 Meter precision
-            Coordinate coordVal = Coordinate.Parse(coord1.UTM.ToString());          
+            Coordinate coordVal = Coordinate.Parse(coord1.UTM.ToString());
             coord1.Unlock_UTM_MGRS_Zone();
 
-            Assert.AreEqual(31, coord1.UTM.LongZone);      
+            Assert.AreEqual(31, coord1.UTM.LongZone);
         }
         /// <summary>
         /// Tests to ensure MGRS grid zone unlocks during conversions if specified.
@@ -428,7 +429,7 @@ namespace CoordinateSharp_UnitTests
         public void MGRS_Grid_Zone_Conversion_Unlock()
         {
 
-            Coordinate coord1 = new Coordinate(51.5074, 1); 
+            Coordinate coord1 = new Coordinate(51.5074, 1);
 
             coord1.Lock_UTM_MGRS_Zone(30); //Lock first coord to zone 30
 
@@ -445,10 +446,10 @@ namespace CoordinateSharp_UnitTests
         public void UTM_MGRS_Grid_Zone_Lock_Conversion_Limits()
         {
 
-            Coordinate coord1 = new Coordinate(51.5074, 1);           
+            Coordinate coord1 = new Coordinate(51.5074, 1);
 
             Assert.ThrowsException<ArgumentOutOfRangeException>(()=>coord1.Lock_UTM_MGRS_Zone(0));
-            Assert.ThrowsException<ArgumentOutOfRangeException>(()=>coord1.Lock_UTM_MGRS_Zone(61));       
+            Assert.ThrowsException<ArgumentOutOfRangeException>(()=>coord1.Lock_UTM_MGRS_Zone(61));
         }
 
         /// <summary>
@@ -491,7 +492,7 @@ namespace CoordinateSharp_UnitTests
         {
             Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
             Assert.AreEqual("23T ML 45382 34246", c.MGRS.ToRoundedString());
-           
+
         }
         /// <summary>
         /// Ensures correct MGRS Centimeter string.
@@ -510,7 +511,7 @@ namespace CoordinateSharp_UnitTests
         public void UTM_Centimeter_Check()
         {
             Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
-            Assert.AreEqual("23T 445381.61737mE 5034245.53566mN", c.UTM.ToCentimeterString());          
+            Assert.AreEqual("23T 445381.61737mE 5034245.53566mN", c.UTM.ToCentimeterString());
         }
 
         /// <summary>
@@ -523,14 +524,33 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual("23T 445382mE 5034246mN", c.UTM.ToRoundedString());
         }
 
-      
+        /// <summary>
+        /// Ensures UTM Rounded string with given precision validates precision.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UTM_Rounded_With_Precision_Input_Validation_Check()
+        {
+            Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
+            var result = c.UTM.ToRoundedString(-2);
+        }
+
+        /// <summary>
+        /// Ensures correct UTM Rounded string with given precision.
+        /// </summary>
+        [TestMethod]
+        public void UTM_Rounded_With_Precision_Check()
+        {
+            Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
+            Assert.AreEqual("23T 445381.62mE 5034245.54mN", c.UTM.ToRoundedString(2));
+        }
 
         /// <summary>
         /// Test geodetic to UPS conversions
         /// </summary>
         [TestMethod]
         public void Geodetic_To_UPS_Conversions()
-        {         
+        {
             EagerLoad el = new EagerLoad(EagerLoadType.UTM_MGRS);
 
             foreach (var currentLine in polar_coordinates)
@@ -539,7 +559,7 @@ namespace CoordinateSharp_UnitTests
 
                 double lat = Convert.ToDouble(parts[5]);
                 double lng = Convert.ToDouble(parts[6]);
-              
+
                 string zone = parts[1];
 
                 int easting = Convert.ToInt32(parts[2]);
@@ -555,7 +575,7 @@ namespace CoordinateSharp_UnitTests
                 Assert.AreEqual(0, c.UTM.Easting - easting, 1, "Easting value outside limits");
                 Assert.AreEqual(0, c.UTM.Northing - northing, 1, "Northing value outside limits");
             }
-            
+
         }
 
         /// <summary>
@@ -604,31 +624,31 @@ namespace CoordinateSharp_UnitTests
 
                 double lat = Convert.ToDouble(parts[5]);
                 double lng = Convert.ToDouble(parts[6]);
-         
+
                 Coordinate c = new Coordinate(lat, lng, el);
 
                 //skip 80-84 due to Earthpoint using different UTM zone returns. Both methods are accurate and test against EarthPoint, but will cause test to fail.
                 if (lat >= 80 && lat <= 84) { continue; }
                 if (Math.Abs(lat) >= 89.99999) { continue; } //Dont test as long doesn't exist at pole.
-           
+
 
                 //CONVERT BACK TEST
                 double precision = .0000001; //1.1 CM Convert Back Precision
 
                 Coordinate bc = UniversalTransverseMercator.ConvertUTMtoLatLong(c.UTM, new EagerLoad(false));
-                
+
                 double l = c.Latitude.ToDouble();
                 double bL = bc.Latitude.ToDouble();
                 //IGNORE 360 values as that equals 0 degrees
                 Assert.IsFalse(Math.Abs(bL - l) > precision && Math.Abs(bL - l) != 360, "Latitude value not expected.");
-               
-               
+
+
                 l = c.Longitude.ToDouble();
                 bL = bc.Longitude.ToDouble();
                 //IGNORE 360 values as that equals 0 degrees
                 Assert.IsFalse(Math.Abs(bL - l) > precision && Math.Abs(bL - l) != 360, "Longitude value not expected.");
             }
-            
+
         }
 
         /// <summary>
@@ -645,7 +665,7 @@ namespace CoordinateSharp_UnitTests
 
                 double lat = Convert.ToDouble(parts[5]);
                 double lng = Convert.ToDouble(parts[6]);
-              
+
                 Coordinate c = new Coordinate(lat, lng, el);
 
                 //skip 80-84 due to Earthpoint using different UTM zone returns. Both methods are accurate and test against EarthPoint, but will cause test to fail.
@@ -656,7 +676,7 @@ namespace CoordinateSharp_UnitTests
                 //CONVERT BACK TEST
                 double precision = .0000001; //1.1 CM Convert Back Precision
 
-              
+
                 precision = .0003;
                 if (Math.Abs(c.Latitude.ToDouble()) > 89) { precision = .002; }
                 else if (Math.Abs(c.Latitude.ToDouble()) > 88) { precision = .0006; }
@@ -764,7 +784,7 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(c.MGRS.Northing, 05228, 1, "MGRS Northing does not match WGS84 expected");
         }
 
-     
+
         /// <summary>
         /// Asserts conversions
         /// </summary>
@@ -774,7 +794,7 @@ namespace CoordinateSharp_UnitTests
         {
             int x = 0;
             List<double[]> coordinates = new List<double[]>() { tc1, tc2, tc3, tc4 };
-          
+
 
             foreach (string expected in expecteds)
             {

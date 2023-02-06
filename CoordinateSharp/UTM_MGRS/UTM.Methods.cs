@@ -1,9 +1,9 @@
 ﻿/*
-CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate 
+CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate
 format conversions and location based celestial calculations.
 https://github.com/Tronald/CoordinateSharp
 
-Many celestial formulas in this library are based on Jean Meeus's 
+Many celestial formulas in this library are based on Jean Meeus's
 Astronomical Algorithms (2nd Edition). Comments that reference only a chapter
 are referring to this work.
 
@@ -12,25 +12,25 @@ License
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
 Copyright (C) 2022, Signature Group, LLC
-  
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
-as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
-FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY Signature Group, LLC. Signature Group, LLC DISCLAIMS THE WARRANTY OF 
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3
+as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a):
+FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY Signature Group, LLC. Signature Group, LLC DISCLAIMS THE WARRANTY OF
 NON INFRINGEMENT OF THIRD PARTY RIGHTS.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. You should have received a copy of the GNU 
-Affero General Public License along with this program; if not, see http://www.gnu.org/licenses or write to the 
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. You should have received a copy of the GNU
+Affero General Public License along with this program; if not, see http://www.gnu.org/licenses or write to the
 Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA, 02110-1301 USA, or download the license from the following URL:
 
 https://www.gnu.org/licenses/agpl-3.0.html
 
-The interactive user interfaces in modified source and object code versions of this program must display Appropriate Legal Notices, 
+The interactive user interfaces in modified source and object code versions of this program must display Appropriate Legal Notices,
 as required under Section 5 of the GNU Affero General Public License.
 
-You can be released from the requirements of the license by purchasing a commercial license. Buying such a license is mandatory 
-as soon as you develop commercial activities involving the CoordinateSharp software without disclosing the source code of your own applications. 
-These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application, 
+You can be released from the requirements of the license by purchasing a commercial license. Buying such a license is mandatory
+as soon as you develop commercial activities involving the CoordinateSharp software without disclosing the source code of your own applications.
+These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application,
 or shipping CoordinateSharp with a closed source product.
 
 Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request on a case by case basis.
@@ -49,7 +49,7 @@ using System.Text.RegularExpressions;
 
 namespace CoordinateSharp
 {
-    public partial class UniversalTransverseMercator 
+    public partial class UniversalTransverseMercator
     {
         /// <summary>
         /// Creates a UniversalTransverMercator (UTM) object with a default WGS84 datum(ellipsoid).
@@ -107,19 +107,19 @@ namespace CoordinateSharp
                 Regex rg = new Regex("[aAbByYzZ]");
                 Match m = rg.Match(gridZone);
                 if (m.Success) { latz = gridZone; }
-                else { throw new FormatException("The UTM Grid Zone Designator format is invalid."); }          
+                else { throw new FormatException("The UTM Grid Zone Designator format is invalid."); }
             }
             else //UTM
             {
                 string resultString = Regex.Match(gridZone, @"\d+").Value;
-              
+
                 if (!int.TryParse(resultString, out longz))
                 {
                     throw new FormatException("The UTM Grid Zone Designator format is invalid.");
                 }
-                latz = gridZone.Replace(resultString, "");             
+                latz = gridZone.Replace(resultString, "");
             }
-         
+
             Construct_UTM(latz, longz, est, nrt, DataValues.DefaultSemiMajorAxis, DataValues.DefaultInverseFlattening, false);
         }
         /// <summary>
@@ -147,17 +147,17 @@ namespace CoordinateSharp
                 Match m = rg.Match(gridZone);
                 if (m.Success) { latz = gridZone; }
                 else { throw new FormatException("The UTM Grid Zone Designator format is invalid."); }
-              
+
             }
             else //UTM
             {
                 string resultString = Regex.Match(gridZone, @"\d+").Value;
-               
+
                 if (!int.TryParse(resultString, out longz))
                 {
                     throw new FormatException("The UTM Grid Zone Designator format is invalid.");
                 }
-                latz = gridZone.Replace(resultString, "");             
+                latz = gridZone.Replace(resultString, "");
             }
 
             Construct_UTM(latz, longz, est, nrt, radius, flatten, false);
@@ -166,7 +166,7 @@ namespace CoordinateSharp
         internal UniversalTransverseMercator(string latz, int longz, double est, double nrt, bool suppressWarnings)
         {
             Construct_UTM(latz, longz, est, nrt, DataValues.DefaultSemiMajorAxis, DataValues.DefaultInverseFlattening, suppressWarnings);
-        }      
+        }
 
         /// <summary>
         /// Creates a UniversalTransverMercator (UTM) object
@@ -175,7 +175,7 @@ namespace CoordinateSharp
         {
             Regex rg = new Regex("[aAbByYzZ]");
             Match m = rg.Match(latz);
-          
+
             if (m.Success)
             {
                 systemType = UTM_Type.UPS;
@@ -193,7 +193,7 @@ namespace CoordinateSharp
 
             if (systemType == UTM_Type.UTM && (nrt < 0 || nrt > 10000000)){ Warn(suppressWarnings, "Northing out of range", "Northing must be between 0-10,000,000.");  }
             if (systemType == UTM_Type.UPS && (nrt < 887000 || nrt > 3113000)) {  Warn(suppressWarnings, "Northing out of range", "Northing must be between 0-10,000,000."); }
-            
+
 
 
             latZone = latz;
@@ -204,7 +204,7 @@ namespace CoordinateSharp
             equatorial_radius = radius;
             inverse_flattening = flaten;
         }
-        
+
         /// <summary>
         /// Constructs a UTM object based off DD Lat/Long
         /// </summary>
@@ -212,7 +212,7 @@ namespace CoordinateSharp
         /// <param name="longi">DD Longitide</param>
         /// <param name="c">Parent Coordinate Object</param>
         internal UniversalTransverseMercator(double lat, double longi, Coordinate c)
-        {       
+        {
             equatorial_radius = DataValues.DefaultSemiMajorAxis;
             inverse_flattening = DataValues.DefaultInverseFlattening;
             ToUTM(lat, longi, this);
@@ -275,7 +275,7 @@ namespace CoordinateSharp
             northing = n;
 
             coordinate = c;
-          
+
         }
 
         /// <summary>
@@ -291,7 +291,7 @@ namespace CoordinateSharp
             }
             return true;
         }
-     
+
         /// <summary>
         /// Assigns UTM values based of Lat/Long
         /// </summary>
@@ -313,10 +313,10 @@ namespace CoordinateSharp
 
             //Within UTM BOUNDS
             string letter;
-          
+
             int zone;
             if (szone == null)
-            {  
+            {
                 zone = (int)Math.Floor(longi / 6 + 31);
             }
             else { zone = szone.Value; }
@@ -364,7 +364,7 @@ namespace CoordinateSharp
             double a = utm.equatorial_radius;
             double f = 1.0 / utm.inverse_flattening;
             double b = a * (1 - f);   // polar radius
-           
+
             double e = Math.Sqrt(1 - Math.Pow(b, 2) / Math.Pow(a, 2));
            // double e0 = e / Math.Sqrt(1 - Math.Pow(e, 1));
 
@@ -372,7 +372,7 @@ namespace CoordinateSharp
             double k0 = 0.9996;
 
             double phi = lat * drad;                              // convert latitude to radians
-           
+
             double utmz;
             if (szone == null)
             {
@@ -384,7 +384,7 @@ namespace CoordinateSharp
                                                      // this gives us zone A-B for below 80S
             double esq = (1 - (b / a) * (b / a));
             double e0sq = e * e / (1 - Math.Pow(e, 2));
-            
+
 
             double N = a / Math.Sqrt(1 - Math.Pow(e * Math.Sin(phi), 2));
             double T = Math.Pow(Math.Tan(phi), 2);
@@ -406,9 +406,9 @@ namespace CoordinateSharp
             x += 500000; // standard easting
 
             // Northing
-        
+
             double y = k0 * (M - M0 + N * Math.Tan(phi) * (A * A * (1 / 2.0 + A * A * ((5 - T + 9 * C + 4 * C * C) / 24.0 + A * A * (61 - 58 * T + T * T + 600 * C - 330 * e0sq) / 720.0))));    // first from the equator
-           
+
             if (y < 0)
             {
                 y = 10000000 + y;   // add in false northing if south of the equator
@@ -418,15 +418,15 @@ namespace CoordinateSharp
             if (zone == 61) { zone = 1; }
 
             double easting = x;
-            double northing = y; 
-               
+            double northing = y;
+
             utm.latZone = letter;
             utm.longZone = zone;
             utm.easting = easting;
             utm.northing = northing;
             utm.systemType = systemType;
         }
-       
+
         /// <summary>
         /// Default formatted UTM string
         /// </summary>
@@ -453,15 +453,35 @@ namespace CoordinateSharp
         /// <returns>UTM Formatted Coordinate String</returns>
         public string ToRoundedString()
         {
-            if (systemType == UTM_Type.UPS) { return LatZone + " " + Math.Round(easting) + "mE " + Math.Round(northing) + "mN"; }
-            return longZone.ToString() + LatZone + " " + Math.Round(easting) + "mE " + Math.Round(northing) + "mN";
+            return ToRoundedString(0);
+        }
+
+        /// <summary>
+        /// Rounded UTM string using a precision of the given number of decimal digits
+        /// </summary>
+        /// <param name="decimalDigits">The number of the decimal digits to use</param>
+        /// <returns>UTM Formatted Coordinate String</returns>
+        public string ToRoundedString(int decimalDigits)
+        {
+            if (systemType == UTM_Type.UPS) { return LatZone + " " + Round(easting, decimalDigits) + "mE " + Round(northing, decimalDigits) + "mN"; }
+            return longZone.ToString() + LatZone + " " + Round(easting, decimalDigits) + "mE " + Round(northing, decimalDigits) + "mN";
+        }
+
+        private static double Round(double input, int decimalDigits)
+        {
+            if (decimalDigits < 0)
+            {
+                throw new ArgumentException(@"Argument 'decimalDigits' must be a non-negative number", nameof(decimalDigits));
+            }
+
+            return decimalDigits > 0 ? Math.Round(input, decimalDigits) : Math.Round(input);
         }
 
         private static Coordinate UTMtoLatLong(double x, double y, double zone, double equatorialRadius, double flattening, EagerLoad el)
         {
             //x easting
             //y northing
-           
+
             //http://home.hiwaay.net/~taylorc/toolbox/geography/geoutm.html
             double phif, Nf, Nfpow, nuf2, ep2, tf, tf2, tf4, cf;
             double x1frac, x2frac, x3frac, x4frac, x5frac, x6frac, x7frac, x8frac;
@@ -469,7 +489,7 @@ namespace CoordinateSharp
 
             double sm_a = equatorialRadius;
             double sm_b = equatorialRadius * (1 - (1.0 / flattening)); //Polar Radius
-          
+
             /* Get the value of phif, the footpoint latitude. */
             phif = FootpointLatitude(y,equatorialRadius,flattening);
 
@@ -657,7 +677,7 @@ namespace CoordinateSharp
             if (dLong > 180) { dLong = 180; }
             if (dLong < -180) { dLong = -180; }
 
-        
+
 
             return new double[] { dLat, dLong };
         }
@@ -681,7 +701,7 @@ namespace CoordinateSharp
             /* Ellipsoid model constants (actual values here are for WGS84) */
             double sm_a = equatorialRadius;
             double sm_b = equatorialRadius * (1 - (1.0 / flattening));
-           
+
 
             /* Precalculate n (Eq. 10.18) */
             n = (sm_a - sm_b) / (sm_a + sm_b);
@@ -741,7 +761,7 @@ namespace CoordinateSharp
         /// <param name="eagerLoad">EagerLoad</param>
         /// <returns>Coordinate</returns>
         /// <example>
-        /// The following example creates (converts to) a geodetic Coordinate object based on a UTM object. 
+        /// The following example creates (converts to) a geodetic Coordinate object based on a UTM object.
         /// Performance is maximized by turning off EagerLoading.
         /// <code>
         /// EagerLoad el = new EagerLoad(false);
@@ -756,12 +776,12 @@ namespace CoordinateSharp
             bool southhemi = false;
             Regex upsCheck = new Regex("[AaBbYyZz]");
             if(upsCheck.IsMatch(utm.latZone))
-            {               
-                return UPS.UPS_To_Geodetic(utm, eagerLoad);         
+            {
+                return UPS.UPS_To_Geodetic(utm, eagerLoad);
             }
 
             Regex regex = new Regex("[CcDdEeFfGgHhJjKkLlMm]");
-            if (regex.IsMatch(utm.latZone)) { southhemi = true; }          
+            if (regex.IsMatch(utm.latZone)) { southhemi = true; }
 
             double cmeridian;
 
@@ -781,7 +801,7 @@ namespace CoordinateSharp
             cmeridian = UTMCentralMeridian(utm.LongZone);
 
             Coordinate c = UTMtoLatLong(x, y, cmeridian, utm.equatorial_radius, utm.inverse_flattening, eagerLoad);
-         
+
             return c;
         }
 
@@ -836,7 +856,7 @@ namespace CoordinateSharp
 
             double[] signed = UTMtoSigned(x, y, cmeridian, utm.equatorial_radius, utm.inverse_flattening);
 
-           
+
             return signed;
 
 
@@ -860,5 +880,5 @@ namespace CoordinateSharp
             if (!supress) { Debug.WriteLine(message); }
         }
 
-    }  
+    }
 }
