@@ -45,6 +45,7 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
 using System;
 using System.Linq;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace CoordinateSharp
@@ -463,8 +464,22 @@ namespace CoordinateSharp
         /// <returns>UTM Formatted Coordinate String</returns>
         public string ToRoundedString(int decimalDigits)
         {
-            if (systemType == UTM_Type.UPS) { return LatZone + " " + Round(easting, decimalDigits) + "mE " + Round(northing, decimalDigits) + "mN"; }
-            return longZone.ToString() + LatZone + " " + Round(easting, decimalDigits) + "mE " + Round(northing, decimalDigits) + "mN";
+            return ToRoundedString(decimalDigits, NumberFormatInfo.CurrentInfo);
+        }
+
+        /// <summary>
+        /// Rounded UTM string using a precision of the given number of decimal digits
+        /// </summary>
+        /// <param name="decimalDigits">The number of the decimal digits to use</param>
+        /// <param name="formatProvider">The IFormatProvider to use for the northing/easting values</param>
+        /// <returns>UTM Formatted Coordinate String</returns>
+        public string ToRoundedString(int decimalDigits, IFormatProvider formatProvider)
+        {
+            var eastingString = Round(easting, decimalDigits).ToString(formatProvider);
+            var northingString = Round(northing, decimalDigits).ToString(formatProvider);
+
+            if (systemType == UTM_Type.UPS) { return LatZone + " " + eastingString + "mE " + northingString + "mN"; }
+            return longZone + LatZone + " " + eastingString + "mE " + northingString + "mN";
         }
 
         private static double Round(double input, int decimalDigits)

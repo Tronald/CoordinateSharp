@@ -546,6 +546,16 @@ namespace CoordinateSharp_UnitTests
         }
 
         /// <summary>
+        /// Ensures correct UTM Rounded string with given precision and culture.
+        /// </summary>
+        [TestMethod]
+        public void UTM_Rounded_With_Precision_With_Culture_Check()
+        {
+            Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
+            Assert.AreEqual("23T 445381,62mE 5034245,54mN", c.UTM.ToRoundedString(2, new CultureInfo("hu-HU")));
+        }
+
+        /// <summary>
         /// Test geodetic to UPS conversions
         /// </summary>
         [TestMethod]
