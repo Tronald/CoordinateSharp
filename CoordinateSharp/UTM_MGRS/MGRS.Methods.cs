@@ -1,9 +1,9 @@
 ﻿/*
-CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate 
+CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate
 format conversions and location based celestial calculations.
 https://github.com/Tronald/CoordinateSharp
 
-Many celestial formulas in this library are based on Jean Meeus's 
+Many celestial formulas in this library are based on Jean Meeus's
 Astronomical Algorithms (2nd Edition). Comments that reference only a chapter
 are referring to this work.
 
@@ -12,25 +12,25 @@ License
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
 Copyright (C) 2022, Signature Group, LLC
-  
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
-as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
-FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY Signature Group, LLC. Signature Group, LLC DISCLAIMS THE WARRANTY OF 
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3
+as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a):
+FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY Signature Group, LLC. Signature Group, LLC DISCLAIMS THE WARRANTY OF
 NON INFRINGEMENT OF THIRD PARTY RIGHTS.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
-or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. You should have received a copy of the GNU 
-Affero General Public License along with this program; if not, see http://www.gnu.org/licenses or write to the 
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. You should have received a copy of the GNU
+Affero General Public License along with this program; if not, see http://www.gnu.org/licenses or write to the
 Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA, 02110-1301 USA, or download the license from the following URL:
 
 https://www.gnu.org/licenses/agpl-3.0.html
 
-The interactive user interfaces in modified source and object code versions of this program must display Appropriate Legal Notices, 
+The interactive user interfaces in modified source and object code versions of this program must display Appropriate Legal Notices,
 as required under Section 5 of the GNU Affero General Public License.
 
-You can be released from the requirements of the license by purchasing a commercial license. Buying such a license is mandatory 
-as soon as you develop commercial activities involving the CoordinateSharp software without disclosing the source code of your own applications. 
-These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application, 
+You can be released from the requirements of the license by purchasing a commercial license. Buying such a license is mandatory
+as soon as you develop commercial activities involving the CoordinateSharp software without disclosing the source code of your own applications.
+These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application,
 or shipping CoordinateSharp with a closed source product.
 
 Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request on a case by case basis.
@@ -51,7 +51,7 @@ using System.Text.RegularExpressions;
 namespace CoordinateSharp
 {
     public partial class MilitaryGridReferenceSystem
-    {   
+    {
 
         /// <summary>
         /// Creates an MilitaryGridReferenceSystem (MGRS) object with a default WGS84 datum(ellipsoid).
@@ -135,7 +135,7 @@ namespace CoordinateSharp
         /// </code>
         /// </example>
         public MilitaryGridReferenceSystem(string gridZone, string d, double e, double n, double rad, double flt)
-        {        
+        {
             string resultString = Regex.Match(gridZone, @"\d+").Value;
             int longz;
             if (!int.TryParse(resultString, out longz))
@@ -148,18 +148,18 @@ namespace CoordinateSharp
                 else { systemType = MGRS_Type.MGRS_Polar; resultString = "0"; }
             }
 
-            string latz = gridZone.Replace(resultString, "");           
-         
+            string latz = gridZone.Replace(resultString, "");
+
             Construct_MGRS(latz, longz, d, e, n, flt, rad);
         }
 
         /// <summary>
         /// Construct MGRS
-        /// </summary>       
+        /// </summary>
         private void Construct_MGRS(string latz, int longz, string d, double e, double n, double rad, double flt)
         {
             Regex rg = new Regex("[aAbByYzZ]");
-            Match m = rg.Match(latz);                    
+            Match m = rg.Match(latz);
 
             if (m.Success)
             {
@@ -196,7 +196,7 @@ namespace CoordinateSharp
             }
             return true;
         }
-      
+
         internal MilitaryGridReferenceSystem(UniversalTransverseMercator utm)
         {
             ToMGRS(utm);
@@ -210,7 +210,7 @@ namespace CoordinateSharp
             string digraph2;
 
             Digraphs digraphs;
-       
+
             if (m.Success)
             {
                 systemType = MGRS_Type.MGRS_Polar;
@@ -226,7 +226,7 @@ namespace CoordinateSharp
                 digraph1 = digraphs.getDigraph1(utm.LongZone, utm.Easting);
                 digraph2 = digraphs.getDigraph2(utm.LongZone, utm.Northing);
             }
- 
+
 
             digraph = digraph1 + digraph2;
             latZone = utm.LatZone;
@@ -243,9 +243,9 @@ namespace CoordinateSharp
                 e = "00000" + ((int)utm.Easting).ToString();
             }
             e = e.Substring(e.Length - 5);
-           
+
             easting = Convert.ToDouble(e) + cE;
-            
+
             string n =  ((int)utm.Northing).ToString();
             if (n.Length < 5)
             {
@@ -253,12 +253,12 @@ namespace CoordinateSharp
             }
             n = n.Substring(n.Length - 5);
 
-           
+
 
             northing = Convert.ToDouble(n) +cN;
             equatorialRadius = utm.equatorial_radius;
             inverseFlattening = utm.inverse_flattening;
-         
+
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace CoordinateSharp
         {
             return MGRStoLatLong(mgrs, GlobalSettings.Default_EagerLoad);
         }
-       
+
         /// <summary>
         /// Creates a Coordinate object from an MGRS/NATO UTM Coordinate
         /// </summary>
@@ -388,7 +388,7 @@ namespace CoordinateSharp
             return c;
         }
 
-      
+
         private static Coordinate MGRS_Polar_ToLatLong(MilitaryGridReferenceSystem mgrs, EagerLoad el)
         {
             //WORKING
@@ -403,9 +403,9 @@ namespace CoordinateSharp
 
 
             string digraphLettersE;
-            if (!isNorth) 
+            if (!isNorth)
             {
-               digraphLettersE = "KLPQRSTUXYZABCFGH"; 
+               digraphLettersE = "KLPQRSTUXYZABCFGH";
             }
             else { digraphLettersE = "RSTUXYZABCFGHJ"; }
 
@@ -422,14 +422,14 @@ namespace CoordinateSharp
             }
 
             var eidx = digraphLettersE.IndexOf(eltr);
-         
+
             //Offsets are set due to less Easting Identifiers.
             //North has 4 less than S
             double offset = 9;
             if (isNorth) { offset = 13; }
 
             if (mgrs.latZone == "B" && eidx < offset && mgrs.easting!=0) { eidx += 18; }
-     
+
 
             double subbase = eidx + offset;
 
@@ -453,7 +453,7 @@ namespace CoordinateSharp
             var highLetter = Math.Round(100 + 1.11 * latBandHigh);
 
             string latBandLetters = null;
-            int l = Convert.ToInt32(lowLetter);          
+            int l = Convert.ToInt32(lowLetter);
             int h = Convert.ToInt32(highLetter+7);
 
             if (mgrs.LongZone / 2.0 == Math.Floor(mgrs.LongZone / 2.0))
@@ -470,13 +470,13 @@ namespace CoordinateSharp
             if (!isNorth) { nOffset = 10; }
             else { latBandLetters = digraphLettersN; }
             int index = latBandLetters.IndexOf(nltr);
-           
+
             if (index == -1 && nltr=='A') { index -=1; } //ALPHA PATCH
 
             //int subset = 0;
             //if ((latz == "Y" || latz == "Z") && (nOffset+index)>25 && (ebase> 2100000 || ebase<2000000) && ebase!= 2000000) { subset = -14; }
             var nbase = 100000 * (index+nOffset);
-            
+
             var x = ebase + mgrs.Easting;
             var y = nbase + mgrs.Northing;
 
@@ -502,7 +502,7 @@ namespace CoordinateSharp
 
             return c;
         }
-     
+
         /// <summary>
         /// Creates a Signed Degree double[] object from an MGRS/NATO UTM Coordinate
         /// </summary>
@@ -612,17 +612,17 @@ namespace CoordinateSharp
         /// </summary>
         /// <returns>MGRS Grid Box</returns>
         /// <example>
-        /// The following example will create an MGRS_GridBox that will allow us to determine 
+        /// The following example will create an MGRS_GridBox that will allow us to determine
         /// The MGRS Point at the bottom left of the current 100km grid square and convert it to Lat/Long.
         /// <code>
         /// MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
         /// var box = mgrs.Get_Box_Boundaries();
-        /// 
+        ///
         /// //Check if created MGRS coordinate is valid
         /// if(!box.IsBoxValid){return;} //MGRS Coordinate GZD and Identifier are not standard. Box cannot be determined.
-        /// 
+        ///
         /// Console.WriteLine("BL: " + gb.Bottom_Left_MGRS_Point); //21N SA 66022 00000
-        /// Console.WriteLine("BL: " + gb.Bottom_Left_Coordinate_Point); //N 0º 0' 0" W 59º 59' 59.982"   
+        /// Console.WriteLine("BL: " + gb.Bottom_Left_Coordinate_Point); //N 0º 0' 0" W 59º 59' 59.982"
         /// </code>
         /// </example>
         public MGRS_GridBox Get_Box_Boundaries()
@@ -638,18 +638,18 @@ namespace CoordinateSharp
         /// <param name="el">EagerLoad</param>
         /// <returns>MGRS_GridBox</returns>
         /// <example>
-        /// The following example will create an MGRS_GridBox that will allow us to determine 
+        /// The following example will create an MGRS_GridBox that will allow us to determine
         /// The MGRS Point at the bottom left of the current 100km grid square and convert it to Lat/Long.
         /// <code>
         /// MilitaryGridReferenceSystem mgrs = new MilitaryGridReferenceSystem("N", 21, "SA", 66037, 61982);
         /// EagerLoad el = new EagerLoad(EagerLoadType.UTM_MGRS); //Only eager load UTM MGRS data for efficiency
         /// var box = mgrs.Get_Box_Boundaries();
-        /// 
+        ///
         /// //Check if created MGRS coordinate is valid
         /// if(!box.IsBoxValid){return;} //MGRS Coordinate GZD and Identifier are not standard. Box cannot be determined.
-        /// 
+        ///
         /// Console.WriteLine("BL: " + gb.Bottom_Left_MGRS_Point); //21N SA 66022 00000
-        /// Console.WriteLine("BL: " + gb.Bottom_Left_Coordinate_Point); //N 0º 0' 0" W 59º 59' 59.982"   
+        /// Console.WriteLine("BL: " + gb.Bottom_Left_Coordinate_Point); //N 0º 0' 0" W 59º 59' 59.982"
         /// </code>
         /// </example>
         public MGRS_GridBox Get_Box_Boundaries(EagerLoad el)
@@ -677,6 +677,7 @@ namespace CoordinateSharp
         /// Centimeter formatted MGRS string
         /// </summary>
         /// <returns>MGRS Formatted Coordinate String</returns>
+        [Obsolete("Please use the ToRoundedString with your preferred precision. Use 5 as precision to keep the behavior of this method.")]
         public string ToCentimeterString()
         {
             if (systemType == MGRS_Type.MGRS)
@@ -695,15 +696,28 @@ namespace CoordinateSharp
         /// <returns>MGRS Formatted Coordinate String</returns>
         public string ToRoundedString()
         {
+            return ToRoundedString(0);
+        }
+
+        /// <summary>
+        /// Rounded MGRS string using a precision of the given number of decimal digits
+        /// </summary>
+        /// <param name="decimalDigits">The number of the decimal digits to use</param>
+        /// <returns>UTM Formatted Coordinate String</returns>
+        public string ToRoundedString(int decimalDigits)
+        {
+            var formatString = "00000" + (decimalDigits > 0 ? "." + new string('#', decimalDigits) : string.Empty);
+            var eastingString = MathHelper.Round(easting, decimalDigits).ToString(formatString);
+            var northingString = MathHelper.Round(northing, decimalDigits).ToString(formatString);
+
             if (systemType == MGRS_Type.MGRS)
             {
-                return longZone.ToString() + LatZone + " " + digraph + " " + Math.Round(easting).ToString("00000") + " " + Math.Round(northing).ToString("00000");
+                return longZone + LatZone + " " + digraph + " " + eastingString + " " + northingString;
             }
             else
             {
-                return LatZone + " " + digraph + " " +  Math.Round(easting).ToString("00000") + " " + Math.Round(northing).ToString("00000");
+                return LatZone + " " + digraph + " " +  eastingString + " " + northingString;
             }
         }
-
     }
 }

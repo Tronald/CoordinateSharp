@@ -464,18 +464,11 @@ namespace CoordinateSharp
         /// <returns>UTM Formatted Coordinate String</returns>
         public string ToRoundedString(int decimalDigits)
         {
-            if (systemType == UTM_Type.UPS) { return LatZone + " " + Round(easting, decimalDigits) + "mE " + Round(northing, decimalDigits) + "mN"; }
-            return longZone.ToString() + LatZone + " " + Round(easting, decimalDigits) + "mE " + Round(northing, decimalDigits) + "mN";
-        }
+            var eastingString = MathHelper.Round(easting, decimalDigits).ToString();
+            var northingString = MathHelper.Round(northing, decimalDigits).ToString();
 
-        private static double Round(double input, int decimalDigits)
-        {
-            if (decimalDigits < 0)
-            {
-                throw new ArgumentException(@"Argument 'decimalDigits' must be a non-negative number", nameof(decimalDigits));
-            }
-
-            return decimalDigits > 0 ? Math.Round(input, decimalDigits) : Math.Round(input);
+            if (systemType == UTM_Type.UPS) { return LatZone + " " + eastingString + "mE " + northingString + "mN"; }
+            return longZone + LatZone + " " + eastingString + "mE " + northingString + "mN";
         }
 
         private static Coordinate UTMtoLatLong(double x, double y, double zone, double equatorialRadius, double flattening, EagerLoad el)
@@ -876,10 +869,10 @@ namespace CoordinateSharp
         {
             if (!supress) { Debug.WriteLine(warning, message); }
         }
+
         private void Warn(bool supress, string message)
         {
             if (!supress) { Debug.WriteLine(message); }
         }
-
     }
 }

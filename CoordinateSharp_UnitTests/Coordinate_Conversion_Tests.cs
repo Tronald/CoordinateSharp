@@ -492,8 +492,29 @@ namespace CoordinateSharp_UnitTests
         {
             Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
             Assert.AreEqual("23T ML 45382 34246", c.MGRS.ToRoundedString());
-
         }
+
+        /// <summary>
+        /// Ensures UTM Rounded string with given precision validates precision.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void MGRS_Rounded_With_Precision_Input_Validation_Check()
+        {
+            Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
+            var result = c.MGRS.ToRoundedString(-2);
+        }
+
+        /// <summary>
+        /// Ensures correct MGRS Rounded string.
+        /// </summary>
+        [TestMethod]
+        public void MGRS_Rounded_With_Precision_Check()
+        {
+            Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
+            Assert.AreEqual("23T ML 45381.62 34245.54", c.MGRS.ToRoundedString(2));
+        }
+
         /// <summary>
         /// Ensures correct MGRS Centimeter string.
         /// </summary>
