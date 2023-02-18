@@ -33,3 +33,6 @@ bld/
 # NuGet v3's project.json files produces more ignoreable files
 *.nuget.props
 *.nuget.targets
+
+# ReSharper solution cache
+_ReSharper.Caches/
