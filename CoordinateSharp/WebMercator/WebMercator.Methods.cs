@@ -121,7 +121,7 @@ namespace CoordinateSharp
             double FE = wmc.false_easting;
             double FN = wmc.false_northing;
 
-            double a = DataValues.DefaultSemiMajorAxis;
+            double a = DataValues.DefaultSemiMajorAxis; //Must use WGS 84
 
             double E = FE + a * (lngRad - 0);
             double N = FN + a * Math.Log(Math.Tan(Math.PI / 4 + latRad / 2));
@@ -178,7 +178,7 @@ namespace CoordinateSharp
             double FE = 0;
             double FN = 0;
 
-            double a = DataValues.DefaultSemiMajorAxis;
+            double a = DataValues.DefaultSemiMajorAxis; //Must use WGS 84
             double lngNO = 0;
             double D = -(N - FN) / a;
 

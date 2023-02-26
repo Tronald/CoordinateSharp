@@ -70,8 +70,8 @@ namespace CoordinateSharp
         /// </example>
         public ECEF(Coordinate coordinate)
         {
-            equatorial_radius = DataValues.DefaultSemiMajorAxis;
-            inverse_flattening = DataValues.DefaultInverseFlattening;
+            equatorial_radius = GlobalSettings.Default_EquatorialRadius;
+            inverse_flattening = GlobalSettings.Default_InverseFlattening;
             Ellipsoid();
             geodetic_height = new Distance(0);
             double[] ecef = LatLong_To_ECEF(coordinate.Latitude.DecimalDegree, coordinate.Longitude.DecimalDegree, geodetic_height.Kilometers);
@@ -106,8 +106,8 @@ namespace CoordinateSharp
         /// </example>
         public ECEF(Coordinate coordinate, Distance height)
         {
-            equatorial_radius = DataValues.DefaultSemiMajorAxis;
-            inverse_flattening = DataValues.DefaultInverseFlattening;
+            equatorial_radius = GlobalSettings.Default_EquatorialRadius;
+            inverse_flattening = GlobalSettings.Default_InverseFlattening;
             Ellipsoid();
             geodetic_height = height;
             double[] ecef = LatLong_To_ECEF(coordinate.Latitude.DecimalDegree, coordinate.Longitude.DecimalDegree, geodetic_height.Kilometers);
@@ -135,8 +135,8 @@ namespace CoordinateSharp
         /// </example>
         public ECEF(double xc, double yc, double zc)
         {
-            equatorial_radius = DataValues.DefaultSemiMajorAxis;
-            inverse_flattening = DataValues.DefaultInverseFlattening;
+            equatorial_radius = GlobalSettings.Default_EquatorialRadius;
+            inverse_flattening = GlobalSettings.Default_InverseFlattening;
             Ellipsoid();
             geodetic_height = new Distance(0);
             x = xc;
@@ -150,8 +150,8 @@ namespace CoordinateSharp
         /// <param name="coordinate">Geodetic coordinate</param>
         internal void ToECEF(Coordinate coordinate)
         {
-            equatorial_radius = DataValues.DefaultSemiMajorAxis;
-            inverse_flattening = DataValues.DefaultInverseFlattening;
+            equatorial_radius = GlobalSettings.Default_EquatorialRadius;
+            inverse_flattening = GlobalSettings.Default_InverseFlattening;
             Ellipsoid();           
             double[] ecef = LatLong_To_ECEF(coordinate.Latitude.DecimalDegree, coordinate.Longitude.DecimalDegree, geodetic_height.Kilometers);
             x = ecef[0];

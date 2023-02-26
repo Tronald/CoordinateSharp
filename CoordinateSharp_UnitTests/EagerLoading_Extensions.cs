@@ -16,12 +16,12 @@ namespace CoordinateSharp_UnitTests
         {
             EagerLoad e = new EagerLoad();
             e.Extensions = new EagerLoad_Extensions();
-            Coordinate c = new Coordinate(45, 75, new DateTime(2008, 1, 2), e);
+            Coordinate c = new Coordinate(45, 75, new DateTime(2008, 1, 22), e);
 
             //Check extension properties to ensure proper loading
             Assert.AreNotEqual(null, c.CelestialInfo.SunSet);//Solar Cycle
             Assert.AreNotEqual(null, c.CelestialInfo.MoonSet);//Lunar Cycle
-            Assert.AreNotEqual(null, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
+            Assert.AreNotEqual(AstrologicalSignType.None, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
             Assert.AreNotEqual(null, c.CelestialInfo.LunarEclipse.LastEclipse.Type);//Lunar Cycle
             Assert.AreNotEqual(null, c.CelestialInfo.SolarEclipse.LastEclipse.Type);//Solar Cycle
             Assert.AreNotEqual(null, c.CelestialInfo.Solstices.Summer);//Lunar Cycle
@@ -170,12 +170,14 @@ namespace CoordinateSharp_UnitTests
         {
             EagerLoad e = new EagerLoad(true);
             e.Extensions = new EagerLoad_Extensions(false);
-            Coordinate c = new Coordinate(45, 75, new DateTime(2008, 1, 2), e);
+            Coordinate c = new Coordinate(45, 75, new DateTime(2008, 1, 21), e);
             e.Extensions.Zodiac = true;
             c.Latitude.DecimalDegree++; //Trigger proper changes to confirm objects remain unloaded
             c.Longitude.DecimalDegree++; //Trigger proper changes to confirm objects remain unloaded
+            c.GeoDate = new DateTime(2008, 1, 22); //Trigger date to ensure moon sign correct.
 
             Assert.AreNotEqual(null, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
+            Assert.AreNotEqual(AstrologicalSignType.None, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
 
             Assert.AreEqual(null, c.CelestialInfo.SunSet);//Solar Cycle
             Assert.AreEqual(null, c.CelestialInfo.MoonSet);//Lunar Cycle         
