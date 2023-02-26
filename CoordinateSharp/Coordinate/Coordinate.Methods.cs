@@ -258,11 +258,11 @@ namespace CoordinateSharp
             {
                 georef = new GEOREF(lat, longi);
             }
-          
+
 
             //Set Ellipsoid
-            equatorial_radius = DataValues.DefaultSemiMajorAxis;
-            inverse_flattening = DataValues.DefaultInverseFlattening;
+            equatorial_radius = GlobalSettings.Default_EquatorialRadius;
+            inverse_flattening = GlobalSettings.Default_InverseFlattening;
         }     
 
         /*DATA LOADERS*/

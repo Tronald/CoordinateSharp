@@ -77,6 +77,34 @@ namespace CoordinateSharp
         /// <summary>
         /// Application wide, default Cartesian parsed format.
         /// </summary>
-        public static CartesianType Default_Cartersian_Type { get; set; } = CartesianType.Cartesian;
+        public static CartesianType Default_Cartesian_Type { get; set; } = CartesianType.Cartesian;
+
+        /// <summary>
+        /// Application wide, default Equatorial Radius (Semi Major Axis).
+        /// </summary>
+        public static double Default_EquatorialRadius { get; set; } = DataValues.DefaultSemiMajorAxis;
+        /// <summary>
+        /// Application wide, default Inverse Flattening.
+        /// </summary>
+        public static double Default_InverseFlattening { get; set; } = DataValues.DefaultInverseFlattening;
+
+        /// <summary>
+        /// Set the default Equatorial Radius and Inverse Flattening based on a specified ellipsoid.
+        /// </summary>
+        /// <param name="spec">Earth_Ellipsoid_Spec</param>
+        public static void Set_DefaultDatum(Earth_Ellipsoid_Spec spec)
+        {
+            Set_DefaultDatum(Earth_Ellipsoid.Get_Ellipsoid(spec));         
+        }
+
+        /// <summary>
+        /// Set the default Equatorial Radius and Inverse Flattening based on a specified ellipsoid.
+        /// </summary>
+        /// <param name="ee">Earth_Ellipsoid</param>
+        public static void Set_DefaultDatum(Earth_Ellipsoid ee)
+        {
+            Default_EquatorialRadius = ee.Equatorial_Radius;
+            Default_InverseFlattening = ee.Inverse_Flattening;
+        }
     }
 }

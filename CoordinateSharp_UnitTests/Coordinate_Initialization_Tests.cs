@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using CoordinateSharp;
+using NuGet.Frameworks;
 
 namespace CoordinateSharp_UnitTests
 {
@@ -380,16 +381,29 @@ namespace CoordinateSharp_UnitTests
         {
             GlobalSettings.Default_CoordinateFormatOptions = new CoordinateFormatOptions() { Format = CoordinateFormatType.Decimal };
             GlobalSettings.Default_EagerLoad = new EagerLoad(false);
+            GlobalSettings.Default_Cartesian_Type = CartesianType.ECEF;
+            GlobalSettings.Default_Parsable_Formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.MGRS;
+            GlobalSettings.Set_DefaultDatum(Earth_Ellipsoid_Spec.Airy_1830);
+
+            Earth_Ellipsoid ee = Earth_Ellipsoid.Get_Ellipsoid(Earth_Ellipsoid_Spec.WGS84_1984);
 
             Coordinate c = new Coordinate(25, 25);
 
             //Ensure setting took
             Assert.AreEqual("25 25", c.ToString());
             Assert.AreEqual(null, c.CelestialInfo);
-
+            Assert.AreNotEqual(ee.Equatorial_Radius, c.Equatorial_Radius);
+            Assert.AreNotEqual(ee.Inverse_Flattening, c.Inverse_Flattening);
+            Assert.ThrowsException<FormatException>(()=> { Coordinate.Parse("10T 573104mE 5249221mN"); });
+           
             //Reset to continue tests
             GlobalSettings.Default_CoordinateFormatOptions = new CoordinateFormatOptions() { Format = CoordinateFormatType.Degree_Minutes_Seconds };
             GlobalSettings.Default_EagerLoad = new EagerLoad(true);
+            GlobalSettings.Default_Parsable_Formats = Allowed_Parse_Format.Lat_Long | Allowed_Parse_Format.MGRS | Allowed_Parse_Format.UTM |
+            Allowed_Parse_Format.Cartesian_ECEF | Allowed_Parse_Format.Cartesian_Spherical |
+            Allowed_Parse_Format.WebMercator | Allowed_Parse_Format.GEOREF;
+            GlobalSettings.Set_DefaultDatum(Earth_Ellipsoid_Spec.WGS84_1984);
+            GlobalSettings.Default_Cartesian_Type = CartesianType.Cartesian; //If not reverted other test will fail.
         }
 
         /// <summary>

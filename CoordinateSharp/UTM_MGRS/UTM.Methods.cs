@@ -46,6 +46,7 @@ using System;
 using System.Linq;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using CoordinateSharp.Formatters;
 
 namespace CoordinateSharp
 {
@@ -65,7 +66,7 @@ namespace CoordinateSharp
         /// </example>
         public UniversalTransverseMercator(string latz, int longz, double est, double nrt)
         {
-            Construct_UTM(latz, longz, est, nrt, DataValues.DefaultSemiMajorAxis, DataValues.DefaultInverseFlattening, false);
+            Construct_UTM(latz, longz, est, nrt, GlobalSettings.Default_EquatorialRadius, GlobalSettings.Default_InverseFlattening, false);
         }
         /// <summary>
         /// Creates a UniversalTransverMercator (UTM) object with a custom datum(ellipsoid).
@@ -120,7 +121,7 @@ namespace CoordinateSharp
                 latz = gridZone.Replace(resultString, "");
             }
 
-            Construct_UTM(latz, longz, est, nrt, DataValues.DefaultSemiMajorAxis, DataValues.DefaultInverseFlattening, false);
+            Construct_UTM(latz, longz, est, nrt, GlobalSettings.Default_EquatorialRadius, GlobalSettings.Default_InverseFlattening, false);
         }
         /// <summary>
         /// Creates a UniversalTransverMercator (UTM) object with a custom WGS84 datum(ellipsoid).
@@ -165,7 +166,7 @@ namespace CoordinateSharp
 
         internal UniversalTransverseMercator(string latz, int longz, double est, double nrt, bool suppressWarnings)
         {
-            Construct_UTM(latz, longz, est, nrt, DataValues.DefaultSemiMajorAxis, DataValues.DefaultInverseFlattening, suppressWarnings);
+            Construct_UTM(latz, longz, est, nrt, GlobalSettings.Default_EquatorialRadius, GlobalSettings.Default_InverseFlattening, suppressWarnings);
         }
 
         /// <summary>
@@ -213,8 +214,8 @@ namespace CoordinateSharp
         /// <param name="c">Parent Coordinate Object</param>
         internal UniversalTransverseMercator(double lat, double longi, Coordinate c)
         {
-            equatorial_radius = DataValues.DefaultSemiMajorAxis;
-            inverse_flattening = DataValues.DefaultInverseFlattening;
+            equatorial_radius = GlobalSettings.Default_EquatorialRadius;
+            inverse_flattening = GlobalSettings.Default_InverseFlattening;
             ToUTM(lat, longi, this);
 
             coordinate = c;
@@ -441,7 +442,7 @@ namespace CoordinateSharp
         /// Centimeter formatted UTM string (to the 5th decimal)
         /// </summary>
         /// <returns>UTM Formatted Coordinate String</returns>
-        [Obsolete("Please use the ToRoundedString with your preferred precision. Use 5 as precision to keep the behavior of this method.")]
+        [Obsolete("Use the ToRoundedString() method with your preferred precision. Use 5 as precision to keep the behavior of this method.")]
         public string ToCentimeterString()
         {
             if (systemType == UTM_Type.UPS) { return LatZone + " " + easting.ToString("0.#####") + "mE " + northing.ToString("0.#####") + "mN"; }
@@ -460,12 +461,12 @@ namespace CoordinateSharp
         /// <summary>
         /// Rounded UTM string using a precision of the given number of decimal digits
         /// </summary>
-        /// <param name="decimalDigits">The number of the decimal digits to use</param>
+        /// <param name="precision">The number of the decimal digits to use</param>
         /// <returns>UTM Formatted Coordinate String</returns>
-        public string ToRoundedString(int decimalDigits)
+        public string ToRoundedString(int precision)
         {
-            var eastingString = MathHelper.Round(easting, decimalDigits).ToString();
-            var northingString = MathHelper.Round(northing, decimalDigits).ToString();
+            var eastingString = easting.Round(precision).ToString();
+            var northingString = northing.Round(precision).ToString();
 
             if (systemType == UTM_Type.UPS) { return LatZone + " " + eastingString + "mE " + northingString + "mN"; }
             return longZone + LatZone + " " + eastingString + "mE " + northingString + "mN";

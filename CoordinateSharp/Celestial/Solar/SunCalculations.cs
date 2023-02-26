@@ -241,67 +241,66 @@ namespace CoordinateSharp
             //Capricorn (December 22-January 19)           
             if (date >= new DateTime(date.Year, 1, 1) && date <= new DateTime(date.Year, 1, 19, 23, 59, 59))
             {
-                c.AstrologicalSigns.zodiacSign = "Capricorn";
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Capricorn;
                 return;
             }
             if (date >= new DateTime(date.Year, 1, 20) && date <= new DateTime(date.Year, 2, 18, 23, 59, 59))
             {
-                c.AstrologicalSigns.zodiacSign = "Aquarius";
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Aquarius;
                 return;
             }
             if (date >= new DateTime(date.Year, 2, 19) && date <= new DateTime(date.Year, 3, 20, 23, 59, 59))
             {
-                c.AstrologicalSigns.zodiacSign = "Pisces";
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Pisces;
                 return;
             }
             if (date >= new DateTime(date.Year, 3, 21) && date <= new DateTime(date.Year, 4, 19, 23, 59, 59))
             {
-                c.AstrologicalSigns.zodiacSign = "Aries";
-                return;
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Aries;
             }
             if (date >= new DateTime(date.Year, 4, 20) && date <= new DateTime(date.Year, 5, 20, 23, 59, 59))
             {
-                c.AstrologicalSigns.zodiacSign = "Taurus";
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Taurus;
                 return;
             }
             if (date >= new DateTime(date.Year, 5, 21) && date <= new DateTime(date.Year, 6, 20,23,59,59))
             {
-                c.AstrologicalSigns.zodiacSign = "Gemini";
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Gemini;
                 return;
             }
             if (date >= new DateTime(date.Year, 6, 21) && date <= new DateTime(date.Year, 7, 22, 23, 59, 59))
             {
-                c.AstrologicalSigns.zodiacSign = "Cancer";
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Cancer;
                 return;
             }
             if (date >= new DateTime(date.Year, 7, 23) && date <= new DateTime(date.Year, 8, 22, 23, 59, 59))
             {
-                c.AstrologicalSigns.zodiacSign = "Leo";
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Leo;
                 return;
             }
             if (date >= new DateTime(date.Year, 8, 23) && date <= new DateTime(date.Year, 9, 22, 23, 59, 59))
             {
-                c.AstrologicalSigns.zodiacSign = "Virgo";
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Virgo;
                 return;
             }
             if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 10, 22, 23, 59, 59))
             {
-                c.AstrologicalSigns.zodiacSign = "Libra";
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Libra;
                 return;
             }
             if (date >= new DateTime(date.Year, 9, 23) && date <= new DateTime(date.Year, 11, 21, 23, 59, 59))
             {
-                c.AstrologicalSigns.zodiacSign = "Scorpio";
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Scorpio;
                 return;
             }
             if (date >= new DateTime(date.Year, 11, 21) && date <= new DateTime(date.Year, 12, 21, 23, 59, 59))
             {
-                c.AstrologicalSigns.zodiacSign = "Sagittarius";
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Sagittarius;
                 return;
             }
             if (date >= new DateTime(date.Year, 12, 22) && date <= new DateTime(date.Year, 12, 31, 23, 59, 59))
             {
-                c.AstrologicalSigns.zodiacSign = "Capricorn";
+                c.AstrologicalSigns.ezodiacSign = AstrologicalSignType.Capricorn;
                 return;
             }
         }

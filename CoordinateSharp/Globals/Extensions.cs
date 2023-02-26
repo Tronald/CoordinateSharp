@@ -133,5 +133,25 @@ namespace CoordinateSharp.Formatters
         {
             return Format.ToSeconds(d);
         }
+        /// <summary>
+        /// Rounds double to specified precision
+        /// </summary>
+        /// <param name="input">double</param>
+        /// <param name="precision">double</param>
+        /// <returns>double</returns>
+        /// <exception cref="ArgumentException">Negative Number</exception>
+        public static double Round(this double input, int precision)
+        {
+            // in .NET implementations the two Math.Round overload may have a different implementation,
+            // which for example may have some performance differences
+            // hence we have this method to distinguish between them based on requested decimalDigits
+
+            if (precision < 0)
+            {
+                throw new ArgumentException(@"Argument 'precision' must be a non-negative number", nameof(precision));
+            }
+
+            return precision > 0 ? Math.Round(input, precision) : Math.Round(input);
+        }
     }
 }

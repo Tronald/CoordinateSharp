@@ -46,7 +46,7 @@ using System;
 using System.Linq;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-
+using CoordinateSharp.Formatters;
 
 namespace CoordinateSharp
 {
@@ -68,7 +68,7 @@ namespace CoordinateSharp
         /// </example>
         public MilitaryGridReferenceSystem(string latz, int longz, string d, double e, double n)
         {
-            Construct_MGRS(latz, longz, d, e, n, DataValues.DefaultSemiMajorAxis, DataValues.DefaultInverseFlattening);
+            Construct_MGRS(latz, longz, d, e, n, GlobalSettings.Default_EquatorialRadius, GlobalSettings.Default_InverseFlattening);
         }
         /// <summary>
         /// Creates an MilitaryGridReferenceSystem (MGRS) object with a custom datum(ellipsoid).
@@ -118,7 +118,7 @@ namespace CoordinateSharp
 
             string latz = gridZone.Replace(resultString, "");
 
-            Construct_MGRS(latz, longz, d, e, n, DataValues.DefaultSemiMajorAxis, DataValues.DefaultInverseFlattening);
+            Construct_MGRS(latz, longz, d, e, n, GlobalSettings.Default_EquatorialRadius, GlobalSettings.Default_InverseFlattening);
         }
         /// <summary>
         /// Creates an MilitaryGridReferenceSystem (MGRS) object with a default WGS84 datum(ellipsoid).
@@ -674,10 +674,10 @@ namespace CoordinateSharp
         }
 
         /// <summary>
-        /// Centimeter formatted MGRS string
+        /// Centimeter formatted MGRS string.
         /// </summary>
         /// <returns>MGRS Formatted Coordinate String</returns>
-        [Obsolete("Please use the ToRoundedString with your preferred precision. Use 5 as precision to keep the behavior of this method.")]
+        [Obsolete("Use the ToRoundedString() method with your preferred precision. Use 5 as precision to keep the behavior of this method.")]
         public string ToCentimeterString()
         {
             if (systemType == MGRS_Type.MGRS)
@@ -702,13 +702,13 @@ namespace CoordinateSharp
         /// <summary>
         /// Rounded MGRS string using a precision of the given number of decimal digits
         /// </summary>
-        /// <param name="decimalDigits">The number of the decimal digits to use</param>
-        /// <returns>UTM Formatted Coordinate String</returns>
-        public string ToRoundedString(int decimalDigits)
+        /// <param name="precision">The number of the decimal digits to use</param>
+        /// <returns>MGRS Formatted Coordinate String</returns>
+        public string ToRoundedString(int precision)
         {
-            var formatString = "00000" + (decimalDigits > 0 ? "." + new string('#', decimalDigits) : string.Empty);
-            var eastingString = MathHelper.Round(easting, decimalDigits).ToString(formatString);
-            var northingString = MathHelper.Round(northing, decimalDigits).ToString(formatString);
+            var formatString = "00000" + (precision > 0 ? "." + new string('#', precision) : string.Empty);
+            var eastingString = easting.Round(precision).ToString(formatString);
+            var northingString = northing.Round(precision).ToString(formatString);
 
             if (systemType == MGRS_Type.MGRS)
             {

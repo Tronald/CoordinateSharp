@@ -474,7 +474,7 @@ namespace CoordinateSharp
         public static bool TryParse(string value, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, GlobalSettings.Default_Parsable_Formats, out coordinate))
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartesian_Type, GlobalSettings.Default_Parsable_Formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad default settings
@@ -504,7 +504,7 @@ namespace CoordinateSharp
         public static bool TryParse(string value, DateTime geoDate, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, GlobalSettings.Default_Parsable_Formats, out coordinate))
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartesian_Type, GlobalSettings.Default_Parsable_Formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad default settings
@@ -623,7 +623,7 @@ namespace CoordinateSharp
         public static bool TryParse(string value, EagerLoad eagerLoad, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, GlobalSettings.Default_Parsable_Formats, out coordinate))
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartesian_Type, GlobalSettings.Default_Parsable_Formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), eagerLoad); //Reset with specified eager load options.
@@ -657,7 +657,7 @@ namespace CoordinateSharp
         public static bool TryParse(string value, DateTime geoDate, EagerLoad eagerLoad, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, GlobalSettings.Default_Parsable_Formats, out coordinate))
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartesian_Type, GlobalSettings.Default_Parsable_Formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate, eagerLoad); //Reset with specified eager load options.
@@ -782,7 +782,7 @@ namespace CoordinateSharp
         public static bool TryParse(string value, Allowed_Parse_Format formats, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, formats, out coordinate))
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartesian_Type, formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble()); //Reset with EagerLoad default settings
@@ -814,7 +814,7 @@ namespace CoordinateSharp
         public static bool TryParse(string value, DateTime geoDate, Allowed_Parse_Format formats, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, formats, out coordinate))
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartesian_Type, formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate); //Reset with EagerLoad default settings
@@ -941,7 +941,7 @@ namespace CoordinateSharp
         public static bool TryParse(string value, EagerLoad eagerLoad, Allowed_Parse_Format formats, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, formats, out coordinate))
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartesian_Type, formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), eagerLoad); //Reset with specified eager load options.
@@ -977,7 +977,7 @@ namespace CoordinateSharp
         public static bool TryParse(string value, DateTime geoDate, EagerLoad eagerLoad, Allowed_Parse_Format formats, out Coordinate coordinate)
         {
             coordinate = null;
-            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartersian_Type, formats, out coordinate))
+            if (FormatFinder.TryParse(value, GlobalSettings.Default_Cartesian_Type, formats, out coordinate))
             {
                 Parse_Format_Type pft = coordinate.Parse_Format;
                 coordinate = new Coordinate(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), geoDate, eagerLoad); //Reset with specified eager load options.

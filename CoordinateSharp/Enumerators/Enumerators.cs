@@ -531,5 +531,126 @@ namespace CoordinateSharp
         /// </summary>
         WaningCrescent
     }
-
+    /// <summary>
+    /// Moon name enumerator
+    /// </summary>
+    [Serializable]
+    public enum MoonName
+    {
+        /// <summary>
+        /// None Specified
+        /// </summary>
+        None,
+        /// <summary>
+        /// Wolf Moon
+        /// </summary>
+        Wolf,
+        /// <summary>
+        /// Snow Moon
+        /// </summary>
+        Snow,
+        /// <summary>
+        /// Worm Moon
+        /// </summary>
+        Worm,
+        /// <summary>
+        /// Pink Moon
+        /// </summary>
+        Pink,
+        /// <summary>
+        /// Flower Moon
+        /// </summary>
+        Flower,
+        /// <summary>
+        /// Strawberry Moon
+        /// </summary>
+        Strawberry,
+        /// <summary>
+        /// Buck Moon
+        /// </summary>
+        Buck,
+        /// <summary>
+        /// Sturgeon Moon
+        /// </summary>
+        Sturgeon,
+        /// <summary>
+        /// Corn Moon
+        /// </summary>
+        Corn,
+        /// <summary>
+        /// Hunters Moon
+        /// </summary>
+        Hunters,
+        /// <summary>
+        /// Beaver Moon
+        /// </summary>
+        Beaver,
+        /// <summary>
+        /// Cold Moon
+        /// </summary>
+        Cold,
+        /// <summary>
+        /// Blue Moon
+        /// </summary>
+        Blue,
+    }
+    /// <summary>
+    /// Moon sign enumerator
+    /// </summary>
+    [Serializable]
+    public enum AstrologicalSignType
+    {
+        /// <summary>
+        /// None Specified
+        /// </summary>
+        None,
+        /// <summary>
+        /// Aries
+        /// </summary>
+        Aries,
+        /// <summary>
+        /// Taurus
+        /// </summary>
+        Taurus,
+        /// <summary>
+        /// Gemini
+        /// </summary>
+        Gemini,
+        /// <summary>
+        /// Cancer
+        /// </summary>
+        Cancer,
+        /// <summary>
+        /// Leo
+        /// </summary>
+        Leo,
+        /// <summary>
+        /// Virgo
+        /// </summary>
+        Virgo,
+        /// <summary>
+        /// Libra
+        /// </summary>
+        Libra,
+        /// <summary>
+        /// Scorpio
+        /// </summary>
+        Scorpio,
+        /// <summary>
+        /// Sagittarius
+        /// </summary>
+        Sagittarius,
+        /// <summary>
+        /// Capricorn
+        /// </summary>
+        Capricorn,
+        /// <summary>
+        /// Aquarius
+        /// </summary>
+        Aquarius,
+        /// <summary>
+        /// Pisces
+        /// </summary>
+        Pisces,
+    }   
 }

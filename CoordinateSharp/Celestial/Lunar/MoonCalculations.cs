@@ -321,7 +321,7 @@ namespace CoordinateSharp
 
                 c.moonIllum = mi;
 
-                string moonName = "";
+                MoonName moonName = MoonName.None;
                 int moonDate = 0;
                 //GET PHASE NAME
 
@@ -424,10 +424,10 @@ namespace CoordinateSharp
                 {
                     if (el.Extensions.Zodiac)
                     {
-                        c.AstrologicalSigns.moonName = moonName;
+                        c.AstrologicalSigns.emoonName = moonName;
                     }
                 }
-                else { if (el.Extensions.Zodiac) { c.AstrologicalSigns.moonName = ""; } }
+                else { if (el.Extensions.Zodiac) { c.AstrologicalSigns.emoonName = MoonName.None; } }
             }
             if (el.Extensions.Lunar_Eclipse) { CalculateLunarEclipse(date, lat, lng, c); }
 
@@ -466,37 +466,37 @@ namespace CoordinateSharp
             }
         }
 
-        private static string GetMoonName(int month, string name)
+        private static MoonName GetMoonName(int month, MoonName name)
         {
-            if (name != "") { return "Blue Moon"; }
+            if (name != MoonName.None) { return MoonName.Blue; }
             switch (month)
-            {                 
+            {
                 case 1:
-                        return "Wolf Moon";
+                    return MoonName.Wolf;
                 case 2:
-                        return "Snow Moon";
+                    return MoonName.Snow;
                 case 3:
-                        return "Worm Moon";
+                    return MoonName.Worm;
                 case 4:
-                        return "Pink Moon";
-                case 5:               
-                        return "Flower Moon";              
-                case 6:                   
-                        return "Strawberry Moon";
-                case 7:               
-                        return "Buck Moon";
+                    return MoonName.Pink;
+                case 5:
+                    return MoonName.Flower;
+                case 6:
+                    return MoonName.Strawberry;
+                case 7:
+                    return MoonName.Buck;
                 case 8:
-                        return "Sturgeon Moon";
+                    return MoonName.Sturgeon;
                 case 9:
-                        return "Corn Moon";
+                    return MoonName.Corn;
                 case 10:
-                        return "Hunters Moon";
+                    return MoonName.Hunters;
                 case 11:
-                        return "Beaver Moon";
+                    return MoonName.Beaver;
                 case 12:
-                        return "Cold Moon";             
+                    return MoonName.Cold;
                 default:
-                    return "";
+                    return MoonName.None;
             }
         }
       
@@ -543,21 +543,21 @@ namespace CoordinateSharp
 
             sign += 1;
 
-            switch (sign.ToString())
+            switch (sign)
             {
-                case "1": c.AstrologicalSigns.moonSign = "Aries"; break;
-                case "2": c.AstrologicalSigns.moonSign = "Taurus"; break;
-                case "3": c.AstrologicalSigns.moonSign = "Gemini"; break;
-                case "4": c.AstrologicalSigns.moonSign = "Cancer"; break;
-                case "5": c.AstrologicalSigns.moonSign = "Leo"; break;
-                case "6": c.AstrologicalSigns.moonSign = "Virgo"; break;
-                case "7": c.AstrologicalSigns.moonSign = "Libra"; break;
-                case "8": c.AstrologicalSigns.moonSign = "Scorpio"; break;
-                case "9": c.AstrologicalSigns.moonSign = "Sagitarius"; break;
-                case "10": c.AstrologicalSigns.moonSign = "Capricorn"; break;
-                case "11": c.AstrologicalSigns.moonSign = "Aquarius"; break;
-                case "12": c.AstrologicalSigns.moonSign = "Pisces"; break;
-                default: c.AstrologicalSigns.moonSign = "Pisces"; break;
+                case 1: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Aries; break;
+                case 2: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Taurus; break;
+                case 3: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Gemini; break;
+                case 4: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Cancer; break;
+                case 5: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Leo; break;
+                case 6: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Virgo; break;
+                case 7: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Libra; break;
+                case 8: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Scorpio; break;
+                case 9: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Sagittarius; break;
+                case 10: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Capricorn; break;
+                case 11: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Aquarius; break;
+                case 12: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Pisces; break;
+                default: c.AstrologicalSigns.emoonSign =  AstrologicalSignType.None; break;
             }
 
         }
