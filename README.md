@@ -1,4 +1,4 @@
-<p align="center"><img src="https://s8.postimg.cc/y7wuenuzp/LOGO_COORDINATE_SHARP.jpg"></p>
+<p align="center"><img src="https://images.squarespace-cdn.com/content/5c840878ebfc7fc3d3a9b6ca/cd133881-c5d2-4b00-bb2e-b4201b797567/coordinatesharp-02-rounded-header.png?content-type=image%2Fpng"></p>
 <br/>
 <p align="center">
 <img src="https://img.shields.io/github/v/release/Tronald/CoordinateSharp?include_prereleases"/>
@@ -100,4 +100,4 @@ Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes).
 
 Have a technical question, but don't feel like creating an issue? Email us at support@signatgroup.com
    
-<p align="center"><img src="https://s8.postimg.cc/wvf5cfpqt/LOGO_COORDINATE_SHARP_1.jpg"></p>
+<p align="center"><img src="https://images.squarespace-cdn.com/content/5c840878ebfc7fc3d3a9b6ca/ced70aa9-0877-42b6-849e-e15735b87b56/coordinatesharp-01-rounded-header.png?content-type=image%2Fpng"></p>
