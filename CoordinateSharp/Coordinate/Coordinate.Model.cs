@@ -43,6 +43,7 @@ Organizations or use cases that fall under the following conditions may receive 
 Please visit http://coordinatesharp.com/licensing or contact Signature Group, LLC to purchase a commercial license, or for any questions regarding the AGPL 3.0 license requirements or free use license: sales@signatgroup.com.
 */
 
+using CoordinateSharp.Formatters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -173,7 +174,12 @@ namespace CoordinateSharp
             {
                 if (geoDate != value)
                 {
-                    geoDate = value;                 
+                    geoDate = value;
+                    if (GlobalSettings.Allow_Coordinate_DateTimeKind_Specification)
+                    {
+                        //Machine timezone has changed, adjust Coordinate offset
+                        offset = geoDate.UTC_Offset();
+                    }
                     NotifyPropertyChanged("CelestialInfo");
                     NotifyPropertyChanged("GeoDate");
                     CoordinateChanged?.Invoke(this, new EventArgs());
@@ -187,7 +193,11 @@ namespace CoordinateSharp
         {
             get { return offset; }
             set
-            {              
+            {
+                if (GlobalSettings.Allow_Coordinate_DateTimeKind_Specification)
+                {
+                    throw new InvalidOperationException("Offset cannot be specified manually when `GlobalSettings.Allow_Coordinate_DateTimeKind_Specification` is set to true.");
+                }
                 if (offset != value)
                 {
                     if (value < -12 || value > 14)

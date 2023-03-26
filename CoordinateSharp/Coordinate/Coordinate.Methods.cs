@@ -43,6 +43,7 @@ Organizations or use cases that fall under the following conditions may receive 
 Please visit http://coordinatesharp.com/licensing or contact Signature Group, LLC to purchase a commercial license, or for any questions regarding the AGPL 3.0 license requirements or free use license: sales@signatgroup.com.
 */
 
+using CoordinateSharp.Formatters;
 using System;
 using System.ComponentModel;
 
@@ -206,7 +207,14 @@ namespace CoordinateSharp
         {
             //SET EagerLoading Setting
             EagerLoadSettings = eagerLoad;
-          
+
+            //Set local offset if operating in local time
+            if (GlobalSettings.Allow_Coordinate_DateTimeKind_Specification == true)
+            {
+                offset = date.UTC_Offset();
+            }
+
+
             //Use default constructor if signed degree is 0 for performance.
             if (lat == 0) { latitude = new CoordinatePart(CoordinateType.Lat); }
             else { latitude = new CoordinatePart(lat, CoordinateType.Lat); }
@@ -227,7 +235,7 @@ namespace CoordinateSharp
             //Load Celestial
             if (eagerLoad.Celestial)
             {
-                celestialInfo = new Celestial(lat, longi, date,0, eagerLoad);
+                celestialInfo = new Celestial(lat, longi, date, offset, eagerLoad);
             }
             //Load UTM MGRS
             if (eagerLoad.UTM_MGRS)

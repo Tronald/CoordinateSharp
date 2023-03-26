@@ -1,21 +1,21 @@
-CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, formatting and location based celestial calculations such as sunset, sunrise, moonset, moonrise and more.
+<p align="center"><img src="https://images.squarespace-cdn.com/content/5c840878ebfc7fc3d3a9b6ca/cd133881-c5d2-4b00-bb2e-b4201b797567/coordinatesharp-02-rounded-header.png?content-type=image%2Fpng"></p>
+<br/>
+<p>
+CoordinateSharp is a simple .NET library that is designed to assist with geographic coordinate conversions, parsing, formatting, magnetic data, and location based celestial calculations such as sunset, sunrise, moonset, moonrise and more.
+</p>
 
-### Like CoordinateSharp? Tell us about it!
-
-This library was built to help other developers. Please make the time and effort worth while by [telling us what you are using it for](https://github.com/Tronald/CoordinateSharp/issues/79).
 
 ### Prerequisites
-.NET 4.0+ Framework, .NET 5.0+, or .NET Standard 1.3+ compatible runtimes.
 
+.NET 4.0+ Framework, .NET 5.0+, or .NET Standard 1.3+ compatible runtimes.
 
 ### Licensing & Purchase
 
-CoordinateSharp is split licensed. You may use CoordinateSharp under the AGPL3.0 or a Commercial Use License that absolves you of the AGPL3.0 requirements. Details as well as pricing may be viewed [on our website](https://coordinatesharp.com/Licensing)
+CoordinateSharp is split licensed. You may use CoordinateSharp for free under the [AGPL-3.0](https://opensource.org/license/agpl-v3/) (requires software to be open source) or a commercial use license that absolves you of the AGPL-3.0 open source requirements. Details as well as pricing may be viewed [on our website](https://coordinatesharp.com/Licensing).
 
 ### Usage Example
 
-
-CoordinateSharp is simple to use. In the below example we create a `Coordinate` using one of the methods below.
+CoordinateSharp is simple to use. In the below example we can create a `Coordinate` using one of the methods below.
 
 ```csharp
 //Seattle coordinates on 5 Jun 2018 @ 10:10 AM (UTC)
@@ -27,18 +27,8 @@ CoordinateSharp is simple to use. In the below example we create a `Coordinate` 
 //Initialize with signed degree (standard method)
 Coordinate c = new Coordinate(47.6062, -122.3321, new DateTime(2018,6,5,10,10,0));
 
-/***IF OTHER FORMAT IS USED SUCH AS DEGREE MINUTES SECONDS***/
-
-//Initialize with TryParse() Method
-Coordinate.TryParse("N 47º 36' 22.32\" W 122º 19' 55.56\"", new DateTime(2018,6,5,10,10,0), out c);
-
-/****OR****/
-
-//Initialize with Secondary Method
-Coordinate c = new Coordinate();
-c.Latitude = new CoordinatePart(47,36, 22.32, CoordinatePosition.N, c);
-c.Longitude = new CoordinatePart(122, 19, 55.56, CoordinatePosition.W, c);
-c.GeoDate = new DateTime(2018,6,5,10,10,0);
+//OR simply parse from a string
+Coordinate c = Coordinate.Parse("N 47º 36.372' W 122º 19.926'", new DateTime(2018,6,5,10,10,0);
 ```
 
 Once the `Coordinate` is created we have access to various formats and celestial data. Here are just a few examples.
@@ -70,10 +60,13 @@ CoordinateSharp.
 * **Lat/Long formatting:** Quickly format how a coordinate is output.
 * **Coordinate conversions:** Convert Geodetic Latitude / Longitude to UTM, MGRS, Cartesian (Spherical and ECEF), Web Mercator (EPSG:3857), GEOREF or vice versa.
 * **Coordinate parsing:** Initialize a `Coordinate` with multiple format types using `TryParse()`.
+* **Distance calculation:** Calculate distances between coordinates.
 * **Coordinate moving/shifting:** Shift coordinates using a distance and bearing, or a distance and target coordinate.
 * **Location based celestial information:** Quickly determine sun set, moon rise, next solar eclipse or even zodiac signs at the input location.
 * **Property change notification:** All properties automatically adjust as the `Coordinate` changes. For example, changing the `GeoDate` will cause all celestial times to recalculate. Adjusting a `Coordinate` latitudinal seconds, will retrigger all coordinate conversions and celestial data so your information is always up to date. 
 * **Geo-Fencing:** Define a perimeter and determine if your coordinate is within or near polylines.
+* **Magnetic Data:** Determine geographic magnetic data such as declination ([requires extension package](https://www.nuget.org/packages/CoordinateSharp.Magnetic/)).
+
 
 ### Guides
 
@@ -83,6 +76,8 @@ You may also view the [Documentation](https://www.coordinatesharp.com/Help/index
 
 Change notes can be viewed [here](https://www.coordinatesharp.com/ChangeNotes).
 
-### Questions
+### Support
 
-Have a technical question, but don't feel like creating an issue? Email us at support@signatgroup.com
+Commercial subscription based license holders may receive direct support by emailing us at support@signatgroup.com. All others may create [an issue](https://github.com/Tronald/CoordinateSharp/issues) at anytime.
+
+<p align="center"><img src="https://images.squarespace-cdn.com/content/5c840878ebfc7fc3d3a9b6ca/ced70aa9-0877-42b6-849e-e15735b87b56/coordinatesharp-01-rounded-header.png?content-type=image%2Fpng"></p>

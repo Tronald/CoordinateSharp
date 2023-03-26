@@ -1,4 +1,5 @@
 ﻿<!--
+/*
 CoordinateSharp is a .NET standard library that is intended to ease geographic coordinate 
 format conversions and location based celestial calculations.
 https://github.com/Tronald/CoordinateSharp
@@ -11,7 +12,7 @@ License
 
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
-Copyright (C) 2019, Signature Group, LLC
+Copyright (C) 2022, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
 as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
@@ -33,43 +34,43 @@ as soon as you develop commercial activities involving the CoordinateSharp softw
 These activities include: offering paid services to customers as an ASP, on the fly location based calculations in a web application, 
 or shipping CoordinateSharp with a closed source product.
 
-Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request.
--Department of Defense
--Department of Homeland Security
--Open source contributors to this library
--Scholarly or scientific uses on a case by case basis.
--Emergency response / management uses on a case by case basis.
+Organizations or use cases that fall under the following conditions may receive a free commercial use license upon request on a case by case basis.
 
-For more information, please contact Signature Group, LLC at this address: sales@signatgroup.com
+
+	-Open source contributors to this library.
+	-Scholarly or scientific research.
+	-Emergency response / management uses.
+
+Please visit http://coordinatesharp.com/licensing or contact Signature Group, LLC to purchase a commercial license, or for any questions regarding the AGPL 3.0 license requirements or free use license: sales@signatgroup.com.
+*/
+
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.16.1.1</Version>
+    <Version>2.17.1.1</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2023</Copyright>
     <Description>A simple library designed to assist with geographic coordinate conversions, formatting and location based solar and lunar information.</Description>
-    <PackageReleaseNotes>-Adds ability to specify centimeter string precision for UTM/MGRS.
--Adds ability to specify global default Equatorial Radius and Inverse Flattening values, allowing Coordinates to default to formats other than WGS84. 
--Adds enumerator options to AstrologicalSign class.
-</PackageReleaseNotes>
+    <PackageReleaseNotes>-Adds ability to operate Coordinate objects in the environment's local time by default.
+-Update branding package &amp; license. </PackageReleaseNotes>
     <PackageTags>Conversion; Latitude; Longitude; Coordinates; Geography; Sun; Moon; Solar; Lunar; Time; MGRS; UTM; EPSG:3857; ECEF; GEOREF; Web Mercator;</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>    <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
-    <AssemblyVersion>2.16.1.1</AssemblyVersion>
+    <AssemblyVersion>2.17.1.1</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
-    <PackageIcon>CoordinateSharpPNG.png</PackageIcon>
+    <PackageIcon>128x128.png</PackageIcon>
     <AssemblyOriginatorKeyFile>CoordinateSharp Strong Name.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
-    <FileVersion>2.16.1.1</FileVersion>
+    <FileVersion>2.17.1.1</FileVersion>
     <RepositoryUrl>https://github.com/Tronald/CoordinateSharp</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -177,16 +178,11 @@ For more information, please contact Signature Group, LLC at this address: sales
       <Version>4.3.0</Version>
     </PackageReference>
   </ItemGroup>
- 
-  
   <ItemGroup>
-    <None Remove="CoordinateSharpPNG.png" />
-    <None Include="CoordinateSharpPNG.png">
+    <None Include="..\..\CoordinateSharp Graphics\128x128.png">
       <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>  
-  </ItemGroup>
-  <ItemGroup>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="License.txt" Pack="true" PackagePath="License.txt" />
   </ItemGroup>
   <ItemGroup>

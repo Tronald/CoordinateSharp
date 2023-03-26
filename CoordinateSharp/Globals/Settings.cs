@@ -58,10 +58,15 @@ namespace CoordinateSharp
     public static class GlobalSettings
     {
         /// <summary>
+        /// Stores utc offset value allowing for validation in primary setter.
+        /// </summary>
+        private static double default_utc_offset = 0;
+
+        /// <summary>
         /// Application wide, default EagerLoad settings for CoordinateSharp.
         /// </summary>
         public static EagerLoad Default_EagerLoad { get; set; } = new EagerLoad(true);
-        
+
         /// <summary>
         /// Application wide, default coordinate formatting output options.
         /// </summary>
@@ -88,6 +93,19 @@ namespace CoordinateSharp
         /// </summary>
         public static double Default_InverseFlattening { get; set; } = DataValues.DefaultInverseFlattening;
 
+        /// <summary>
+        /// Sets whether Coordinate calculates in UTC (default) or environment's DateTimeKind specification. Allows Coordinate objects to run in local time automatically if set to true. 
+        /// </summary>
+        /// <remarks>
+        /// If the `Coordinate` object's set `GeoDate` value has a `DateTimeKind` value set as `Local` and `Allow_Coordinate_DateTimeKind_Specification` is set to `true`, then the Coordinate object will initialize and calculate celestial data 
+        /// based on the environment's local time by default.
+        /// 
+        /// If `DateTimeKind` Specification is allowed, then setting the `Coordinate.Offset` property will throw an `InvalidOperationException` as CoordinateSharp is self-handling offsets.
+        /// 
+        /// While Allowing `DateTimeKind` specification is convenient, it is not recommended if you require control of timezones or manual adjustments of UTC offsets. Use only if applicable. 
+        /// </remarks>
+        public static bool Allow_Coordinate_DateTimeKind_Specification { get; set; } = false;
+    
         /// <summary>
         /// Set the default Equatorial Radius and Inverse Flattening based on a specified ellipsoid.
         /// </summary>
