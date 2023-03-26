@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using CoordinateSharp;
 using NuGet.Frameworks;
+using System.Xml;
 
 namespace CoordinateSharp_UnitTests
 {
@@ -405,7 +406,28 @@ namespace CoordinateSharp_UnitTests
             GlobalSettings.Set_DefaultDatum(Earth_Ellipsoid_Spec.WGS84_1984);
             GlobalSettings.Default_Cartesian_Type = CartesianType.Cartesian; //If not reverted other test will fail.
         }
+        /// <summary>
+        /// Tests Coordinate object initializes as specified in the Global Settings that specify to run in local environments time.
+        /// </summary>
+        [TestMethod]
+        public void Global_Settings_Local_Environment_Time_Settings()
+        {
+            GlobalSettings.Allow_Coordinate_DateTimeKind_Specification = true;
+            Coordinate c = new Coordinate(47.36, -122.06, new DateTime(2023, 03, 02));
+            double delta = 100;
+         
+            TimeSpan sr = new DateTime(2023, 3, 2, 6, 48, 30) - c.CelestialInfo.SunRise.Value;
+            Assert.AreEqual(0,sr.TotalSeconds, delta);
 
+            TimeSpan ss = new DateTime(2023, 3, 2, 17, 55, 16) - c.CelestialInfo.SunSet.Value;
+            Assert.AreEqual(0, ss.TotalSeconds, delta);
+
+            Assert.ThrowsException<InvalidOperationException>(() => c.Offset = c.Offset + 1);
+
+            GlobalSettings.Allow_Coordinate_DateTimeKind_Specification = false;
+
+
+        }
         /// <summary>
         /// Test base coordinate initialization with new date to ensure no exceptions are thrown.
         /// </summary>

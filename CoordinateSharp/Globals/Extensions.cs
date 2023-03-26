@@ -153,5 +153,16 @@ namespace CoordinateSharp.Formatters
 
             return precision > 0 ? Math.Round(input, precision) : Math.Round(input);
         }
+
+        /// <summary>
+        /// Get the UTC offset hours from the specified date
+        /// </summary>
+        /// <param name="d">DateTime</param>
+        /// <returns>double</returns>
+        public static double UTC_Offset(this DateTime d)
+        {
+            TimeSpan ts = d.ToUniversalTime() - d;
+            return ts.TotalHours * -1;         
+        }
     }
 }
