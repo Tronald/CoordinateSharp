@@ -105,8 +105,7 @@ namespace CoordinateSharp
             if (gridZone.Count() == 1)
             {
                 longz = 0;
-                Regex rg = new Regex("[aAbByYzZ]");
-                Match m = rg.Match(gridZone);
+                Match m = ZonesRegex.UpsZoneRegex.Match(gridZone);
                 if (m.Success) { latz = gridZone; }
                 else { throw new FormatException("The UTM Grid Zone Designator format is invalid."); }
             }
@@ -144,8 +143,7 @@ namespace CoordinateSharp
             if (gridZone.Count() == 1)
             {
                 longz = 0;
-                Regex rg = new Regex("[aAbByYzZ]");
-                Match m = rg.Match(gridZone);
+                Match m = ZonesRegex.UpsZoneRegex.Match(gridZone);
                 if (m.Success) { latz = gridZone; }
                 else { throw new FormatException("The UTM Grid Zone Designator format is invalid."); }
 
@@ -174,8 +172,7 @@ namespace CoordinateSharp
         /// </summary>
         private void Construct_UTM(string latz, int longz, double est, double nrt, double radius, double flaten, bool suppressWarnings)
         {
-            Regex rg = new Regex("[aAbByYzZ]");
-            Match m = rg.Match(latz);
+            Match m = ZonesRegex.UpsZoneRegex.Match(latz);
 
             if (m.Success)
             {
@@ -251,8 +248,7 @@ namespace CoordinateSharp
         internal UniversalTransverseMercator(string latz, int longz, double e, double n, Coordinate c, double rad, double flt, bool suppressWarnings)
         {
             //validate utm
-            Regex rg = new Regex("[aAbByYzZ]");
-            Match m = rg.Match(latz);
+            Match m = ZonesRegex.UpsZoneRegex.Match(latz);
 
             if (m.Success)
             {
@@ -286,7 +282,7 @@ namespace CoordinateSharp
         /// <returns>boolean</returns>
         private bool Verify_Lat_Zone(string l)
         {
-            if (LatZones.longZongLetters.Where(x => x == l.ToUpper()).Count() != 1)
+            if (LatZones.longZongLetters.Where(x => string.Equals(x, l, StringComparison.OrdinalIgnoreCase)).Count() != 1)
             {
                 return false;
             }
@@ -769,14 +765,12 @@ namespace CoordinateSharp
         {
 
             bool southhemi = false;
-            Regex upsCheck = new Regex("[AaBbYyZz]");
-            if(upsCheck.IsMatch(utm.latZone))
+            if(ZonesRegex.UpsZoneRegex.IsMatch(utm.latZone))
             {
                 return UPS.UPS_To_Geodetic(utm, eagerLoad);
             }
 
-            Regex regex = new Regex("[CcDdEeFfGgHhJjKkLlMm]");
-            if (regex.IsMatch(utm.latZone)) { southhemi = true; }
+            if (ZonesRegex.SouthEmisphereZone.IsMatch(utm.latZone)) { southhemi = true; }
 
             double cmeridian;
 
@@ -819,8 +813,7 @@ namespace CoordinateSharp
 
             bool southhemi = false;
 
-            Regex upsCheck = new Regex("[AaBbYyZz]");
-            if (upsCheck.IsMatch(utm.latZone))
+            if (ZonesRegex.UpsZoneRegex.IsMatch(utm.latZone))
             {
                 Coordinate c = UPS.UPS_To_Geodetic(utm, new EagerLoad(false));
                 return new double[] { c.Latitude.ToDouble(), c.Longitude.ToDouble() };

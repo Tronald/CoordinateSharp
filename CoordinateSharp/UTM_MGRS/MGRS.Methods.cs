@@ -109,7 +109,7 @@ namespace CoordinateSharp
             if(!int.TryParse(resultString, out longz))
             {
                 //Check Polar First
-                if (!Regex.Match(gridZone.ToUpper(), "[ABZY]").Success)
+                if (!ZonesRegex.UpsZoneRegex.IsMatch(gridZone))
                 {
                     throw new FormatException("The MGRS Grid Zone Designator format is invalid.");
                 }
@@ -141,7 +141,7 @@ namespace CoordinateSharp
             if (!int.TryParse(resultString, out longz))
             {
                 //Check Polar First
-                if (!Regex.Match(gridZone.ToUpper(), "[ABZY]").Success)
+                if (!ZonesRegex.UpsZoneRegex.IsMatch(gridZone) )
                 {
                     throw new FormatException("The MGRS Grid Zone Designator format is invalid.");
                 }
@@ -158,8 +158,7 @@ namespace CoordinateSharp
         /// </summary>
         private void Construct_MGRS(string latz, int longz, string d, double e, double n, double rad, double flt)
         {
-            Regex rg = new Regex("[aAbByYzZ]");
-            Match m = rg.Match(latz);
+            Match m = ZonesRegex.UpsZoneRegex.Match(latz);
 
             if (m.Success)
             {
@@ -190,7 +189,7 @@ namespace CoordinateSharp
 
         private bool Verify_Lat_Zone(string l)
         {
-            if (LatZones.longZongLetters.Where(x => x == l.ToUpper()).Count() != 1)
+            if (LatZones.longZongLetters.Where(x => string.Equals(x, l, StringComparison.OrdinalIgnoreCase)).Count() != 1)
             {
                 return false;
             }
@@ -203,8 +202,7 @@ namespace CoordinateSharp
         }
         internal void ToMGRS(UniversalTransverseMercator utm)
         {
-            Regex rg = new Regex("[ABYZ]");
-            Match m = rg.Match(utm.LatZone.ToUpper());
+            Match m = ZonesRegex.UpsZoneRegex.Match(utm.LatZone);
 
             string digraph1;
             string digraph2;
@@ -520,8 +518,7 @@ namespace CoordinateSharp
         public static double[] MGRStoSignedDegree(MilitaryGridReferenceSystem mgrs)
         {
 
-            Regex upsCheck = new Regex("[AaBbYyZz]");
-            if (upsCheck.IsMatch(mgrs.latZone))
+            if (ZonesRegex.UpsZoneRegex.IsMatch(mgrs.latZone))
             {
                 Coordinate c = MGRStoLatLong(mgrs);
                 return new double[] { c.Latitude.ToDouble(), c.Longitude.ToDouble() };
