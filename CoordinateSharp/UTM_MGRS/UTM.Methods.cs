@@ -278,7 +278,7 @@ namespace CoordinateSharp
         /// <returns>boolean</returns>
         private bool Verify_Lat_Zone(string l)
         {
-            if (LatZones.longZongLetters.Where(x => string.Equals(x, l, StringComparison.OrdinalIgnoreCase)).Count() != 1)
+            if (!LatZones.longZongLetters.Any(x => string.Equals(x, l, StringComparison.OrdinalIgnoreCase)))
             {
                 return false;
             }
