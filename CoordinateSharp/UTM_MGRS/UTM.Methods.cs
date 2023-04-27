@@ -105,8 +105,7 @@ namespace CoordinateSharp
             if (gridZone.Count() == 1)
             {
                 longz = 0;
-                Match m = ZonesRegex.UpsZoneRegex.Match(gridZone);
-                if (m.Success) { latz = gridZone; }
+                if (ZonesRegex.UpsZoneRegex.IsMatch(gridZone)) { latz = gridZone; }
                 else { throw new FormatException("The UTM Grid Zone Designator format is invalid."); }
             }
             else //UTM
@@ -143,8 +142,7 @@ namespace CoordinateSharp
             if (gridZone.Count() == 1)
             {
                 longz = 0;
-                Match m = ZonesRegex.UpsZoneRegex.Match(gridZone);
-                if (m.Success) { latz = gridZone; }
+                if (ZonesRegex.UpsZoneRegex.IsMatch(gridZone)) { latz = gridZone; }
                 else { throw new FormatException("The UTM Grid Zone Designator format is invalid."); }
 
             }
@@ -172,9 +170,7 @@ namespace CoordinateSharp
         /// </summary>
         private void Construct_UTM(string latz, int longz, double est, double nrt, double radius, double flaten, bool suppressWarnings)
         {
-            Match m = ZonesRegex.UpsZoneRegex.Match(latz);
-
-            if (m.Success)
+            if (ZonesRegex.UpsZoneRegex.IsMatch(latz))
             {
                 systemType = UTM_Type.UPS;
                 if (longz != 0)
@@ -248,9 +244,7 @@ namespace CoordinateSharp
         internal UniversalTransverseMercator(string latz, int longz, double e, double n, Coordinate c, double rad, double flt, bool suppressWarnings)
         {
             //validate utm
-            Match m = ZonesRegex.UpsZoneRegex.Match(latz);
-
-            if (m.Success)
+            if (ZonesRegex.UpsZoneRegex.IsMatch(latz))
             {
                 systemType = UTM_Type.UPS;
                 if (longz != 0)
@@ -770,7 +764,7 @@ namespace CoordinateSharp
                 return UPS.UPS_To_Geodetic(utm, eagerLoad);
             }
 
-            if (ZonesRegex.SouthEmisphereZone.IsMatch(utm.latZone)) { southhemi = true; }
+            if (ZonesRegex.SouthEmisphereZoneRegex.IsMatch(utm.latZone)) { southhemi = true; }
 
             double cmeridian;
 
