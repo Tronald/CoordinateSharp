@@ -158,9 +158,7 @@ namespace CoordinateSharp
         /// </summary>
         private void Construct_MGRS(string latz, int longz, string d, double e, double n, double rad, double flt)
         {
-            Match m = ZonesRegex.UpsZoneRegex.Match(latz);
-
-            if (m.Success)
+            if (ZonesRegex.UpsZoneRegex.IsMatch(latz))
             {
                 systemType = MGRS_Type.MGRS_Polar;
                 if (longz != 0)
@@ -202,14 +200,12 @@ namespace CoordinateSharp
         }
         internal void ToMGRS(UniversalTransverseMercator utm)
         {
-            Match m = ZonesRegex.UpsZoneRegex.Match(utm.LatZone);
-
             string digraph1;
             string digraph2;
 
             Digraphs digraphs;
 
-            if (m.Success)
+            if (ZonesRegex.UpsZoneRegex.IsMatch(utm.LatZone))
             {
                 systemType = MGRS_Type.MGRS_Polar;
                 digraphs = new Digraphs(systemType, utm.LatZone);
