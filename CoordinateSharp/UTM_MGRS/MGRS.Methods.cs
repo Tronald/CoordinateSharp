@@ -172,7 +172,7 @@ namespace CoordinateSharp
             if ((longz < 1 || longz > 60) && longz!=0 && systemType!= MGRS_Type.MGRS_Polar) { Debug.WriteLine("Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
             if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
             if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
-            if (d.Count() < 2 || d.Count() > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (d.Length < 2 || d.Length > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             if (ds.digraph1.Where(x => x.Letter == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             if (ds.digraph2.Where(x => x.Letter == d.ToUpper()[1].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             latZone = latz.ToUpper();
@@ -187,7 +187,7 @@ namespace CoordinateSharp
 
         private bool Verify_Lat_Zone(string l)
         {
-            if (LatZones.longZongLetters.Where(x => string.Equals(x, l, StringComparison.OrdinalIgnoreCase)).Count() != 1)
+            if (!LatZones.longZongLetters.Any(x => string.Equals(x, l, StringComparison.OrdinalIgnoreCase)))
             {
                 return false;
             }

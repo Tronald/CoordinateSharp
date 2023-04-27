@@ -102,7 +102,7 @@ namespace CoordinateSharp
             int longz;
             string latz;
             //DETERMINE IF UPS COORD
-            if (gridZone.Count() == 1)
+            if (gridZone.Length == 1)
             {
                 longz = 0;
                 if (ZonesRegex.UpsZoneRegex.IsMatch(gridZone)) { latz = gridZone; }
@@ -139,7 +139,7 @@ namespace CoordinateSharp
             int longz;
             string latz;
             //DETERMINE IF UPS COORD
-            if (gridZone.Count() == 1)
+            if (gridZone.Length == 1)
             {
                 longz = 0;
                 if (ZonesRegex.UpsZoneRegex.IsMatch(gridZone)) { latz = gridZone; }
@@ -180,7 +180,9 @@ namespace CoordinateSharp
             }
             else if (longz < 1 || longz > 60) { Warn(suppressWarnings, "Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
 
+#if DEBUG // Warn does nothing in RELEASE mode, strip Verify_Lat_Zone call because it is very expensive 
             if (!Verify_Lat_Zone(latz)) {Warn(suppressWarnings, "Latitudinal zone invalid", "UTM latitudinal zone was unrecognized.");        }
+#endif
 
             if (systemType== UTM_Type.UTM && ( est < 160000 || est > 834000)) {  Warn(suppressWarnings, "The Easting value provided is outside the max allowable range. Use with caution.");  }
             if (systemType == UTM_Type.UPS && (est < 887000 || est > 3113000)) { Warn(suppressWarnings, "The Easting value provided is outside the max allowable range. Use with caution.");  }
