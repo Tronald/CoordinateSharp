@@ -652,5 +652,5 @@ namespace CoordinateSharp
         /// Pisces
         /// </summary>
         Pisces,
-    }   
+    }     
 }

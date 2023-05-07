@@ -103,7 +103,13 @@ namespace CoordinateSharp
                 _points.Add(new Point { Latitude = c.Latitude.ToDouble(), Longitude = c.Longitude.ToDouble() });
             }
         }
-    
+        /// <summary>
+        /// Provides a List of Points contained within the drawn GeoFence.
+        /// </summary>
+        public List<Point> Points
+        {
+            get { return _points; }           
+        }
         private Coordinate ClosestPointOnSegment(Point a, Point b, Coordinate p, DateTime dt, EagerLoad eg)
         {
             var d = new Point

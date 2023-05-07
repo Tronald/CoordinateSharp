@@ -53,6 +53,15 @@ namespace CoordinateSharp
     [Serializable]
     public partial class GEOREF
     {
+        static string digits = "0123456789";
+        static string lngTile = "ABCDEFGHJKLMNPQRSTUVWXYZZ"; // Repeat the last Z for 180 degree check efficiency
+        static string latTile = "ABCDEFGHJKLMM"; // Repeat the last M for 90 degree check efficiency
+        static string degrees = "ABCDEFGHJKLMNPQ";
+        static int tile = 15;
+        static double lngorig = -180;
+        static double latorig = -90;
+        static double based = 10;
+        static int maxprec = 11;     
         private string quad_15;
         private string quad_1;
         private string easting; //stored as string due to leading zero with dynamic precision requirements.
