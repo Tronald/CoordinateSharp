@@ -522,7 +522,7 @@ namespace CoordinateSharp_UnitTests
         public void MGRS_Centimeter_Check()
         {
             Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
-            Assert.AreEqual("23T ML 45381.61737 34245.53566", c.MGRS.ToCentimeterString());
+            Assert.AreEqual("23T ML 45381.61737 34245.53566", c.MGRS.ToRoundedString(5));
         }
 
         /// <summary>
@@ -532,7 +532,7 @@ namespace CoordinateSharp_UnitTests
         public void UTM_Centimeter_Check()
         {
             Coordinate c = new Coordinate(45.4596, -45.6986, new EagerLoad(EagerLoadType.UTM_MGRS));
-            Assert.AreEqual("23T 445381.61737mE 5034245.53566mN", c.UTM.ToCentimeterString());
+            Assert.AreEqual("23T 445381.61737mE 5034245.53566mN", c.UTM.ToRoundedString(5));
         }
 
         /// <summary>
@@ -805,7 +805,30 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(c.MGRS.Northing, 05228, 1, "MGRS Northing does not match WGS84 expected");
         }
 
+        [TestMethod]
+        public void GEOREF_Shifting()
+        {
+            string[] lines = File.ReadAllLines("CoordinateData\\GEOREF_SHIFT.txt");
+            int lineCount = 0;
+            foreach(string line in lines)
+            {
+                string[] sections = line.Split(',');
+                int precision = int.Parse(sections[0]);
+                string georefT = sections[1];
+                string bl = sections[2];
+                string br = sections[3];
+                string tl = sections[4];
+                string tr = sections[5];
 
+                GEOREF geo = new GEOREF(georefT.Substring(0, 2), georefT.Substring(2, 2), georefT.Substring(4, 10), georefT.Substring(14, 10));
+
+                Assert.AreEqual(bl,geo.Get_BottomLeftCorner(precision).ToString(10), $"Bottom Left does not match on iteration {lineCount}");
+                Assert.AreEqual(br,geo.Get_BottomRightCorner(precision).ToString(10), $"Bottom Right does not match on iteration {lineCount}");
+                Assert.AreEqual(tl,geo.Get_TopLeftCorner(precision).ToString(10), $"Top Left does not match on iteration {lineCount}");
+                Assert.AreEqual(tr,geo.Get_TopRightCorner(precision).ToString(10), $"Top Right does not match on iteration {lineCount}");
+                lineCount++;
+            }
+        }
         /// <summary>
         /// Asserts conversions
         /// </summary>

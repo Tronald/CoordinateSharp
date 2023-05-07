@@ -51,15 +51,7 @@ namespace CoordinateSharp
 {
     public partial class GEOREF
     {
-        static string digits = "0123456789";
-        static string lngTile = "ABCDEFGHJKLMNPQRSTUVWXYZZ"; // Repeat the last Z for 180 degree check efficiency
-        static string latTile = "ABCDEFGHJKLMM"; // Repeat the last M for 90 degree check efficiency
-        static string degrees = "ABCDEFGHJKLMNPQ";
-        static int tile = 15;
-        static double lngorig = -180;
-        static double latorig = -90;
-        static double based = 10;
-        static int maxprec = 11;
+     
 
         /// <summary>
         /// Creates a GEOREF.
@@ -129,8 +121,9 @@ namespace CoordinateSharp
             if (!string.IsNullOrWhiteSpace(easting)) { firstEDigit = int.Parse(easting[0].ToString()); }
             if (!string.IsNullOrWhiteSpace(northing)) { firstNDigit = int.Parse(northing[0].ToString()); }
 
-            if (firstEDigit > 6) { throw new FormatException("Easting value is invalid."); }
-            if (firstNDigit > 6) { throw new FormatException("Northing value is invalid."); }
+            //Restrict to 59.9~ degrees
+            if (firstEDigit >= 6) { throw new FormatException("Easting value is invalid."); }
+            if (firstNDigit >= 6) { throw new FormatException("Northing value is invalid."); }
 
             //Ensure max precision not exceeded
             if (easting.Length > maxprec) { throw new FormatException("Max precision allowed exceeded."); }
@@ -284,6 +277,11 @@ namespace CoordinateSharp
             double lat = (tile * lat1) / unit;
             double lon = (tile * lon1) / unit;
 
+            if (lat > 90) { lat = 90; }
+            if (lat < -90) { lat = -90; }
+            if(lon > 180) { lngorig = 180; }
+            if (lon < -180) { lngorig = -180; }
+
             return new double[] { lat, lon };
         }
 
@@ -393,129 +391,371 @@ namespace CoordinateSharp
         }
 
 
-        #region GeoFence Methods  //In works, needed to get release out though, so will finish during a subsequent update.
-
-        private GeoFence ToGeoFence(int precision)
+        #region GeoFence Methods  
+        /// <summary>
+        /// Creates a GeoFence box based on the specified precision of the GEOREF coordinates. May not be reliable at poles.
+        /// </summary>
+        /// <remarks>
+        /// <para>Precision Levels</para>
+        /// <para>0: Quad 15 corners</para>
+        /// <para>1-2: Quad 1 corners</para>
+        /// <para>3-4: Easting and Northing minute corners</para>
+        /// <para>5-11: Easting and Northing seconds corners</para>
+        /// </remarks>
+        /// <param name="precision">Precision</param>
+        /// <returns>GeoFence</returns>
+        public GeoFence ToGeoFence(int precision)
         {
-            if (precision < 0) { throw new FormatException(); }
-            if (precision > maxprec) { throw new FormatException(); }
-            if (precision == 1) { precision = 2; }
-            if (precision == 3) { precision = 4; }
+            precision = Set_Precision(precision);
 
             GEOREF bl = Get_BottomLeftCorner(precision);
-
+            GEOREF br = Get_BottomRightCorner(precision);
+            GEOREF tr = Get_TopRightCorner(precision);
+            GEOREF tl = Get_TopLeftCorner(precision);
 
             List<Coordinate> coordinates = new List<Coordinate>()
             {
-                GEOREF.ConvertGEOREFtoLatLong(bl,new EagerLoad(EagerLoadType.GEOREF))
+                GEOREF.ConvertGEOREFtoLatLong(bl,new EagerLoad(EagerLoadType.GEOREF)),
+                GEOREF.ConvertGEOREFtoLatLong(br,new EagerLoad(EagerLoadType.GEOREF)),
+                GEOREF.ConvertGEOREFtoLatLong(tr,new EagerLoad(EagerLoadType.GEOREF)),
+                GEOREF.ConvertGEOREFtoLatLong(tl,new EagerLoad(EagerLoadType.GEOREF)),
+                GEOREF.ConvertGEOREFtoLatLong(bl,new EagerLoad(EagerLoadType.GEOREF)),//Close box
             };
+
             GeoFence geoFence = new GeoFence(coordinates);
+         
             return geoFence;
         }
 
-        private GEOREF Get_BottomLeftCorner(int precision)
+        /// <summary>
+        /// Gets the Bottom Left corner of the GEOREF coordinate based on the specified precision.        
+        /// </summary>
+        /// <remarks>
+        /// <para>Precision Levels</para>
+        /// <para>0: Quad 15 corners</para>
+        /// <para>1-2: Quad 1 corners</para>
+        /// <para>3-4: Easting and Northing minute corners</para>
+        /// <para>5-11: Easting and Northing seconds corners</para>
+        /// </remarks>
+        /// <param name="precision">Precision</param>
+        /// <returns>GEOREF</returns>
+        public GEOREF Get_BottomLeftCorner(int precision)
         {
-            if (precision < 0) { throw new FormatException(); }
-            if (precision > maxprec) { throw new FormatException(); }
-            if (precision == 1) { precision = 2; }
-            if (precision == 3) { precision = 4; }
-
-            string q1=quad_1;
-            if (precision < 2) { q1 = null; }
-            int minPrec = 0;
-            if (precision > 2) { minPrec = precision - 2; }
-            return new GEOREF(quad_15, q1, Easting.Substring(0,minPrec), Northing.Substring(0,minPrec));
-        }
-
-        private GEOREF Get_BottomRightCorner(int precision)
-        {
-            if (precision < 0) { throw new FormatException(); }
-            if (precision > maxprec) { throw new FormatException(); }
-            if (precision == 1) { precision = 2; }
-            if (precision == 3) { precision = 4; }
-
-            string nQuad_15=quad_15;
-            string nQuad_1 = quad_1;
-            string nEasting=null;
-         
-            //Change to match standard of conversion precision since 0 means first 2 characters here but means 4 in conversions
-            if(precision == 0)
+            precision = Set_Precision(precision);
+            GEOREF geo = new GEOREF(quad_15, quad_1, easting, northing);
+            geo.Shift_GeoRef(precision, false, false);
+            
+            if (precision < 4)
             {
-                //QUAD 15
-                nQuad_15 = Shift_Quad_15_Lng(quad_15[0]) + quad_15[1].ToString();
-            }
-            else if( precision == 2 )
-            {
-                //QUAD 1
-                nQuad_1 = Shift_Quad_1_Degree(quad_1[0]) + quad_1[1].ToString();
-
-                //Check if next boundary entered
-                if (nQuad_1[0] =='A')
+                geo.easting = "0".PadRight(maxprec, '0');
+                geo.northing = "0".PadRight(maxprec, '0');
+                if(precision < 2)
                 {
-                    nQuad_15 = Shift_Quad_15_Lng(quad_15[0]) + quad_15[1].ToString();
+                    geo.quad_1 = "AA";
                 }
-            }
-            else if(precision == 4)
-            {
-                //Min
-                int min_lng = Shift_Minutes(int.Parse(easting.Substring(0,2)));
-                nEasting = min_lng.ToString().PadLeft(2, '0');
 
-                if (min_lng == 0)
-                {
-                    //QUAD 1
-                    nQuad_1 = Shift_Quad_1_Degree(quad_1[0]) + quad_1[1].ToString();
-
-                    //Check if next boundary entered
-                    if (nQuad_1[0] == 'A')
-                    {
-                        nQuad_15 = Shift_Quad_15_Lng(quad_15[0]) + quad_15[1].ToString();
-                    }
-                }            
+                return geo;
             }
             else
             {
-                //Seconds
-                string seconds = "0." + easting.Substring(2, maxprec-2);
-                decimal sec_lng = Shift_Seconds(decimal.Parse(seconds, CultureInfo.InvariantCulture));
-                
-                //Did seconds move coordinate to next minute?
-                if(sec_lng>=1)
-                {
-                    sec_lng = 0;
-
-                    int min_lng = Shift_Minutes(int.Parse(easting.Substring(0, 2)));
-                    nEasting = min_lng.ToString().PadLeft(2, '0');
-
-                    if (min_lng == 0)
-                    {
-                        //QUAD 1
-                        nQuad_1 = Shift_Quad_1_Degree(quad_1[0]) + quad_1[1].ToString();
-
-                        //Check if next boundary entered
-                        if (nQuad_1[0] == 'A')
-                        {
-                            nQuad_15 = Shift_Quad_15_Lng(quad_15[0]) + quad_15[1].ToString();
-                        }
-                    }
-
-                }
-                else
-                {
-                    nEasting = easting.Substring(0, 2) + sec_lng.ToString(CultureInfo.InvariantCulture).Split('.').Last();
-                }
-
-               
+                return new GEOREF(quad_15, quad_1, Easting.Substring(0, precision-2), Northing.Substring(0, precision-2));
             }
-            int minPrec = 0;
-            if(precision > 4) { minPrec= precision-2; }
-            return new GEOREF(nQuad_15, nQuad_1, nEasting.Substring(0, minPrec), northing.Substring(0, minPrec)); 
+
+           
+        }
+
+        /// <summary>
+        /// Gets the Top Left corner of the GEOREF coordinate based on the specified precision.
+        /// </summary>
+        /// <remarks>
+        /// <para>Precision Levels</para>
+        /// <para>0: Quad 15 corners</para>
+        /// <para>1-2: Quad 1 corners</para>
+        /// <para>3-4: Easting and Northing minute corners</para>
+        /// <para>5-11: Easting and Northing seconds corners</para>
+        /// </remarks>
+        /// <param name="precision">Precision</param>
+        /// <returns>GEOREF</returns>
+        public GEOREF Get_TopLeftCorner(int precision)
+        {
+            precision = Set_Precision(precision);
+            GEOREF geo = new GEOREF(quad_15, quad_1, easting, northing);
+            geo.Shift_GeoRef(precision, true, false);
+            if (precision < 4)
+            {
+                geo.easting = "0".PadRight(maxprec, '0');
+                geo.northing = "0".PadRight(maxprec, '0');
+                if (precision < 2)
+                {
+                    geo.quad_1 = "AA";
+                }
+            }
+            else
+            {
+                geo.easting = geo.easting.Substring(0, precision - 2).PadRight(maxprec, '0');
+                geo.northing = geo.northing.Substring(0, precision - 2).PadRight(maxprec, '0');
+            }
+            return geo;
+        }
+        /// <summary>
+        /// Gets the Bottom Right corner of the GEOREF coordinate based on the specified precision.
+        /// </summary>
+        /// <remarks>
+        /// <para>Precision Levels</para>
+        /// <para>0: Quad 15 corners</para>
+        /// <para>1-2: Quad 1 corners</para>
+        /// <para>3-4: Easting and Northing minute corners</para>
+        /// <para>5-11: Easting and Northing seconds corners</para>
+        /// </remarks>
+        /// <param name="precision">Precision</param>
+        /// <returns>GEOREF</returns>      
+        public GEOREF Get_BottomRightCorner(int precision)
+        {
+            precision = Set_Precision(precision);
+            GEOREF geo = new GEOREF(quad_15, quad_1, easting, northing);
+            geo.Shift_GeoRef(precision, false, true);
+            if (precision < 4)
+            {
+                geo.easting = "0".PadRight(maxprec, '0');
+                geo.northing = "0".PadRight(maxprec, '0');
+                if (precision < 2)
+                {
+                    geo.quad_1 = "AA";
+                }
+            }
+            else
+            {
+                geo.easting = geo.easting.Substring(0, precision - 2).PadRight(maxprec, '0');
+                geo.northing = geo.northing.Substring(0, precision - 2).PadRight(maxprec, '0');
+            }
+            return geo;
+        }
+        /// <summary>
+        /// Gets the Top Right corner of the GEOREF coordinate based on the specified precision.
+        /// </summary>
+        /// <remarks>
+        /// <para>Precision Levels</para>
+        /// <para>0: Quad 15 corners</para>
+        /// <para>1-2: Quad 1 corners</para>
+        /// <para>3-4: Easting and Northing minute corners</para>
+        /// <para>5-11: Easting and Northing seconds corners</para>
+        /// </remarks>
+        /// <param name="precision">Precision</param>
+        /// <returns>GEOREF</returns>
+        public GEOREF Get_TopRightCorner(int precision)
+        {
+            precision = Set_Precision(precision);
+            GEOREF geo = new GEOREF(quad_15, quad_1, easting, northing);
+            geo.Shift_GeoRef(precision, true, true);
+            if (precision < 4)
+            {
+                geo.easting = "0".PadRight(maxprec, '0');
+                geo.northing = "0".PadRight(maxprec, '0');
+                if (precision < 2)
+                {
+                    geo.quad_1 = "AA";
+                }
+            }
+            else
+            {
+                geo.easting = geo.easting.Substring(0, precision - 2).PadRight(maxprec, '0');
+                geo.northing = geo.northing.Substring(0, precision - 2).PadRight(maxprec, '0');
+            }
+            return geo;
+        }
+      
+       
+     
+        private void Shift_GeoRef(int precision, bool latB, bool lngB)
+        {         
+            string lat = quad_15[1].ToString();
+            string lng = quad_15[0].ToString();
+
+            if (latB)
+            {
+                bool quad_1_Lat = false;
+                if (precision >= 2)
+                {
+                    quad_1_Lat = Shift_Quad_1(precision, true, false);
+                }
+                if (quad_1_Lat || precision < 2)
+                {
+                    lat = Shift_Quad_15_Lat(quad_15[1]);
+                    //quad_1 = "A" + quad_1[1];
+                   northing = "0".PadRight(maxprec, '0');
+                }
+            }
+
+            if (lngB)
+            {
+                bool quad_1_Lng = false;
+                if (precision >= 2)
+                {
+                    quad_1_Lng = Shift_Quad_1(precision, false, true);
+                }
+                if (quad_1_Lng || precision < 2)
+                {
+                    lng = Shift_Quad_15_Lng(quad_15[0]);
+                    //quad_1 = quad_1[0] + "A";
+                    easting = "0".PadRight(maxprec, '0');
+                }
+            }
+
+            quad_15 = lng + lat;
+     
+        }
+        private bool Shift_Quad_1(int precision, bool latB, bool lngB)
+        {
+            string lat = quad_1[1].ToString();
+            string lng = quad_1[0].ToString();
+            
+            bool shift = false;
+            
+           
+
+            if (latB)
+            {
+                bool northingB = false;
+                if(precision >= 4)
+                {
+                    northingB = Shift_Northing(precision);
+                }
+                if (northingB || precision < 4)
+                {
+                    lat = Shift_Quad_1_Degree(quad_1[1]);
+                    northing = "0".PadRight(maxprec, '0');
+                    if (lat == "A") { shift = true; }//Shift into next quad15
+                }
+            }
+
+            if (lngB)
+            {
+                bool eastingB = false;
+                if(precision>=4)
+                {
+                    eastingB = Shift_Easting(precision);
+                }
+                if (eastingB || precision < 4)
+                {
+                    lng = Shift_Quad_1_Degree(quad_1[0]);
+                    easting= "0".PadRight(maxprec, '0');
+
+                    if (lng == "A") { shift = true; }//Shift into next quad15
+                }
+            }
+           
+            quad_1 = lng+lat;
+            return shift;
+        }
+        private bool Shift_Easting(int precision)
+        {
+            int minutes = int.Parse(easting.Substring(0, 2));
+            int seconds = int.Parse(easting.Substring(2, maxprec-2));
+
+            precision = precision - 2;
+
+            if(precision > 2)
+            {
+                //Shift Seconds First
+                seconds = Shift_Second(seconds, precision);              
+            }
+            
+            if(precision<= 2 || seconds == 0)
+            {
+                minutes = Shift_Minute(minutes);
+                seconds = 0;
+                if (minutes == 0)
+                {
+                    easting = "0".PadRight(maxprec, '0');
+                    return true;
+                }
+            }      
+
+            easting = minutes.ToString().PadLeft(2, '0') + seconds.ToString().PadLeft(maxprec - 2, '0');
+            return false;
+         
+        }
+        private bool Shift_Northing(int precision)
+        {
+            int minutes = int.Parse(northing.Substring(0, 2));
+            int seconds = int.Parse(northing.Substring(2, maxprec - 2));
+
+            precision = precision - 2;
+
+            if (precision > 2)
+            {
+                //Shift Seconds First
+                seconds = Shift_Second(seconds, precision);
+            }
+
+            if (precision <= 2 || seconds == 0)
+            {
+                minutes = Shift_Minute(minutes);
+                seconds = 0;
+                if (minutes == 0)
+                {
+                    northing = "0".PadRight(maxprec, '0');
+                    return true;
+                }
+            }          
+
+            northing = minutes.ToString().PadLeft(2, '0') + seconds.ToString().PadLeft(maxprec - 2, '0');
+            return false;
+
+        }
+        private int Shift_Minute(int num)
+        {
+            int a = num + 1;
+            if (a >= 60) 
+            { 
+                //Exceeded, Shift Quad 1
+                return 0; 
+            }
+            return a;
+        }
+        private int Shift_Second(int seconds, int precision)
+        {
+            precision = precision - 2;
+            decimal dec = 1000000000;
+            decimal delt = dec;
+            decimal dseconds = seconds / dec; //Decimal keeps leading zeros safe it safe
+
+            for (int x = 0; x < precision; x++)
+            {
+                delt /= 10;
+            }
+            decimal a = dseconds + delt/dec;
+
+            if (a>=(decimal)1.0)
+            {
+                //Exceeded, shift minutes
+                return 0;
+            }
+            return (int)((int)(a * dec / delt) * delt);
+        }
+
+        private int Set_Precision(int precision)
+        {
+            if (precision < 0) { throw new FormatException("The specified precision cannot be less than 0."); }
+            if (precision > maxprec) { throw new FormatException($"The specified precision cannot be greater that {maxprec}"); }
+            if (precision == 1) { return 2; }
+            if (precision == 3) { return 4; }
+            return precision;
         }
         private string Shift_Quad_15_Lng(char c)
         {
             if (c == 'Z') { return "A"; }
             int i = (int)c;
             i++;
+            if ((char)i == 'I') { i++; } //I does not exist
+            return ((char)i).ToString();
+        }
+        private string Shift_Quad_15_Lat(char c)
+        {
+            if (c == 'M') { return "A"; }
+            int i = (int)c;
+            i++;
+            if ((char)i == 'I') { i++; } //I does not exist
             return ((char)i).ToString();
         }
         private string Shift_Quad_1_Degree(char c)
@@ -523,21 +763,10 @@ namespace CoordinateSharp
             if (c == 'Q') { return "A"; }
             int i = (int)c;
             i++;
+            if ((char)i == 'I') { i++; } //I does not exist
             return ((char)i).ToString();
         }
-        private int Shift_Minutes(int min)
-        {
-            if (min == 60) { return 0; }
-            return min + 1;
-        }
-        private decimal Shift_Seconds(decimal sec)
-        {
-            //Decimal Places
-            sec = sec/1.000000000000000000000000000000000m; //Normalize
-            int count = BitConverter.GetBytes(decimal.GetBits(sec)[3])[2];
-            decimal add = 1 / (decimal)Math.Pow(10, count);
-            return sec + add;
-        }
+
         #endregion
     }
 }

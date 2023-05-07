@@ -58,11 +58,6 @@ namespace CoordinateSharp
     public static class GlobalSettings
     {
         /// <summary>
-        /// Stores utc offset value allowing for validation in primary setter.
-        /// </summary>
-        private static double default_utc_offset = 0;
-
-        /// <summary>
         /// Application wide, default EagerLoad settings for CoordinateSharp.
         /// </summary>
         public static EagerLoad Default_EagerLoad { get; set; } = new EagerLoad(true);

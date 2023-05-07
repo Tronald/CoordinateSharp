@@ -50,15 +50,17 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.17.1.1</Version>
+    <Version>2.18.1.1</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2023</Copyright>
-    <Description>A simple library designed to assist with geographic coordinate conversions, formatting and location based solar and lunar information.</Description>
-    <PackageReleaseNotes>-Adds ability to operate Coordinate objects in the environment's local time by default.
--Update branding package &amp; license. </PackageReleaseNotes>
+    <Description>CoordinateSharp is a high powered, lightweight .NET library that can convert geographical coordinates, perform distance logic, and calculate location based sun, moon, and magnetic information with minimal code.</Description>
+    <PackageReleaseNotes>-Improves UTM and MGRS conversion efficiency by 13x.
+-Adds ability create geofence from a specified GEOREF coordinate and precision level.
+-Adds ability to locate GEOREF box corners based on a given precision level.
+-Restricts GEOREF easting and northing minutes and seconds to 59.999... to comply with library standards.</PackageReleaseNotes>
     <PackageTags>Conversion; Latitude; Longitude; Coordinates; Geography; Sun; Moon; Solar; Lunar; Time; MGRS; UTM; EPSG:3857; ECEF; GEOREF; Web Mercator;</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>    <PackageIconUrl></PackageIconUrl>
