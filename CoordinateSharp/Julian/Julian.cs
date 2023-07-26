@@ -43,6 +43,8 @@ Organizations or use cases that fall under the following conditions may receive 
 Please visit http://coordinatesharp.com/licensing or contact Signature Group, LLC to purchase a commercial license, or for any questions regarding the AGPL 3.0 license requirements or free use license: sales@signatgroup.com.
 */
 using System;
+using System.Diagnostics;
+
 namespace CoordinateSharp
 {
     /// <summary>
@@ -125,6 +127,10 @@ namespace CoordinateSharp
         /// Returns date from Julian
         /// Meeus ch. 7
         /// </summary>
+        /// <remarks>
+        /// The Gregorian calendar (started in 1582) contains different leap year rules than the Julian calendar. To avoid exceptions, any invalid pre-1582 Gregorian leap year conversions of
+        /// February 29th will shift to March 1st. As such you may see two consecutive Julian to Gregorian conversions produce a date of March 1st on rare occasions.  
+        /// </remarks>
         /// <param name="j">Julian date</param>
         /// <returns>DateTime</returns>
         /// <example>
@@ -136,7 +142,7 @@ namespace CoordinateSharp
         /// </example>
         public static DateTime? GetDate_FromJulian(double j)
         {
-            if (Double.IsNaN(j)) { return null; } //No Event Occured
+            if (Double.IsNaN(j)) { return null; } //No Event Occurred
 
             j = j + .5;
             double Z = Math.Floor(j);
@@ -176,6 +182,19 @@ namespace CoordinateSharp
             hours = Math.Floor(hours);
             minutes = Math.Floor(minutes);
 
+            //Leap year safety check due to differences in Julian and Gregorian calendars.
+            //This limitation of CoordinateSharp is documented. Safety check implemented to prevent breakage.
+            if (month == 2 && day == 29)
+            {
+                if (year / 100 == (int)(year / 100) && year / 400 != (int)(year / 400))
+                {
+                    Debug.WriteLine($"CAUTION: Julian date {j} does not exist on the Gregorian calendar (29-FEB-{year}). Shifting to next Gregorian day (1-MAR-{year}).");
+                    month++;
+                    day = 1;
+
+                }
+            }
+
             DateTime? date = new DateTime?(new DateTime((int)year, (int)month, (int)day, (int)hours, (int)minutes, (int)seconds));
             return date;
         }
@@ -183,6 +202,10 @@ namespace CoordinateSharp
         /// Returns date from Julian based on epoch 2000
         /// Meeus ch. 7
         /// </summary>
+        /// <remarks>
+        /// The Gregorian calendar (started in 1582) contains different leap year rules than the Julian calendar. To avoid exceptions, any invalid pre-1582 Gregorian leap year conversions of
+        /// February 29th will shift to March 1st. As such you may see two consecutive Julian to Gregorian conversions produce a date of March 1st on rare occasions.  
+        /// </remarks>
         /// <param name="j">Julian date (epoch 2000)</param>
         /// <returns>DateTime</returns>
         /// <example>
@@ -200,6 +223,10 @@ namespace CoordinateSharp
         /// Returns date from Julian based on epoch 1970
         /// Meeus ch. 7
         /// </summary>
+        /// <remarks>
+        /// The Gregorian calendar (started in 1582) contains different leap year rules than the Julian calendar. To avoid exceptions, any invalid pre-1582 Gregorian leap year conversions of
+        /// February 29th will shift to March 1st. As such you may see two consecutive Julian to Gregorian conversions produce a date of March 1st on rare occasions.  
+        /// </remarks>
         /// <param name="j">Julian date (epoch 1970)</param>
         /// <returns>DateTime</returns>
         /// <example>
