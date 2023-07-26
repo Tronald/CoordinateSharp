@@ -433,7 +433,7 @@ namespace CoordinateSharp
           
             double tdec = Math.Asin(Math.Sin(E.ToRadians()) * Math.Sin(trueLongitude.ToRadians())); //25.7 True declination. Asin used in liu of sin.
 
-            double CE = E + .00256 * Math.Cos(ascendingNode.ToRadians());//22.2 Obliquity of the ecliptic
+            double CE = E + .00256 * Math.Cos(ascendingNode.ToRadians());//25.6 & 25.7 Apparent position of the sun.
 
             double ara = Math.Atan2(Math.Cos(CE.ToRadians()) * Math.Sin(apparentLongitude.ToRadians()), Math.Cos(apparentLongitude.ToRadians())); //25.8 Apparent Right Ascensions. Using Atan2 we can move tan to the right side of the function with Numerator, Denominator           
             double adec = Math.Asin(Math.Sin(CE.ToRadians()) * Math.Sin(apparentLongitude.ToRadians())); //25.8 Apparent declination. Asin used in liu of sin.
@@ -443,6 +443,7 @@ namespace CoordinateSharp
             //Set to degrees
             //celC.trueRightAscension = tra.ToDegrees();
             //celC.trueDeclination = tdec.ToDegrees();
+            var tr = tra.ToDegrees().NormalizeDegrees360();
             celC.rightAscension = ara.ToDegrees().NormalizeDegrees360();
             celC.declination = adec.ToDegrees();
             celC.julianDayDecimal = JD-.5 - Math.Floor(JD-.5);
@@ -450,7 +451,8 @@ namespace CoordinateSharp
             celC.longitude = apparentLongitude.NormalizeDegrees360();
             celC.radiusVector = R;
             celC.geometricMeanLongitude = L0.NormalizeDegrees360();
-            //Latitude is always 0 for sun as perturbations no accounted for in low accuracy formulas
+            celC.obliquityOfEcliptic = E.NormalizeDegrees360();
+            //Latitude is always 0 for sun as perturbations not accounted for in low accuracy formulas
             celC.latitude = 0;
             celC.trueLatitude = 0;
 

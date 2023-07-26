@@ -6,6 +6,8 @@ using System.Runtime.Serialization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using NuGet.Frameworks;
+
 namespace CoordinateSharp_UnitTests
 {
     [TestClass]
@@ -115,6 +117,24 @@ namespace CoordinateSharp_UnitTests
             double signed = -2318.19280;
             Assert.AreEqual(201.80720, Format.NormalizeDegrees360(signed),.000000001);
         }
+
+        [TestMethod]
+        public void JulianLeapYearSafetyCheck()
+        {
+            //Ensure no throws due to calendar differences
+            JulianConversions.GetDate_FromJulian(1757641.5);
+
+            for (int x = 100; x < 2400; x += 100)
+            {
+                Celestial.CalculateCelestialTimes(39, -72, new DateTime(x, 2, 26));
+                Celestial.CalculateCelestialTimes(39, -72, new DateTime(x, 4, 21, 10, 10, 12));
+            }
+           
+            
+
+        }
+
+       
 
         /// <summary>
         /// Ensures Coordinate and serialize in binary and deserialze properly

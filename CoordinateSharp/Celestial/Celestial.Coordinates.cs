@@ -54,6 +54,7 @@ namespace CoordinateSharp
     public class SolarCoordinates
     {
         //Test Against https://www.timeanddate.com/worldclock/sunearth.html     
+
         internal double trueLongitude;
         internal double trueLatitude;
         internal double julianDayDecimal;
@@ -64,7 +65,7 @@ namespace CoordinateSharp
         internal double rightAscension;
         internal double declination;
         internal double geometricMeanLongitude;
-    
+        internal double obliquityOfEcliptic; 
 
         /// <summary>
         /// Radius Vector (expressed in astronomical units).
@@ -95,6 +96,11 @@ namespace CoordinateSharp
         /// Geometric Mean Longitude.
         /// </summary>
         public double GeometricMeanLongitude { get { return geometricMeanLongitude; } }
+
+        /// <summary>
+        /// Obliquity of the Ecliptic
+        /// </summary>
+        public double ObliquityOfEcliptic { get { return obliquityOfEcliptic; } }
 
         /// <summary>
         /// Subsolar Latitude. The point at which the sun is perceived to be directly overhead of the Earth (at the zenith).
