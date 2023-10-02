@@ -69,7 +69,48 @@ namespace CoordinateSharp_UnitTests
             //ADD UPS
 
         }
+        [TestMethod]
+        public void UTM_Initializes_Out_Of_Bounds()
+        {
 
+            UniversalTransverseMercator utm = new UniversalTransverseMercator("Q", 0, 581943.5, 2111989.8);
+            Assert.IsTrue(utm.Out_Of_Bounds);
+
+            utm = new UniversalTransverseMercator("Q", 61, 581943.5, 2111989.8);
+            Assert.IsTrue(utm.Out_Of_Bounds);
+
+            utm = new UniversalTransverseMercator("14I", 581943.5, 2111989.8);
+            Assert.IsTrue(utm.Out_Of_Bounds);
+
+            utm = new UniversalTransverseMercator("14Q", 15999, 2111989.8);
+            Assert.IsTrue(utm.Out_Of_Bounds);
+
+            utm = new UniversalTransverseMercator("14Q", 834001, 2111989.8);
+            Assert.IsTrue(utm.Out_Of_Bounds);
+
+            utm = new UniversalTransverseMercator("14Q", 832000, -1);
+            Assert.IsTrue(utm.Out_Of_Bounds);
+
+            utm = new UniversalTransverseMercator("14Q", 832000, 10000001);
+            Assert.IsTrue(utm.Out_Of_Bounds);
+
+            //UPS
+            utm = new UniversalTransverseMercator("14A", 886999, 3113000);
+            Assert.IsTrue(utm.Out_Of_Bounds);
+
+            utm = new UniversalTransverseMercator("14A", 3113001, 3113000);
+            Assert.IsTrue(utm.Out_Of_Bounds);
+
+            utm = new UniversalTransverseMercator("14A", 887000, 3113001);
+            Assert.IsTrue(utm.Out_Of_Bounds);
+
+            utm = new UniversalTransverseMercator("14A", 887000, 886999);
+            Assert.IsTrue(utm.Out_Of_Bounds);
+
+            utm = new UniversalTransverseMercator("Q", 45, 581943.5, 2111989.8);
+            Assert.IsFalse(utm.Out_Of_Bounds);
+
+        }
         /// <summary>
         /// Test MGRS initialization to ensure no exceptions are thrown.
         /// </summary>

@@ -137,7 +137,7 @@ namespace CoordinateSharp_UnitTests
        
 
         /// <summary>
-        /// Ensures Coordinate and serialize in binary and deserialze properly
+        /// Ensures Coordinate and serialize in binary and deserialize properly
         /// </summary>
         [TestMethod]
         public void Binary_Serialization()

@@ -8,6 +8,7 @@ using System.IO;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Reflection.Metadata.Ecma335;
 
 namespace CoordinateSharp_UnitTests
 {
@@ -590,6 +591,30 @@ namespace CoordinateSharp_UnitTests
             c = new Coordinate(76, -45, new DateTime(2021, 8, 18, 10,7,0));           
             t = Celestial.Get_Time_at_Solar_Altitude(c, -.8);
             Assert.AreEqual(CelestialStatus.NoSet, t.Condition);
+        }
+
+        [TestMethod]
+        public void Time_at_Azimuth_Tests()
+        {
+            Random r = new Random();
+            for (int x = 0; x < 100; x++)
+            {
+                double lat = r.Next(-80, 80);
+                double lng = r.Next(-180, 180);
+                DateTime d = new DateTime(r.Next(2000, 2050), r.Next(1, 12), r.Next(1, 28));
+                double az = r.Next(90, 270);
+                double offset = r.Next(-12, 12);
+                Coordinate c = new Coordinate(lat, lng, d, new EagerLoad(false));
+                c.Offset = offset;
+                DateTime? t = Celestial.Get_Time_At_Solar_Azimuth(az, c);
+                if (t == null) { continue; }
+
+                c = new Coordinate(lat,lng,t.Value, new EagerLoad(EagerLoadType.Celestial));
+                c.Offset = offset;
+                Assert.AreEqual(az, c.CelestialInfo.SunAzimuth, .7);
+            }
+           
+           
         }
 
         /// <summary>

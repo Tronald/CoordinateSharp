@@ -11,7 +11,7 @@ License
 
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
-Copyright (C) 2022, Signature Group, LLC
+Copyright (C) 2023, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
 as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
@@ -61,6 +61,7 @@ namespace CoordinateSharp
         private int longZone;
         private double easting;
         private double northing;
+        private bool out_of_bounds=false;
 
         private UTM_Type systemType = UTM_Type.UTM;
      
@@ -112,6 +113,13 @@ namespace CoordinateSharp
             get { return inverse_flattening; }
         }
 
+        /// <summary>
+        /// Specifies whether the current coordinate was created outside of system specified limitations. Does not apply if zone locking is used within a Coordinate object.
+        /// </summary>
+        public bool Out_Of_Bounds
+        {
+            get { return out_of_bounds; }
+        }
       
         
         /// <summary>

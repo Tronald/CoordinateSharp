@@ -47,7 +47,7 @@ For more information, please contact Signature Group, LLC at this address: sales
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.1.9.0</Version>
+    <Version>1.1.10.0</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
