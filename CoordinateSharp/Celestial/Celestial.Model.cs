@@ -11,7 +11,7 @@ License
 
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
-Copyright (C) 2022, Signature Group, LLC
+Copyright (C) 2023, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
 as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
@@ -81,6 +81,7 @@ namespace CoordinateSharp
         internal Apogee apogee;
         internal AdditionalSolarTimes additionalSolarTimes;
         internal AstrologicalSigns astrologicalSigns;
+        internal AlmanacMoonName almanacMoonName;
         internal SolarEclipse solarEclipse;
         internal LunarEclipse lunarEclipse;
         internal Solstices solstices;
@@ -247,13 +248,24 @@ namespace CoordinateSharp
         /// </summary>
         /// <remarks>Contains dawn, dusk and twilight times.</remarks>
         public AdditionalSolarTimes AdditionalSolarTimes { get { return additionalSolarTimes; } }
+       
         /// <summary>
         /// Astrological signs based on the provided date.
         /// </summary>
         /// <remarks>
         /// Contains zodiac, moon sign and moon name during full moon events.
-        /// </remarks>
+        /// </remarks>       
+        [Obsolete("Astrological sign calculations have been deprecated and are being removed from CoordinateSharp. Moon names will still be available via the " +
+        "AlmanacMoonName class contained within the CelestialInfo class.")]
         public AstrologicalSigns AstrologicalSigns { get { return astrologicalSigns; } }
+
+        /// <summary>
+        /// Farmers Almanac moon names
+        /// </summary>
+        /// <remarks>
+        /// Contains farmers almanac moon name.
+        /// </remarks>
+        public AlmanacMoonName AlmanacMoonName { get { return almanacMoonName; } }
 
         /// <summary>
         /// Solar eclipse details.

@@ -11,7 +11,7 @@ License
 
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
-Copyright (C) 2022, Signature Group, LLC
+Copyright (C) 2023, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
 as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
@@ -244,9 +244,11 @@ namespace CoordinateSharp
         }
     }
     /// <summary>
-    /// Class for storing astrological sign information.
+    /// Class for storing astrological naming and sign information.
     /// </summary>
     [Serializable]
+    [Obsolete("Astrological sign calculations have been deprecated and are being removed from CoordinateSharp. Moon names will still be available via the " +
+        "AlmanacMoonName class contained within the CelestialInfo class.")]
     public class AstrologicalSigns
     {     
         internal MoonName emoonName = CoordinateSharp.MoonName.None;
@@ -281,25 +283,25 @@ namespace CoordinateSharp
         }
         /// <summary>
         /// Astrological Moon Sign String.
-        /// </summary>
+        /// </summary>       
         public string MoonSign 
         { 
             get 
             {
                 switch (emoonSign)
                 {
-                    case CoordinateSharp.AstrologicalSignType.Aries: return "Aries";
-                    case CoordinateSharp.AstrologicalSignType.Taurus: return "Taurus";
-                    case CoordinateSharp.AstrologicalSignType.Gemini: return "Gemini";
-                    case CoordinateSharp.AstrologicalSignType.Cancer: return "Cancer";
-                    case CoordinateSharp.AstrologicalSignType.Leo: return "Leo";
-                    case CoordinateSharp.AstrologicalSignType.Virgo: return "Virgo";
-                    case CoordinateSharp.AstrologicalSignType.Libra: return "Libra";
-                    case CoordinateSharp.AstrologicalSignType.Scorpio: return "Scorpio";
-                    case CoordinateSharp.AstrologicalSignType.Sagittarius: return "Sagittarius";
-                    case CoordinateSharp.AstrologicalSignType.Capricorn: return "Capricorn";
-                    case CoordinateSharp.AstrologicalSignType.Aquarius: return "Aquarius";
-                    case CoordinateSharp.AstrologicalSignType.Pisces: return "Pisces";
+                    case AstrologicalSignType.Aries: return "Aries";
+                    case AstrologicalSignType.Taurus: return "Taurus";
+                    case AstrologicalSignType.Gemini: return "Gemini";
+                    case AstrologicalSignType.Cancer: return "Cancer";
+                    case AstrologicalSignType.Leo: return "Leo";
+                    case AstrologicalSignType.Virgo: return "Virgo";
+                    case AstrologicalSignType.Libra: return "Libra";
+                    case AstrologicalSignType.Scorpio: return "Scorpio";
+                    case AstrologicalSignType.Sagittarius: return "Sagittarius";
+                    case AstrologicalSignType.Capricorn: return "Capricorn";
+                    case AstrologicalSignType.Aquarius: return "Aquarius";
+                    case AstrologicalSignType.Pisces: return "Pisces";
 
                     default: return null;
                 }
@@ -315,18 +317,18 @@ namespace CoordinateSharp
             {
                 switch (ezodiacSign)
                 {
-                    case CoordinateSharp.AstrologicalSignType.Aries: return "Aries";
-                    case CoordinateSharp.AstrologicalSignType.Taurus: return "Taurus";
-                    case CoordinateSharp.AstrologicalSignType.Gemini: return "Gemini";
-                    case CoordinateSharp.AstrologicalSignType.Cancer: return "Cancer";
-                    case CoordinateSharp.AstrologicalSignType.Leo: return "Leo";
-                    case CoordinateSharp.AstrologicalSignType.Virgo: return "Virgo";
-                    case CoordinateSharp.AstrologicalSignType.Libra: return "Libra";
-                    case CoordinateSharp.AstrologicalSignType.Scorpio: return "Scorpio";
-                    case CoordinateSharp.AstrologicalSignType.Sagittarius: return "Sagittarius";
-                    case CoordinateSharp.AstrologicalSignType.Capricorn: return "Capricorn";
-                    case CoordinateSharp.AstrologicalSignType.Aquarius: return "Aquarius";
-                    case CoordinateSharp.AstrologicalSignType.Pisces: return "Pisces";
+                    case AstrologicalSignType.Aries: return "Aries";
+                    case AstrologicalSignType.Taurus: return "Taurus";
+                    case AstrologicalSignType.Gemini: return "Gemini";
+                    case AstrologicalSignType.Cancer: return "Cancer";
+                    case AstrologicalSignType.Leo: return "Leo";
+                    case AstrologicalSignType.Virgo: return "Virgo";
+                    case AstrologicalSignType.Libra: return "Libra";
+                    case AstrologicalSignType.Scorpio: return "Scorpio";
+                    case AstrologicalSignType.Sagittarius: return "Sagittarius";
+                    case AstrologicalSignType.Capricorn: return "Capricorn";
+                    case AstrologicalSignType.Aquarius: return "Aquarius";
+                    case AstrologicalSignType.Pisces: return "Pisces";
 
                     default: return null;
                 }
@@ -337,15 +339,59 @@ namespace CoordinateSharp
         /// Astrological Moon Name.
         /// </summary>
         public MoonName EMoonName { get { return emoonName; } }
+      
         /// <summary>
         /// Astrological Moon Sign.
         /// </summary>
+        [Obsolete("")]
         public AstrologicalSignType EMoonSign { get { return emoonSign; } }
 
         /// <summary>
         /// Astrological Zodiac Sign.
         /// </summary>
+        [Obsolete("")]
         public AstrologicalSignType EZodiacSign { get { return ezodiacSign; } }
+    }
+ 
+    /// <summary>
+    /// Class for storing farmers almanac moon names.
+    /// </summary>
+    [Serializable]
+    public class AlmanacMoonName
+    {
+        internal MoonName emoonName = CoordinateSharp.MoonName.None;
+        /// <summary>
+        /// Astrological Moon Name String.
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                switch (emoonName)
+                {
+                    case MoonName.Wolf: return "Wolf Moon";
+                    case MoonName.Snow: return "Snow Moon";
+                    case MoonName.Worm: return "Worm Moon";
+                    case MoonName.Pink: return "Pink Moon";
+                    case MoonName.Flower: return "Flower Moon";
+                    case MoonName.Strawberry: return "Strawberry Moon";
+                    case MoonName.Buck: return "Buck Moon";
+                    case MoonName.Sturgeon: return "Sturgeon Moon";
+                    case MoonName.Corn: return "Corn Moon";
+                    case MoonName.Hunters: return "Hunters Moon";
+                    case MoonName.Beaver: return "Beaver Moon";
+                    case MoonName.Blue: return "Blue Moon";
+                    case MoonName.Cold: return "Cold Moon";
+                    default: return null;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Farmers Almanac Moon Name.
+        /// </summary>
+        public MoonName EName { get { return emoonName; } }
     }
     /// <summary>
     /// Class containing detailed lunar eclipse information.

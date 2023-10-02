@@ -11,7 +11,7 @@ License
 
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
-Copyright (C) 2022, Signature Group, LLC
+Copyright (C) 2023, Signature Group, LLC
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3
 as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a):
@@ -175,20 +175,30 @@ namespace CoordinateSharp
                 systemType = UTM_Type.UPS;
                 if (longz != 0)
                 {
+                    //Ignore Long Zones as they do not exist in UPS. Warn to indicate issue. Users should create their own checks on this value as required.
                     Warn(suppressWarnings, "UPS Longitudinal Zone Invalid", "You passed a UPS coordinate. The longitudinal zone should be set to 0.");
                 }
             }
-            else if (longz < 1 || longz > 60) { Warn(suppressWarnings, "Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
+            else if (longz < 1 || longz > 60) 
+            { 
+               
+                Warn(suppressWarnings, "Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60.");
+                out_of_bounds = true; 
+            }
 
 #if DEBUG // Warn does nothing in RELEASE mode, strip Verify_Lat_Zone call because it is very expensive 
-            if (!Verify_Lat_Zone(latz)) {Warn(suppressWarnings, "Latitudinal zone invalid", "UTM latitudinal zone was unrecognized.");        }
+            if (!Verify_Lat_Zone(latz))
+            {
+                Warn(suppressWarnings, "Latitudinal zone invalid", "UTM latitudinal zone was unrecognized.");
+                out_of_bounds = true;
+            }
 #endif
 
-            if (systemType== UTM_Type.UTM && ( est < 160000 || est > 834000)) {  Warn(suppressWarnings, "The Easting value provided is outside the max allowable range. Use with caution.");  }
-            if (systemType == UTM_Type.UPS && (est < 887000 || est > 3113000)) { Warn(suppressWarnings, "The Easting value provided is outside the max allowable range. Use with caution.");  }
+            if (systemType== UTM_Type.UTM && ( est < 160000 || est > 834000)) {  Warn(suppressWarnings, "The Easting value provided is outside the max allowable range. Use with caution."); out_of_bounds = true; }
+            if (systemType == UTM_Type.UPS && (est < 887000 || est > 3113000)) { Warn(suppressWarnings, "The Easting value provided is outside the max allowable range. Use with caution."); out_of_bounds = true; }
 
-            if (systemType == UTM_Type.UTM && (nrt < 0 || nrt > 10000000)){ Warn(suppressWarnings, "Northing out of range", "Northing must be between 0-10,000,000.");  }
-            if (systemType == UTM_Type.UPS && (nrt < 887000 || nrt > 3113000)) {  Warn(suppressWarnings, "Northing out of range", "Northing must be between 0-10,000,000."); }
+            if (systemType == UTM_Type.UTM && (nrt < 0 || nrt > 10000000)){ Warn(suppressWarnings, "Northing out of range", "Northing must be between 0-10,000,000."); out_of_bounds = true; }
+            if (systemType == UTM_Type.UPS && (nrt < 887000 || nrt > 3113000)) {  Warn(suppressWarnings, "Northing out of range", "Northing must be between 887,000-3,113,000."); out_of_bounds = true; }
 
 
 
@@ -231,46 +241,7 @@ namespace CoordinateSharp
 
             coordinate = c;
         }
-        /// <summary>
-        /// Constructs a UTM object based off a UTM coordinate
-        /// Not yet implemented
-        /// </summary>
-        /// <param name="latz">Zone Letter</param>
-        /// <param name="longz">Zone Number</param>
-        /// <param name="e">Easting</param>
-        /// <param name="n">Northing</param>
-        /// <param name="c">Parent Coordinate Object</param>
-        /// <param name="rad">Equatorial Radius</param>
-        /// <param name="flt">Inverse Flattening</param>
-        /// <param name="suppressWarnings">Suppress UTM System Warnings</param>
-        internal UniversalTransverseMercator(string latz, int longz, double e, double n, Coordinate c, double rad, double flt, bool suppressWarnings)
-        {
-            //validate utm
-            if (ZonesRegex.UpsZoneRegex.IsMatch(latz))
-            {
-                systemType = UTM_Type.UPS;
-                if (longz != 0)
-                {
-                    Debug.WriteLine("UPS Longitudinal Zone Invalid", "You passed a UPS coordinate. The longitudinal zone should be set to 0.");
-                }
-            }
-            else if (longz < 1 || longz > 60) { Warn(suppressWarnings, "Longitudinal zone out of range", "UTM longitudinal zones must be between 1-60."); }
-            if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
-            if (e < 160000 || e > 834000) { Warn(suppressWarnings, "The Easting value provided is outside the max allowable range. If this is intentional, use with caution."); }
-            if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
-
-            equatorial_radius = rad;
-            inverse_flattening = flt;
-            latZone = latz;
-            longZone = longz;
-
-            easting = e;
-            northing = n;
-
-            coordinate = c;
-
-        }
-
+      
         /// <summary>
         /// Verifies Lat zone when convert from UTM to DD Lat/Long
         /// </summary>
@@ -373,7 +344,7 @@ namespace CoordinateSharp
             }
             else { utmz = szone.Value; }
             // longitude to utm zone
-            double zcm = 3 + 6.0 * (utmz - 1) - 180;                     // central meridian of a zone
+            double zcm = 3 + 6.0 * (utmz - 1) - 180; // central meridian of a zone
                                                      // this gives us zone A-B for below 80S
             double esq = (1 - (b / a) * (b / a));
             double e0sq = e * e / (1 - Math.Pow(e, 2));

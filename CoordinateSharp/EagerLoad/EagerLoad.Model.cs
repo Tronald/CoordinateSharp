@@ -11,7 +11,7 @@ License
 
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
-Copyright (C) 2022, Signature Group, LLC
+Copyright (C) 2023, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
 as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
@@ -131,6 +131,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Eager load zodiac data.
         /// </summary>
+        [Obsolete("Zodiacs have been deprecated and are being removed from CoordinateSharp. Almanac moon names will still be available view the AlmanacMoonName class. They will be eager loaded with the 'Lunar_Cyle'.")]
         public bool Zodiac { get; set; }
         /// <summary>
         /// Eager load MGRS data.

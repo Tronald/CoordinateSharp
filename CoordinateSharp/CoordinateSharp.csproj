@@ -12,7 +12,7 @@ License
 
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
-Copyright (C) 2022, Signature Group, LLC
+Copyright (C) 2023, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
 as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
@@ -50,27 +50,29 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.19.1.1</Version>
+    <Version>2.20.1.1</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2023</Copyright>
     <Description>CoordinateSharp is a high powered, lightweight .NET library that can convert geographical coordinates, perform distance logic, and calculate location based sun, moon, and magnetic information with minimal code.</Description>
-    <PackageReleaseNotes>-Fixes "Leap Year Bug" impacting celestial calculations and Julian date conversions prior to 1582 (pre-Gregorian).
--Exposes the Obliquity of Ecliptic value within the SolarCoordinate class.</PackageReleaseNotes>
+    <PackageReleaseNotes>-Adds ability to estimate time of day from sun azimuth.
+-Adds "out of bounds" check to UTM initialization, allowing users to detect over projection.
+-Deprecates 'AstrologicalSigns' class and replaces with new 'AlmanacMoonName' class.
+-Various documentation fixes.</PackageReleaseNotes>
     <PackageTags>Conversion; Latitude; Longitude; Coordinates; Geography; Sun; Moon; Solar; Lunar; Time; MGRS; UTM; EPSG:3857; ECEF; GEOREF; Web Mercator;</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>    <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
-    <AssemblyVersion>2.19.1.1</AssemblyVersion>
+    <AssemblyVersion>2.20.1.1</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>128x128.png</PackageIcon>
     <AssemblyOriginatorKeyFile>CoordinateSharp Strong Name.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
-    <FileVersion>2.19.1.1</FileVersion>
+    <FileVersion>2.20.1.1</FileVersion>
     <RepositoryUrl>https://github.com/Tronald/CoordinateSharp</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -189,7 +191,7 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
     <Folder Include="Debuggers\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net40" Version="1.0.2">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net40" Version="1.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

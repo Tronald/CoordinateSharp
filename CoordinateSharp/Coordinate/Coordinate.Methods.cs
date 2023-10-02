@@ -11,7 +11,7 @@ License
 
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
-Copyright (C) 2022, Signature Group, LLC
+Copyright (C) 2023, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
 as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
@@ -921,7 +921,7 @@ namespace CoordinateSharp
         public void Lock_UTM_MGRS_Zone(int zone)
         {
             //Ensure zone limits are not exceeded
-            if(zone<1 || zone>60) {throw new ArgumentOutOfRangeException("UTM and MGRS latitudinal zone is out of range."); }
+            if(zone<1 || zone>60) {throw new ArgumentOutOfRangeException("UTM and MGRS Longitudinal zone is out of range."); }
             utm_mgrs_LongitudeZone_Override = zone;
             NotifyPropertyChanged("UTM");
             NotifyPropertyChanged("MGRS");

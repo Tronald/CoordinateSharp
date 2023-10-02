@@ -11,7 +11,7 @@ License
 
 CoordinateSharp is split licensed and may be licensed under the GNU Affero General Public License version 3 or a commercial use license as stated.
 
-Copyright (C) 2022, Signature Group, LLC
+Copyright (C) 2023, Signature Group, LLC
   
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 
 as published by the Free Software Foundation with the addition of the following permission added to Section 15 as permitted in Section 7(a): 
@@ -1279,6 +1279,153 @@ namespace CoordinateSharp
         {
             offset *= -1; //REVERSE OFFSET FOR POSITIONING
             return MoonCalc.GetMoonCoords(date, offset);
+        }
+
+        /// <summary>
+        /// Returns the estimated time of day at the provided coordinate based on the azimuth of the sun at the current date, with an azimuth delta of 1.
+        /// </summary>
+        /// <param name="azimuth">Sun azimuth in degrees</param>
+        /// <param name="c">Coordinate</param>
+        /// <returns>DateTime?</returns>
+        /// <remarks>Returns null if azimuth does not exist for day or sun is down. May not be reliable in circumpolar regions</remarks>
+        /// <example>
+        /// <code>
+        /// DateTime d = new DateTime(2023, 9, 29);
+        /// double azimuth = 190.1
+        /// 
+        /// Coordinate c = new Coordinate(47.3, -122, d);
+        /// 
+        /// DateTime timeAtAzimuth = Get_Time_At_Solar_Azimuth(azimuth, c);
+        ///  
+        /// Console.WriteLine($"TIME AT AZ: {timeAtAzimuth}"); //9/29/2023 1:31:03 PM
+        /// </code>
+        /// </example>
+        public static DateTime? Get_Time_At_Solar_Azimuth(double azimuth, Coordinate c)
+        {
+           return Get_Time_At_Solar_Azimuth(azimuth, c, 1);
+        }
+
+        /// <summary>
+        /// Returns the estimated time of day at the provided coordinate based on the azimuth of the sun at the current date with a specified azimuth delta.
+        /// </summary>
+        /// <param name="azimuth">Sun azimuth in degrees</param>
+        /// <param name="c">Coordinate</param>
+        /// <param name="delta">Error Delta</param>
+        /// <returns>DateTime?</returns>
+        /// <remarks>Returns null if azimuth does not exist for day or sun is down. May not be reliable in circumpolar regions</remarks>
+        /// <example>
+        /// <code>
+        /// DateTime d = new DateTime(2023, 9, 29);
+        /// double azimuth = 190.1
+        /// 
+        /// Coordinate c = new Coordinate(47.3, -122, d);
+        /// 
+        /// DateTime timeAtAzimuth = Get_Time_At_Solar_Azimuth(azimuth, c);
+        ///  
+        /// Console.WriteLine($"TIME AT AZ: {timeAtAzimuth}"); //9/29/2023 1:31:03 PM
+        /// </code>
+        /// </example>
+        public static DateTime? Get_Time_At_Solar_Azimuth(double azimuth, Coordinate c, double delta)
+        {
+            DateTime d = c.GeoDate.Date; //Set to date
+            DateTime hour = Get_Hour(d, azimuth, c);
+            DateTime minutes = Get_Minute(hour, azimuth, c);
+            DateTime seconds = Get_Seconds(minutes, azimuth, c);
+
+            Coordinate nc = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble(), seconds, new EagerLoad(EagerLoadType.Celestial));
+            nc.Offset = c.Offset;
+            if (!nc.CelestialInfo.isSunUp || Math.Abs(azimuth - nc.CelestialInfo.sunAzimuth) > delta)
+            {
+                return null;
+            }
+
+            return seconds;
+        }
+
+        private static DateTime Get_Hour(DateTime d, double azimuth, Coordinate c)
+        {
+            EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
+            int closeHour = 0;
+            double az = 999;
+            DateTime nd = new DateTime(d.Year, d.Month, d.Day);
+            for (int x = 0; x < 24; x++)
+            {
+                Coordinate nc = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble(), nd.AddHours(x), el);
+                nc.Offset = c.Offset;
+                if (Math.Abs(nc.CelestialInfo.SunAzimuth - azimuth) < az)
+                {
+                    az = Math.Abs(nc.CelestialInfo.SunAzimuth - azimuth);
+                    closeHour = x;
+                }
+            }
+
+
+            return d.AddHours(closeHour);
+        }
+
+        private static DateTime Get_Minute(DateTime d, double azimuth, Coordinate c)
+        {
+            EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
+            int closeMinutes = 0;
+            double az = 999;
+            DateTime nd = new DateTime(d.Year, d.Month, d.Day, d.Hour, 0, 0);
+            for (int x = 0; x < 60; x++)
+            {
+                Coordinate nc = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble(), nd.AddMinutes(x), el);
+                nc.Offset = c.Offset;
+                if (Math.Abs(nc.CelestialInfo.SunAzimuth - azimuth) < az)
+                {
+                    az = Math.Abs(nc.CelestialInfo.SunAzimuth - azimuth);
+                    closeMinutes = x;
+                }
+            }
+
+            for (int x = 0; x < 60; x++)
+            {
+                Coordinate nc = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble(), nd.AddMinutes(-x), el);
+                nc.Offset = c.Offset;
+                if (Math.Abs(nc.CelestialInfo.SunAzimuth - azimuth) < az)
+                {
+                    az = Math.Abs(nc.CelestialInfo.SunAzimuth - azimuth);
+                    closeMinutes = -x;
+                }
+            }
+
+            return d.AddMinutes(closeMinutes);
+        }
+
+        private static DateTime Get_Seconds(DateTime d, double azimuth, Coordinate c)
+        {
+            EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Cycle);
+            int closeSeconds = 0;
+            double az = 999;
+            DateTime nd = new DateTime(d.Year, d.Month, d.Day, d.Hour, d.Minute, 0);
+            for (int x = 0; x < 60; x++)
+            {
+                Coordinate nc = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble(), nd.AddSeconds(x), el);
+                nc.Offset = c.Offset;
+                if (Math.Abs(nc.CelestialInfo.SunAzimuth - azimuth) < az)
+                {
+                    az = Math.Abs(nc.CelestialInfo.SunAzimuth - azimuth);
+                    closeSeconds = x;
+                }
+            }
+
+            for (int x = 0; x < 60; x++)
+            {
+                Coordinate nc = new Coordinate(c.Latitude.ToDouble(), c.Longitude.ToDouble(), nd.AddSeconds(-x), el);
+                nc.Offset = c.Offset;
+                if (Math.Abs(nc.CelestialInfo.SunAzimuth - azimuth) < az)
+                {
+                    az = Math.Abs(nc.CelestialInfo.SunAzimuth - azimuth);
+                    closeSeconds = -x;
+                }
+            }
+
+            return d.AddSeconds(closeSeconds);
         }
 
         //Time Slips
