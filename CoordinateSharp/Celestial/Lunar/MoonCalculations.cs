@@ -473,11 +473,11 @@ namespace CoordinateSharp
             //SET ECLIPSE DATA
             if (lastE >= 0)
             {
-                c.LunarEclipse.lastEclipse = new LunarEclipseDetails(se[lastE]);
+                c.LunarEclipse.LastEclipse = new LunarEclipseDetails(se[lastE]);
             }
             if (nextE >= 0)
             {
-                c.LunarEclipse.nextEclipse = new LunarEclipseDetails(se[nextE]);
+                c.LunarEclipse.NextEclipse = new LunarEclipseDetails(se[nextE]);
             }
         }
 

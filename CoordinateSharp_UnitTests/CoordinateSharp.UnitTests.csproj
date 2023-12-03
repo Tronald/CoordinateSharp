@@ -14,6 +14,7 @@
     <None Remove="CelestialData\BottomDiscSet.txt" />
     <None Remove="CelestialData\CivilDawn.txt" />
     <None Remove="CelestialData\CivilDusk.txt" />
+    <None Remove="CelestialData\Coordinate.txt" />
     <None Remove="CelestialData\IsMoonUp.txt" />
     <None Remove="CelestialData\IsSunUp.txt" />
     <None Remove="CelestialData\LunarEclipse.txt" />
@@ -28,7 +29,6 @@
     <None Remove="CelestialData\NauticalDawn.txt" />
     <None Remove="CelestialData\NauticalDusk.txt" />
     <None Remove="CelestialData\Perigee.txt" />
-    <None Remove="CelestialData\SolarEclipse.txt" />
     <None Remove="CelestialData\SunAlts.txt" />
     <None Remove="CelestialData\SunAzs.txt" />
     <None Remove="CelestialData\SunRise.txt" />
@@ -121,7 +121,7 @@
     <Content Include="CelestialData\Perigee.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="CelestialData\SolarEclipse.txt">
+    <Content Include="CelestialData\Coordinate.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="CelestialData\SunAlts.txt">

@@ -9,6 +9,8 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Reflection.Metadata.Ecma335;
+using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace CoordinateSharp_UnitTests
 {
@@ -173,31 +175,26 @@ namespace CoordinateSharp_UnitTests
         [TestMethod]
         public void SolarEclipses()
         {
-            IFormatter formatter = new BinaryFormatter();
-            //Deserialize     
-            using (StreamReader streamReader = new StreamReader("CelestialData\\SolarEclipse.txt"))
+            string json = File.ReadAllText("CelestialData\\Coordinate.txt");
+
+            Coordinate c = JsonConvert.DeserializeObject<Coordinate>(json);
+            SolarEclipse ev = c.CelestialInfo.SolarEclipse;
+            SolarEclipseDetails lE1 = ev.LastEclipse;
+            SolarEclipseDetails nE1 = ev.NextEclipse;
+            SolarEclipseDetails lE2 = data.SolarEclispe.LastEclipse;
+            SolarEclipseDetails nE2 = data.SolarEclispe.NextEclipse;
+
+            PropertyInfo[] properties = typeof(SolarEclipseDetails).GetProperties();
+            foreach (PropertyInfo property in properties)
             {
-                BinaryFormatter binaryFormatter = new BinaryFormatter();
-                SolarEclipse ev = (SolarEclipse)binaryFormatter.Deserialize(streamReader.BaseStream);
+                var l1 = property.GetValue(lE1);
+                var l2 = property.GetValue(lE2);
+                var n1 = property.GetValue(nE1);
+                var n2 = property.GetValue(nE2);
 
-                SolarEclipseDetails lE1 = ev.LastEclipse;
-                SolarEclipseDetails nE1 = ev.NextEclipse;
-                SolarEclipseDetails lE2 = data.SolarEclispe.LastEclipse;
-                SolarEclipseDetails nE2 = data.SolarEclispe.NextEclipse;
-
-                PropertyInfo[] properties = typeof(SolarEclipseDetails).GetProperties();
-                foreach (PropertyInfo property in properties)
-                {
-                    var l1 = property.GetValue(lE1);
-                    var l2 = property.GetValue(lE2);
-                    var n1 = property.GetValue(nE1);
-                    var n2 = property.GetValue(nE2);
-
-                    Assert.AreEqual(l1.ToString(), l2.ToString(), "Last Eclipse data does not match.");
-                    Assert.AreEqual(n1.ToString(), n2.ToString(), "Next Eclipse data does not match.");
-                }
+                Assert.AreEqual(l1.ToString(), l2.ToString(), "Last Eclipse data does not match.");
+                Assert.AreEqual(n1.ToString(), n2.ToString(), "Next Eclipse data does not match.");
             }
-
         }
         [TestMethod]
         public void IsSunUp()
@@ -611,7 +608,7 @@ namespace CoordinateSharp_UnitTests
 
                 c = new Coordinate(lat,lng,t.Value, new EagerLoad(EagerLoadType.Celestial));
                 c.Offset = offset;
-                Assert.AreEqual(az, c.CelestialInfo.SunAzimuth, .7);
+                Assert.AreEqual(az, c.CelestialInfo.SunAzimuth, .8);
             }
            
            

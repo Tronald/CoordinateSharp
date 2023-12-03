@@ -50,6 +50,8 @@ namespace CoordinateSharp.Eclipse
 {
     internal class LunarData
     {
+        //Tables: https://eclipse.gsfc.nasa.gov/JLEX/JLEX-NA.html
+
         static double[] LE1601 = new double[] {
             // 1601  1 18
             2305831.105839,  15.0,   117.3,  0.033, -0.978,  3,
@@ -14584,7 +14586,7 @@ namespace CoordinateSharp.Eclipse
   20.1319604,   0.56553,  5.160e-04,
    8.0835801,   0.28700, -3.300e-04
         };
-
+       
         public static double[] LunarDateData(DateTime d)
         {
             //Return combined 100 year arrays so in order to grab Last and Next exlipLE.
