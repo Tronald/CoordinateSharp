@@ -330,11 +330,11 @@ namespace CoordinateSharp
             //SET ECLIPSE DATA
             if (lastE >= 0)
             {
-                c.SolarEclipse.lastEclipse = new SolarEclipseDetails(se[lastE]);
+                c.SolarEclipse.LastEclipse = new SolarEclipseDetails(se[lastE]);
             }
             if (nextE >= 0)
             {
-                c.SolarEclipse.nextEclipse = new SolarEclipseDetails(se[nextE]);
+                c.SolarEclipse.NextEclipse = new SolarEclipseDetails(se[nextE]);
             }
         }
 

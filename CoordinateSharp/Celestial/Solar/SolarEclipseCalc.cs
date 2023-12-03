@@ -920,13 +920,15 @@ namespace CoordinateSharp
             {
                 return ans;
             }
-            if (mid[40] == 2)
+            if (mid[40] == 2) //Event occurring at sunrise
             {
-                ans = a.ToString() + "(r)";
+                return ans;
+                //ans = a.ToString() + "(r)";
             }
             if (mid[40] == 3)
             {
-                ans = a.ToString() + "(s)";
+                return ans;
+                //ans = a.ToString()+ "(s)"; //event occurring at sunset
             }
             return ans;
         }
@@ -966,11 +968,13 @@ namespace CoordinateSharp
             }
             if (mid[40] == 2)
             {
-                ans = a.ToString() + "(r)";
+                return ans;
+                //ans = a.ToString() + "(r)"; // + "(r)";
             }
             if (mid[40] == 3)
             {
-                ans = a + "(s)";
+                return ans;
+               // ans = a + "(s)"; //event occurring at sunset
             }
             return ans;
         }

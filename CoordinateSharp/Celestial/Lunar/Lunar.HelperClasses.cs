@@ -216,26 +216,23 @@ namespace CoordinateSharp
     /// </summary>
     [Serializable]
     public class LunarEclipse
-    {
-        internal LunarEclipseDetails lastEclipse;
-        internal LunarEclipseDetails nextEclipse;
-
+    {      
         /// <summary>
         /// Initialize a LunarEclipse object
         /// </summary>
         public LunarEclipse()
         {
-            lastEclipse = new LunarEclipseDetails();
-            nextEclipse = new LunarEclipseDetails();
+            LastEclipse = new LunarEclipseDetails();
+            NextEclipse = new LunarEclipseDetails();
         }
         /// <summary>
         /// Details about the previous lunar eclipse at the specified DateTime and Coordinate.
         /// </summary>
-        public LunarEclipseDetails LastEclipse { get { return lastEclipse; } }
+        public LunarEclipseDetails LastEclipse { get; internal set; }
         /// <summary>
         /// Details about the next lunar eclipse at the specified DateTime and Coordinate.
         /// </summary>
-        public LunarEclipseDetails NextEclipse { get { return nextEclipse; } }
+        public LunarEclipseDetails NextEclipse { get; internal set; }
 
         internal void ConvertTo_LocalTime(double offset)
         {
@@ -408,6 +405,8 @@ namespace CoordinateSharp
         private DateTime totalEclipseEnd;
         private DateTime partialEclispeEnd;
         private DateTime penumbralEclipseEnd;
+        private double penumbralMagnitude;
+        private double umbralMagnitude;
 
         private bool hasEclipseData;
 
@@ -471,6 +470,15 @@ namespace CoordinateSharp
             {
                 penumbralEclipseEnd = date.Add(ts);
             }
+
+            double pu = 0;
+            double.TryParse(values[2], out pu);
+            penumbralMagnitude = pu;
+
+            pu = 0;
+            double.TryParse(values[3], out pu);
+            umbralMagnitude = pu;
+
             Adjust_Dates();
         }
         /// <summary>
@@ -576,6 +584,19 @@ namespace CoordinateSharp
         /// DateTime when the penumbral eclipse ends.
         /// </summary>
         public DateTime PenumbralEclispeEnd { get { return penumbralEclipseEnd; } }
+
+        /// <summary>
+        /// Penumbral magnitude. The fraction of the Moon's diameter that is covered by Earth's penumbra (lighter part of Earth's shadow). 
+        /// The penumbral magnitude of a total lunar eclipse is usually greater than 2 while the penumbral magnitude of a partial lunar eclipse is 
+        /// always greater than 1 and usually smaller than 2.
+        /// </summary>
+        public double PenumbralMagnitude { get { return penumbralMagnitude; } }
+
+        /// <summary>
+        /// Umbral magnitude. The fraction of the Moon's diameter that is covered by Earth's umbra (darker part of Earth's shadow) at the instance of the greatest eclipse.
+        /// </summary>
+        public double UmbralMagnitude { get { return umbralMagnitude; } }
+
         /// <summary>
         /// Lunar eclipse default string.
         /// </summary>

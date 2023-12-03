@@ -160,25 +160,23 @@ namespace CoordinateSharp
     [Serializable]
     public class SolarEclipse
     {
-        internal SolarEclipseDetails lastEclipse;
-        internal SolarEclipseDetails nextEclipse;
-
+     
         /// <summary>
         /// Initialize a SolarEclipse object.
         /// </summary>
         public SolarEclipse()
         {
-            lastEclipse = new SolarEclipseDetails();
-            nextEclipse = new SolarEclipseDetails();
+            LastEclipse = new SolarEclipseDetails();
+            NextEclipse = new SolarEclipseDetails();
         }
         /// <summary>
         /// Details about the previous solar eclipse at the specified DateTime and Coordinate.
         /// </summary>
-        public SolarEclipseDetails LastEclipse { get { return lastEclipse; } }
+        public SolarEclipseDetails LastEclipse { get; internal set; }
         /// <summary>
         /// Details about the next solar eclipse at the specified DateTime and Coordinate.
         /// </summary>
-        public SolarEclipseDetails NextEclipse { get { return nextEclipse; } }
+        public SolarEclipseDetails NextEclipse { get; internal set; }
 
         internal void ConvertTo_LocalTime(double offset)
         {
@@ -200,6 +198,8 @@ namespace CoordinateSharp
         internal DateTime aorTEclipseEnd;
         internal DateTime partialEclispeEnd;
         internal TimeSpan aorTDuration;
+        internal double magnitude;
+        internal double coverage;
 
         internal bool hasEclipseData;
 
@@ -254,6 +254,15 @@ namespace CoordinateSharp
             {
                 partialEclispeEnd = date.Add(ts);
             }
+
+            double mc = 0;
+            double.TryParse(values[11],out mc);
+            magnitude = mc;
+           
+            mc = 0;
+            double.TryParse(values[12], out mc);
+            coverage = mc;
+
             //A or T Duration
             if (values[13] != "-")
             {
@@ -366,11 +375,28 @@ namespace CoordinateSharp
         /// <summary>
         /// DateTime when the partial eclipse ends.
         /// </summary>
+        [Obsolete("Property named incorrectly. Use correctly named 'PartialEclipseEnd' instead.")]
         public DateTime PartialEclispeEnd { get { return partialEclispeEnd; } }
+        /// <summary>
+        /// DateTime when the partial eclipse ends.
+        /// </summary>
+        public DateTime PartialEclipseEnd { get { return partialEclispeEnd; } }
+
         /// <summary>
         /// Duration of Annular or Total eclipse (if applicable).
         /// </summary>
         public TimeSpan AorTDuration { get { return aorTDuration; } }
+
+        /// <summary>
+        /// Eclipse magnitude. Annular and partial will be between 0.0-1.0, while total will exceed 1.0.
+        /// </summary>
+        public double Magnitude { get { return magnitude; } }
+
+        /// <summary>
+        /// Coverage of the eclipse. Will be between 0.0-1.0.
+        /// </summary>
+        public double Coverage { get { return coverage; } }
+
         /// <summary>
         /// Solar eclipse default string.
         /// </summary>

@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 
 namespace CoordinateSharp_UnitTests
 {
@@ -111,30 +112,30 @@ namespace CoordinateSharp_UnitTests
         }
         [TestMethod]
         public void LunarEclipse()
-        {     
+        {
             //Deserialize     
-            using (StreamReader streamReader = new StreamReader("CelestialData\\LunarEclipse.txt"))
+            string json = File.ReadAllText("CelestialData\\Coordinate.txt");
+
+            Coordinate c = JsonConvert.DeserializeObject<Coordinate>(json);
+            LunarEclipse ev = c.CelestialInfo.LunarEclipse;
+
+            LunarEclipseDetails lE1 = ev.LastEclipse;
+            LunarEclipseDetails nE1 = ev.NextEclipse;
+            LunarEclipseDetails lE2 = data.LunarEclispe.LastEclipse;
+            LunarEclipseDetails nE2 = data.LunarEclispe.NextEclipse;
+
+            PropertyInfo[] properties = typeof(LunarEclipseDetails).GetProperties();
+            foreach (PropertyInfo property in properties)
             {
-                BinaryFormatter binaryFormatter = new BinaryFormatter();
-                LunarEclipse ev = (LunarEclipse)binaryFormatter.Deserialize(streamReader.BaseStream);
+                var l1 = property.GetValue(lE1);
+                var l2 = property.GetValue(lE2);
+                var n1 = property.GetValue(nE1);
+                var n2 = property.GetValue(nE2);
 
-                LunarEclipseDetails lE1 = ev.LastEclipse;
-                LunarEclipseDetails nE1 = ev.NextEclipse;
-                LunarEclipseDetails lE2 = data.LunarEclispe.LastEclipse;
-                LunarEclipseDetails nE2 = data.LunarEclispe.NextEclipse;
-
-                PropertyInfo[] properties = typeof(LunarEclipseDetails).GetProperties();
-                foreach (PropertyInfo property in properties)
-                {
-                    var l1 = property.GetValue(lE1);
-                    var l2 = property.GetValue(lE2);
-                    var n1 = property.GetValue(nE1);
-                    var n2 = property.GetValue(nE2);
-
-                    Assert.AreEqual(l1.ToString(), l2.ToString(), "Last Eclipse data does not match.");
-                    Assert.AreEqual(n1.ToString(), n2.ToString(), "Next Eclipse data does not match.");
-                }
+                Assert.AreEqual(l1.ToString(), l2.ToString(), "Last Eclipse data does not match.");
+                Assert.AreEqual(n1.ToString(), n2.ToString(), "Next Eclipse data does not match.");
             }
+
         }
 
         [TestMethod]
