@@ -1045,7 +1045,7 @@ namespace CoordinateSharp
         public static Solstices Get_Solstices(DateTime d, double offset)
         {
             Celestial c = new Celestial();
-            SunCalc.Calculate_Soltices_Equinoxes(d, c, offset);
+            SunCalc.Calculate_Solstices_Equinoxes(d, c, offset);
             return c.Solstices;
         }
 
@@ -1069,7 +1069,7 @@ namespace CoordinateSharp
         public static Equinoxes Get_Equinoxes(DateTime d, double offset)
         {
             Celestial c = new Celestial();
-            SunCalc.Calculate_Soltices_Equinoxes(d, c, offset);
+            SunCalc.Calculate_Solstices_Equinoxes(d, c, offset);
             return c.Equinoxes;
         }
 

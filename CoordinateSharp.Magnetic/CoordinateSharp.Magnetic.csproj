@@ -47,22 +47,21 @@ For more information, please contact Signature Group, LLC at this address: sales
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70; net80</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.1.11.0</Version>
+    <Version>1.1.12.0</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <Copyright>Copyright 2023</Copyright>
+    <Copyright>Copyright 2024</Copyright>
     <Description>CoordinateSharp magnetic data extensions.</Description>
-    <PackageReleaseNotes>-Adds NET 8.0 support.
--Maps to latest CoordinateSharp version.</PackageReleaseNotes>
+    <PackageReleaseNotes>-Maps to latest CoordinateSharp version.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Magnetic Declination</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp.Magnetic</PackageId>
     <Title>CoordinateSharp.Magnetic</Title>
-    <AssemblyVersion>1.1.11.0</AssemblyVersion>
+    <AssemblyVersion>1.1.12.0</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>128x128.png</PackageIcon>
