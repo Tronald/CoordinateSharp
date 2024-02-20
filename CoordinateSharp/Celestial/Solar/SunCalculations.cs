@@ -50,7 +50,7 @@ namespace CoordinateSharp
 {
     internal class SunCalc
     {     
-        public static void CalculateSunTime(double lat, double longi, DateTime date, Celestial c, EagerLoad el, double offset)
+        public static void CalculateSunTime(double lat, double lng, DateTime date, Celestial c, EagerLoad el, double offset)
         {
            
             if (date.Year == 0001) { return; } //Return if date value hasn't been established.
@@ -61,7 +61,7 @@ namespace CoordinateSharp
                 ////Sun Time Calculations
                 //Get solar coordinate info and feed
                 //Get Julian     
-                double lw = rad * -longi;
+                double lw = rad * -lng;
                 double phi = rad * lat;
 
                 //Rise Set        
@@ -77,17 +77,18 @@ namespace CoordinateSharp
                 var celC = Get_Solar_Coordinates(date, -offset);
                 c.solarCoordinates = celC;
                 //Azimuth and Altitude
-                CalculateSunAngle(date.AddHours(-offset), longi, lat, c, celC); //SUBTRACT OFFSET TO CALC IN Z TIME AND ADJUST SUN ANGLE DURING LOCAL CALCULATIONS.
+                CalculateSunAngle(date.AddHours(-offset), lng, lat, c, celC); //SUBTRACT OFFSET TO CALC IN Z TIME AND ADJUST SUN ANGLE DURING LOCAL CALCULATIONS.
                 // neither sunrise nor sunset
                 if ((!c.SunRise.HasValue) && (!c.SunSet.HasValue))
                 {
                     if (c.SunAltitude < 0)
                     {
                         c.sunCondition = CelestialStatus.DownAllDay;
+                      
                     }
                     else
                     {
-                        c.sunCondition = CelestialStatus.UpAllDay;
+                        c.sunCondition = CelestialStatus.UpAllDay;                      
                     }
                 }
                 // sunrise or sunset
@@ -104,7 +105,15 @@ namespace CoordinateSharp
                         // No sunset this date
                         c.sunCondition = CelestialStatus.NoSet;
                     }
+                    else
+                    {
+
+                    }
                 }
+
+                //Sat day and night time spans within 24 hours period
+                Set_DayNightSpan(c);
+
                 //Additional Times
                 c.additionalSolarTimes = new AdditionalSolarTimes();
                 //Dusk and Dawn
@@ -128,10 +137,13 @@ namespace CoordinateSharp
                 //BottomDisc
                 evDate = Get_Event_Time(lw, phi, -.2998, actualDate, offset, false);
                 c.AdditionalSolarTimes.sunriseBottomDisc = evDate[0];
-                c.AdditionalSolarTimes.sunsetBottomDisc = evDate[1];             
+                c.AdditionalSolarTimes.sunsetBottomDisc = evDate[1];    
+                
+                //Day Night Span
+
             }
-            if (el.Extensions.Solstice_Equinox){ Calculate_Soltices_Equinoxes(date, c, offset); }         
-            if (el.Extensions.Solar_Eclipse) { CalculateSolarEclipse(date, lat, longi, c); }
+            if (el.Extensions.Solstice_Equinox){ Calculate_Solstices_Equinoxes(date, c, offset); }         
+            if (el.Extensions.Solar_Eclipse) { CalculateSolarEclipse(date, lat, lng, c); }
         }
         /// <summary>
         /// Gets time of event based on specified degree below specified altitude
@@ -224,7 +236,43 @@ namespace CoordinateSharp
             }
             return target;
         }
-
+        private static void Set_DayNightSpan(Celestial c)
+        {
+            if(c.sunCondition == CelestialStatus.RiseAndSet)
+            {
+                //Need to handle set before rise for UTC and timezone adjustments.
+                if(c.sunSet>c.SunRise)
+                {
+                    c.daySpan= c.sunSet.Value.TimeOfDay - c.SunRise.Value.TimeOfDay;
+                    c.nightSpan = new TimeSpan(24, 0, 0) - c.daySpan;
+                }
+                else
+                {
+                    c.nightSpan = c.sunRise.Value.TimeOfDay - c.SunSet.Value.TimeOfDay;
+                    c.daySpan = new TimeSpan(24, 0, 0) - c.nightSpan;
+                }
+            }
+            else if(c.sunCondition == CelestialStatus.DownAllDay)
+            {
+                c.nightSpan= new TimeSpan(24, 0, 0);
+                c.daySpan = new TimeSpan(0);
+            }
+            else if(c.sunCondition == CelestialStatus.UpAllDay)
+            {
+                c.daySpan = new TimeSpan(24, 0, 0);
+                c.nightSpan = new TimeSpan(0);
+            }
+            else if(c.sunCondition == CelestialStatus.NoRise)
+            {
+                c.nightSpan = new TimeSpan(24, 0, 0) - c.sunSet.Value.TimeOfDay;
+                c.daySpan = c.sunSet.Value.TimeOfDay;
+            }
+            else if(c.sunCondition == CelestialStatus.NoSet)
+            {
+                c.daySpan= new TimeSpan(24, 0, 0) - c.sunRise.Value.TimeOfDay;
+                c.nightSpan = c.sunRise.Value.TimeOfDay;
+            }
+        }
         public static void CalculateZodiacSign(DateTime date, Celestial c)
         {
             //Aquarius (January 20 to February 18)
@@ -304,11 +352,11 @@ namespace CoordinateSharp
                 return;
             }
         }
-        public static void CalculateSolarEclipse(DateTime date, double lat, double longi, Celestial c)
+        public static void CalculateSolarEclipse(DateTime date, double lat, double lng, Celestial c)
         {
             //Convert to Radian
             double latR = lat * Math.PI / 180;
-            double longR = longi * Math.PI / 180;
+            double longR = lng * Math.PI / 180;
             List<List<string>> se = SolarEclipseCalc.CalculateSolarEclipse(date, latR, longR);
             //RETURN FIRST AND LAST
             if (se.Count == 0) { return; }
@@ -338,7 +386,7 @@ namespace CoordinateSharp
             }
         }
 
-        public static void Calculate_Soltices_Equinoxes(DateTime d, Celestial c, double offset)
+        public static void Calculate_Solstices_Equinoxes(DateTime d, Celestial c, double offset)
         {
             double springEquinoxJDE;
             double fallEquinoxJDE;
@@ -504,12 +552,12 @@ namespace CoordinateSharp
             c.sunAzimuth = ang[0];
             c.sunAltitude = ang[1];           
         }
-        public static double[] CalculateSunAngle(DateTime date, double longi, double lat, SolarCoordinates solC)
+        public static double[] CalculateSunAngle(DateTime date, double lng, double lat, SolarCoordinates solC)
         {
             TimeSpan ts = date - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             double dms = (ts.TotalMilliseconds / dayMS - .5 + j1970) - j2000;
 
-            double lw = rad * -longi;
+            double lw = rad * -lng;
             double phi = rad * lat;
             double e = rad * 23.4397;        
 

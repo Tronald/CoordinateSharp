@@ -61,6 +61,9 @@ namespace CoordinateSharp
         internal DateTime? moonSet;
         internal DateTime? moonRise;
 
+        internal TimeSpan daySpan;
+        internal TimeSpan nightSpan;
+
         internal DateTime? solarNoon;
 
         internal double sunAltitude;
@@ -195,6 +198,16 @@ namespace CoordinateSharp
         /// Sun azimuth in degrees (E of N).
         /// </summary>
         public double SunAzimuth { get { return sunAzimuth; } }
+
+        /// <summary>
+        /// Daylight time span for date and location. 
+        /// </summary>
+        public TimeSpan DaySpan { get { return daySpan; } }
+        /// <summary>
+        /// Night time span for date and location.
+        /// </summary>
+        public TimeSpan NightSpan { get { return nightSpan; } }
+
         /// <summary>
         /// Moon altitude in degrees (E of N) (corrected for parallax and refraction).
         /// </summary>

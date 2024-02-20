@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿// Ignore Spelling: Azs Astro
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using CoordinateSharp;
 using System.Reflection;
@@ -82,7 +84,7 @@ namespace CoordinateSharp_UnitTests
             //THESE OBJECT ARE TESTED AGAINST SERIALIZED OBJECTS.
             //IF CHANGING THE MODEL YOU WILL HAVE TO CHANGE THE OBJECTS THEY ARE TESTED AGAINST AS WELL
 
-            data.SolarEclispe = c.CelestialInfo.SolarEclipse;
+            data.SolarEclipse = c.CelestialInfo.SolarEclipse;
 
         }
         /// <summary>
@@ -181,8 +183,8 @@ namespace CoordinateSharp_UnitTests
             SolarEclipse ev = c.CelestialInfo.SolarEclipse;
             SolarEclipseDetails lE1 = ev.LastEclipse;
             SolarEclipseDetails nE1 = ev.NextEclipse;
-            SolarEclipseDetails lE2 = data.SolarEclispe.LastEclipse;
-            SolarEclipseDetails nE2 = data.SolarEclispe.NextEclipse;
+            SolarEclipseDetails lE2 = data.SolarEclipse.LastEclipse;
+            SolarEclipseDetails nE2 = data.SolarEclipse.NextEclipse;
 
             PropertyInfo[] properties = typeof(SolarEclipseDetails).GetProperties();
             foreach (PropertyInfo property in properties)
@@ -682,6 +684,57 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(lcZ.SubsolarLongitude, lcL.SubsolarLongitude, .0001, "Subsolar Longitude");
             Assert.AreEqual(lcZ.RightAscension, lcL.RightAscension, .0000001, "Right Ascension");
         }
+        /// <summary>
+        /// Ensures day and night time spans are calculating correctly
+        /// </summary>
+        [TestMethod]
+        public void Check_DayNight_Times()
+        {
+            //Rise and set at Z
+            Coordinate c = new Coordinate(45, 112, new DateTime(2024, 9, 30));
+            Assert.AreEqual(new TimeSpan(24, 0, 0), c.CelestialInfo.DaySpan + c.CelestialInfo.NightSpan);           
+
+            //Rise and set at local
+            Coordinate c2 = new Coordinate(45, 112, new DateTime(2024, 9, 30));
+            for (int i = -12; i <=14;  i++) 
+            {
+                c2.Offset = i;
+                Assert.AreEqual(c.CelestialInfo.DaySpan.TotalMinutes, c2.CelestialInfo.DaySpan.TotalMinutes ,3.2);     //3.2 minute delta accounts for day shift. Still accurate as long as sum of span = 24hrs
+                Assert.AreEqual(new TimeSpan(24, 0, 0), c2.CelestialInfo.DaySpan + c2.CelestialInfo.NightSpan);
+                Assert.AreEqual(new TimeSpan(11, 45, 0).TotalMinutes, c2.CelestialInfo.DaySpan.TotalMinutes, 3.8); //3.8 minute delta accounts for local day shift. Still accurate as long as sum of span = 24hrs
+                Assert.AreEqual(new TimeSpan(12, 15, 0).TotalMinutes, c2.CelestialInfo.NightSpan.TotalMinutes, 3.8); //3.8 minute delta accounts for local day shift. Still accurate as long as sum of span = 24hrs
+                if (c2.CelestialInfo.SunRise < c2.CelestialInfo.SunSet)
+                {
+                    Assert.AreEqual(c2.CelestialInfo.DaySpan, c2.CelestialInfo.SunSet - c2.CelestialInfo.SunRise); //Checks timespan is calculating correctly
+                }
+                else
+                {
+
+                    Assert.AreEqual(c2.CelestialInfo.NightSpan, c2.CelestialInfo.SunRise - c2.CelestialInfo.SunSet); //Checks timespan is calculating correctly
+                }
+            }
+           
+
+            //Up all day
+            c = new Coordinate(89, 112, new DateTime(2024, 12, 12));
+            Assert.AreEqual(new TimeSpan(24, 0, 0), c.CelestialInfo.DaySpan + c.CelestialInfo.NightSpan);
+            Assert.AreEqual(new TimeSpan(0, 0, 0), c.CelestialInfo.DaySpan);
+
+            //Down all day
+            c = new Coordinate(89, 112, new DateTime(2024, 6, 21));
+            Assert.AreEqual(new TimeSpan(24, 0, 0), c.CelestialInfo.DaySpan + c.CelestialInfo.NightSpan);
+            Assert.AreEqual(new TimeSpan(24, 0, 0), c.CelestialInfo.DaySpan);
+
+            //No Rise
+            c = new Coordinate(76, 45, new DateTime(2021, 4, 24));
+            Assert.AreEqual(new TimeSpan(24, 0, 0), c.CelestialInfo.DaySpan + c.CelestialInfo.NightSpan);
+            Assert.AreEqual(c.CelestialInfo.SunSet.Value.TimeOfDay, c.CelestialInfo.DaySpan);
+
+            //Down all day
+            c = new Coordinate(-76, 45, new DateTime(2021, 2, 13));
+            Assert.AreEqual(new TimeSpan(24, 0, 0), c.CelestialInfo.DaySpan + c.CelestialInfo.NightSpan);
+            Assert.AreEqual(c.CelestialInfo.SunRise.Value.TimeOfDay, c.CelestialInfo.NightSpan);
+        }
     }
 
 
@@ -703,7 +756,7 @@ namespace CoordinateSharp_UnitTests
         public List<double> SunAlts { get; set; }
         public List<double> SunAzs { get; set; }
 
-        public SolarEclipse SolarEclispe { get; set; }
+        public SolarEclipse SolarEclipse { get; set; }
 
         public List<bool> IsSunUp { get; set; }
 
