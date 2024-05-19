@@ -54,6 +54,8 @@
     <None Remove="CoordinatePartData\Signed.txt" />
     <None Remove="CoordinatePartData\SignedDDM.txt" />
     <None Remove="CoordinatePartData\SignedDMS.txt" />
+    <None Remove="GeoFenceData\ColoradoEllipse.txt" />
+    <None Remove="GeoFenceData\ColoradoSphere.txt" />
     <None Remove="MagneticData\MagneticFields2020.txt" />
   </ItemGroup>
 
@@ -194,6 +196,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="CoordinatePartData\SignedDMS.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="GeoFenceData\ColoradoEllipse.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="GeoFenceData\ColoradoSphere.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="MagneticData\MagneticFields2020.txt">

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CoordinateSharp;
+using System.IO;
 namespace CoordinateSharp_UnitTests
 {
     [TestClass]
@@ -132,7 +133,51 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(0, c.Longitude.ToDouble() - gd.Last.Longitude.ToDouble(), .000001);            
         }
 
+        /// <summary>
+        /// Tests densify logic to ensure proper point placement.
+        /// </summary>
+        [TestMethod]
+        public void Densify()
+        {
+            //Create a four point GeoFence around Utah
 
+            List<GeoFence.Point> points = new List<GeoFence.Point>();
+
+            points.Add(new GeoFence.Point(41.003444, -109.045223));
+            points.Add(new GeoFence.Point(41.003444, -102.041524));
+            points.Add(new GeoFence.Point(36.993076, -102.041524));
+            points.Add(new GeoFence.Point(36.993076, -109.045223));
+            points.Add(new GeoFence.Point(41.003444, -109.045223));
+
+            GeoFence ellipseTest = new GeoFence(points);
+            GeoFence sphereTest = new GeoFence(new List<GeoFence.Point>(points));
+
+            
+            ellipseTest.Densify(new Distance(5, DistanceType.Kilometers));        
+            sphereTest.Densify(new Distance(5, DistanceType.Kilometers), Shape.Sphere);
+
+            string[] ellipseTestPoints = File.ReadAllText("GeoFenceData\\ColoradoEllipse.txt").Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] sphereTestPoints = File.ReadAllText("GeoFenceData\\ColoradoSphere.txt").Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            for(int x =0;x< ellipseTestPoints.Length;x++)
+            {
+                string[] point = ellipseTestPoints[x].Split(',');
+                double lat = double.Parse(point[0]);
+                double lng = double.Parse(point[1]);
+                Assert.AreEqual(ellipseTest.Points[x].Latitude, lat, .00000000001);
+                Assert.AreEqual(ellipseTest.Points[x].Longitude, lng, .00000000001);
+            }
+
+            for (int x = 0; x < sphereTestPoints.Length; x++)
+            {
+                string[] point = sphereTestPoints[x].Split(',');
+                double lat = double.Parse(point[0]);
+                double lng = double.Parse(point[1]);
+                Assert.AreEqual(sphereTest.Points[x].Latitude, lat, .00000000001);
+                Assert.AreEqual(sphereTest.Points[x].Longitude, lng, .00000000001);
+            }
+        }
+    
         /// <summary>
         /// Ensures Vincenty precision withing bounds
         /// </summary>

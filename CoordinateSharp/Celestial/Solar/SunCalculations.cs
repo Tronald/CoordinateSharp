@@ -104,11 +104,7 @@ namespace CoordinateSharp
                     {
                         // No sunset this date
                         c.sunCondition = CelestialStatus.NoSet;
-                    }
-                    else
-                    {
-
-                    }
+                    }                   
                 }
 
                 //Sat day and night time spans within 24 hours period
