@@ -42,17 +42,21 @@ Organizations or use cases that fall under the following conditions may receive 
 
 Please visit http://coordinatesharp.com/licensing or contact Signature Group, LLC to purchase a commercial license, or for any questions regarding the AGPL 3.0 license requirements or free use license: sales@signatgroup.com.
 */
+
+// Ignore Spelling: Densify
+
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace CoordinateSharp
-{   
+{
     /// <summary>
     /// The GeoFence class is used to help check if points/coordinates are inside or near a specified polygon/polyline, 
     /// </summary>
     [Serializable]
     public partial class GeoFence
-    {   
+    {
         private readonly List<Point> _points = new List<Point>();
 
         /// <summary>
@@ -108,7 +112,7 @@ namespace CoordinateSharp
         /// </summary>
         public List<Point> Points
         {
-            get { return _points; }           
+            get { return _points; }
         }
         private Coordinate ClosestPointOnSegment(Point a, Point b, Coordinate p, DateTime dt, EagerLoad eg)
         {
@@ -136,7 +140,8 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="point">Point to test</param>
         /// <remarks>
-        /// Points sitting on the edge of a polygon may return true or false.
+        /// This method utilizes 2D ray casting techniques and does not inherently account for the curvature of the Earth. To mitigate the impact of Earth shape distortion on polygons or polylines that span long distances, users should employ densification.
+        /// Points sitting on the edge of a polygon may return true or false. 
         /// </remarks>
         /// <returns>bool</returns>
         /// <example>
@@ -189,6 +194,9 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="point">Point to test</param>
         /// <param name="range">Range in meters</param>
+        /// <remarks>
+        /// This method utilizes 2D ray casting techniques and does not inherently account for the curvature of the Earth. To mitigate the impact of Earth shape distortion on polygons or polylines that span long distances, users should employ densification.
+        /// </remarks>
         /// <returns>bool</returns>
         /// <example>
         /// The following example shows how to determine if a coordinate is within 1000 meters of
@@ -223,7 +231,7 @@ namespace CoordinateSharp
                 if (c.Get_Distance_From_Coordinate(point).Meters <= range)
                     return true;
             }
-        
+
             return false;
         }
 
@@ -232,6 +240,9 @@ namespace CoordinateSharp
         /// </summary>
         /// <param name="point">Point to test</param>
         /// <param name="range">Range is a distance object</param>
+        /// <remarks>
+        /// This method utilizes 2D ray casting techniques and does not inherently account for the curvature of the Earth. To mitigate the impact of Earth shape distortion on polygons or polylines that span long distances, users should employ densification.
+        /// </remarks>
         /// <returns>bool</returns>
         /// <example>
         /// The following example shows how to determine if a coordinate is within 1 km of
@@ -261,12 +272,13 @@ namespace CoordinateSharp
                 return false;
 
             return IsPointInRangeOfLine(point, range.Meters);
-        }   
-        
+        }
+
         /// <summary>
         /// Gets distance from nearest polyline in shape
-        /// </summary>
+        /// </summary>       
         /// <param name="point">Coordinate</param>
+        /// <remarks>This method utilizes 2D ray casting techniques and does not inherently account for the curvature of the Earth. To mitigate the impact of Earth shape distortion on polygons or polylines that span long distances, users should employ densification.</remarks>
         /// <returns>Distance</returns>
         public Distance DistanceFromNearestPolyLine(Coordinate point)
         {
@@ -279,18 +291,148 @@ namespace CoordinateSharp
             {
                 Coordinate c = ClosestPointOnSegment(_points[i], _points[i + 1], point, point.GeoDate, point.EagerLoadSettings);
 
-                if (d == null) { d= new Distance(point, c); }
+                if (d == null) { d = new Distance(point, c); }
                 else
                 {
                     Distance nd = new Distance(point, c);
                     if (nd.Meters < d.Meters) { d = nd; }
                 }
-              
+
             }
 
             return d;
         }
 
-       
-    }  
+        /// <summary>
+        /// Densifies the polygon by adding additional points along each edge at specified intervals using ellipsoidal (Vincenty) logic.
+        /// </summary>
+        /// <param name="distance">The distance between points along the polygon's edges. This distance determines how frequently new points are inserted into the polygon</param>
+        /// <remarks>
+        /// This method is particularly useful for large polygons where the curvature of the Earth can cause 
+        /// significant distortion in geographic calculations. By adding more points at regular intervals, 
+        /// the polygon better conforms to the curved surface of the Earth, reducing errors in area calculations, 
+        /// perimeter calculations, and point-in-polygon tests.
+        ///
+        /// The function automatically calculates intermediate points based on the great-circle distance between 
+        /// existing vertices, ensuring that the new points adhere to the true geographic shape of the polygon.
+        /// This is essential for maintaining geographic integrity when performing spatial operations or visualizations.
+        ///
+        /// Note: The densification process increases the number of vertices in the polygon, which may impact performance 
+        /// and memory usage in spatial computations and data storage. Optimal use of this function depends on the required 
+        /// precision and the geographic extent of the application.
+        /// </remarks>
+        /// <example>
+        /// Here is how you might use this function to densify a polygon representing a large geographic area:
+        /// <code>
+        /// //Create a four point GeoFence around Utah
+        /// List&lt;GeoFence.Point&gt; points = new List&lt;GeoFence.Point&gt;();
+        /// points.Add(new GeoFence.Point(41.003444, -109.045223));
+        /// points.Add(new GeoFence.Point(41.003444, -102.041524));
+        /// points.Add(new GeoFence.Point(36.993076, -102.041524));
+        /// points.Add(new GeoFence.Point(36.993076, -109.045223));
+        /// points.Add(new GeoFence.Point(41.003444, -109.045223));
+        ///
+        /// GeoFence gf = new GeoFence(points);
+        ///
+        /// gf.Densify(new Distance(10, DistanceType.Kilometers));
+        /// 
+        /// //The gf.Points list now contains additional points at intervals of approximately 10 kilometers.
+        /// </code>
+        /// </example>
+        public void Densify(Distance distance)
+        {
+            Densify(distance, Shape.Ellipsoid);
+        }
+
+        /// <summary>
+        /// Densifies the polygon by adding additional points along each edge at specified intervals.
+        /// </summary>
+        /// <param name="distance">The distance between points along the polygon's edges. This distance determines how frequently new points are inserted into the polygon</param>
+        /// <param name="shape">Specify earth shape. Sphere is more efficient, but less precise than ellipsoid.</param>
+        /// <remarks>
+        /// This method is particularly useful for large polygons where the curvature of the Earth can cause 
+        /// significant distortion in geographic calculations. By adding more points at regular intervals, 
+        /// the polygon better conforms to the curved surface of the Earth, reducing errors in area calculations, 
+        /// perimeter calculations, and point-in-polygon tests.
+        ///
+        /// The function automatically calculates intermediate points based on the great-circle distance between 
+        /// existing vertices, ensuring that the new points adhere to the true geographic shape of the polygon.
+        /// This is essential for maintaining geographic integrity when performing spatial operations or visualizations.
+        ///
+        /// Note: The densification process increases the number of vertices in the polygon, which may impact performance 
+        /// and memory usage in spatial computations and data storage. Optimal use of this function depends on the required 
+        /// precision and the geographic extent of the application.
+        /// </remarks>
+        /// <example>
+        /// Here is how you might use this function to densify a polygon representing a large geographic area:
+        /// <code>     
+        /// //Create a four point GeoFence around Utah
+        /// List&lt;GeoFence.Point&gt; points = new List&lt;GeoFence.Point&gt;();
+        /// points.Add(new GeoFence.Point(41.003444, -109.045223));
+        /// points.Add(new GeoFence.Point(41.003444, -102.041524));
+        /// points.Add(new GeoFence.Point(36.993076, -102.041524));
+        /// points.Add(new GeoFence.Point(36.993076, -109.045223));
+        /// points.Add(new GeoFence.Point(41.003444, -109.045223));
+        ///
+        /// GeoFence gf = new GeoFence(points);
+        ///
+        /// gf.Densify(new Distance(10, DistanceType.Kilometers), Shape.Sphere);
+        /// 
+        /// //The gf.Points list now contains additional points at intervals of approximately 10 kilometers.
+        /// </code>
+        /// </example>
+        public void Densify(Distance distance, Shape shape)
+        {
+            if (_points.Count < 2)
+            {
+                throw new InvalidOperationException("You cannot perform densification a Geofence that has less than 2 points.");
+            }
+            //Store the original points for reference as _points will be modified
+            List<Point> ogpoints = new List<Point>(_points);
+
+            //Create a collection of point collections to insert into the polygon
+            List<List<Point>> inserts = new List<List<Point>>();
+
+            //Iterate the polygon to create densification points
+            for (int x = 0; x < ogpoints.Count - 1; x++)
+            {
+                var p1 = ogpoints[x];
+                var p2 = ogpoints[x + 1];
+
+                List<Point> ipoints = new List<Point>();
+
+                //Coordinate to move
+                Coordinate mc = new Coordinate(p1.Latitude, p1.Longitude, new EagerLoad(false));
+
+                //Destination
+                Coordinate dc = new Coordinate(p2.Latitude, p2.Longitude, new EagerLoad(false));
+
+                while (new Distance(mc, dc).Meters > distance.Meters)
+                {
+                    mc.Move(dc, distance, shape);
+                    ipoints.Add(new Point(mc.Latitude.ToDouble(), mc.Longitude.ToDouble()));
+                }
+
+                inserts.Add(ipoints);
+            }
+
+            //Clear existing collection
+            _points.Clear();
+
+            //Create new points collection.
+            for (int x = 0; x < ogpoints.Count - 1; x++)
+            {
+                var p = ogpoints[x];
+                _points.Add(p);
+                foreach (var dp in inserts[x])
+                {
+                    _points.Add(dp);
+                }
+            }
+
+            //Add last point to close shape.
+            _points.Add(ogpoints.Last());
+        }
+
+    }
 }
