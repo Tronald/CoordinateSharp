@@ -45,6 +45,7 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using CoordinateSharp.Formatters;
 namespace CoordinateSharp
 {
@@ -57,7 +58,9 @@ namespace CoordinateSharp
             if (el.Extensions.Solar_Cycle)
             {
                 DateTime actualDate = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
+
               
+
                 ////Sun Time Calculations
                 //Get solar coordinate info and feed
                 //Get Julian     
@@ -65,30 +68,38 @@ namespace CoordinateSharp
                 double phi = rad * lat;
 
                 //Rise Set        
-                DateTime?[] evDate = Get_Event_Time(lw, phi, -.8333, actualDate, offset,true); //ADDED OFFSET TO ALL Get_Event_Time calls.
+                DateTime?[] evDate = Get_Event_Time(lat, lng, lw, phi, -.8333, actualDate, offset,true); //ADDED OFFSET TO ALL Get_Event_Time calls.
                
                 c.sunRise = evDate[0];
                 c.sunSet = evDate[1];
                 c.solarNoon = evDate[2];
-               
-                c.sunCondition = CelestialStatus.RiseAndSet;
 
                 //Get Solar Coordinate
                 var celC = Get_Solar_Coordinates(date, -offset);
                 c.solarCoordinates = celC;
                 //Azimuth and Altitude
                 CalculateSunAngle(date.AddHours(-offset), lng, lat, c, celC); //SUBTRACT OFFSET TO CALC IN Z TIME AND ADJUST SUN ANGLE DURING LOCAL CALCULATIONS.
+
+                //SET SUN CONDITION
+                c.sunCondition = CelestialStatus.RiseAndSet;
+       
                 // neither sunrise nor sunset
                 if ((!c.SunRise.HasValue) && (!c.SunSet.HasValue))
                 {
-                    if (c.SunAltitude < 0)
+                    //Check sun altitude at apex (solar noon) to ensure accurate logic.
+                    //Previous logic determined of user time passed (c.sunAltitude), but due to Meeus limitation in 15.1, it could cause a misreport.
+                    //https://github.com/Tronald/CoordinateSharp/issues/167
+
+                    var safety = new Celestial();
+                    CalculateSunAngle(c.solarNoon.Value, lng, lat, safety, celC); 
+                   
+                    if (safety.sunAltitude <= -.8333)
                     {
                         c.sunCondition = CelestialStatus.DownAllDay;
-                      
                     }
                     else
                     {
-                        c.sunCondition = CelestialStatus.UpAllDay;                      
+                        c.sunCondition = CelestialStatus.UpAllDay;
                     }
                 }
                 // sunrise or sunset
@@ -96,17 +107,14 @@ namespace CoordinateSharp
                 {
                     if (!c.SunRise.HasValue)
                     {
-                        // No sunrise this date
                         c.sunCondition = CelestialStatus.NoRise;
-
                     }
                     else if (!c.SunSet.HasValue)
                     {
-                        // No sunset this date
                         c.sunCondition = CelestialStatus.NoSet;
-                    }                   
+                    }
                 }
-
+              
                 //Sat day and night time spans within 24 hours period
                 Set_DayNightSpan(c);
 
@@ -114,24 +122,24 @@ namespace CoordinateSharp
                 c.additionalSolarTimes = new AdditionalSolarTimes();
                 //Dusk and Dawn
                 //Civil
-                evDate = Get_Event_Time(lw, phi, -6, actualDate, offset,false);
+                evDate = Get_Event_Time(lat, lng, lw, phi, -6, actualDate, offset,false);
                 c.AdditionalSolarTimes.civilDawn = evDate[0];
                 c.AdditionalSolarTimes.civilDusk = evDate[1];
 
 
                 //Nautical
-                evDate = Get_Event_Time(lw, phi, -12, actualDate, offset, false);
+                evDate = Get_Event_Time(lat, lng, lw, phi, -12, actualDate, offset, false);
                 c.AdditionalSolarTimes.nauticalDawn = evDate[0];
                 c.AdditionalSolarTimes.nauticalDusk = evDate[1];
 
                 //Astronomical
-                evDate = Get_Event_Time(lw, phi, -18, actualDate, offset, false);
+                evDate = Get_Event_Time(lat, lng, lw, phi, -18, actualDate, offset, false);
 
                 c.AdditionalSolarTimes.astronomicalDawn = evDate[0];
                 c.AdditionalSolarTimes.astronomicalDusk = evDate[1];
 
                 //BottomDisc
-                evDate = Get_Event_Time(lw, phi, -.2998, actualDate, offset, false);
+                evDate = Get_Event_Time(lat, lng, lw, phi, -.2998, actualDate, offset, false);
                 c.AdditionalSolarTimes.sunriseBottomDisc = evDate[0];
                 c.AdditionalSolarTimes.sunsetBottomDisc = evDate[1];    
                 
@@ -141,9 +149,22 @@ namespace CoordinateSharp
             if (el.Extensions.Solstice_Equinox){ Calculate_Solstices_Equinoxes(date, c, offset); }         
             if (el.Extensions.Solar_Eclipse) { CalculateSolarEclipse(date, lat, lng, c); }
         }
+
+        private static double GetAltitude(DateTime date, double offset, double lat, double lng)
+        {
+            var safety = new Celestial();
+
+            var celC = Get_Solar_Coordinates(date, offset);
+            CalculateSunAngle(date.AddHours(-offset), lng, lat, safety, celC);
+
+            return safety.sunAltitude;
+        }
+
         /// <summary>
         /// Gets time of event based on specified degree below specified altitude
         /// </summary>
+        /// <param name="lat">Observer  Latitude  in degrees</param>
+        /// <param name="lng">Observer Longitude in degrees</param>
         /// <param name="lw">Observer Longitude in radians</param>
         /// <param name="phi">Observer Latitude in radians</param>
         /// <param name="h">Angle in Degrees</param>
@@ -151,7 +172,7 @@ namespace CoordinateSharp
         /// <param name="offset">Offset hours</param>
         /// <param name="calculateNoon">Should solar noon iterate and return value</param>
         /// <returns>DateTime?[]{rise, set}</returns> 
-        internal static DateTime?[] Get_Event_Time(double lw, double phi, double h, DateTime date, double offset, bool calculateNoon)
+        internal static DateTime?[] Get_Event_Time(double lat, double lng, double lw, double phi, double h, DateTime date, double offset, bool calculateNoon)
         {
             double julianOffset = offset * .04166667;
            
@@ -167,15 +188,9 @@ namespace CoordinateSharp
                 double d = JulianConversions.GetJulian(date.AddDays(x-2)) - j2000 + .5; //LESS PRECISE JULIAN NEEDED
                 double n = julianCycle(d, lw);
 
-                //var celC = Get_Solar_Coordinates(date); //Change and Test locs!
-
-                double ds = approxTransit(0, lw, n);
-
-                //M = celC.MeanAnomaly.ToRadians();
+                double ds = approxTransit(0, lw, n);          
 
                 double M = solarMeanAnomaly(ds);
-
-               
 
                 double L = eclipticLongitude(M);
 
@@ -200,16 +215,144 @@ namespace CoordinateSharp
                 }
             }
 
+            DateTime? tNoon = null;
+            if (calculateNoon)
+            {
+                tNoon = Get_Event_Target_Date(solarNoons, date);
+                solarEventsCorrection(lat, lng, date, offset, rises, sets, tNoon);
+            }
+
             //Compare and send           
             DateTime? tRise = Get_Event_Target_Date(rises, date);
             DateTime? tSet = Get_Event_Target_Date(sets, date);
 
-            DateTime? tNoon = null;
-            if (calculateNoon){tNoon = Get_Event_Target_Date(solarNoons, date); }
+        
 
             return new DateTime?[] { tRise, tSet, tNoon};
         }
 
+        /// <summary>
+        /// Corrects near horizon miss calculations that may occur on rare occasion due to Meeus 15.1 limitation. 
+        /// May cause slight efficiency decrease during transition from rise/set to up or down all day.
+        /// Occurs rare so delay should be negligent in most instances.
+        /// </summary>
+        /// <param name="lat">latitude</param>
+        /// <param name="lng">longitude</param>
+        /// <param name="target">target date</param>
+        /// <param name="offset">timezone offset</param>
+        /// <param name="rises">sun rises</param>
+        /// <param name="sets">sun sets</param>
+       ///<param name="solarNoon">solar noon time</param>
+        private static void solarEventsCorrection(double lat, double lng, DateTime target, double offset, DateTime?[] rises, DateTime?[] sets, DateTime? solarNoon)
+        {
+            if (!solarNoon.HasValue) { return; }//can't check
+            if (!datesContainNull(rises) && !datesContainNull(sets)) { return; }
+
+            DateTime? tRise = Get_Event_Target_Date(rises, target);
+            DateTime? tSet = Get_Event_Target_Date(sets, target);
+           
+            int? setIndex = null;
+            int? riseIndex = null;
+
+            //Determine if this can be passed through a top level call in future for efficiency. This is a duplicate call, but original may not return correct value
+            var solarAltitude = GetAltitude(solarNoon.Value, offset, lat, lng);
+
+            if (tRise.HasValue && tSet.HasValue)
+            {
+                setIndex = targetEventIndex(sets, tSet.Value);
+                riseIndex = targetEventIndex(rises, tRise.Value);
+
+                if(setIndex==null || riseIndex==null) { return; }
+
+                //SEE IF NEXT DAY HAS DUPLICATE NULLS. SIGNALS ALL DAY EVENT OCCURING
+                if (setIndex != 4 && riseIndex != 4 && !sets[setIndex.Value + 1].HasValue && !rises[riseIndex.Value + 1].HasValue)
+                {
+                    
+
+                    //IF RISE AFTER SET AND DOWN ALL DAY ZERO OUT RISE
+                    if (solarAltitude<=-0.8333 && sets[setIndex.Value].Value < rises[riseIndex.Value].Value)
+                    {
+                        rises[riseIndex.Value] = null;
+                    }
+                    ////IF SET IS AFTER RISE AND UP ALL DAY, ZERO OUT SET
+                    else if (solarAltitude> -0.8333 && sets[setIndex.Value].Value > rises[riseIndex.Value].Value)
+                    {
+                        sets[setIndex.Value] = null;
+                    }
+                
+                 
+                }
+                //SEE IF PREVIOUS DAY HAS DUPLICATE NULLS
+                else if (setIndex != 0 && riseIndex != 0 && !sets[setIndex.Value - 1].HasValue && !rises[riseIndex.Value - 1].HasValue)
+                {
+
+                    ////IF RISE IS BEFORE SET AND DOWN ALL DAY ZERO OUT RISE
+                    if (solarAltitude <= -0.8333 && sets[setIndex.Value].Value > rises[riseIndex.Value].Value)
+                    {
+                        rises[riseIndex.Value] = null;
+                    }
+                    ////IF SET IS BEFORE RISE AND UP ALL DAY, ZERO OUT SET
+                    else if (solarAltitude> -0.8333 && sets[setIndex.Value].Value < rises[riseIndex.Value].Value)
+                    {
+                        sets[setIndex.Value] = null;
+                    }
+                }
+            }
+            else if(tRise.HasValue && !tSet.HasValue) 
+            {
+                riseIndex = targetEventIndex(rises, tRise.Value);
+                if (riseIndex == null) { return; }
+
+                //IF NEXT DAY IS UP DOWN ALL DAY SCRATCH THIS TIME BECAUSE THE SUN HAS TO SET FIRST
+                if(riseIndex != 4 && !rises[riseIndex.Value + 1].HasValue && solarAltitude <= -0.8333)
+                {
+                    rises[riseIndex.Value] = null;
+                }
+                //IF PREVIOUS DAY IS UP ALL DAY SCRATCH AS THIS HAS TO SET FIRST
+                else if (riseIndex != 0 && !rises[riseIndex.Value - 1].HasValue && solarAltitude > -0.8333)
+                {
+                    rises[riseIndex.Value] = null;
+                }
+               
+  
+            }
+            else if (!tRise.HasValue && tSet.HasValue)
+            {
+                setIndex = targetEventIndex(sets, tSet.Value);
+                if (setIndex == null) { return; }
+
+                //IF NEXT DAY IS UP ALL DAY SCRATCH THIS TIME BECAUSE THE SUN HAS TO RISE FIRST
+                if (setIndex != 4 && !sets[setIndex.Value + 1].HasValue && solarAltitude > -0.8333)
+                {
+                    sets[setIndex.Value] = null;
+                }
+                //IF PREVIOUS DAY IS DOWN ALL DAY SCRATCH AS THIS HAS TO RISE FIRST
+                else if (setIndex != 0 && !sets[setIndex.Value - 1].HasValue && solarAltitude <= -0.8333)
+                {
+                    sets[setIndex.Value] = null;
+                }
+            }
+
+        }
+        private static bool datesContainNull(DateTime?[] dates)
+        {
+            foreach(var d in dates)
+            {
+                if (!d.HasValue) { return true; }
+            }
+            return false;
+        }
+
+        private static int? targetEventIndex(DateTime?[] dates, DateTime target)
+        {
+            int x = 0;
+            foreach(var d in dates)
+            {
+                if(d.HasValue && d.Value == target) { return x; }
+                x++;
+            }
+            return null;
+        }
         /// <summary>
         /// Iterates stored events and extracts the one that occurs on the target date.
         /// </summary>
@@ -527,7 +670,7 @@ namespace CoordinateSharp
         private static double GetTime(double h, double lw, double phi, double dec, double n,double M, double L) 
         {
             double approxTime = hourAngle(h, phi, dec);    //Ch15 Formula 15.1  
-
+            
             double a = approxTransit(approxTime, lw, n);
             double st = solarTransitJ(a, M, L);
           

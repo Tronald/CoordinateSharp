@@ -48,6 +48,7 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace CoordinateSharp
 {
@@ -341,7 +342,7 @@ namespace CoordinateSharp
         /// </example>
         public void Densify(Distance distance)
         {
-            Densify(distance, Shape.Ellipsoid);
+            Densify(distance, Shape.Ellipsoid, Earth_Ellipsoid.Get_Ellipsoid(Earth_Ellipsoid_Spec.WGS84_1984));
         }
 
         /// <summary>
@@ -383,6 +384,52 @@ namespace CoordinateSharp
         /// </example>
         public void Densify(Distance distance, Shape shape)
         {
+            Densify(distance, shape, Earth_Ellipsoid.Get_Ellipsoid(Earth_Ellipsoid_Spec.WGS84_1984));
+        }
+        /// <summary>
+        /// Densifies the polygon by adding additional points along each edge at specified intervals using ellipsoidal (Vincenty) logic with a user specified earth shape.
+        /// </summary>
+        /// <param name="distance">The distance between points along the polygon's edges. This distance determines how frequently new points are inserted into the polygon</param>    
+        /// <param name="ellipsoid">Specify earth ellipsoid shape.</param>
+        /// <remarks>
+        /// This method is particularly useful for large polygons where the curvature of the Earth can cause 
+        /// significant distortion in geographic calculations. By adding more points at regular intervals, 
+        /// the polygon better conforms to the curved surface of the Earth, reducing errors in area calculations, 
+        /// perimeter calculations, and point-in-polygon tests.
+        ///
+        /// The function automatically calculates intermediate points based on the great-circle distance between 
+        /// existing vertices, ensuring that the new points adhere to the true geographic shape of the polygon.
+        /// This is essential for maintaining geographic integrity when performing spatial operations or visualizations.
+        ///
+        /// Note: The densification process increases the number of vertices in the polygon, which may impact performance 
+        /// and memory usage in spatial computations and data storage. Optimal use of this function depends on the required 
+        /// precision and the geographic extent of the application.
+        /// </remarks>
+        /// <example>
+        /// Here is how you might use this function to densify a polygon representing a large geographic area:
+        /// <code>     
+        /// //Create a four point GeoFence around Utah
+        /// List&lt;GeoFence.Point&gt; points = new List&lt;GeoFence.Point&gt;();
+        /// points.Add(new GeoFence.Point(41.003444, -109.045223));
+        /// points.Add(new GeoFence.Point(41.003444, -102.041524));
+        /// points.Add(new GeoFence.Point(36.993076, -102.041524));
+        /// points.Add(new GeoFence.Point(36.993076, -109.045223));
+        /// points.Add(new GeoFence.Point(41.003444, -109.045223));
+        ///
+        /// GeoFence gf = new GeoFence(points);
+        ///
+        /// gf.Densify(new Distance(10, DistanceType.Kilometers), Earth_Ellipsoid.Get_Ellipsoid(Earth_Ellipsoid_Spec.GRS67_1967));
+        /// 
+        /// //The gf.Points list now contains additional points at intervals of approximately 10 kilometers.
+        /// </code>
+        /// </example>
+        public void Densify(Distance distance, Earth_Ellipsoid ellipsoid)
+        {
+            Densify(distance, Shape.Ellipsoid, ellipsoid);
+        }
+
+        private void Densify(Distance distance, Shape shape, Earth_Ellipsoid ellipsoid)
+        {
             if (_points.Count < 2)
             {
                 throw new InvalidOperationException("You cannot perform densification a Geofence that has less than 2 points.");
@@ -402,10 +449,10 @@ namespace CoordinateSharp
                 List<Point> ipoints = new List<Point>();
 
                 //Coordinate to move
-                Coordinate mc = new Coordinate(p1.Latitude, p1.Longitude, new EagerLoad(false));
+                Coordinate mc = new Coordinate(p1.Latitude, p1.Longitude, new EagerLoad(false), ellipsoid.Equatorial_Radius, ellipsoid.Inverse_Flattening);
 
                 //Destination
-                Coordinate dc = new Coordinate(p2.Latitude, p2.Longitude, new EagerLoad(false));
+                Coordinate dc = new Coordinate(p2.Latitude, p2.Longitude, new EagerLoad(false), ellipsoid.Equatorial_Radius, ellipsoid.Inverse_Flattening);
 
                 while (new Distance(mc, dc).Meters > distance.Meters)
                 {
@@ -433,6 +480,5 @@ namespace CoordinateSharp
             //Add last point to close shape.
             _points.Add(ogpoints.Last());
         }
-
     }
 }

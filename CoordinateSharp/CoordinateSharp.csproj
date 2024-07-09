@@ -50,26 +50,27 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70; net80</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.23.1.1</Version>
+    <Version>2.24.1.1</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2024</Copyright>
     <Description>CoordinateSharp is a high powered, lightweight .NET library that can convert geographical coordinates, perform distance logic, and calculate location based sun, moon, and magnetic information with minimal code.</Description>
-    <PackageReleaseNotes>-Adds the ability to densify polylines to mitigate geofence spherical distortions over long distances.</PackageReleaseNotes>
+    <PackageReleaseNotes>-Fixes bug causing incorrect sun condition to report in circumpolar regions during slow transition at horizon.
+-Adds feature to allow custom specification of earth shape during point densification.</PackageReleaseNotes>
     <PackageTags>Conversion; Latitude; Longitude; Coordinates; Geography; Sun; Moon; Solar; Lunar; Time; MGRS; UTM; EPSG:3857; ECEF; GEOREF; Web Mercator;</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>    <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
-    <AssemblyVersion>2.23.1.1</AssemblyVersion>
+    <AssemblyVersion>2.24.1.1</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>128x128.png</PackageIcon>
     <AssemblyOriginatorKeyFile>CoordinateSharp Strong Name.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
-    <FileVersion>2.23.1.1</FileVersion>
+    <FileVersion>2.24.1.1</FileVersion>
     <RepositoryUrl>https://github.com/Tronald/CoordinateSharp</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

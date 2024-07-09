@@ -725,15 +725,58 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(new TimeSpan(24, 0, 0), c.CelestialInfo.DaySpan + c.CelestialInfo.NightSpan);
             Assert.AreEqual(new TimeSpan(24, 0, 0), c.CelestialInfo.DaySpan);
 
-            //No Rise
-            c = new Coordinate(76, 45, new DateTime(2021, 4, 24));
-            Assert.AreEqual(new TimeSpan(24, 0, 0), c.CelestialInfo.DaySpan + c.CelestialInfo.NightSpan);
-            Assert.AreEqual(c.CelestialInfo.SunSet.Value.TimeOfDay, c.CelestialInfo.DaySpan);
-
-            //Down all day
-            c = new Coordinate(-76, 45, new DateTime(2021, 2, 13));
+            //No Set
+            c = new Coordinate(66.771832, 22.339500, new DateTime(2024, 6, 2));
+            c.Offset = 2;
             Assert.AreEqual(new TimeSpan(24, 0, 0), c.CelestialInfo.DaySpan + c.CelestialInfo.NightSpan);
             Assert.AreEqual(c.CelestialInfo.SunRise.Value.TimeOfDay, c.CelestialInfo.NightSpan);
+
+            //No Rise
+            c = new Coordinate(78.2232, 15.6469, new DateTime(2024, 10, 26));
+            c.Offset = -11;
+            Assert.AreEqual(new TimeSpan(24, 0, 0), c.CelestialInfo.DaySpan + c.CelestialInfo.NightSpan);
+            Assert.AreEqual(c.CelestialInfo.SunSet.Value.TimeOfDay, c.CelestialInfo.DaySpan);
+        }
+        [TestMethod]
+        public void Check_Horizon_Hang_Correction()
+        {
+            EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+
+            //No Rise Reported, Correct to Up All Day
+            DateTime d = new DateTime(2021, 4, 24, 0, 0, 0);
+            var c = Celestial.CalculateCelestialTimes(76, 45, d, el, 0);
+            Assert.AreEqual(c.SunCondition, CelestialStatus.UpAllDay);
+
+            //Next day is up all day, correct to No Set
+            d = new DateTime(2021, 4, 24, 0, 0, 0);
+            c = Celestial.CalculateCelestialTimes(76, 45, d, el, 3);
+            Assert.AreEqual(c.SunCondition, CelestialStatus.NoSet);
+
+            //Ensure up all day
+            d = new DateTime(2021, 4, 25, 0, 0, 0);
+            c = Celestial.CalculateCelestialTimes(76, 45, d, el, 3);
+            Assert.AreEqual(c.SunCondition, CelestialStatus.UpAllDay);
+      
+            //No set correct to up all day
+            d = new DateTime(2024, 6, 4);
+            c = Celestial.CalculateCelestialTimes(66.771832, 22.339500, d, el, 2);
+            Assert.AreEqual(c.SunCondition, CelestialStatus.UpAllDay);
+
+            //No rise correct to up all day
+            d = new DateTime(2024, 7, 9);
+            c = Celestial.CalculateCelestialTimes(66.771832, 22.339500, d, el, 2);
+            Assert.AreEqual(c.SunCondition, CelestialStatus.UpAllDay);
+
+            //Correct Up All Day
+            d = new DateTime(2024, 1, 8);
+            c = Celestial.CalculateCelestialTimes(-66.771832, 22.339500, d, el, 2);
+            Assert.AreEqual(c.SunCondition, CelestialStatus.UpAllDay);
+
+            //Strip Set correction
+            d = new DateTime(2024, 12, 4);
+            c = Celestial.CalculateCelestialTimes(-66.771832, 22.339500, d, el, 2);
+            Assert.AreEqual(c.SunCondition, CelestialStatus.NoSet);
+
         }
     }
 

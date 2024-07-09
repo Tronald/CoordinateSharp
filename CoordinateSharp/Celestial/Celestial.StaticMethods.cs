@@ -1147,7 +1147,7 @@ namespace CoordinateSharp
             double lw = rad * -longi;
             double phi = rad * lat;
 
-            var events = SunCalc.Get_Event_Time(lw, phi, alt, date, offset, false);
+            var events = SunCalc.Get_Event_Time(lat, longi, lw, phi, alt, date, offset, false);
          
             var altE = new AltitudeEvents() { Rising = events[0], Setting = events[1] };
 

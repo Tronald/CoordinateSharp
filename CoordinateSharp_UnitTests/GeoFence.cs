@@ -151,10 +151,11 @@ namespace CoordinateSharp_UnitTests
 
             GeoFence ellipseTest = new GeoFence(points);
             GeoFence sphereTest = new GeoFence(new List<GeoFence.Point>(points));
+            GeoFence customTest = new GeoFence(new List<GeoFence.Point>(points));
 
-            
             ellipseTest.Densify(new Distance(5, DistanceType.Kilometers));        
             sphereTest.Densify(new Distance(5, DistanceType.Kilometers), Shape.Sphere);
+            customTest.Densify(new Distance(5, DistanceType.Kilometers), Earth_Ellipsoid.Get_Ellipsoid(Earth_Ellipsoid_Spec.WGS84_1984));
 
             string[] ellipseTestPoints = File.ReadAllText("GeoFenceData\\ColoradoEllipse.txt").Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             string[] sphereTestPoints = File.ReadAllText("GeoFenceData\\ColoradoSphere.txt").Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -166,6 +167,8 @@ namespace CoordinateSharp_UnitTests
                 double lng = double.Parse(point[1]);
                 Assert.AreEqual(ellipseTest.Points[x].Latitude, lat, .00000000001);
                 Assert.AreEqual(ellipseTest.Points[x].Longitude, lng, .00000000001);
+                Assert.AreEqual(customTest.Points[x].Latitude, lat, .00000000001);
+                Assert.AreEqual(customTest.Points[x].Longitude, lng, .00000000001);
             }
 
             for (int x = 0; x < sphereTestPoints.Length; x++)
@@ -176,6 +179,8 @@ namespace CoordinateSharp_UnitTests
                 Assert.AreEqual(sphereTest.Points[x].Latitude, lat, .00000000001);
                 Assert.AreEqual(sphereTest.Points[x].Longitude, lng, .00000000001);
             }
+
+           
         }
     
         /// <summary>
