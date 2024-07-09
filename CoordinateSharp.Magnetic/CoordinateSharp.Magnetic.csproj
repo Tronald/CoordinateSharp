@@ -47,7 +47,7 @@ For more information, please contact Signature Group, LLC at this address: sales
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70; net80</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.1.13.0</Version>
+    <Version>1.1.14.0</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
@@ -61,7 +61,7 @@ For more information, please contact Signature Group, LLC at this address: sales
     <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp.Magnetic</PackageId>
     <Title>CoordinateSharp.Magnetic</Title>
-    <AssemblyVersion>1.1.13.0</AssemblyVersion>
+    <AssemblyVersion>1.1.14.0</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>128x128.png</PackageIcon>
