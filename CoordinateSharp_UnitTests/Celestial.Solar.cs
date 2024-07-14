@@ -13,6 +13,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace CoordinateSharp_UnitTests
 {
@@ -778,6 +779,7 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(c.SunCondition, CelestialStatus.NoSet);
 
         }
+       
     }
 
 
