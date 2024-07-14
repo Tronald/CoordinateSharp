@@ -91,7 +91,12 @@ namespace CoordinateSharp
                     //https://github.com/Tronald/CoordinateSharp/issues/167
 
                     var safety = new Celestial();
-                    CalculateSunAngle(c.solarNoon.Value, lng, lat, safety, celC); 
+                    //Solarnoon may return null on certain days due to formula limitations in circumpolar regions.
+                    //When this occurs set noon to 00:00 because issue occurs around 0 hour.
+                    //The check is accurate enough for up or down all day determination
+                    DateTime? snoon = c.solarNoon;
+                    if (snoon == null) { snoon=actualDate.AddHours(-offset); }
+                    CalculateSunAngle(snoon.Value, lng, lat, safety, celC); 
                    
                     if (safety.sunAltitude <= -.8333)
                     {

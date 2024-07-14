@@ -3,6 +3,8 @@ using System;
 using CoordinateSharp;
 using NuGet.Frameworks;
 using System.Xml;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CoordinateSharp_UnitTests
 {
@@ -53,6 +55,44 @@ namespace CoordinateSharp_UnitTests
             cp = new CoordinatePart(25, 25, 25, CoordinatesPosition.S);
             cp = new CoordinatePart(25, 25, 25, CoordinatesPosition.W);
 
+        }
+
+        //Test has high chance to catch random exception issues in circumpolar region.
+        //Long running however, so comment out until final tests ran if needed
+        [TestMethod]
+        public void CoordinateInitExceptionCheckNPole()
+        {
+            List<Task> tasks = new List<Task>();
+
+            for (int i1 = -180; i1 < 180; i1++)
+            {
+                DateTime dateTime1 = new DateTime(2024, 1, 1);
+
+                for (int i = 0; i < 365; i++)
+                {
+                    int currentI1 = i1;
+                    DateTime currentDate = dateTime1.AddDays(i);
+
+                    // Initialize the Coordinate object within a Task
+                    Task coordinateTask = Task.Run(() =>
+                    {                      
+                        var coordinate = new Coordinate(90, currentI1, currentDate);
+                        coordinate.Offset = 2;
+                        return coordinate;
+                    });
+
+                    tasks.Add(coordinateTask);
+                }
+            }
+
+            try
+            {
+                Task.WhenAll(tasks).GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail($"Task threw an exception: {ex}");
+            }
         }
 
         /// <summary>
