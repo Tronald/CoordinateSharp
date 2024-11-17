@@ -401,16 +401,7 @@ namespace CoordinateSharp
             return longZone.ToString() + LatZone + " " + (int)easting + "mE " + (int)northing + "mN";
         }
 
-        /// <summary>
-        /// Centimeter formatted UTM string (to the 5th decimal)
-        /// </summary>
-        /// <returns>UTM Formatted Coordinate String</returns>
-        [Obsolete("Use the ToRoundedString() method with your preferred precision. Use 5 as precision to keep the behavior of this method.")]
-        public string ToCentimeterString()
-        {
-            if (systemType == UTM_Type.UPS) { return LatZone + " " + easting.ToString("0.#####") + "mE " + northing.ToString("0.#####") + "mN"; }
-            return longZone.ToString() + LatZone + " " + easting.ToString("0.#####") + "mE " + northing.ToString("0.#####") + "mN";
-        }
+       
 
         /// <summary>
         /// Rounded UTM string

@@ -666,22 +666,7 @@ namespace CoordinateSharp
             }
         }
 
-        /// <summary>
-        /// Centimeter formatted MGRS string.
-        /// </summary>
-        /// <returns>MGRS Formatted Coordinate String</returns>
-        [Obsolete("Use the ToRoundedString() method with your preferred precision. Use 5 as precision to keep the behavior of this method.")]
-        public string ToCentimeterString()
-        {
-            if (systemType == MGRS_Type.MGRS)
-            {
-                return longZone.ToString() + LatZone + " " + digraph + " " + easting.ToString("00000.#####") + " " + northing.ToString("00000.#####");
-            }
-            else
-            {
-                return LatZone + " " + digraph + " " + easting.ToString("00000.#####") + " " + northing.ToString("00000.#####");
-            }
-        }
+      
 
         /// <summary>
         /// Rounded MGRS string

@@ -49,6 +49,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace CoordinateSharp
 {
@@ -58,8 +59,8 @@ namespace CoordinateSharp
     [Serializable]
     public partial class GeoFence
     {
-        private readonly List<Point> _points = new List<Point>();
-
+        private List<Point> _points = new List<Point>();
+      
         /// <summary>
         /// Create a GeoFence using a list of points. 
         /// A GeoFence can be either a series of lines or polygons.
@@ -479,6 +480,257 @@ namespace CoordinateSharp
 
             //Add last point to close shape.
             _points.Add(ogpoints.Last());
+        }
+
+        /// <summary>
+        /// Orders the points of the GeoFence to be right-handed (counterclockwise).
+        /// This method is typically used for the outer boundary of a polygon,
+        /// following the GeoJSON specification, where the outer boundary is represented with right-handed (counterclockwise) orientation.
+        /// </summary>
+        /// <remarks>
+        /// A polygon is considered right-handed if its points are ordered in a counterclockwise direction.
+        /// This method rearranges the points in the GeoFence to ensure a counterclockwise orientation.
+        /// </remarks>
+        /// <returns>Returns the GeoFence instance with points ordered in a right-handed (counterclockwise) direction.</returns>
+        /// <example>
+        /// Example usage:
+        /// <code>
+        /// // Create a GeoFence with points in arbitrary order
+        /// List&lt;Coordinate&gt; points = new List&lt;Coordinate&gt;()
+        /// {
+        ///     new Coordinate(47.6062, -122.3321),  // Seattle
+        ///     new Coordinate(48.7519, -122.4787),  // Bellingham
+        ///     new Coordinate(47.2529, -122.4443),  // Tacoma
+        ///     new Coordinate(48.0419, -122.9025),  // Port Townsend
+        /// };
+        /// GeoFence outerFence = new GeoFence(points);
+        ///
+        /// // Order the points to be right-handed (counterclockwise)
+        /// outerFence.OrderPoints_RightHanded();
+        ///
+        /// // Verify the points are ordered correctly and close the polygon
+        /// outerFence.ClosePolygon();
+        ///
+        /// // The GeoFence is now ready to be used as an outer boundary in a GeoJSON polygon
+        /// </code>
+        /// </example>
+
+        public void OrderPoints_RightHanded()
+        {
+            List<Point> points = new List<Point>();
+
+            // Calculate the centroid of the points
+            var centroid = GetCentroid();
+
+            // Sort points based on their angle relative to the centroid
+            _points = _points
+                .OrderBy(p => Math.Atan2(p.Latitude - centroid.Latitude, p.Longitude - centroid.Longitude))
+                .ToList();
+
+        }
+
+        /// <summary>
+        /// Orders the points of the GeoFence to be left-handed (clockwise).
+        /// This method is typically used for inner boundaries (holes) in a polygon,
+        /// following the GeoJSON specification, where holes are represented with left-handed (clockwise) orientation.
+        /// </summary>
+        /// <remarks>
+        /// A polygon is considered left-handed if its points are ordered in a clockwise direction.
+        /// This method rearranges the points in the GeoFence to ensure a clockwise orientation.
+        /// </remarks>
+        /// <returns>Returns the GeoFence instance with points ordered in a left-handed (clockwise) direction.</returns>
+        /// <example>
+        /// Example usage:
+        /// <code>
+        /// // Create a GeoFence with points in arbitrary order
+        /// List&lt;Coordinate&gt; points = new List&lt;Coordinate&gt;()
+        /// {
+        ///       new Coordinate(46.8523, -121.7603),  // Mount Rainier (center point)
+        ///       new Coordinate(46.8625, -121.7401),  // Slightly north-east
+        ///       new Coordinate(46.8421, -121.7805),  // Slightly south-west
+        ///       new Coordinate(46.8650, -121.7850),  // North-west
+        ///       new Coordinate(46.8400, -121.7500)   // South-east
+        /// };
+        /// GeoFence innerFence = new GeoFence(points);
+        ///
+        /// // Order the points to be left-handed (clockwise)
+        /// innerFence.OrderPoints_LeftHanded();
+        ///
+        /// // Verify the points are ordered correctly and close the polygon
+        /// innerFence.ClosePolygon();
+        ///
+        /// // The GeoFence is now ready to be used as an inner boundary (hole) in a GeoJSON polygon
+        /// </code>
+        /// </example>
+        public void OrderPoints_LeftHanded()
+        {
+            // Calculate the centroid of the points
+            var centroid = GetCentroid();
+
+            // Sort points based on their angle relative to the centroid in reverse order
+            _points = _points
+                .OrderByDescending(p => Math.Atan2(p.Latitude - centroid.Latitude, p.Longitude - centroid.Longitude))
+                .ToList();
+        }
+
+        /// <summary>
+        /// Returns the central point of the polygon.
+        /// </summary>
+        /// <returns>Point</returns>
+        public Point GetCentroid()
+        {
+            double centroidLat = 0;
+            double centroidLong = 0;
+
+            foreach (var point in _points)
+            {
+                centroidLat += point.Latitude;
+                centroidLong += point.Longitude;
+            }
+
+            int totalPoints = Points.Count;
+
+            return new Point(centroidLat / totalPoints, centroidLong / totalPoints);
+        }
+
+        /// <summary>
+        /// Closes and Completes the polygon shape ensure the first and last points are identical.
+        /// </summary>
+        public void ClosePolygon()
+        {
+            if(_points.Count > 0)
+            {
+                _points.Add(new Point(_points.First().Latitude, _points.First().Longitude));
+            }
+        }
+
+        /// <summary>
+        /// Builds a GeoJSON representation of a polygon with a single outer boundary (fence).
+        /// This method is a simplified version that creates GeoJSON without any inner fences (holes).
+        /// </summary>
+        /// <param name="geoFence">The outer boundary of the polygon, which should be right-handed (counterclockwise).</param>
+        /// <returns>Returns a string representing the GeoJSON format of the polygon with the specified outer boundary.</returns>
+        /// <example>
+        /// The example method ensures that the outer fence is right-handed (counterclockwise), 
+        /// following GeoJSON conventions for outer boundaries.
+        /// <code>
+        /// // Create the outer fence (right-handed, closed polygon)
+        /// List&lt;Coordinate&gt; outerPoints = new List&lt;Coordinate&gt;()
+        /// {
+        ///     new Coordinate(47.6062, -122.3321),  // Seattle
+        ///     new Coordinate(48.7519, -122.4787),  // Bellingham
+        ///     new Coordinate(47.2529, -122.4443),  // Tacoma
+        ///     new Coordinate(48.0419, -122.9025),  // Port Townsend
+        ///     new Coordinate(47.6062, -122.3321)   // Closing the loop
+        /// };
+        /// GeoFence outerFence = new GeoFence(outerPoints);
+        /// 
+        /// //Points should be right hand ordered and polygon closed if not previously done so.
+        /// outerFence.OrderPoints_RightHanded();
+        /// outerFence.ClosePolygon();
+        ///
+        /// // Build the GeoJSON string for the outer fence only
+        /// string geoJson = GeoFence.GeoJsonPolygonBuilder(outerFence);
+        /// Console.WriteLine(geoJson);
+        /// </code>
+        /// </example>
+
+        public static string GeoJsonPolygonBuilder(GeoFence geoFence)
+        {
+            return GeoFence.GeoJsonPolygonBuilder(geoFence, new List<GeoFence>());
+        }
+
+        /// <summary>
+        /// Builds a GeoJSON representation of a polygon with an outer boundary (fence) and optional inner boundaries (fences).
+        /// The method ensures that the outer fence is right-handed (counterclockwise) and inner fences are left-handed (clockwise), 
+        /// following GeoJSON conventions for polygons and holes.
+        /// </summary>
+        /// <param name="outerFence">The outer boundary of the polygon, which should be right-handed (counterclockwise).</param>
+        /// <param name="innerFences">A list of inner boundaries (holes), each of which should be left-handed (clockwise).</param>
+        /// <returns>Returns a string representing the GeoJSON format of the polygon with the specified boundaries.</returns>
+        /// <example>
+        /// Example usage:
+        /// <code>
+        /// // Create the outer fence (right-handed, closed polygon)
+        /// List&lt;Coordinate&gt; outerPoints = new List&lt;Coordinate&gt;()
+        /// {
+        ///     new Coordinate(47.6062, -122.3321),  // Seattle
+        ///     new Coordinate(48.7519, -122.4787),  // Bellingham
+        ///     new Coordinate(47.2529, -122.4443),  // Tacoma
+        ///     new Coordinate(48.0419, -122.9025),  // Port Townsend
+        /// };
+        /// GeoFence outerFence = new GeoFence(outerPoints);
+        /// outerFence.OrderPoints_RightHanded();
+        /// outerFence.ClosePolygon();
+        ///
+        /// // Create inner fences (left-handed, closed polygons)
+        /// List&lt;Coordinate&gt; innerPoints1 = new List&lt;Coordinate&gt;()
+        /// {
+        ///     new Coordinate(46.8523, -121.7603),  // Mount Rainier
+        ///     new Coordinate(46.8625, -121.7401),
+        ///     new Coordinate(46.8421, -121.7805),
+        /// };
+        /// GeoFence innerFence1 = new GeoFence(innerPoints1);
+        /// innerFence1.OrderPoints_LeftHanded();
+        /// innerFence1.ClosePolygon();
+        ///
+        /// List&lt;Coordinate&gt; innerPoints2 = new List&lt;Coordinate&gt;()
+        /// {
+        ///     new Coordinate(47.2331, -119.8529),  // Quincy
+        ///     new Coordinate(47.2400, -119.8700),
+        ///     new Coordinate(47.2280, -119.8350),
+        /// };
+        /// GeoFence innerFence2 = new GeoFence(innerPoints2);
+        /// innerFence2.OrderPoints_LeftHanded();
+        /// innerFence2.ClosePolygon();
+        ///
+        /// // Build the GeoJSON string
+        /// string geoJson = GeoFence.GeoJsonPolygonBuilder(outerFence, new List&lt;GeoFence&gt; { innerFence1, innerFence2 });
+        /// Console.WriteLine(geoJson);
+        /// </code>
+        /// </example>
+        public static string GeoJsonPolygonBuilder(GeoFence outerFence, List<GeoFence> innerFences)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("{");
+            sb.AppendLine("\"type\": \"FeatureCollection\",");
+            sb.AppendLine("\"features\": [");
+            sb.AppendLine("{");
+            sb.AppendLine("\"type\": \"Feature\",");
+            sb.AppendLine("\"properties\": {},");
+            sb.AppendLine("\"geometry\": {");
+            sb.AppendLine("\"type\": \"Polygon\",");
+            sb.AppendLine("\"coordinates\": [");
+         
+            List<string> polygons = new List<string>();
+            polygons.Add(GeoJsonPointBuilder(outerFence.Points));
+
+            foreach (var innerFence in innerFences)
+            {
+                polygons.Add(GeoJsonPointBuilder(innerFence.Points));
+            }
+
+            sb.AppendLine(string.Join(",\n", polygons));
+
+            sb.AppendLine("]");
+            sb.AppendLine("}");
+            sb.AppendLine("}");
+            sb.AppendLine("]");
+            sb.AppendLine("}");
+
+            return sb.ToString();
+        }
+
+        private static string GeoJsonPointBuilder(List<Point> points)
+        {
+            List<string> results = new List<string>();
+         
+            foreach (var p in points)
+            {
+                results.Add($"[{p.Longitude}, {p.Latitude}]");             
+            }
+
+            return $"[\n{string.Join(",\n", results)}\n]";
         }
     }
 }

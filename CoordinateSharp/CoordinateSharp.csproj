@@ -47,31 +47,33 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70; net80</TargetFrameworks>
+    <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70; net80; net90</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>2.24.2.1</Version>
+    <Version>3.1.1.1</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2024</Copyright>
     <Description>CoordinateSharp is a high powered, lightweight .NET library that can convert geographical coordinates, perform distance logic, and calculate location based sun, moon, and magnetic information with minimal code.</Description>
-    <PackageReleaseNotes>-Fixes critical bug causing exceptions near poles.
--Fixes bugs causing incorrect sun condition to report in circumpolar regions during slow transition at horizon.
--Adds overload to GeoFence.Denisfy() to allow custom specification of earth shape during point densification.</PackageReleaseNotes>
+    <PackageReleaseNotes>-Removed deprecated items: This is a breaking change for any projects still referencing obsolete classes or methods.
+-Added .NET 9 support: The application now includes full compatibility with .NET 9.
+-Enhanced GeoFence point handling: Added the ability to reorder GeoFence points with right-hand or left-hand orientation.
+-Added GeoJson support: New functionality to build GeoJson objects directly from GeoFences.
+-Extended MoonIllum properties: Added a new moonAge property to the MoonIllum class.</PackageReleaseNotes>
     <PackageTags>Conversion; Latitude; Longitude; Coordinates; Geography; Sun; Moon; Solar; Lunar; Time; MGRS; UTM; EPSG:3857; ECEF; GEOREF; Web Mercator;</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>    <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
-    <AssemblyVersion>2.24.2.1</AssemblyVersion>
+    <AssemblyVersion>3.1.1.1</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>128x128.png</PackageIcon>
     <AssemblyOriginatorKeyFile>CoordinateSharp Strong Name.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
-    <FileVersion>2.24.2.1</FileVersion>
+    <FileVersion>3.1.1.1</FileVersion>
     <RepositoryUrl>https://github.com/Tronald/CoordinateSharp</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

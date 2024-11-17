@@ -167,8 +167,7 @@ namespace CoordinateSharp
 
         //Creates empty properties
         private void Create_Properties()
-        {
-            astrologicalSigns = new AstrologicalSigns(); //REMOVE WITH ZODIAC REMOVAL
+        {          
             almanacMoonName = new AlmanacMoonName();
             lunarEclipse = new LunarEclipse();
             solarEclipse = new SolarEclipse();
@@ -222,16 +221,10 @@ namespace CoordinateSharp
                 }
             }
 
-            if (el.Extensions.Lunar_Cycle || el.Extensions.Zodiac || el.Extensions.Lunar_Eclipse)
+            if (el.Extensions.Lunar_Cycle || el.Extensions.Lunar_Eclipse)
             {
                 MoonCalc.GetMoonIllumination(date, this, lat, longi, el, offset);
-            }
-
-            if (el.Extensions.Zodiac)
-            {
-                SunCalc.CalculateZodiacSign(date, this);
-                MoonCalc.GetMoonSign(date, this);
-            }
+            }        
 
             if (el.Extensions.Lunar_Cycle || el.Extensions.Solar_Cycle)
             {
@@ -266,8 +259,7 @@ namespace CoordinateSharp
 
                 Perigee.ConvertTo_Local_Time(offset);
                 Apogee.ConvertTo_Local_Time(offset);
-                LunarEclipse.ConvertTo_LocalTime(offset);
-                MoonCalc.GetMoonSign(c.GeoDate.AddHours(offset), this);
+                LunarEclipse.ConvertTo_LocalTime(offset);            
             }
 
             ////Solar
@@ -278,8 +270,7 @@ namespace CoordinateSharp
                 AdditionalSolarTimes.Convert_To_Local_Time(offset);
 
                 //Eclipse
-                SolarEclipse.ConvertTo_LocalTime(offset);
-                SunCalc.CalculateZodiacSign(c.GeoDate.AddHours(offset), this);
+                SolarEclipse.ConvertTo_LocalTime(offset);             
             }
         }
 

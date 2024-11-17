@@ -21,7 +21,7 @@ namespace CoordinateSharp_UnitTests
             //Check extension properties to ensure proper loading
             Assert.AreNotEqual(null, c.CelestialInfo.SunSet);//Solar Cycle
             Assert.AreNotEqual(null, c.CelestialInfo.MoonSet);//Lunar Cycle
-            Assert.AreNotEqual(AstrologicalSignType.None, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
+         
             Assert.AreNotEqual(null, c.CelestialInfo.LunarEclipse.LastEclipse.Type);//Lunar Cycle
             Assert.AreNotEqual(null, c.CelestialInfo.SolarEclipse.LastEclipse.Type);//Solar Cycle
             Assert.AreNotEqual(null, c.CelestialInfo.Solstices.Summer);//Lunar Cycle
@@ -40,7 +40,7 @@ namespace CoordinateSharp_UnitTests
             c.Longitude.DecimalDegree++; //Trigger proper changes to confirm objects remain unloaded
             Assert.AreEqual(null, c.CelestialInfo.SunSet);//Solar Cycle
             Assert.AreEqual(null, c.CelestialInfo.MoonSet);//Lunar Cycle
-            Assert.AreEqual(null, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
+          
             Assert.AreEqual(new DateTime(), c.CelestialInfo.LunarEclipse.LastEclipse.Date);//Lunar Cycle
             Assert.AreEqual(new DateTime(), c.CelestialInfo.SolarEclipse.LastEclipse.Date);//Solar Eclipse
             Assert.AreEqual(new DateTime(), c.CelestialInfo.Solstices.Summer);//Solstice Equinox
@@ -63,7 +63,7 @@ namespace CoordinateSharp_UnitTests
             Assert.AreNotEqual(null, c.CelestialInfo.SunSet);//Solar Cycle
            
             Assert.AreEqual(null, c.CelestialInfo.MoonSet);//Lunar Cycle
-            Assert.AreEqual(null, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
+         
             Assert.AreEqual(new DateTime(), c.CelestialInfo.LunarEclipse.LastEclipse.Date);//Lunar Cycle
             Assert.AreEqual(new DateTime(), c.CelestialInfo.SolarEclipse.LastEclipse.Date);//Solar Eclipse
             Assert.AreEqual(new DateTime(), c.CelestialInfo.Solstices.Summer);//Solstice Equinox
@@ -86,7 +86,7 @@ namespace CoordinateSharp_UnitTests
             Assert.AreNotEqual(null, c.CelestialInfo.MoonSet);//Lunar Cycle
 
             Assert.AreEqual(null, c.CelestialInfo.SunSet);//Solar Cycle
-            Assert.AreEqual(null, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
+   
             Assert.AreEqual(new DateTime(), c.CelestialInfo.LunarEclipse.LastEclipse.Date);//Lunar Cycle
             Assert.AreEqual(new DateTime(), c.CelestialInfo.SolarEclipse.LastEclipse.Date);//Solar Eclipse
             Assert.AreEqual(new DateTime(), c.CelestialInfo.Solstices.Summer);//Solstice Equinox
@@ -110,7 +110,7 @@ namespace CoordinateSharp_UnitTests
 
             Assert.AreEqual(null, c.CelestialInfo.SunSet);//Solar Cycle
             Assert.AreEqual(null, c.CelestialInfo.MoonSet);//Lunar Cycle
-            Assert.AreEqual(null, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
+          
             Assert.AreEqual(new DateTime(), c.CelestialInfo.LunarEclipse.LastEclipse.Date);//Lunar Cycle
             Assert.AreEqual(new DateTime(), c.CelestialInfo.Solstices.Summer);//Solstice Equinox
             Assert.AreEqual(null, c.MGRS); //MGRS                   
@@ -133,7 +133,7 @@ namespace CoordinateSharp_UnitTests
 
             Assert.AreEqual(null, c.CelestialInfo.SunSet);//Solar Cycle
             Assert.AreEqual(null, c.CelestialInfo.MoonSet);//Lunar Cycle
-            Assert.AreEqual(null, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
+      
             Assert.AreEqual(new DateTime(), c.CelestialInfo.SolarEclipse.LastEclipse.Date);//Solar Eclipse
             Assert.AreEqual(new DateTime(), c.CelestialInfo.Solstices.Summer);//Solstice Equinox
             Assert.AreEqual(null, c.MGRS); //MGRS                   
@@ -157,35 +157,12 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(new DateTime(), c.CelestialInfo.SolarEclipse.LastEclipse.Date);//Solar Eclipse
             Assert.AreEqual(null, c.CelestialInfo.SunSet);//Solar Cycle
             Assert.AreEqual(null, c.CelestialInfo.MoonSet);//Lunar Cycle
-            Assert.AreEqual(null, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
+           
             Assert.AreEqual(new DateTime(), c.CelestialInfo.LunarEclipse.LastEclipse.Date);//Lunar Eclipse      
             Assert.AreEqual(null, c.MGRS); //MGRS                   
         }
 
-        /// <summary>
-        /// Ensures Zodiac Extension properly turns back on without turning other extensions on
-        /// </summary>
-        [TestMethod]
-        public void Zodiac_Extension_On()
-        {
-            EagerLoad e = new EagerLoad(true);
-            e.Extensions = new EagerLoad_Extensions(false);
-            Coordinate c = new Coordinate(45, 75, new DateTime(2008, 1, 21), e);
-            e.Extensions.Zodiac = true;
-            c.Latitude.DecimalDegree++; //Trigger proper changes to confirm objects remain unloaded
-            c.Longitude.DecimalDegree++; //Trigger proper changes to confirm objects remain unloaded
-            c.GeoDate = new DateTime(2008, 1, 22); //Trigger date to ensure moon sign correct.
-
-            Assert.AreNotEqual(null, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
-            Assert.AreNotEqual(AstrologicalSignType.None, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
-
-            Assert.AreEqual(null, c.CelestialInfo.SunSet);//Solar Cycle
-            Assert.AreEqual(null, c.CelestialInfo.MoonSet);//Lunar Cycle         
-            Assert.AreEqual(new DateTime(), c.CelestialInfo.SolarEclipse.LastEclipse.Date);//Solar Eclipse
-            Assert.AreEqual(new DateTime(), c.CelestialInfo.LunarEclipse.LastEclipse.Date);//Lunar Eclipse  
-            Assert.AreEqual(new DateTime(), c.CelestialInfo.Solstices.Summer);//Solstice Equinox
-            Assert.AreEqual(null, c.MGRS); //MGRS                   
-        }
+      
 
         /// <summary>
         /// Ensures MGRS Extension properly turns back on without turning other extensions on
@@ -202,7 +179,7 @@ namespace CoordinateSharp_UnitTests
 
             Assert.AreNotEqual(null, c.MGRS); //MGRS     
 
-            Assert.AreEqual(null, c.CelestialInfo.AstrologicalSigns.MoonName);//Zodiac
+       
             Assert.AreEqual(null, c.CelestialInfo.SunSet);//Solar Cycle
             Assert.AreEqual(null, c.CelestialInfo.MoonSet);//Lunar Cycle         
             Assert.AreEqual(new DateTime(), c.CelestialInfo.SolarEclipse.LastEclipse.Date);//Solar Eclipse
@@ -223,7 +200,7 @@ namespace CoordinateSharp_UnitTests
             var solarEclipse = c.CelestialInfo.SolarEclipse.LastEclipse.Date;
             var lunarEclipse = c.CelestialInfo.LunarEclipse.LastEclipse.Date;
             var solstice = c.CelestialInfo.Solstices.Summer;
-            var zodiac = c.CelestialInfo.AstrologicalSigns.MoonSign;
+            
 
             c.EagerLoadSettings.Extensions = new EagerLoad_Extensions(false);
             c.Latitude.DecimalDegree = 47;
@@ -234,7 +211,7 @@ namespace CoordinateSharp_UnitTests
             Assert.AreEqual(solarEclipse, c.CelestialInfo.SolarEclipse.LastEclipse.Date);
             Assert.AreEqual(lunarEclipse, c.CelestialInfo.LunarEclipse.LastEclipse.Date);
             Assert.AreEqual(solstice, c.CelestialInfo.Solstices.Summer);
-            Assert.AreEqual(zodiac, c.CelestialInfo.AstrologicalSigns.MoonSign);
+           
 
         }
         /// <summary>
@@ -250,7 +227,7 @@ namespace CoordinateSharp_UnitTests
             var solarEclipse = c.CelestialInfo.SolarEclipse.LastEclipse.Date;
             var lunarEclipse = c.CelestialInfo.LunarEclipse.LastEclipse.Date;
             var solstice = c.CelestialInfo.Solstices.Summer;
-            var zodiac = c.CelestialInfo.AstrologicalSigns.MoonSign;
+         
 
             //Change properties with extensions off
             c.EagerLoadSettings.Extensions = new EagerLoad_Extensions(false);
@@ -267,7 +244,7 @@ namespace CoordinateSharp_UnitTests
             Assert.AreNotEqual(solarEclipse, c.CelestialInfo.SolarEclipse.LastEclipse.Date);
             Assert.AreNotEqual(lunarEclipse, c.CelestialInfo.LunarEclipse.LastEclipse.Date);
             Assert.AreNotEqual(solstice, c.CelestialInfo.Solstices.Summer);
-            Assert.AreNotEqual(zodiac, c.CelestialInfo.AstrologicalSigns.MoonSign);
+         
 
         }
     }

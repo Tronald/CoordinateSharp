@@ -54,7 +54,10 @@ namespace CoordinateSharp
     [Serializable]
     public class MoonIllum
     {
-
+        /// <summary>
+        /// Moon age or number of days since last new moon
+        /// </summary>
+        public double Age { get { return Phase * 29.53; } }
         /// <summary>
         /// Moon's fraction
         /// </summary>
@@ -70,6 +73,7 @@ namespace CoordinateSharp
         /// <summary>
         /// Moon's phase name for the specified day
         /// </summary>
+       
         public string PhaseName { get; internal set; }
         /// <summary>
         /// Moon's phase name enumerator for the specified day
@@ -240,115 +244,7 @@ namespace CoordinateSharp
             NextEclipse.Convert_To_Local_Time(offset);
         }
     }
-    /// <summary>
-    /// Class for storing astrological naming and sign information.
-    /// </summary>
-    [Serializable]
-    [Obsolete("Astrological sign calculations have been deprecated and are being removed from CoordinateSharp. Moon names will still be available via the " +
-        "AlmanacMoonName class contained within the CelestialInfo class.")]
-    public class AstrologicalSigns
-    {     
-        internal MoonName emoonName = CoordinateSharp.MoonName.None;
-        internal AstrologicalSignType emoonSign = CoordinateSharp.AstrologicalSignType.None;
-        internal AstrologicalSignType ezodiacSign = CoordinateSharp.AstrologicalSignType.None;
 
-        /// <summary>
-        /// Astrological Moon Name String.
-        /// </summary>
-        public string MoonName 
-        { 
-            get 
-            { 
-                switch(emoonName)
-                {
-                    case CoordinateSharp.MoonName.Wolf: return "Wolf Moon";                
-                    case CoordinateSharp.MoonName.Snow: return "Snow Moon";
-                    case CoordinateSharp.MoonName.Worm: return "Worm Moon";
-                    case CoordinateSharp.MoonName.Pink: return "Pink Moon";
-                    case CoordinateSharp.MoonName.Flower: return "Flower Moon";
-                    case CoordinateSharp.MoonName.Strawberry: return "Strawberry Moon";
-                    case CoordinateSharp.MoonName.Buck: return "Buck Moon";
-                    case CoordinateSharp.MoonName.Sturgeon: return "Sturgeon Moon";
-                    case CoordinateSharp.MoonName.Corn: return "Corn Moon";
-                    case CoordinateSharp.MoonName.Hunters: return "Hunters Moon";
-                    case CoordinateSharp.MoonName.Beaver: return "Beaver Moon";
-                    case CoordinateSharp.MoonName.Blue: return "Blue Moon";
-                    case CoordinateSharp.MoonName.Cold: return "Cold Moon";
-                    default: return null;
-                }
-            }
-        }
-        /// <summary>
-        /// Astrological Moon Sign String.
-        /// </summary>       
-        public string MoonSign 
-        { 
-            get 
-            {
-                switch (emoonSign)
-                {
-                    case AstrologicalSignType.Aries: return "Aries";
-                    case AstrologicalSignType.Taurus: return "Taurus";
-                    case AstrologicalSignType.Gemini: return "Gemini";
-                    case AstrologicalSignType.Cancer: return "Cancer";
-                    case AstrologicalSignType.Leo: return "Leo";
-                    case AstrologicalSignType.Virgo: return "Virgo";
-                    case AstrologicalSignType.Libra: return "Libra";
-                    case AstrologicalSignType.Scorpio: return "Scorpio";
-                    case AstrologicalSignType.Sagittarius: return "Sagittarius";
-                    case AstrologicalSignType.Capricorn: return "Capricorn";
-                    case AstrologicalSignType.Aquarius: return "Aquarius";
-                    case AstrologicalSignType.Pisces: return "Pisces";
-
-                    default: return null;
-                }
-            } 
-        }
-
-        /// <summary>
-        /// Astrological Zodiac Sign String.
-        /// </summary>
-        public string ZodiacSign
-        {
-            get
-            {
-                switch (ezodiacSign)
-                {
-                    case AstrologicalSignType.Aries: return "Aries";
-                    case AstrologicalSignType.Taurus: return "Taurus";
-                    case AstrologicalSignType.Gemini: return "Gemini";
-                    case AstrologicalSignType.Cancer: return "Cancer";
-                    case AstrologicalSignType.Leo: return "Leo";
-                    case AstrologicalSignType.Virgo: return "Virgo";
-                    case AstrologicalSignType.Libra: return "Libra";
-                    case AstrologicalSignType.Scorpio: return "Scorpio";
-                    case AstrologicalSignType.Sagittarius: return "Sagittarius";
-                    case AstrologicalSignType.Capricorn: return "Capricorn";
-                    case AstrologicalSignType.Aquarius: return "Aquarius";
-                    case AstrologicalSignType.Pisces: return "Pisces";
-
-                    default: return null;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Astrological Moon Name.
-        /// </summary>
-        public MoonName EMoonName { get { return emoonName; } }
-      
-        /// <summary>
-        /// Astrological Moon Sign.
-        /// </summary>
-        [Obsolete("")]
-        public AstrologicalSignType EMoonSign { get { return emoonSign; } }
-
-        /// <summary>
-        /// Astrological Zodiac Sign.
-        /// </summary>
-        [Obsolete("")]
-        public AstrologicalSignType EZodiacSign { get { return ezodiacSign; } }
-    }
  
     /// <summary>
     /// Class for storing farmers almanac moon names.

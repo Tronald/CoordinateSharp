@@ -95,6 +95,19 @@ namespace CoordinateSharp_UnitTests
         {
             Check_Values(data.MoonFractions, "CelestialData\\MoonFraction.txt",.01);
         }
+
+        [TestMethod]
+        public void MoonAge()
+        {
+            DateTime d = new DateTime(2024, 1, 1,12,0,0);
+            Coordinate c = new Coordinate(45, 45, d);
+            for (int i = 0; i < 30; i++)
+            {
+                Assert.AreEqual(c.CelestialInfo.MoonIllum.Phase, c.CelestialInfo.MoonIllum.Age / 29.53, .00001);
+                c.GeoDate= c.GeoDate.AddDays(i);
+            }
+        }
+
         [TestMethod]
         public void MoonPhase()
         {

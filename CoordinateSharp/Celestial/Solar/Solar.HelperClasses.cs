@@ -372,11 +372,7 @@ namespace CoordinateSharp
         /// </summary>
         /// <remarks>returns 0001/01/01 if event did not occur</remarks>
         public DateTime AorTEclipseEnd { get { return aorTEclipseEnd; } }
-        /// <summary>
-        /// DateTime when the partial eclipse ends.
-        /// </summary>
-        [Obsolete("Property named incorrectly. Use correctly named 'PartialEclipseEnd' instead.")]
-        public DateTime PartialEclispeEnd { get { return partialEclispeEnd; } }
+    
         /// <summary>
         /// DateTime when the partial eclipse ends.
         /// </summary>
