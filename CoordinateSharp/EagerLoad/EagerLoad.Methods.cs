@@ -213,8 +213,7 @@ namespace CoordinateSharp
             Solstice_Equinox = true;
             Lunar_Cycle = true;
             Solar_Eclipse = true;
-            Lunar_Eclipse = true;
-            Zodiac = true;
+            Lunar_Eclipse = true;           
             MGRS = true;
         }
         /// <summary>
@@ -228,8 +227,7 @@ namespace CoordinateSharp
             Solstice_Equinox = eagerLoad;
             Lunar_Cycle = eagerLoad;
             Solar_Eclipse = eagerLoad;
-            Lunar_Eclipse = eagerLoad;
-            Zodiac = eagerLoad;
+            Lunar_Eclipse = eagerLoad;           
             MGRS = eagerLoad;
         }
 
@@ -245,8 +243,7 @@ namespace CoordinateSharp
             Solstice_Equinox = false;
             Lunar_Cycle = false;
             Solar_Eclipse = false;
-            Lunar_Eclipse = false;
-            Zodiac = false;
+            Lunar_Eclipse = false;          
             MGRS = false;
 
             if (et.HasFlag(EagerLoad_ExtensionsType.Solar_Cycle))
@@ -268,11 +265,7 @@ namespace CoordinateSharp
             if (et.HasFlag(EagerLoad_ExtensionsType.Lunar_Eclipse))
             {
                 Lunar_Eclipse = true;
-            }
-            if (et.HasFlag(EagerLoad_ExtensionsType.Zodiac))
-            {
-                Zodiac = true;
-            }
+            }          
             if(et.HasFlag(EagerLoad_ExtensionsType.MGRS))
             {
                 MGRS = true;
@@ -290,7 +283,7 @@ namespace CoordinateSharp
             Lunar_Cycle = option;
             Solar_Eclipse = option;
             Lunar_Eclipse = option;
-            Zodiac = option;
+           
         }
     }
 }

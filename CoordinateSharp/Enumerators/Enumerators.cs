@@ -259,19 +259,15 @@ namespace CoordinateSharp
         /// <summary>
         /// Eager load lunar eclipse data.
         /// </summary>
-        Lunar_Eclipse = 8,
-        /// <summary>
-        /// Eager load zodiac data.
-        /// </summary>
-        Zodiac = 16,
+        Lunar_Eclipse = 8,       
         /// <summary>
         /// Eager load MGRS data.
         /// </summary>
-        MGRS = 32,
+        MGRS = 16,
         /// <summary>
         /// Eager load solstice and equinox data.
         /// </summary>
-        Solstice_Equinox=64
+        Solstice_Equinox=32
     }
 
     /// <summary>

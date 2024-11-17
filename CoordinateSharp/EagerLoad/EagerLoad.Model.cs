@@ -128,11 +128,7 @@ namespace CoordinateSharp
         /// Eager load lunar eclipse data.
         /// </summary>
         public bool Lunar_Eclipse { get; set; }
-        /// <summary>
-        /// Eager load zodiac data.
-        /// </summary>
-        [Obsolete("Zodiacs have been deprecated and are being removed from CoordinateSharp. Almanac moon names will still be available view the AlmanacMoonName class. They will be eager loaded with the 'Lunar_Cyle'.")]
-        public bool Zodiac { get; set; }
+      
         /// <summary>
         /// Eager load MGRS data.
         /// </summary>

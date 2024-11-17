@@ -292,7 +292,7 @@ namespace CoordinateSharp
         {
        
             //Moon Illum must be done for both the Moon Name and Phase so either will trigger it to load
-            if (el.Extensions.Lunar_Cycle || el.Extensions.Zodiac)
+            if (el.Extensions.Lunar_Cycle)
             {
                 date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Utc);
                 offset *= -1;
@@ -317,7 +317,7 @@ namespace CoordinateSharp
                 mi.Fraction = (1 + Math.Cos(inc)) / 2;
                 mi.Phase = 0.5 + 0.5 * inc * (angle < 0 ? -1 : 1) / Math.PI;
                 mi.Angle = angle;
-
+           
 
                 c.moonIllum = mi;
 
@@ -422,24 +422,13 @@ namespace CoordinateSharp
                 }
                
 
-                //REMOVE WITH ZODIAC REMOVAL
                 if (date.Day == moonDate)
                 {
                     c.AlmanacMoonName.emoonName = moonName;
-
-                    //REMOVE WITH ZODIAC REMOVAL
-                    if (el.Extensions.Zodiac)
-                    {
-                        c.AstrologicalSigns.emoonName = moonName;                      
-                    }
-                   
                 }               
                 else 
                 {
-                    c.AlmanacMoonName.emoonName = MoonName.None;
-                    //REMOVE WITH ZODIAC REMOVAL
-                    if (el.Extensions.Zodiac) { c.AstrologicalSigns.emoonName = MoonName.None; }
-                   
+                    c.AlmanacMoonName.emoonName = MoonName.None;                   
                 }
              
 
@@ -515,83 +504,6 @@ namespace CoordinateSharp
             }
         }
       
-    
-
-        public static void GetMoonSign(DateTime date, Celestial c)
-        {
-            //Formulas taken from https://www.astrocal.co.uk/moon-sign-calculator/
-            double d = date.Day;
-            double m = date.Month;
-            double y = date.Year;
-            double hr = date.Hour;
-            double mi = date.Minute;
-
-            double f = hr + (mi / 60);
-            double im = 12 * (y + 4800) + m - 3;
-            double j = (2 * (im - Math.Floor(im / 12) * 12) + 7 + 365 * im) / 12;
-            j = Math.Floor(j) + d + Math.Floor(im / 48) - 32083;
-            double jd = j + Math.Floor(im / 4800) - Math.Floor(im / 1200) + 38;
-            double T = ((jd - 2415020) + f / 24 - .5) / 36525;
-            // double ob = FNr(23.452294 - .0130125 * T);
-            double ll = 973563 + 1732564379 * T - 4 * T * T;
-            double g = 1012395 + 6189 * T;
-            double n = 933060 - 6962911 * T + 7.5 * T * T;
-            double g1 = 1203586 + 14648523 * T - 37 * T * T;
-            d = 1262655 + 1602961611 * T - 5 * T * T;
-            double M = 3600;
-            double l = (ll - g1) / M;
-            double l1 = ((ll - d) - g) / M;
-            f = (ll - n) / M;
-            d /= M;
-            y = 2 * d;
-            double ml = 22639.6 * FNs(l) - 4586.4 * FNs(l - y);
-            ml = ml + 2369.9 * FNs(y) + 769 * FNs(2 * l) - 669 * FNs(l1);
-            ml = ml - 411.6 * FNs(2 * f) - 212 * FNs(2 * l - y);
-            ml = ml - 206 * FNs(l + l1 - y) + 192 * FNs(l + y);
-            ml = ml - 165 * FNs(l1 - y) + 148 * FNs(l - l1) - 125 * FNs(d);
-            ml = ml - 110 * FNs(l + l1) - 55 * FNs(2 * f - y);
-            ml = ml - 45 * FNs(l + 2 * f) + 40 * FNs(l - 2 * f);
-            //double tn = n + 5392 * FNs(2 * f - y) - 541 * FNs(l1) - 442 * FNs(y);
-            //tn = tn + 423 * FNs(2 * f) - 291 * FNs(2 * l - 2 * f);
-            g = FNu(FNp(ll + ml));
-            double sign = Math.Floor(g / 30);
-
-            sign += 1;
-
-            switch (sign)
-            {
-                case 1: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Aries; break;
-                case 2: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Taurus; break;
-                case 3: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Gemini; break;
-                case 4: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Cancer; break;
-                case 5: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Leo; break;
-                case 6: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Virgo; break;
-                case 7: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Libra; break;
-                case 8: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Scorpio; break;
-                case 9: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Sagittarius; break;
-                case 10: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Capricorn; break;
-                case 11: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Aquarius; break;
-                case 12: c.AstrologicalSigns.emoonSign = AstrologicalSignType.Pisces; break;
-                default: c.AstrologicalSigns.emoonSign =  AstrologicalSignType.None; break;
-            }
-
-        }
-
-        private static double FNp(double x)
-        {
-            double sgn;
-            if (x < 0)
-            { sgn = -1; }
-            else
-            { sgn = 1; }
-            return sgn * ((Math.Abs(x) / 3600) / 360 - Math.Floor((Math.Abs(x) / 3600.0) / 360.0)) * 360;
-        }
-        private static double FNu(double x)
-        { return x - (Math.Floor(x / 360) * 360); }
-        private static double FNr(double x)
-        { return Math.PI / 180 * x; }
-        private static double FNs(double x)
-        { return Math.Sin(Math.PI / 180 * x); }
 
         //v1.1.3 Formulas
         //The following formulas are either additions 

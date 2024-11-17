@@ -83,7 +83,7 @@ namespace CoordinateSharp
         internal Perigee perigee;
         internal Apogee apogee;
         internal AdditionalSolarTimes additionalSolarTimes;
-        internal AstrologicalSigns astrologicalSigns;
+      
         internal AlmanacMoonName almanacMoonName;
         internal SolarEclipse solarEclipse;
         internal LunarEclipse lunarEclipse;
@@ -262,15 +262,7 @@ namespace CoordinateSharp
         /// <remarks>Contains dawn, dusk and twilight times.</remarks>
         public AdditionalSolarTimes AdditionalSolarTimes { get { return additionalSolarTimes; } }
        
-        /// <summary>
-        /// Astrological signs based on the provided date.
-        /// </summary>
-        /// <remarks>
-        /// Contains zodiac, moon sign and moon name during full moon events.
-        /// </remarks>       
-        [Obsolete("Astrological sign calculations have been deprecated and are being removed from CoordinateSharp. Moon names will still be available via the " +
-        "AlmanacMoonName class contained within the CelestialInfo class.")]
-        public AstrologicalSigns AstrologicalSigns { get { return astrologicalSigns; } }
+     
 
         /// <summary>
         /// Farmers Almanac moon names
