@@ -50,9 +50,25 @@ namespace CoordinateSharp.Magnetic
     /// </summary>
     public static class MagneticExtensions
     {
+        /// <summary>
+        /// Creates a Magnetic object from a Coordinate with the latest data model. Assumes height is at MSL.
+        /// </summary>
+        /// <param name="coordinate">Coordinate</param>
+        /// <returns>Magnetic</returns>
+        /// <example>
+        /// Creating a Magnetic object from a coordinate.
+        /// <code>
+        /// Coordinate c = Coordinate(25,25, new DateTime(2020,1,1));
+        /// Magnetic m = c.GetMagnetic();
+        /// </code>
+        /// </example>
+        public static Magnetic GetMagnetic(this Coordinate coordinate)
+        {
+            return new Magnetic(coordinate, Magnetic.latestDataModel);
+        }
 
         /// <summary>
-        /// Creates a Magnetic object from a Coordinate. Assumes height is at MSL and a provided data model.
+        /// Creates a Magnetic object from a Coordinate and a provided data model. Assumes height is at MSL.
         /// </summary>
         /// <param name="coordinate">Coordinate</param>
         /// <param name="dataModel">Data Model</param>
@@ -69,6 +85,24 @@ namespace CoordinateSharp.Magnetic
             return new Magnetic(coordinate, dataModel);          
         }
 
+        /// <summary>
+        /// Creates a Magnetic object from a Coordinate with a specified height in meters above MSL using the latest data model.
+        /// </summary>
+        /// <param name="coordinate">Coordinate</param>
+        /// <param name="height">Height in Meters</param>
+        /// <returns>Magnetic</returns>
+        /// <example>
+        /// Creating a Magnetic object from a coordinate with a specified height.
+        /// <code>
+        /// Coordinate c = Coordinate(25,25, new DateTime(2020,1,1));
+        /// //Height in meters.
+        /// Magnetic m = c.GetMagnetic(1000);
+        /// </code>
+        /// </example>
+        public static Magnetic GetMagnetic(this Coordinate coordinate, double height)
+        {
+            return new Magnetic(coordinate, height, Magnetic.latestDataModel);
+        }
         /// <summary>
         /// Creates a Magnetic object from a Coordinate with a specified height in meters above MSL and a provided data model.
         /// </summary>
@@ -89,6 +123,25 @@ namespace CoordinateSharp.Magnetic
             return new Magnetic(coordinate, height, dataModel);
         }
 
+        /// <summary>
+        /// Creates a Magnetic object from a Coordinate with a specified height above MSL using the latest data model.
+        /// </summary>
+        /// <param name="coordinate">Coordinate</param>
+        /// <param name="height">Height</param>
+    
+        /// <returns>Magnetic</returns>
+        /// <example>
+        /// Creating a Magnetic object from a coordinate with a specified height..
+        /// <code>
+        /// Coordinate c = Coordinate(25,25, new DateTime(2020,1,1));
+        /// Distance d = new Distance(10, DistanceType.Miles); //Height is 10 miles above MSL
+        /// Magnetic m = c.GetMagnetic(d);
+        /// </code>
+        /// </example>
+        public static Magnetic GetMagnetic(this Coordinate coordinate, Distance height)
+        {
+            return new Magnetic(coordinate, height, Magnetic.latestDataModel);
+        }
         /// <summary>
         /// Creates a Magnetic object from a Coordinate with a specified height above MSL and a provided data model.
         /// </summary>

@@ -51,6 +51,8 @@ namespace CoordinateSharp.Magnetic
     [Serializable]
     public partial class Magnetic 
     {
+        internal static readonly DataModel latestDataModel = DataModel.WMM2025;
+
         internal double semiMajorAxis;
         internal double semiMinorAxis;
         internal double inverseFlattening;
@@ -214,7 +216,9 @@ namespace CoordinateSharp.Magnetic
     {
         //***REFERENCE WMM DOCUMENTS FOLDER FOR INFO***
         //Uncertainty taken from https://www.ngdc.noaa.gov/geomag/WMM/limit.shtml
-        //WMM REPORT DOWNLOADED HAS TOTAL INTESTY AT 145 not 148 like web site says.
+        //Uncertainty taken from https://www.ncei.noaa.gov/products/world-magnetic-model/accuracy-limitations-error-model
+        //Review WMM Reports for Uncertainty updates
+        //.
         //Values are populated via the hard calculated values in the World Magnetic Model
         //X = North
         //Y = East
@@ -230,9 +234,9 @@ namespace CoordinateSharp.Magnetic
         /// <param name="m">Magentic</param>
         public Uncertainty(Magnetic m)
         {
-            if (m.Model == DataModel.WMM2015) { Load_2015(m); }
+            if (m.Model == DataModel.WMM2025) { Load_2025(m); }
             else if (m.Model == DataModel.WMM2020) { Load_2020(m); }
-
+            else if (m.Model == DataModel.WMM2015) { Load_2015(m); }
         }
 
         //Load WMM 2015 COF
@@ -256,7 +260,19 @@ namespace CoordinateSharp.Magnetic
             HorizontalIntensity = 128;
             TotalIntensity = 145;
             Inclination = .21;
-            Declination = Math.Sqrt(Math.Pow(.26, 2) + Math.Pow(5625 / m.MagneticFieldElements.HorizontalIntensity, 2));
+            Declination = Math.Sqrt(Math.Pow(.26, 2) + Math.Pow(5625 / m.MagneticFieldElements.HorizontalIntensity, 2));         
+        }
+
+        //Load WMM 2025 COF
+        private void Load_2025(Magnetic m)
+        {
+            NorthComponent = 137;
+            EastComponent = 89;
+            DownComponent = 141;
+            HorizontalIntensity = 133;
+            TotalIntensity = 138;
+            Inclination = .20;
+            Declination = Math.Sqrt(Math.Pow(.26, 2) + Math.Pow(5417 / m.MagneticFieldElements.HorizontalIntensity, 2));
         }
     }
 }

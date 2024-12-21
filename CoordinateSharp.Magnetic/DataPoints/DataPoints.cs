@@ -56,16 +56,22 @@ namespace CoordinateSharp.Magnetic
             Parent = magnetic;
             Points = new List<DataPoint>();
 
-            if (model == DataModel.WMM2015)
+            if (model == DataModel.WMM2025)
             {
-                Load_Data(WMM2015COF.Data);
-                modelYear = 2015;
+                Load_Data(WMM2025COF.Data);
+                modelYear = 2025;
             }
-            if (model == DataModel.WMM2020)
+            else if (model == DataModel.WMM2020)
             {
                 Load_Data(WMM2020COF.Data);
                 modelYear = 2020;
             }
+            else if (model == DataModel.WMM2015)
+            {
+                Load_Data(WMM2015COF.Data);
+                modelYear = 2015;
+            }
+            
         }
 
         private readonly double modelYear;

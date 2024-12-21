@@ -57,10 +57,14 @@ namespace CoordinateSharp.Magnetic
         /// <summary>
         /// World Magnetic Model 2015 (2014-2019).
         /// </summary>
-        WMM2015, 
+        WMM2015,
         /// <summary>
         /// World Magnetic Model 2020 (2019-2024).
         /// </summary>
-        WMM2020
+        WMM2020,
+        /// <summary>
+        /// World Magnetic Model 2025 (2025-2029).
+        /// </summary>
+        WMM2025
     }
 }

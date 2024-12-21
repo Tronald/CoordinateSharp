@@ -22,12 +22,12 @@ namespace CoordinateSharp_UnitTests
     [TestClass]
     public class MagneticTests
     {
-        private List<string> MageneticTestValues;
+        private List<string> Magnetic2020TestValues;
 
         [TestInitialize]
         public void InitializeValues()
         {
-            MageneticTestValues = File.ReadAllText("MagneticData\\MagneticFields2020.txt").Split("\n").ToList();
+            Magnetic2020TestValues = File.ReadAllText("MagneticData\\MagneticFields2020.txt").Split("\n").ToList();
         }
         /// <summary>
         /// Check magnetic field accuracy for WMM2020.
@@ -37,7 +37,7 @@ namespace CoordinateSharp_UnitTests
         {
            
             int x = 1;
-            foreach(var line in MageneticTestValues.ToList())
+            foreach(var line in Magnetic2020TestValues.ToList())
             {
                 var items = line.Replace("\r","").Split(" ").Where(x => !string.IsNullOrEmpty(x)).ToList();
                 System.Diagnostics.Debug.WriteLine(x);
@@ -64,7 +64,7 @@ namespace CoordinateSharp_UnitTests
         {
       
             int x = 1;
-            foreach (var line in MageneticTestValues.ToList())
+            foreach (var line in Magnetic2020TestValues.ToList())
             {
                 var items = line.Replace("\r", "").Split(" ").Where(x => !string.IsNullOrEmpty(x)).ToList();
                 System.Diagnostics.Debug.WriteLine(x);
