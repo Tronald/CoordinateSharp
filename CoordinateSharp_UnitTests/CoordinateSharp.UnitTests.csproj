@@ -58,6 +58,7 @@
     <None Remove="GeoFenceData\ColoradoSphere.txt" />
     <None Remove="GeoFenceData\GeoJsonSE.json" />
     <None Remove="MagneticData\MagneticFields2020.txt" />
+    <None Remove="MagneticData\MagneticFields2025.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -212,6 +213,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="MagneticData\MagneticFields2020.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MagneticData\MagneticFields2025.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
