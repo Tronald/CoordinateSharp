@@ -55,6 +55,11 @@ namespace CoordinateSharp.Magnetic
                 List<CoefficientModel> models = new List<CoefficientModel>();
 
                 //Convert COF to models.
+                //NOTES TO QUICKLY CREATE FROM COF FILE
+                //REGEX REPLACE (In Notepad++)
+                //FIND: ^\s*(-?\d+)\s+(-?\d+)\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)\s+(-?\d+\.?\d*)\s*$
+                //REPALCE: models.Add\(new CoefficientModel\(\1, \2, \3, \4, \5, \6\)\);\n
+
                 models.Add(new CoefficientModel(1, 0, -29438.5, 0, 10.7, 0));
                 models.Add(new CoefficientModel(1, 1, -1501.1, 4796.2, 17.9, -26.8));
                 models.Add(new CoefficientModel(2, 0, -2445.3, 0, -8.6, 0));

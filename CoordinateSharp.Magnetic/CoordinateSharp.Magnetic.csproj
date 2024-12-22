@@ -47,21 +47,22 @@ For more information, please contact Signature Group, LLC at this address: sales
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70; net80; net90</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.1.16.0</Version>
+    <Version>2.1.1.0</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2024</Copyright>
     <Description>CoordinateSharp magnetic data extensions.</Description>
-    <PackageReleaseNotes>-Adds .NET 9 support</PackageReleaseNotes>
+    <PackageReleaseNotes>Adds support for the World Magnetic Model 2025 (WMM2025), covering the years 2025–2029.
+Introduces constructors that default to the latest WMM, eliminating the need for developers to manually update WMM specifications in their code after upgrading.</PackageReleaseNotes>
     <PackageTags>CoordinateSharp Latitude Longitude Coordinates Geography Magnetic Declination</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp.Magnetic</PackageId>
     <Title>CoordinateSharp.Magnetic</Title>
-    <AssemblyVersion>1.1.16.0</AssemblyVersion>
+    <AssemblyVersion>2.1.1.0</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>128x128.png</PackageIcon>
@@ -174,7 +175,7 @@ For more information, please contact Signature Group, LLC at this address: sales
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\CoordinateSharp Graphics\128x128.png">
+    <None Include="128x128.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
