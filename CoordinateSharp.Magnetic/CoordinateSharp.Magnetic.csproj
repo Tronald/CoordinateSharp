@@ -174,7 +174,7 @@ For more information, please contact Signature Group, LLC at this address: sales
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\CoordinateSharp Graphics\128x128.png">
+    <None Include="128x128.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

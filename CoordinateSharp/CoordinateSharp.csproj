@@ -182,7 +182,7 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\CoordinateSharp Graphics\128x128.png">
+    <None Include="128x128.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
