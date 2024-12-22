@@ -90,24 +90,7 @@ namespace CoordinateSharp.Magnetic
             Load(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), 0, coordinate.Equatorial_Radius, coordinate.Inverse_Flattening, d);
         }
 
-        /// <summary>
-        /// Initializes a magnetic object based on a Coordinate, height and the latest data model.
-        /// </summary>
-        /// <param name="coordinate">Coordinate</param>
-        /// <param name="height">Height in Meters</param>
-        /// <example>
-        /// Creating a Magnetic object from a coordinate with a specified height (in meters).
-        /// <code>
-        /// Coordinate c = Coordinate(25,25, new DateTime(2020,1,1));
-        /// Magnetic m = new Magnetic(c, 1000);
-        /// </code>
-        /// </example>
-        public Magnetic(Coordinate coordinate, double height)
-        {
-            DateTime d = coordinate.GeoDate.AddHours(-coordinate.Offset);
-            Model = latestDataModel;
-            Load(coordinate.Latitude.ToDouble(), coordinate.Longitude.ToDouble(), height, coordinate.Equatorial_Radius, coordinate.Inverse_Flattening, d);
-        }
+     
         /// <summary>
         /// Initializes a magnetic object based on a Coordinate, height and a provided data model.
         /// </summary>

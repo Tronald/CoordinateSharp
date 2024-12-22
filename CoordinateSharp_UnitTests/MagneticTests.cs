@@ -84,6 +84,30 @@ namespace CoordinateSharp_UnitTests
             }
         }
 
+        [TestMethod]
+        public void MagneticFieldsLatestModel()
+        {
+
+            int x = 1;
+            foreach (var line in Magnetic2025TestValues.ToList())
+            {
+                var items = line.Replace("\r", "").Split(" ").Where(x => !string.IsNullOrEmpty(x)).ToList();
+                System.Diagnostics.Debug.WriteLine(x);
+                DateTime d = Get_Date_From_Year_Fraction(double.Parse(items[0]));
+                Coordinate c = new Coordinate(double.Parse(items[2]), double.Parse(items[3]), d, new EagerLoad(false));
+                var m = new Magnetic(c, new Distance(double.Parse(items[1]), DistanceType.Kilometers)).MagneticFieldElements;
+
+                Assert.AreEqual(double.Parse(items[4]), m.Declination, .01, $"Declination exceed delta on iteration {x}.");
+                Assert.AreEqual(double.Parse(items[5]), m.Inclination, .01, $"Inclination exceed delta on iteration {x}.");
+                Assert.AreEqual(double.Parse(items[6]), m.HorizontalIntensity, 1, $"Horizontal Intensity exceed delta on iteration {x}.");
+                Assert.AreEqual(double.Parse(items[7]), m.NorthComponent, 1, $"North Component exceed delta on iteration {x}.");
+                Assert.AreEqual(double.Parse(items[8]), m.EastComponent, 1, $"East Component exceed delta on iteration {x}.");
+                Assert.AreEqual(double.Parse(items[9]), m.DownComponent, 1, $"Down Component exceed delta on iteration {x}.");
+                Assert.AreEqual(double.Parse(items[10]), m.TotalIntensity, 1, $"Total Intensity exceed delta on iteration {x}.");
+                x++;
+            }
+        }
+
         /// <summary>
         /// Check variation accuracy for WMM2020.
         /// </summary>
@@ -254,15 +278,15 @@ namespace CoordinateSharp_UnitTests
             Magnetic m2 = new Magnetic(89,-121, new DateTime(2025,1,1), 0,0 , DataModel.WMM2025);
             Magnetic m3 = new Magnetic(c);
             Magnetic m4 = new Magnetic(89, -121, new DateTime(2025, 1, 1), 0, 0);
-            Magnetic m5 = new Magnetic(c, (double)0);
+            //Method 5 constructor removed for ambiguity avoidance
             Magnetic m6 = new Magnetic(c, new Distance(0));
             Magnetic m7 = new Magnetic(c, new Distance(0), DataModel.WMM2025);
-            Magnetic m8 = new Magnetic(c, (double)0, DataModel.WMM2025);
+            Magnetic m8 = new Magnetic(c, 0, DataModel.WMM2025);
           
             Assert.IsTrue(Helpers.ReflectiveEquals(m1.MagneticFieldElements, m2.MagneticFieldElements));
             Assert.IsTrue(Helpers.ReflectiveEquals(m1.MagneticFieldElements, m3.MagneticFieldElements));
             Assert.IsTrue(Helpers.ReflectiveEquals(m1.MagneticFieldElements, m4.MagneticFieldElements));
-            Assert.IsTrue(Helpers.ReflectiveEquals(m1.MagneticFieldElements, m5.MagneticFieldElements));
+            //Method 5 constructor removed for ambiguity avoidance
             Assert.IsTrue(Helpers.ReflectiveEquals(m1.MagneticFieldElements, m6.MagneticFieldElements));
             Assert.IsTrue(Helpers.ReflectiveEquals(m1.MagneticFieldElements, m7.MagneticFieldElements));
             Assert.IsTrue(Helpers.ReflectiveEquals(m1.MagneticFieldElements, m8.MagneticFieldElements));
@@ -287,6 +311,11 @@ namespace CoordinateSharp_UnitTests
             m2 = new Magnetic(45, 45, new DateTime(2020, 1, 1, 8, 0, 0), 0, 100, DataModel.WMM2020);
 
             Assert.IsTrue(Helpers.ReflectiveEquals(m1.MagneticFieldElements, m2.MagneticFieldElements), "Failed on attempt 2.");
+
+            m1 = new Magnetic(45, 45, new DateTime(2020, 1, 1), -8, 100);
+            m2 = new Magnetic(45, 45, new DateTime(2020, 1, 1, 8, 0, 0), 0, 100);
+
+            Assert.IsTrue(Helpers.ReflectiveEquals(m1.MagneticFieldElements, m2.MagneticFieldElements), "Failed on attempt 3.");
         }
 
         /// <summary>
@@ -307,6 +336,12 @@ namespace CoordinateSharp_UnitTests
             m1 = new Magnetic(c, new Distance(100), DataModel.WMM2020);
             m2 = c.GetMagnetic(new Distance(100), DataModel.WMM2020);
             Assert.IsTrue(Helpers.ReflectiveEquals(m1.MagneticFieldElements, m2.MagneticFieldElements), "Failed on attempt 3.");
+
+            m1 = new Magnetic(c, new Distance(100));
+            m2 = c.GetMagnetic(new Distance(100));
+            Assert.IsTrue(Helpers.ReflectiveEquals(m1.MagneticFieldElements, m2.MagneticFieldElements), "Failed on attempt 4.");
+
+         
         }
 
         private DateTime Get_Date_From_Year_Fraction(double year)
