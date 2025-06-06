@@ -295,11 +295,11 @@ namespace CoordinateSharp
         private DateTime date;
         private LunarEclipseType type;
         private DateTime penumbralEclipseBegin;
-        private DateTime partialEclispeBegin;
+        private DateTime partialEclipseBegin;
         private DateTime totalEclipseBegin;
         private DateTime midEclipse;
         private DateTime totalEclipseEnd;
-        private DateTime partialEclispeEnd;
+        private DateTime partialEclipseEnd;
         private DateTime penumbralEclipseEnd;
         private double penumbralMagnitude;
         private double umbralMagnitude;
@@ -339,7 +339,7 @@ namespace CoordinateSharp
             //PartialEclipse start
             if (TimeSpan.TryParse(values[6], out ts))
             {
-                partialEclispeBegin = date.Add(ts);
+                partialEclipseBegin = date.Add(ts);
             }
             //Total start
             if (TimeSpan.TryParse(values[8], out ts))
@@ -359,7 +359,7 @@ namespace CoordinateSharp
             //Partial Eclipse end
             if (TimeSpan.TryParse(values[14], out ts))
             {
-                partialEclispeEnd = date.Add(ts);
+                partialEclipseEnd = date.Add(ts);
             }
             //Penumbral Eclipse end
             if (TimeSpan.TryParse(values[16], out ts))
@@ -390,48 +390,61 @@ namespace CoordinateSharp
         /// </summary>
         private void Adjust_Dates()
         {
-            //Load array in squential order.
-            DateTime[] dateArray = new DateTime[] { penumbralEclipseBegin, partialEclispeBegin, totalEclipseBegin, midEclipse, totalEclipseEnd, partialEclispeEnd, penumbralEclipseEnd };
-            DateTime baseTime = partialEclispeEnd;
-            bool multiDay = false; //used to detrmine if eclipse crossed into next Z day
-            baseTime = penumbralEclipseBegin;
-            for (int x = 0; x < dateArray.Count(); x++)
+            //Lunar eclipse date begins when penumbral starts
+            if(partialEclipseBegin > new DateTime() && (penumbralEclipseBegin - partialEclipseBegin).TotalSeconds > 59)
             {
-                DateTime d = dateArray[x];
-                //Check if date exist
-                if (d > new DateTime())
+                partialEclipseBegin = partialEclipseBegin.AddDays(1);
+            }
+            if (totalEclipseBegin > new DateTime() && (penumbralEclipseBegin - totalEclipseBegin).TotalSeconds > 59)
+            {
+                totalEclipseBegin = totalEclipseBegin.AddDays(1);
+            }
+            if (midEclipse> new DateTime() && (penumbralEclipseBegin - midEclipse).TotalSeconds > 59)
+            {
+                midEclipse = midEclipse.AddDays(1);
+            }
+            if (totalEclipseEnd > new DateTime() && (penumbralEclipseBegin - totalEclipseEnd).TotalSeconds > 59)
+            {
+                totalEclipseEnd = totalEclipseEnd.AddDays(1);
+            }
+            if (partialEclipseEnd > new DateTime() && (penumbralEclipseBegin - partialEclipseEnd).TotalSeconds > 59)
+            {
+                partialEclipseEnd = partialEclipseEnd.AddDays(1);
+            }
+            if (penumbralEclipseEnd > new DateTime() && (penumbralEclipseBegin - penumbralEclipseEnd).TotalSeconds > 59)
+            {
+                penumbralEclipseEnd = penumbralEclipseEnd.AddDays(1);
+            }
+            return;
+                
+                
+                
+                if (midEclipse < penumbralEclipseBegin)
+            {
+                if (totalEclipseBegin < new DateTime() && totalEclipseBegin > midEclipse)
                 {
-                    if (d < baseTime)
-                    {
-                        multiDay = true;
-                    }
+                    totalEclipseBegin =totalEclipseBegin.AddDays(-1);
                 }
-                baseTime = dateArray[x];
-                if (multiDay == true)
+                if (partialEclipseBegin > new DateTime() && partialEclipseBegin > midEclipse)
                 {
-                    switch (x)
-                    {
-                        case 1:
-                            partialEclispeBegin = partialEclispeBegin.AddDays(1);
-                            break;
-                        case 2:
-                            totalEclipseBegin = totalEclipseBegin.AddDays(1);
-                            break;
-                        case 3:
-                            midEclipse = midEclipse.AddDays(1);
-                            break;
-                        case 4:
-                            totalEclipseEnd = totalEclipseEnd.AddDays(1);
-                            break;
-                        case 5:
-                            partialEclispeEnd = partialEclispeEnd.AddDays(1);
-                            break;
-                        case 6:
-                            penumbralEclipseEnd = penumbralEclipseEnd.AddDays(1);
-                            break;
-                        default:
-                            break;
-                    }
+                    partialEclipseBegin=partialEclipseBegin.AddDays(-1);
+                }
+                penumbralEclipseBegin = penumbralEclipseBegin.AddDays(-1);
+                
+            }
+            else
+            {
+                if (totalEclipseEnd > new DateTime() && (midEclipse - totalEclipseEnd).TotalSeconds > 59)
+                {
+                    totalEclipseEnd = totalEclipseEnd.AddDays(1);
+                }
+                if (partialEclipseEnd > new DateTime() && (midEclipse - partialEclipseEnd).TotalSeconds > 59)
+                {
+                    partialEclipseEnd = partialEclipseEnd.AddDays(1);
+                }
+                if ((midEclipse - penumbralEclipseEnd).TotalSeconds > 59)
+                {
+                    penumbralEclipseEnd = penumbralEclipseEnd.AddDays(1);
                 }
             }
         }
@@ -452,11 +465,18 @@ namespace CoordinateSharp
         /// DateTime when the penumbral eclipse begins.
         /// </summary>
         public DateTime PenumbralEclipseBegin { get { return penumbralEclipseBegin; } }
+        [Obsolete("PartialEclispeBegin is deprecated (due to original misspelling). Use PartialEclipseBegin property instead.")]
+        /// <summary>
+        /// DateTime when the partial eclipse begins (if applicable).
+        /// </summary>
+        /// <remarks>Returns 0001/01/01 if event did not occur.</remarks>
+        public DateTime PartialEclispeBegin { get { return partialEclipseBegin; } }
+       
         /// <summary>
         /// DateTime when the partial eclipse begins (if applicable).
         /// </summary>
         /// <remarks>returns 0001/01/01 if event did not occur.</remarks>
-        public DateTime PartialEclispeBegin { get { return partialEclispeBegin; } }
+        public DateTime PartialEclipseBegin { get { return partialEclipseBegin; } }
         /// <summary>
         /// DateTime when Total eclipse begins (if applicable).
         /// </summary>
@@ -471,16 +491,30 @@ namespace CoordinateSharp
         /// </summary>
         /// <remarks>returns 0001/01/01 if event did not occur.</remarks>
         public DateTime TotalEclipseEnd { get { return totalEclipseEnd; } }
+
+        [Obsolete("PartialEclispeEnd is deprecated (due to original misspelling). Use PartialEclipseEnd property instead.")]
+        /// <summary>
+        /// DateTime when the partial eclipse ends (if applicable).
+        /// </summary>
+        /// <remarks>Returns 0001/01/01 if event did not occur.</remarks>
+        public DateTime PartialEclispeEnd { get { return partialEclipseEnd; } }
+
         /// <summary>
         /// DateTime when the partial eclipse ends (if applicable).
         /// </summary>
         /// <remarks>returns 0001/01/01 if event did not occur.</remarks>
-        public DateTime PartialEclispeEnd { get { return partialEclispeEnd; } }
+        public DateTime PartialEclipseEnd { get { return partialEclipseEnd; } }
+
+        [Obsolete("PenumbralEclispeEnd is deprecated (due to original misspelling). Use PenumbralEclipseEnd property instead.")]
         /// <summary>
         /// DateTime when the penumbral eclipse ends.
         /// </summary>
         public DateTime PenumbralEclispeEnd { get { return penumbralEclipseEnd; } }
-
+       
+        /// <summary>
+        /// DateTime when the penumbral eclipse ends.
+        /// </summary>
+        public DateTime PenumbralEclipseEnd { get { return penumbralEclipseEnd; } }
         /// <summary>
         /// Penumbral magnitude. The fraction of the Moon's diameter that is covered by Earth's penumbra (lighter part of Earth's shadow). 
         /// The penumbral magnitude of a total lunar eclipse is usually greater than 2 while the penumbral magnitude of a partial lunar eclipse is 

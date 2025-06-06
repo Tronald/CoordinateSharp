@@ -303,7 +303,7 @@ namespace CoordinateSharp
 
             double a3 = easting;
             double a4 = a2 + ((int)(a3 / 100000)) - 1;
-            return digraph1.Where(x => x.Zone == Math.Floor(a4)).FirstOrDefault().Letter;
+            return digraph1.FirstOrDefault(x => x.Zone == Math.Floor(a4)).Letter;
         }
 
         internal string getDigraph2(int longZone, double northing)
@@ -318,7 +318,7 @@ namespace CoordinateSharp
             {
                 a4 = a4 + 19;
             }
-            return digraph2.Where(x => x.Zone == Math.Floor(a4)).FirstOrDefault().Letter;
+            return digraph2.FirstOrDefault(x => x.Zone == Math.Floor(a4)).Letter;
         }
         internal string getDigraph2_Polar(int longZone, double northing)
         {
@@ -334,7 +334,7 @@ namespace CoordinateSharp
             {
                 a4 = a4 + 19;
             }
-            return digraph2.Where(x => x.Zone == Math.Floor(a4)).FirstOrDefault().Letter;
+            return digraph2.FirstOrDefault(x => x.Zone == Math.Floor(a4)).Letter;
 
         }
 

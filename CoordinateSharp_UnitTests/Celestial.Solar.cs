@@ -14,6 +14,8 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using CoordinateSharp.UnitTests;
+using System.Diagnostics;
 
 namespace CoordinateSharp_UnitTests
 {
@@ -198,6 +200,71 @@ namespace CoordinateSharp_UnitTests
                 Assert.AreEqual(l1.ToString(), l2.ToString(), "Last Eclipse data does not match.");
                 Assert.AreEqual(n1.ToString(), n2.ToString(), "Next Eclipse data does not match.");
             }
+        }
+        [TestMethod]
+        public void SolarEclipses_Detailed()
+        {
+            //Ensures test data matches calculation at test data date, location and TZ offset.           
+            string json;
+            List<SolarEclipseTestModel> eclipses;
+
+            for (int x = 0; x <= 29; x++)
+            {
+                //All tests are ran at coord 42, -112, TZ offset -7
+                string d = x.ToString("D2");
+                json = File.ReadAllText($"CelestialData\\Solar Eclipse\\42N 112W TZ-7\\SE{d}01.json");
+                eclipses = JsonConvert.DeserializeObject<List<SolarEclipseTestModel>>(json);
+
+                foreach (var expected in eclipses)
+                {
+                    Coordinate c = new Coordinate(42, -112, expected.Date.AddDays(-1), new EagerLoad(EagerLoadType.Celestial));
+                    c.Offset = -7;
+                    SolarEclipseDetails actual = c.CelestialInfo.SolarEclipse.NextEclipse;
+
+                    SolarEclipseValueCheck(expected, actual);
+                }
+            }
+
+            //Region integrity check
+            json = File.ReadAllText($"CelestialData\\Solar Eclipse\\32S 80E TZ6\\SE2001.json");
+            eclipses = JsonConvert.DeserializeObject<List<SolarEclipseTestModel>>(json);
+            foreach (var expected in eclipses)
+            {
+                Coordinate c = new Coordinate(-32, 80, expected.Date.AddDays(-1), new EagerLoad(EagerLoadType.Celestial));
+                c.Offset = 6;
+                SolarEclipseDetails actual = c.CelestialInfo.SolarEclipse.NextEclipse;
+                SolarEclipseValueCheck(expected, actual);
+            }
+
+            json = File.ReadAllText($"CelestialData\\Solar Eclipse\\58N 68E TZ0\\SE2001.json");
+            eclipses = JsonConvert.DeserializeObject<List<SolarEclipseTestModel>>(json);
+            foreach (var expected in eclipses)
+            {
+                Coordinate c = new Coordinate(58, 68, expected.Date.AddDays(-1), new EagerLoad(EagerLoadType.Celestial));
+              
+                SolarEclipseDetails actual = c.CelestialInfo.SolarEclipse.NextEclipse;
+                SolarEclipseValueCheck(expected, actual);
+            }
+
+        }
+        public void SolarEclipseValueCheck(SolarEclipseTestModel expected, SolarEclipseDetails actual)
+        {
+            TimeSpan ts = expected.Date - actual.Date;
+
+            Assert.AreEqual(ts.TotalDays, 0);
+            Assert.AreEqual((expected.PartialEclipseBegin - actual.PartialEclipseBegin).TotalMinutes, 0, 1);
+            Assert.AreEqual((expected.PartialEclipseEnd - actual.PartialEclipseEnd).TotalMinutes, 0, 1);
+            Assert.AreEqual((expected.AorTEclipseBegin - actual.AorTEclipseBegin).TotalMinutes, 0, 1);
+            Assert.AreEqual((expected.AorTEclipseEnd - actual.AorTEclipseEnd).TotalMinutes, 0, 1);
+            Assert.AreEqual(expected.Magnitude, actual.Magnitude, .002);
+            Assert.AreEqual((expected.MaximumEclipse - actual.MaximumEclipse).TotalMinutes, 0, 1);
+            Assert.AreEqual(expected.Coverage, actual.Coverage, .002);
+            Assert.AreEqual(expected.Type, actual.Type);
+
+            TimeSpan expectedTrimmed = new TimeSpan(0, expected.AorTDuration.Hours, expected.AorTDuration.Minutes, 0);
+            TimeSpan actualTrimmed = new TimeSpan(0, actual.AorTDuration.Hours, actual.AorTDuration.Minutes, 0);
+
+            Assert.AreEqual((expectedTrimmed - actualTrimmed).Minutes, 0, 1);
         }
         [TestMethod]
         public void IsSunUp()
@@ -482,7 +549,7 @@ namespace CoordinateSharp_UnitTests
         /// <summary>
         /// Ensures solstice/equinox accuracy is within error limits (100 seconds maximum delta).
         /// Tested together due to algorithm configuration of values.
-        /// Table 27B Accurate between 1000-3000AD
+        /// Table 27B Accurate between 1000-2999AD
         /// </summary>
         [TestMethod]
         public void Solstice_Accuracy_Test_27B()

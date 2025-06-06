@@ -17,7 +17,6 @@
     <None Remove="CelestialData\Coordinate.txt" />
     <None Remove="CelestialData\IsMoonUp.txt" />
     <None Remove="CelestialData\IsSunUp.txt" />
-    <None Remove="CelestialData\LunarEclipse.txt" />
     <None Remove="CelestialData\MoonAlts.txt" />
     <None Remove="CelestialData\MoonAzs.txt" />
     <None Remove="CelestialData\MoonDistance.txt" />
@@ -29,6 +28,7 @@
     <None Remove="CelestialData\NauticalDawn.txt" />
     <None Remove="CelestialData\NauticalDusk.txt" />
     <None Remove="CelestialData\Perigee.txt" />
+    <None Remove="CelestialData\Solar Eclipse\SE2901.json" />
     <None Remove="CelestialData\SunAlts.txt" />
     <None Remove="CelestialData\SunAzs.txt" />
     <None Remove="CelestialData\SunRise.txt" />
@@ -89,7 +89,100 @@
     <Content Include="CelestialData\IsSunUp.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="CelestialData\LunarEclipse.txt">
+    <Content Include="CelestialData\Lunar Eclipse\32S 80E TZ6\LE2001.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE0001.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE0101.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE0201.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE0301.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE0401.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE0501.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE0601.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE0701.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE0801.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE0901.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE1001.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE1101.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE1201.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE1301.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE1401.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE1501.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE1601.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE1701.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE1801.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE1901.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE2001.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE2101.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE2201.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE2301.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE2401.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE2501.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE2601.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE2701.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE2801.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\42N 112W TZ-7\LE2901.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Lunar Eclipse\58N 68E TZ0\LE2001.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="CelestialData\MoonAlts.txt">
@@ -126,6 +219,102 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="CelestialData\Coordinate.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\32S 80E TZ6\SE2001.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE0301.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE0201.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE0101.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE0001.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE0401.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE0501.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE0601.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE0701.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE0801.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE0901.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE1001.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE1101.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE1201.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE1401.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE1301.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE1601.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE1501.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE1701.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE1801.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE1901.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE2201.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE2101.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE2301.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE2001.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE2401.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE2501.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE2701.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE2601.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE2801.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\42N 112W TZ-7\SE2901.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CelestialData\Solar Eclipse\58N 68E TZ0\SE2001.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="CelestialData\SunAlts.txt">

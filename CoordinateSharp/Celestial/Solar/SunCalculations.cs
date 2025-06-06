@@ -54,7 +54,7 @@ namespace CoordinateSharp
         public static void CalculateSunTime(double lat, double lng, DateTime date, Celestial c, EagerLoad el, double offset)
         {
            
-            if (date.Year == 0001) { return; } //Return if date value hasn't been established.
+            if (date <= new DateTime().AddDays(5)) { return; } //Return if date value hasn't been established.
             if (el.Extensions.Solar_Cycle)
             {
                 DateTime actualDate = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
@@ -501,16 +501,7 @@ namespace CoordinateSharp
         #region Private Suntime Members
         private static readonly double dayMS = 1000 * 60 * 60 * 24, j1970 = 2440588, j2000 = 2451545;
         private static readonly double rad = Math.PI / 180;     
-
-        private static double LocalSiderealTimeForTimeZone(double lon, double jd, double z)
-        {
-            double s = 24110.5 + 8640184.812999999 * jd / 36525 + 86636.6 * z + 86400 * lon;
-            s = s / 86400;
-            s = s - Math.Truncate(s);
-            double lst = s * 360 *rad;
-           
-            return lst;
-        }
+      
         private static double SideRealTime(double d, double lw)
         {
             double s = rad * (280.16 + 360.9856235 * d) - lw;
@@ -534,23 +525,29 @@ namespace CoordinateSharp
                 .000289 * Math.Sin(3 * M.ToRadians()); //25.4 Equation of the center
 
             double trueLongitude = L0 + C; //25.4
+            double trueLongitudeRadians = trueLongitude.ToRadians();
+
             double trueAnomaly = M + C; //25.4 "v" 
 
             double R = (1.000001018 * (1 - Math.Pow(e, 2))) / (1 + e * Math.Cos(trueAnomaly.ToRadians())); //25.5 Radius Vector
 
             double ascendingNode = 125.04 - 1934.136 * T;
+            double ascendingNodeRadians = ascendingNode.ToRadians();
+
             double apparentLongitude = trueLongitude - .00569 - .00478 * Math.Sin(ascendingNode.ToRadians());
+            double apparentLongitudeRadians = apparentLongitude.ToRadians();
 
             double E = Format.ToDegrees(23, 26, 21.488) - (46.8150 / 3600) * T - (.00059 / 3600) * Math.Pow(T, 2) + (.001813 / 3600) * Math.Pow(T, 3);//22.2 Obliquity of the ecliptic
 
-            double tra = Math.Atan2(Math.Cos(E.ToRadians()) * Math.Sin(trueLongitude.ToRadians()), Math.Cos(trueLongitude.ToRadians())); //25.6 True Right Ascensions. Using Atan2 we can move tan to the right side of the function with Numerator, Denominator
+            double tra = Math.Atan2(Math.Cos(E.ToRadians()) * Math.Sin(trueLongitudeRadians), Math.Cos(trueLongitudeRadians)); //25.6 True Right Ascensions. Using Atan2 we can move tan to the right side of the function with Numerator, Denominator
           
-            double tdec = Math.Asin(Math.Sin(E.ToRadians()) * Math.Sin(trueLongitude.ToRadians())); //25.7 True declination. Asin used in liu of sin.
+            double tdec = Math.Asin(Math.Sin(E.ToRadians()) * Math.Sin(trueLongitudeRadians)); //25.7 True declination. Asin used in liu of sin.
 
             double CE = E + .00256 * Math.Cos(ascendingNode.ToRadians());//25.6 & 25.7 Apparent position of the sun.
+            double CERadians = CE.ToRadians(); 
 
-            double ara = Math.Atan2(Math.Cos(CE.ToRadians()) * Math.Sin(apparentLongitude.ToRadians()), Math.Cos(apparentLongitude.ToRadians())); //25.8 Apparent Right Ascensions. Using Atan2 we can move tan to the right side of the function with Numerator, Denominator           
-            double adec = Math.Asin(Math.Sin(CE.ToRadians()) * Math.Sin(apparentLongitude.ToRadians())); //25.8 Apparent declination. Asin used in liu of sin.
+            double ara = Math.Atan2(Math.Cos(CERadians) * Math.Sin(apparentLongitudeRadians), Math.Cos(apparentLongitudeRadians)); //25.8 Apparent Right Ascensions. Using Atan2 we can move tan to the right side of the function with Numerator, Denominator           
+            double adec = Math.Asin(Math.Sin(CERadians) * Math.Sin(apparentLongitudeRadians)); //25.8 Apparent declination. Asin used in liu of sin.
 
             SolarCoordinates celC = new SolarCoordinates();
 
@@ -629,8 +626,10 @@ namespace CoordinateSharp
 
             double H = SideRealTime(dms, lw) - solC.rightAscension.ToRadians();
 
-            double azimuth = Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(solC.declination.ToRadians()) * Math.Cos(phi)) * 180 / Math.PI + 180;
-            double altitude = Math.Asin(Math.Sin(phi) * Math.Sin(solC.declination.ToRadians()) + Math.Cos(phi) * Math.Cos(solC.declination.ToRadians()) * Math.Cos(H)) * 180 / Math.PI;
+            double declinationRadians = solC.declination.ToRadians();
+
+            double azimuth = Math.Atan2(Math.Sin(H), Math.Cos(H) * Math.Sin(phi) - Math.Tan(declinationRadians) * Math.Cos(phi)) * 180 / Math.PI + 180;
+            double altitude = Math.Asin(Math.Sin(phi) * Math.Sin(declinationRadians) + Math.Cos(phi) * Math.Cos(declinationRadians) * Math.Cos(H)) * 180 / Math.PI;
 
             return new double[] { azimuth, altitude };
         }
@@ -648,19 +647,7 @@ namespace CoordinateSharp
             return m + c + p + Math.PI;
         }
        
-        //Legacy Coord method
-        //private static double[] sunCoords(double d)
-        //{
-
-        //    double m = solarMeanAnomaly(d);
-        //    double l = eclipticLongitude(m);
-        //    double[] sc = new double[2];
-        //    double b = 0;
-        //    double e = rad * 23.4397; // obliquity of the Earth
-        //    sc[0] = Math.Asin(Math.Sin(b) * Math.Cos(e) + Math.Cos(b) * Math.Sin(e) * Math.Sin(l)); //declination
-        //    sc[1] = Math.Atan2(Math.Sin(l) * Math.Cos(e) - Math.Tan(b) * Math.Sin(e), Math.Cos(l)); //rightAscension     
-        //    return sc;
-        //}
+    
         #endregion
 
     }

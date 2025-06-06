@@ -42,6 +42,7 @@ Organizations or use cases that fall under the following conditions may receive 
 
 Please visit http://coordinatesharp.com/licensing or contact Signature Group, LLC to purchase a commercial license, or for any questions regarding the AGPL 3.0 license requirements or free use license: sales@signatgroup.com.
 */
+using CoordinateSharp.Formatters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1076,6 +1077,8 @@ namespace CoordinateSharp
         /// <summary>
         /// Get times based on the specified Coordinate object's data and altitude.
         /// Condition (AltitudeEvents) should be checked if either Rising or Setting values return null.
+        /// <b>Caution:</b> These methods are only reliable during daylight hours when the sun is visible. 
+        /// Time calculations will not be accurate after sunset when the altitude is negative.
         /// </summary>
         /// <param name="c">Coordinate</param>
         /// <param name="alt">Altitude in degrees</param>
@@ -1098,8 +1101,10 @@ namespace CoordinateSharp
             return Get_Time_at_Solar_Altitude(c.Latitude.ToDouble(), c.Longitude.ToDouble(), c.GeoDate, alt, c.Offset);
         }
         /// <summary>
-        /// Get times (in UTC) at the provided solar position, date and altitude.
+        /// Get times based on the specified Coordinate object's data and altitude.
         /// Condition (AltitudeEvents) should be checked if either Rising or Setting values return null.
+        /// <b>Caution:</b> These methods are only reliable during daylight hours when the sun is visible. 
+        /// Time calculations will not be accurate after sunset when the altitude is negative.
         /// </summary>
         /// <param name="lat">Signed latitude</param>
         /// <param name="longi">Signed longitude</param>
@@ -1121,8 +1126,10 @@ namespace CoordinateSharp
             return Get_Time_at_Solar_Altitude(lat, longi, date, alt, 0);
         }
         /// <summary>
-        /// Get times (at the specified offset) at the provided solar position, date and altitude. 
-        /// Condition (AltitudeEvents) should be checked if either Rising or Setting value return null.
+        /// Get times based on the specified Coordinate object's data and altitude.
+        /// Condition (AltitudeEvents) should be checked if either Rising or Setting values return null.
+        /// <b>Caution:</b> These methods are only reliable during daylight hours when the sun is visible. 
+        /// Time calculations will not be accurate after sunset when the altitude is negative.
         /// </summary>
         /// <param name="lat">Signed latitude</param>
         /// <param name="longi">Signed longitude</param>
@@ -1340,8 +1347,7 @@ namespace CoordinateSharp
             }
 
             return seconds;
-        }
-
+        }      
         private static DateTime Get_Hour(DateTime d, double azimuth, Coordinate c)
         {
             EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
@@ -1428,53 +1434,7 @@ namespace CoordinateSharp
             return d.AddSeconds(closeSeconds);
         }
 
-        //Time Slips
-        private static DateTime? Get_Correct_Slipped_Date(DateTime? actual, DateTime? pre, DateTime? post, int i)
-        {
-            switch (i)
-            {
-                case 0:
-                    return pre;
-                case 1:
-                    return actual;
-                case 2:
-                    return post;
-                default:
-                    return null;
-            }
-        }
-        private static int Determine_Slipped_Event_Index(DateTime? actual, DateTime? pre, DateTime? post, DateTime d)
-        {
-
-            if (actual.HasValue)
-            {
-                if (actual.Value.Day != d.Day)
-                {
-                    if (pre.HasValue)
-                    {
-                        if (pre.Value.Day == d.Day) { return 0; }
-                    }
-                    if (post.HasValue)
-                    {
-                        if (post.Value.Day == d.Day) { return 2; }
-                    }
-                    return 3;
-                }
-            }
-            else
-            {
-                if (pre.HasValue)
-                {
-                    if (pre.Value.Day == d.Day) { return 0; }
-                }
-                if (post.HasValue)
-                {
-                    if (post.Value.Day == d.Day) { return 2; }
-                }
-            }
-            return 1;
-        }
-
+       
       
     }
 }

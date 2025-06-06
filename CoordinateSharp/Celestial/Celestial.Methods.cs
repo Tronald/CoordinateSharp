@@ -242,38 +242,6 @@ namespace CoordinateSharp
             }
         }
   
-
-        /// <summary>
-        /// In place time slip
-        /// </summary>
-        /// <param name="c">Coordinate</param>
-        /// <param name="offset">hour offset</param>
-        /// <param name="el">Celestial EagerLoad Option</param>
-        private void Local_Convert(Coordinate c, double offset, Celestial_EagerLoad el)
-        {
-            //Find new lunar set rise times
-            if (el == Celestial_EagerLoad.All || el == Celestial_EagerLoad.Lunar)
-            {
-                if (MoonSet.HasValue) { moonSet = moonSet.Value.AddHours(offset); }
-                if (MoonRise.HasValue) { moonRise = moonRise.Value.AddHours(offset); }
-
-                Perigee.ConvertTo_Local_Time(offset);
-                Apogee.ConvertTo_Local_Time(offset);
-                LunarEclipse.ConvertTo_LocalTime(offset);            
-            }
-
-            ////Solar
-            if (el == Celestial_EagerLoad.All || el == Celestial_EagerLoad.Solar)
-            {
-                if (sunSet.HasValue) { sunSet = sunSet.Value.AddHours(offset); }
-                if (SunRise.HasValue) { sunRise = SunRise.Value.AddHours(offset); }
-                AdditionalSolarTimes.Convert_To_Local_Time(offset);
-
-                //Eclipse
-                SolarEclipse.ConvertTo_LocalTime(offset);             
-            }
-        }
-
        
     }
 
