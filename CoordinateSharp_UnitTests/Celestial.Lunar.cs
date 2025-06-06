@@ -10,6 +10,8 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using CoordinateSharp.UnitTests;
+using System.Diagnostics;
 
 namespace CoordinateSharp_UnitTests
 {
@@ -59,7 +61,7 @@ namespace CoordinateSharp_UnitTests
             //Set Dates and Finish
             //THESE OBJECT ARE TESTED AGAINST SERIALIZED OBJECTS.
             //IF CHANGING THE MODEL YOU WILL HAVE TO CHANGE THE OBJECTS THEY ARE TESTED AGAINST AS WELL
-            data.LunarEclispe = c.CelestialInfo.LunarEclipse;
+            data.LunarEclipse = c.CelestialInfo.LunarEclipse;
             data.Perigee = c.CelestialInfo.Perigee;
             data.Apogee = c.CelestialInfo.Apogee;
 
@@ -134,8 +136,8 @@ namespace CoordinateSharp_UnitTests
 
             LunarEclipseDetails lE1 = ev.LastEclipse;
             LunarEclipseDetails nE1 = ev.NextEclipse;
-            LunarEclipseDetails lE2 = data.LunarEclispe.LastEclipse;
-            LunarEclipseDetails nE2 = data.LunarEclispe.NextEclipse;
+            LunarEclipseDetails lE2 = data.LunarEclipse.LastEclipse;
+            LunarEclipseDetails nE2 = data.LunarEclipse.NextEclipse;
 
             PropertyInfo[] properties = typeof(LunarEclipseDetails).GetProperties();
             foreach (PropertyInfo property in properties)
@@ -149,6 +151,71 @@ namespace CoordinateSharp_UnitTests
                 Assert.AreEqual(n1.ToString(), n2.ToString(), "Next Eclipse data does not match.");
             }
 
+        }
+        [TestMethod]
+        public void LunarEclipses_Detailed()
+        {
+            //Ensures test data matches calculation at test data date, location and TZ offset.           
+            string json;
+            List<LunarEclipseTestModel> eclipses;
+
+            for (int x = 0; x <= 29; x++)
+            {
+                //All tests are ran at coord 42, -112, TZ offset -7
+                string d = x.ToString("D2");
+                json = File.ReadAllText($"CelestialData\\Lunar Eclipse\\42N 112W TZ-7\\LE{d}01.json");
+                eclipses = JsonConvert.DeserializeObject<List<LunarEclipseTestModel>>(json);
+
+                foreach (var expected in eclipses)
+                {
+                    Coordinate c = new Coordinate(42, -112, expected.Date.AddDays(-1), new EagerLoad(EagerLoadType.Celestial));
+                    c.Offset = -7;
+                    LunarEclipseDetails actual = c.CelestialInfo.LunarEclipse.NextEclipse;
+
+                    LunarEclipseValueCheck(expected, actual);
+                }
+            }
+
+            //Region integrity check
+            json = File.ReadAllText($"CelestialData\\Lunar Eclipse\\32S 80E TZ6\\LE2001.json");
+            eclipses = JsonConvert.DeserializeObject<List<LunarEclipseTestModel>>(json);
+            foreach (var expected in eclipses)
+            {
+                Coordinate c = new Coordinate(-32, 80, expected.Date.AddDays(-1), new EagerLoad(EagerLoadType.Celestial));
+                c.Offset = 6;
+                LunarEclipseDetails actual = c.CelestialInfo.LunarEclipse.NextEclipse;
+                LunarEclipseValueCheck(expected, actual);
+            }
+
+            json = File.ReadAllText($"CelestialData\\Lunar Eclipse\\58N 68E TZ0\\LE2001.json");
+            eclipses = JsonConvert.DeserializeObject<List<LunarEclipseTestModel>>(json);
+            foreach (var expected in eclipses)
+            {
+                Coordinate c = new Coordinate(58, 68, expected.Date.AddDays(-1), new EagerLoad(EagerLoadType.Celestial));
+              
+                LunarEclipseDetails actual = c.CelestialInfo.LunarEclipse.NextEclipse;
+                LunarEclipseValueCheck(expected, actual);
+            }
+
+        }
+        private void LunarEclipseValueCheck(LunarEclipseTestModel expected, LunarEclipseDetails actual)
+        {
+            TimeSpan ts = expected.Date - actual.Date;
+
+            Assert.AreEqual(ts.TotalDays, 0);
+
+
+            Assert.AreEqual((expected.PenumbralEclipseBegin - actual.PenumbralEclipseBegin).TotalMinutes, 0, 1);
+            Assert.AreEqual((expected.PenumbralEclipseEnd - actual.PenumbralEclipseEnd).TotalMinutes, 0, 1);
+            Assert.AreEqual((expected.PartialEclipseBegin - actual.PartialEclipseBegin).TotalMinutes, 0, 1);
+            Assert.AreEqual((expected.PartialEclipseEnd - actual.PartialEclipseEnd).TotalMinutes, 0, 1);
+            Assert.AreEqual((expected.TotalEclipseBegin - actual.TotalEclipseBegin).TotalMinutes, 0, 1);
+            Assert.AreEqual((expected.TotalEclipseEnd - actual.TotalEclipseEnd).TotalMinutes, 0, 1);
+
+
+            Assert.AreEqual(expected.UmbralMagnitude, actual.UmbralMagnitude, .002);
+            Assert.AreEqual(expected.PenumbralMagnitude, actual.PenumbralMagnitude, .002);
+            Assert.AreEqual(expected.Type, actual.Type);
         }
 
         [TestMethod]
@@ -629,7 +696,7 @@ namespace CoordinateSharp_UnitTests
         public List<double> MoonAlts { get; set; } = new List<double>();
         public List<double> MoonAzs { get; set; } = new List<double>();
 
-        public LunarEclipse LunarEclispe { get; set; }
+        public LunarEclipse LunarEclipse { get; set; }
 
         public List<bool> IsMoonUp { get; set; } = new List<bool>();
 

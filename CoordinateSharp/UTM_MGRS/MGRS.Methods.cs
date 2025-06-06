@@ -173,8 +173,8 @@ namespace CoordinateSharp
             if (!Verify_Lat_Zone(latz)) { throw new ArgumentException("Latitudinal zone invalid", "UTM latitudinal zone was unrecognized."); }
             if (n < 0 || n > 10000000) { throw new ArgumentOutOfRangeException("Northing out of range", "Northing must be between 0-10,000,000."); }
             if (d.Length < 2 || d.Length > 2) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
-            if (ds.digraph1.Where(x => x.Letter == d.ToUpper()[0].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
-            if (ds.digraph2.Where(x => x.Letter == d.ToUpper()[1].ToString()).Count() == 0) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (!ds.digraph1.Any(x => x.Letter == d.ToUpper()[0].ToString())) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
+            if (!ds.digraph2.Any(x => x.Letter == d.ToUpper()[1].ToString())) { throw new ArgumentException("Digraph invalid", "MGRS Digraph was unrecognized."); }
             latZone = latz.ToUpper();
             longZone = longz;
             digraph = d.ToUpper();

@@ -192,11 +192,11 @@ namespace CoordinateSharp
     {
         internal DateTime date;
         internal SolarEclipseType type;
-        internal DateTime partialEclispeBegin;
+        internal DateTime partialEclipseBegin;
         internal DateTime aorTEclipseBegin;
         internal DateTime maximumEclipse;
         internal DateTime aorTEclipseEnd;
-        internal DateTime partialEclispeEnd;
+        internal DateTime partialEclipseEnd;
         internal TimeSpan aorTDuration;
         internal double magnitude;
         internal double coverage;
@@ -232,7 +232,7 @@ namespace CoordinateSharp
             //Eclipse start
             if (TimeSpan.TryParse(values[2], out ts))
             {
-                partialEclispeBegin = date.Add(ts);
+                partialEclipseBegin = date.Add(ts);
             }
             //A or T start
             if (TimeSpan.TryParse(values[4], out ts))
@@ -252,13 +252,13 @@ namespace CoordinateSharp
             //Eclipse end
             if (TimeSpan.TryParse(values[9], out ts))
             {
-                partialEclispeEnd = date.Add(ts);
+                partialEclipseEnd = date.Add(ts);
             }
 
             double mc = 0;
-            double.TryParse(values[11],out mc);
+            double.TryParse(values[11], out mc);
             magnitude = mc;
-           
+
             mc = 0;
             double.TryParse(values[12], out mc);
             coverage = mc;
@@ -285,7 +285,9 @@ namespace CoordinateSharp
             {
                 aorTDuration = new TimeSpan();
             }
-            Adjust_Dates();//Adjust dates if required (needed when eclipse crosses into next day).
+
+            
+            Adjust_Dates();
         }
         /// <summary>
         /// Initialize an empty SolarEclipseDetails object
@@ -300,46 +302,27 @@ namespace CoordinateSharp
         /// </summary>
         private void Adjust_Dates()
         {
-            //Load array in reverse event order
-            DateTime[] dateArray = new DateTime[] { partialEclispeBegin, aorTEclipseBegin, maximumEclipse, aorTEclipseEnd, partialEclispeEnd };
-            DateTime baseTime = partialEclispeEnd;
-            bool multiDay = false; //used to detrmine if eclipse crossed into next Z day
-
-            for (int x = 4; x >= 0; x--)
+            //Solar eclipse date is at maximum eclipse
+            if ((maximumEclipse - partialEclipseBegin).TotalSeconds < -59)
             {
-                DateTime d = dateArray[x];
-                //Check if date exist
-                if (d > new DateTime())
+                if (aorTEclipseBegin > new DateTime() && aorTEclipseBegin > maximumEclipse)
                 {
-
-                    //Adjust if time is less than then baseTime.
-                    if (d > baseTime)
-                    {
-                        switch (x)
-                        {
-                            case 3:
-                                aorTEclipseEnd = aorTEclipseEnd.AddDays(-1);
-                                break;
-                            case 2:
-                                maximumEclipse = maximumEclipse.AddDays(-1);
-                                break;
-                            case 1:
-                                aorTEclipseBegin = aorTEclipseBegin.AddDays(-1);
-                                break;
-                            case 0:
-                                partialEclispeBegin = partialEclispeBegin.AddDays(-1);
-                                break;
-                            default:
-                                break;
-                        }
-
-                        multiDay = true;//Set true to change base date value.
-                    }
+                   aorTEclipseBegin = aorTEclipseBegin.AddDays(-1);
                 }
+                partialEclipseBegin = partialEclipseBegin.AddDays(-1);
+
+
             }
-            if (multiDay)
+            else
             {
-                this.date = this.date.AddDays(-1); //Shave day off base date if multiday.
+                if (aorTEclipseEnd > new DateTime() && (maximumEclipse - aorTEclipseEnd).TotalSeconds > 59)
+                {
+                    aorTEclipseEnd = aorTEclipseEnd.AddDays(1);
+                }
+                if ((maximumEclipse - partialEclipseEnd).TotalSeconds > 59)
+                {
+                    partialEclipseEnd = partialEclipseEnd.AddDays(1);
+                }
             }
         }
         /// <summary>
@@ -354,10 +337,15 @@ namespace CoordinateSharp
         /// Solar eclipse type.
         /// </summary>
         public SolarEclipseType Type { get { return type; } }
+        [Obsolete("PartialEclispeBegin is deprecated (due to original misspelling). Use PartialEclipseBegin property instead.")]
         /// <summary>
         /// DateTime when the partial eclipse begins.
         /// </summary>
-        public DateTime PartialEclispeBegin { get { return partialEclispeBegin; } }
+        public DateTime PartialEclispeBegin { get { return partialEclipseBegin; } }
+        /// <summary>
+        /// DateTime when the partial eclipse begins.
+        /// </summary>
+        public DateTime PartialEclipseBegin { get { return partialEclipseBegin; } }
         /// <summary>
         /// DateTime when an Annular or Total eclipse begins (if applicable).
         /// </summary>
@@ -376,7 +364,7 @@ namespace CoordinateSharp
         /// <summary>
         /// DateTime when the partial eclipse ends.
         /// </summary>
-        public DateTime PartialEclipseEnd { get { return partialEclispeEnd; } }
+        public DateTime PartialEclipseEnd { get { return partialEclipseEnd; } }
 
         /// <summary>
         /// Duration of Annular or Total eclipse (if applicable).
@@ -418,7 +406,7 @@ namespace CoordinateSharp
                 }
             }
 
-            date = partialEclispeBegin.Date;
+            date = partialEclipseBegin.Date;
         }
     }
 

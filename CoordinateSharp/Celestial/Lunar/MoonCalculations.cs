@@ -454,7 +454,16 @@ namespace CoordinateSharp
          
             foreach (List<string> values in se)
             {
-                DateTime ld = DateTime.ParseExact(values[0], "yyyy-MMM-dd", System.Globalization.CultureInfo.InvariantCulture);
+                //string date = values[0];
+                //// Ensure year is 4 digits
+                //string[] parts = input.Split('-');
+                //if (parts[0].Length == 3)
+                //{
+                //    parts[0] = "0" + parts[0];
+                //}
+                //date = string.Join("-", parts);
+                string[] formats = { "yyyy-MMM-dd", "yyy-MMM-dd", "yy-MMM-dd", "y-MMM-dd" };
+                DateTime ld = DateTime.ParseExact(values[0], formats, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
                 if (ld < date && ld > lastDate) { lastDate = ld; lastE = currentE; }
                 if (ld >= date && ld < nextDate) { nextDate = ld; nextE = currentE; }
                 currentE++;

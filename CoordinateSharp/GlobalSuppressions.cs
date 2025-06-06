@@ -8,4 +8,3 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "<Pending>", Scope = "member", Target = "~P:CoordinateSharp.EagerLoad_Extensions.MGRS")]
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "<Pending>", Scope = "member", Target = "~P:CoordinateSharp.EagerLoad.GEOREF")]
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "<Pending>", Scope = "member", Target = "~P:CoordinateSharp.Celestial.MoonIllum")]
-[assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "<Pending>", Scope = "member", Target = "~P:CoordinateSharp.LunarEclipseDetails.PartialEclispeBegin")]

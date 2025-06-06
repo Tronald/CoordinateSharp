@@ -260,9 +260,7 @@ namespace CoordinateSharp
         /// Additional solar event times based on the provided date and location.
         /// </summary>
         /// <remarks>Contains dawn, dusk and twilight times.</remarks>
-        public AdditionalSolarTimes AdditionalSolarTimes { get { return additionalSolarTimes; } }
-       
-     
+        public AdditionalSolarTimes AdditionalSolarTimes { get { return additionalSolarTimes; } }        
 
         /// <summary>
         /// Farmers Almanac moon names
@@ -271,13 +269,12 @@ namespace CoordinateSharp
         /// Contains farmers almanac moon name.
         /// </remarks>
         public AlmanacMoonName AlmanacMoonName { get { return almanacMoonName; } }
-
         /// <summary>
-        /// Solar eclipse details.
+        /// Solar eclipse details. Data is available from 0001AD-2999AD. Any dates outside that range will return empty data.
         /// </summary>
         public SolarEclipse SolarEclipse { get { return solarEclipse; } }
         /// <summary>
-        /// Lunar eclipse details.
+        /// Lunar eclipse details. Data is available from 0001AD-2999AD. Any dates outside that range will return empty data.
         /// </summary>
         public LunarEclipse LunarEclipse { get { return lunarEclipse; } }
 
