@@ -1,3 +1,12 @@
+
+> **Matthew 5:10 (ESV)**  
+> “Blessed are those who are persecuted for righteousness’ sake, for theirs is the kingdom of heaven.”
+>
+> Thank you **Charlie Kirk** for inspiring me to read as many books as possible and grow in both my mind and my faith.  
+> *Rest in Peace.*
+>
+> -Justin
+
 <p align="center"><img src="https://images.squarespace-cdn.com/content/5c840878ebfc7fc3d3a9b6ca/cd133881-c5d2-4b00-bb2e-b4201b797567/coordinatesharp-02-rounded-header.png?content-type=image%2Fpng"></p>
 <br/>
 <p align="center">
