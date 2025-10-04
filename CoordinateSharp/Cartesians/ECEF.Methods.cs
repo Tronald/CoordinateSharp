@@ -246,6 +246,70 @@ namespace CoordinateSharp
           
             return c;
         }
+       
+        /// <summary>
+        /// Returns a Geodetic Coordinate object based on the provided ECEF coordinate X, Y, Z values.
+        /// </summary>
+        /// <param name="x">X</param>
+        /// <param name="y">Y</param>
+        /// <param name="z">Z</param>
+        /// <param name="el">EagerLoad</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on ECEF X, Y, Z values with eager loading turned off..
+        /// <code>
+        /// Coordinate c = ECEF.ECEFToLatLong(4090.877, 4090.877, 2679.708, new EagerLoad(false));   
+        /// 
+        /// Console.WriteLine(c); //N 24º 59' 59.986" E 45º 0' 0"
+        /// Console.WriteLine(c.ECEF.GeoDetic_Height.Meters); //1499.97912820436
+        /// </code>
+        /// </example>
+        public static Coordinate ECEFToLatLong(double x, double y, double z, EagerLoad el)
+        {
+            ECEF ecef = new ECEF(x, y, z);
+            double[] values = ecef.ECEF_To_LatLong(x, y, z);
+            
+
+            Coordinate c = new Coordinate(values[0], values[1], el);
+            if (el.ECEF)
+            {
+                ecef.geodetic_height = new Distance(values[2]);
+                c.ECEF = ecef;
+            }
+            return c;
+        }
+        /// <summary>
+        /// Returns a Geodetic Coordinate object based on the provided ECEF coordinate.
+        /// </summary>
+        /// <param name="ecef">ECEF Coordinate</param>
+        /// <param name="el">EagerLoad</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on an ECEF object with eager loading turned off.
+        /// <code>
+        /// ECEF ecef = new ECEF(4090.877, 4090.877, 2679.708);
+		/// Coordinate c = ECEF.ECEFToLatLong(ecef, new EagerLoad(false));
+        /// 
+        /// Console.WriteLine(c); //N 24º 59' 59.986" E 45º 0' 0"
+        /// Console.WriteLine(c.ECEF.GeoDetic_Height.Meters); //1499.97912820436
+        /// </code>
+        /// </example>
+        public static Coordinate ECEFToLatLong(ECEF ecef, EagerLoad el)
+        {
+            double[] values = ecef.ECEF_To_LatLong(ecef.X, ecef.Y, ecef.Z);
+
+            Coordinate c = new Coordinate(values[0], values[1], el);
+            Distance height = new Distance(values[2]);
+
+            if (el.ECEF)
+            {
+                ecef.geodetic_height = new Distance(values[2]);
+
+                c.ECEF = ecef;
+            }
+
+            return c;
+        }
 
         /// <summary>
         /// Default formatted ECEF string.

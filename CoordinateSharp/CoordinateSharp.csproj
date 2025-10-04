@@ -50,31 +50,27 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70; net80; net90</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>3.2.1.1</Version>
+    <Version>3.3.1.1</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2025</Copyright>
     <Description>CoordinateSharp is a high-performance, lightweight .NET library for working with geographical coordinates. Effortlessly convert coordinates, compute distances, and calculate location-based solar, lunar, and magnetic data — all with minimal code.</Description>
-    <PackageReleaseNotes>- Expanded solar and lunar eclipse calculation range from 1600 AD–2600 AD to a 3000-year range starting at 0001 AD.
-- Added corrected eclipse properties and deprecated misspelled properties.
-- Improved eclipse calculation accuracy.
-- Optimized UTM and MGRS conversion efficiency.
-- Refactored celestial calculations for improved efficiency.
-- Removed unused code.</PackageReleaseNotes>
+    <PackageReleaseNotes>- Added overloads to the ECEF-to-LatLong converters that accept an EagerLoading setting.
+- Added overloads to the Cartesian-to-LatLong converters that accept an EagerLoading setting.</PackageReleaseNotes>
     <PackageTags>Coordinates; Latitude; Longitude; Coordinate Conversion; Geography; Geodesy; Distance Calculation; Sun Position; Moon Position; Solar Calculator; Lunar Calculator; Magnetic Declination; MGRS; UTM; EPSG:3857; ECEF; GEOREF; Web Mercator; Geospatial; Astronomy; .NET</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>    <PackageIconUrl></PackageIconUrl>
     <PackageId>CoordinateSharp</PackageId>
     <Title>CoordinateSharp</Title>
-    <AssemblyVersion>3.2.1.1</AssemblyVersion>
+    <AssemblyVersion>3.3.1.1</AssemblyVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <SignAssembly>true</SignAssembly>
     <PackageIcon>128x128.png</PackageIcon>
     <AssemblyOriginatorKeyFile>CoordinateSharp Strong Name.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
-    <FileVersion>3.2.1.1</FileVersion>
+    <FileVersion>3.3.1.1</FileVersion>
     <RepositoryUrl>https://github.com/Tronald/CoordinateSharp</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

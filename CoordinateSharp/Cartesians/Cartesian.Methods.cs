@@ -158,6 +158,64 @@ namespace CoordinateSharp
         }
 
         /// <summary>
+        /// Returns a geodetic Coordinate object based on the provided Cartesian coordinate X, Y, Z values.
+        /// </summary>
+        /// <param name="x">X</param>
+        /// <param name="y">Y</param>
+        /// <param name="z">Z</param>
+        /// <param name="el">EagerLoad</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on spherical Cartesian X, Y, Z values with eager loading turned off.
+        /// <code>
+        /// Coordinate c = Cartesian.CartesianToLatLong(0.64085638, 0.64085638, 0.42261826, new EagerLoad(false));	    
+        /// Console.WriteLine(c); //N 24º 59' 60" E 45º 0' 0"
+        /// </code>
+        /// </example>
+        public static Coordinate CartesianToLatLong(double x, double y, double z, EagerLoad el)
+        {
+            double lon = Math.Atan2(y, x);
+            double hyp = Math.Sqrt(x * x + y * y);
+            double lat = Math.Atan2(z, hyp);
+
+            double Lat = lat * (180 / Math.PI);
+            double Lon = lon * (180 / Math.PI);
+
+
+            return new Coordinate(Lat, Lon, el);
+        }
+        /// <summary>
+        /// Returns a geodetic Coordinate object based on the provided Cartesian coordinate.
+        /// </summary>
+        /// <param name="cart">Cartesian Coordinate</param>
+        /// <param name="el">EagerLoad</param>
+        /// <returns>Coordinate</returns>
+        /// <example>
+        /// The following example creates (converts to) a geodetic Coordinate object based on a spherical Cartesian object with eager loading turned off.
+        /// <code>
+        /// Cartesian cart = new Cartesian(0.64085638, 0.64085638, 0.42261826);
+		/// Coordinate c = Cartesian.CartesianToLatLong(cart, new EagerLoad(false));
+        /// Console.WriteLine(c); //N 24º 59' 60" E 45º 0' 0"
+        /// </code>
+        /// </example>
+        public static Coordinate CartesianToLatLong(Cartesian cart, EagerLoad el)
+        {
+            double x = cart.X;
+            double y = cart.Y;
+            double z = cart.Z;
+
+            double lon = Math.Atan2(y, x);
+            double hyp = Math.Sqrt(x * x + y * y);
+            double lat = Math.Atan2(z, hyp);
+
+            double Lat = lat * (180 / Math.PI);
+            double Lon = lon * (180 / Math.PI);
+            return new Coordinate(Lat, Lon, el);
+        }
+
+
+
+        /// <summary>
         /// Default formatted Cartesian string.
         /// </summary>
         /// <remarks>
