@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Numerics;
 
 namespace CoordinateSharp_UnitTests
 {
@@ -170,6 +171,14 @@ namespace CoordinateSharp_UnitTests
                 Assert.AreEqual(expected, c.Cartesian.ToString(),  string.Format("Value: {0}      Expected: {1}", c.Cartesian.ToString(), expected));
                 x++;
             }
+
+            //CHECK EAGERLOAD OVERLOAD
+            EagerLoad el = new EagerLoad(EagerLoadType.Cartesian);
+            Coordinate c2 = Cartesian.CartesianToLatLong(0.23195629, 0.73504058, 0.63711194, el);
+            Assert.AreEqual(c2.MGRS, null, "EagerLoad Settings Failed");
+
+            c2 = Cartesian.CartesianToLatLong(c2.Cartesian, el);
+            Assert.AreEqual(c2.MGRS, null, "EagerLoad Settings Failed");
         }
 
         /// <summary>
@@ -194,6 +203,16 @@ namespace CoordinateSharp_UnitTests
                 Assert.AreEqual(expected, c.ECEF.ToString());
                 x++;
             }
+
+            //CHECK EAGERLOAD OVERLOAD
+            EagerLoad el = new EagerLoad(EagerLoadType.ECEF);
+            Coordinate c2 = ECEF.ECEFToLatLong(1481, 4694, 4041, el);
+            Assert.AreEqual(c2.MGRS,null, "EagerLoad Settings Failed");
+
+            c2 = ECEF.ECEFToLatLong(c2.ECEF, el);
+            Assert.AreEqual(c2.MGRS, null, "EagerLoad Settings Failed");
+
+
         }
 
         /// <summary>
