@@ -737,7 +737,7 @@ namespace CoordinateSharp
 
             if(m  =="Feb" && d ==29 && !DateTime.IsLeapYear((int)year))
             {
-                ans = year.ToString("D4") + "-Mar-01";
+                ans = ((int)year).ToString("D4") + "-Mar-01";
             }
             return ans;
         }
