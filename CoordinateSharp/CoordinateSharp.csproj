@@ -50,15 +50,14 @@ Please visit http://coordinatesharp.com/licensing or contact Signature Group, LL
     <TargetFrameworks>net40; netstandard1.3; netstandard1.4; netstandard2.0; netstandard2.1; net50; net60; net70; net80; net90</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>3.3.1.1</Version>
+    <Version>3.3.2.1</Version>
     <Authors>Signature Group, LLC</Authors>
     <Company />
     <PackageProjectUrl>https://github.com/Tronald/CoordinateSharp</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
     <Copyright>Copyright 2025</Copyright>
     <Description>CoordinateSharp is a high-performance, lightweight .NET library for working with geographical coordinates. Effortlessly convert coordinates, compute distances, and calculate location-based solar, lunar, and magnetic data — all with minimal code.</Description>
-    <PackageReleaseNotes>- Added overloads to the ECEF-to-LatLong converters that accept an EagerLoading setting.
-- Added overloads to the Cartesian-to-LatLong converters that accept an EagerLoading setting.</PackageReleaseNotes>
+    <PackageReleaseNotes>- Resolves solar-eclipse leap-year handling error that triggered an exception when Feb 29 calculations occurred in a non-leap year.</PackageReleaseNotes>
     <PackageTags>Coordinates; Latitude; Longitude; Coordinate Conversion; Geography; Geodesy; Distance Calculation; Sun Position; Moon Position; Solar Calculator; Lunar Calculator; Magnetic Declination; MGRS; UTM; EPSG:3857; ECEF; GEOREF; Web Mercator; Geospatial; Astronomy; .NET</PackageTags>
     <!-- <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>-->
     <PackageLicenseFile>License.txt</PackageLicenseFile>    <PackageIconUrl></PackageIconUrl>

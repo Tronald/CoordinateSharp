@@ -266,6 +266,17 @@ namespace CoordinateSharp_UnitTests
 
             Assert.AreEqual((expectedTrimmed - actualTrimmed).Minutes, 0, 1);
         }
+
+        [TestMethod]
+        public void SolarEclipses_LeapYearIntegrityCheck()
+        {
+            EagerLoad el = new EagerLoad(EagerLoadType.Celestial);
+            el.Extensions = new EagerLoad_Extensions(EagerLoad_ExtensionsType.Solar_Eclipse | EagerLoad_ExtensionsType.Lunar_Eclipse);
+
+            DateTime eclipseDate = new DateTime(2351, 1, 1, 0, 1, 0);
+
+            Coordinate c = new Coordinate(36.162603, -86.799343, eclipseDate, el);//Will throw if failed
+        }
         [TestMethod]
         public void IsSunUp()
         {
