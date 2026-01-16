@@ -347,7 +347,47 @@ namespace CoordinateSharp_UnitTests
             }
 
         }
+        [TestMethod]
+        public void SunCondition_NoEventCheck()
+        {
+            Coordinate c = new Coordinate(69.68331, 9.955951, new DateTime(2026, 1, 14, 18, 48, 0));
+            SunCondition_NoEventCheck(c, CelestialStatus.UpAllDay);
 
+            c = new Coordinate(69.716046, 11.373193, new DateTime(2026, 1, 14, 18, 48, 0));
+            SunCondition_NoEventCheck(c, CelestialStatus.UpAllDay);
+
+            c = new Coordinate(69.718731, 18.484865, new DateTime(2026, 1, 14, 18, 48, 0));
+            SunCondition_NoEventCheck(c, CelestialStatus.UpAllDay);
+
+            c = new Coordinate(69.687064, 19.902523, new DateTime(2026, 1, 14, 18, 48, 0));
+            SunCondition_NoEventCheck(c, CelestialStatus.UpAllDay);
+
+            c = new Coordinate(-69.68331, -9.955951, new DateTime(2026, 1, 14, 18, 48, 0));
+            SunCondition_NoEventCheck(c, CelestialStatus.DownAllDay);
+
+            c = new Coordinate(-69.716046, -11.373193, new DateTime(2026, 1, 14, 18, 48, 0));
+            SunCondition_NoEventCheck(c, CelestialStatus.DownAllDay);
+
+            c = new Coordinate(-69.718731, -18.484865, new DateTime(2026, 1, 14, 18, 48, 0));
+            SunCondition_NoEventCheck(c, CelestialStatus.DownAllDay);
+
+            c = new Coordinate(-69.687064, -19.902523, new DateTime(2026, 1, 14, 18, 48, 0));
+            SunCondition_NoEventCheck(c, CelestialStatus.DownAllDay);
+
+        }
+        private void SunCondition_NoEventCheck(Coordinate c, CelestialStatus status)
+        {
+            while (c.GeoDate < new DateTime(2026, 1, 17))
+            {
+                c.GeoDate = c.GeoDate.AddHours(.1);
+                if (c.CelestialInfo.SunCondition == status)
+                {
+                    Console.WriteLine(c.GeoDate.ToString());
+                    Console.WriteLine(c.CelestialInfo.SunAltitude);
+                    throw new InvalidOperationException();
+                }
+            }
+        }
         /// <summary>
         /// Ensures static celestial logic works correctly.
         /// </summary>
