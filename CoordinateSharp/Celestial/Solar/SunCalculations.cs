@@ -59,8 +59,6 @@ namespace CoordinateSharp
             {
                 DateTime actualDate = new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Utc);
 
-              
-
                 ////Sun Time Calculations
                 //Get solar coordinate info and feed
                 //Get Julian     
@@ -86,25 +84,32 @@ namespace CoordinateSharp
                 // neither sunrise nor sunset
                 if ((!c.SunRise.HasValue) && (!c.SunSet.HasValue))
                 {
-                    //Check sun altitude at apex (solar noon) to ensure accurate logic.
-                    //Previous logic determined of user time passed (c.sunAltitude), but due to Meeus limitation in 15.1, it could cause a misreport.
-                    //https://github.com/Tronald/CoordinateSharp/issues/167
-
-                    var safety = new Celestial();
-                    //Solarnoon may return null on certain days due to formula limitations in circumpolar regions.
-                    //When this occurs set noon to 00:00 because issue occurs around 0 hour.
-                    //The check is accurate enough for up or down all day determination
-                    DateTime? snoon = c.solarNoon;
-                    if (snoon == null) { snoon=actualDate.AddHours(-offset); }
-                    CalculateSunAngle(snoon.Value, lng, lat, safety, celC); 
-                   
-                    if (safety.sunAltitude <= -.8333)
+                    //Hemisphere check
+                    //Northern
+                    if (lat >= 0)
                     {
-                        c.sunCondition = CelestialStatus.DownAllDay;
+                        //declination to determine if winter or summer
+                        if (c.solarCoordinates.declination > 0)
+                        {
+                            c.sunCondition = CelestialStatus.UpAllDay;
+                        }
+                        else
+                        {
+                            c.sunCondition = CelestialStatus.DownAllDay;
+                        }
                     }
+                    //Southern
                     else
                     {
-                        c.sunCondition = CelestialStatus.UpAllDay;
+                        //declination to determine if winter or summer
+                        if (c.solarCoordinates.declination > 0)
+                        {
+                            c.sunCondition = CelestialStatus.DownAllDay;
+                        }
+                        else
+                        {
+                            c.sunCondition = CelestialStatus.UpAllDay;   // includes d == 0
+                        }
                     }
                 }
                 // sunrise or sunset
