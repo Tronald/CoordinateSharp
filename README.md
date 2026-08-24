@@ -83,7 +83,7 @@ CoordinateSharp.
 * **Coordinate parsing:** Initialize a `Coordinate` with multiple format types using `TryParse()`.
 * **Distance calculation:** Calculate distances between coordinates.
 * **Coordinate moving/shifting:** Shift coordinates using a distance and bearing, or a distance and target coordinate.
-* **Location based celestial information:** Quickly determine sun set, moon rise, next solar eclipse or even zodiac signs at the input location.
+* **Location based celestial information:** Quickly determine sun set, moon rise, or next solar eclipse at the input location.
 * **Property change notification:** All properties automatically adjust as the `Coordinate` changes. For example, changing the `GeoDate` will cause all celestial times to recalculate. Adjusting a `Coordinate` latitudinal seconds, will retrigger all coordinate conversions and celestial data so your information is always up to date. 
 * **Geo-Fencing:** Define a perimeter and determine if your coordinate is within or near polylines.
 * **Magnetic Data:** Determine geographic magnetic data such as declination ([requires extension package](https://www.nuget.org/packages/CoordinateSharp.Magnetic/)).
